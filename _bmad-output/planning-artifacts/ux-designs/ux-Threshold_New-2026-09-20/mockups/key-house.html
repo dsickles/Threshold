@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Threshold — The New House</title>
+<style>
+/* Governs: DESIGN.md Brand, Colors, Layout (no corner HUD), interact-highlight, subtitle omitted in first wander.
+   EXPERIENCE.md IA The New House; HUD & Diegetic UI; State Patterns First wander; Input tap-to-move / tap-to-look.
+   Tiny pause only. No stick, minimap, crosshair, or quest marker. */
+:root {
+  --ink: #F4EFE6;
+  --ink-muted: #9A9084;
+  --accent: #C4A574;
+  --border: #3D3832;
+  --safe: 24px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #111;
+  font-family: "Segoe UI", sans-serif;
+}
+.phone {
+  width: 390px;
+  height: 844px;
+  border-radius: 36px;
+  overflow: hidden;
+  position: relative;
+  border: 10px solid #2a2a2a;
+  background: #1a1714;
+}
+.wall {
+  position: absolute;
+  inset: 0 0 42% 0;
+  background:
+    radial-gradient(circle at 78% 22%, rgba(232,212,168,0.55), transparent 26%),
+    linear-gradient(180deg, #6b6258 0%, #3d3832 70%, #2a2520 100%);
+}
+.floor {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 46%;
+  background: linear-gradient(180deg, #4a433c, #1c1916);
+}
+.window {
+  position: absolute;
+  top: 96px;
+  right: 36px;
+  width: 110px;
+  height: 150px;
+  border: 10px solid #241f1b;
+  background: linear-gradient(180deg, #E8D4A8, #a09078);
+}
+.table {
+  position: absolute;
+  left: 48px;
+  bottom: 168px;
+  width: 160px;
+  height: 14px;
+  background: #2a2520;
+  box-shadow: 0 28px 0 0 #1c1916;
+}
+.object {
+  position: absolute;
+  left: 92px;
+  bottom: 196px;
+  width: 36px;
+  height: 28px;
+  background: #5c534c;
+  border: 2px solid #C4A574;
+  box-shadow: 0 0 0 3px rgba(196,165,116,0.45);
+}
+.pause {
+  position: absolute;
+  top: var(--safe);
+  right: var(--safe);
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+.caption {
+  position: absolute;
+  left: var(--safe);
+  right: var(--safe);
+  bottom: var(--safe);
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+  <div class="phone" aria-label="The New House, first wander">
+    <div class="wall"></div>
+    <div class="window"></div>
+    <div class="floor"></div>
+    <div class="table"></div>
+    <div class="object" aria-label="Highlighted trigger, unlabeled"></div>
+    <button class="pause" type="button">Pause</button>
+  </div>
+</body>
+</html>

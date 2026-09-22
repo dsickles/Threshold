@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Threshold — Title</title>
+<style>
+/* Governs: DESIGN.md Brand & Style, Colors, Typography, Layout & Spacing, Components button-primary / button-quiet.
+   EXPERIENCE.md IA Title; State Patterns Cold open, No save, Menu focus; Key Flow “Alex, first time, phone browser” step 1.
+   Continue is omitted: no checkpoint. Play is default focus. */
+:root {
+  --surface: #1C1916;
+  --ink: #F4EFE6;
+  --ink-muted: #9A9084;
+  --accent: #C4A574;
+  --border: #3D3832;
+  --scrim: #0C0B0A;
+  --safe: 24px;
+  --md: 8px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #111;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--ink);
+}
+.phone {
+  width: 390px;
+  height: 844px;
+  border-radius: 36px;
+  overflow: hidden;
+  position: relative;
+  border: 10px solid #2a2a2a;
+  background: #3a342c;
+}
+.room {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(12,11,10,0.72), rgba(12,11,10,0.55)),
+    radial-gradient(circle at 70% 18%, #E8D4A8 0%, transparent 28%),
+    linear-gradient(180deg, #4a433b 0%, #2c2824 42%, #1a1714 100%);
+}
+.floor {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 38%;
+  background: linear-gradient(180deg, #3a342c, #241f1b);
+}
+.window {
+  position: absolute;
+  top: 72px;
+  right: 48px;
+  width: 88px;
+  height: 120px;
+  border: 8px solid #2a2520;
+  background: linear-gradient(180deg, #E8D4A8, #8a7a62);
+  opacity: 0.85;
+}
+.menu {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  width: min(480px, calc(100% - 48px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: var(--safe);
+}
+h1 {
+  margin: 0 0 32px;
+  font-family: Georgia, serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+button {
+  width: 100%;
+  min-height: 44px;
+  border-radius: var(--md);
+  font-family: "Segoe UI", sans-serif;
+  font-size: 16px;
+  cursor: default;
+}
+.primary {
+  background: var(--accent);
+  color: var(--surface);
+  border: 2px solid var(--accent);
+  font-weight: 600;
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.quiet {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+.note {
+  margin: 8px 0 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+  <div class="phone" aria-label="Title, cold open, no save">
+    <div class="room"></div>
+    <div class="window"></div>
+    <div class="floor"></div>
+    <div class="menu">
+      <h1>Threshold</h1>
+      <button class="primary" type="button">Play</button>
+      <button class="quiet" type="button">Settings</button>
+    </div>
+  </div>
+</body>
+</html>
