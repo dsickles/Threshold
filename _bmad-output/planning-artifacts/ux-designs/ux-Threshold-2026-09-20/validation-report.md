@@ -1,7 +1,7 @@
-# Validation Report — Threshold_New
+# Validation Report — Threshold
 
-- **DESIGN.md:** `_bmad-output/planning-artifacts/ux-designs/ux-Threshold_New-2026-09-20/DESIGN.md`
-- **EXPERIENCE.md:** `_bmad-output/planning-artifacts/ux-designs/ux-Threshold_New-2026-09-20/EXPERIENCE.md`
+- **DESIGN.md:** `_bmad-output/planning-artifacts/ux-designs/ux-Threshold-2026-09-20/DESIGN.md`
+- **EXPERIENCE.md:** `_bmad-output/planning-artifacts/ux-designs/ux-Threshold-2026-09-20/EXPERIENCE.md`
 - **Run at:** 2026-09-21
 
 ## Overall verdict

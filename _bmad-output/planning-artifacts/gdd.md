@@ -3,7 +3,7 @@
 **Author:** Dan (with Samus Shepard)
 **Game Type:** Narrative Anthology (Adventure / Multi-Genre)
 **Target Platform(s):** Browser (first), Mobile (second), PC / Steam (third)
-**Reconciled:** 2026-09-20 from the 2025-11-22 draft. Stale self-references (Deckbuilder USP, _The Outsider_, apartment hub, 30-minute minigames) were aligned with later planning decisions; see [decision-history.md](decision-history.md). **2026-09-22:** Platform order, the one tap scheme, the performance bar, and the development-epic build order were aligned with [game-architecture.md](game-architecture.md) and the UX spines ([DESIGN.md](ux-designs/ux-Threshold_New-2026-09-20/DESIGN.md), [EXPERIENCE.md](ux-designs/ux-Threshold_New-2026-09-20/EXPERIENCE.md)). First slice is the 3D House plus _The Partner_. Original: [archive/2025-11-22-original/bmm-gdd-Threshold-2025-11-22.md](archive/2025-11-22-original/bmm-gdd-Threshold-2025-11-22.md).
+**Reconciled:** 2026-09-20 from the 2025-11-22 draft. Stale self-references (Deckbuilder USP, _The Outsider_, apartment hub, 30-minute minigames) were aligned with later planning decisions; see [decision-history.md](decision-history.md). **2026-09-22:** Platform order, the one tap scheme, the performance bar, and the development-epic build order were aligned with [game-architecture.md](game-architecture.md) and the UX spines ([DESIGN.md](ux-designs/ux-Threshold-2026-09-20/DESIGN.md), [EXPERIENCE.md](ux-designs/ux-Threshold-2026-09-20/EXPERIENCE.md)). First slice is the 3D House plus _The Partner_. Original: [archive/2025-11-22-original/bmm-gdd-Threshold-2025-11-22.md](archive/2025-11-22-original/bmm-gdd-Threshold-2025-11-22.md).
 
 ---
 

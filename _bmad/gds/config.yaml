@@ -14,7 +14,7 @@ primary_platform:
   - other
 
 # Core Configuration Values
-project_name: Threshold_New
+project_name: Threshold
 user_name: Dan
 communication_language: English
 document_output_language: English

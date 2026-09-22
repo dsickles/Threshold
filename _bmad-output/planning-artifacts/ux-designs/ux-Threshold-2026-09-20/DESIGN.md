@@ -9,7 +9,7 @@ sources:
   - '{planning_artifacts}/narrative-design.md'
   - '{planning_artifacts}/game-architecture.md'
   - '{planning_artifacts}/decision-history.md'
-  - '{planning_artifacts}/ux-designs/ux-Threshold_New-2026-09-20/.decision-log.md'
+  - '{planning_artifacts}/ux-designs/ux-Threshold-2026-09-20/.decision-log.md'
   - '{project-root}/docs/agent-reports/report-designer-samus.md'
   - '{project-root}/docs/agent-reports/report-narrative-sophia.md'
   - '{project-root}/docs/agent-reports/report-dev-gordon.md'

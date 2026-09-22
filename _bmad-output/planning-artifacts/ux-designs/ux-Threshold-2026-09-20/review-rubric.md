@@ -1,4 +1,4 @@
-# Spine Pair Review — Threshold_New
+# Spine Pair Review — Threshold
 
 ## Overall verdict
 
