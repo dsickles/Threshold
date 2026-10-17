@@ -35,12 +35,20 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 ## Rules that must not break
 
 - One tap scheme everywhere. Click = tap. No WASD, virtual stick, mouse-look or gamepad. The House uses fixed viewpoints.
+- Nothing works only on hover. Tap targets are at least 44px.
 - The Loss (The Protector) has no warning, no skip and no retry.
 - Each chapter has one result. Only spoken words and journal wording may differ (Stoic/Vulnerable).
 - Saves happen only between chapters. Hiding the tab pauses but never saves.
 - The House must look right without volumetric fog. No Godot CompositorEffects (they don't run in the browser).
 - The UI never explains the metaphor.
 - Before starting a ticket, check it is v1 in docs/scope.md. If it isn't, ask Dan.
+
+## Changing things
+
+- Ask before adding a Godot addon, plugin, library or other outside dependency.
+- Keep the House and each chapter separate: a chapter must not reach into the House or another chapter, except through the shared systems in game-architecture.md.
+- Don't invent story, dialogue or journal wording. If a placeholder is needed, mark it clearly as a placeholder and tell Dan.
+- Don't delete or rewrite design docs. The one exception is fixing an out-of-date line after a decision (see "When documents disagree").
 
 ## Agent skills
 
@@ -58,4 +66,6 @@ Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.js
 
 ## Building and testing
 
-Not set up yet (milestone M0). When it is, record here: the pinned Godot version, how to run the game, how to run tests, how to export the web build, and where the private test link lives. Automated tests cover the core table and save/load; everything else is checked by playing, including on Dan's phone.
+Not set up yet (milestone M0). When it is, record here: the pinned Godot version, how to run the game, how to check scripts for errors without opening the editor, how to run tests, how to export the web build, and where the private test link lives. Also add `.godot/` to `.gitignore` and commit Godot's `.uid` files alongside their scripts. Automated tests cover the core table and save/load; everything else is checked by playing, including on Dan's phone.
+
+Claude can't see the game running. End every change Dan needs to play with a short "what to look for" list: where to go, what to tap, and what should happen.
