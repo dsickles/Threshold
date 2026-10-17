@@ -69,6 +69,14 @@ Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.js
 
 Pinned engine: **Godot 4.7.2**, standard build (not .NET). Private test link: a password-protected itch.io page, uploaded with butler (see `docs/scope.md`, "Settled questions").
 
-Not set up yet (milestone M0). When it is, record here: how to run the game, how to check scripts for errors without opening the editor, how to run tests, how to export the web build, and where the private test link lives. Also add `.godot/` to `.gitignore` and commit Godot's `.uid` files alongside their scripts. Automated tests cover the core table and save/load; everything else is checked by playing, including on Dan's phone.
+- **Project folder:** `game/` (open `game/project.godot`). It lives in its own folder so Godot never imports `docs/` or `archive/`. Renderer: Compatibility. `.godot/` and `build/` are ignored; commit each `.uid` file with its script.
+- **Tools:** Godot and butler live in `DASSoft\Tools`, next to this repo (paths in `tools/paths.ps1`; override with the `GODOT` / `BUTLER` environment variables). Export templates for 4.7.2 must be installed in `%APPDATA%\Godot\export_templates\4.7.2.stable\`.
+- **Run:** open `game/project.godot` in `Godot_v4.7.2-stable_win64.exe` and press Play (F5).
+- **Error check (no editor):** `powershell -ExecutionPolicy Bypass -File tools/check.ps1`. It runs Godot's built-in script check on every `.gd` file and exits non-zero on any error.
+- **Tests:** none yet. The test addon is chosen in M1, together with the core table.
+- **Export and publish:** `powershell -ExecutionPolicy Bypass -File tools/publish.ps1`. It error-checks, exports the "Web" preset (single-threaded) to `build/web/` at the repo root (outside `game/`, so Godot never imports old builds), then runs one butler command: `butler push build/web dsickles/threshold:html5`. butler is logged in once on Dan's PC.
+- **Private test link:** https://dsickles.itch.io/threshold (restricted, password-protected; Dan holds the password, never write it in the repo).
+
+Automated tests cover the core table and save/load; everything else is checked by playing, including on Dan's phone.
 
 Claude can't see the game running. End every change Dan needs to play with a short "what to look for" list: where to go, what to tap, and what should happen.
