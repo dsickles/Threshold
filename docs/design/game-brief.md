@@ -4,8 +4,9 @@
 **Reconciled:** 2026-09-20
 **Author:** Dan (with Samus Shepard)
 **Status:** Canonical (reconciled from the 2025-11-22 draft)
+**Updated:** 2026-10-17. Platform order, first slice, MVP and next steps aligned with [ADR-0002](../adr/0002-build-order-spark-to-silence.md), [roadmap.md](../roadmap.md) and [scope.md](../scope.md).
 
-Superseded ideas from the original draft (Roguelike Deckbuilder, The Role Model, The Outsider, a 9-month-only timeline, apartment hub) are recorded in [decision-history.md](decision-history.md). The 2025-11-22 text is archived at [archive/2025-11-22-original/bmm-game-brief-Threshold-2025-11-22.md](archive/2025-11-22-original/bmm-game-brief-Threshold-2025-11-22.md).
+Superseded ideas from the original draft (Roguelike Deckbuilder, The Role Model, The Outsider, a 9-month-only timeline, apartment hub) are recorded in [decision-history.md](decision-history.md). The 2025-11-22 text is archived at [archive/2025-11-22-original/bmm-game-brief-Threshold-2025-11-22.md](../../archive/2026-10-bmad/_bmad-output/planning-artifacts/archive/2025-11-22-original/bmm-game-brief-Threshold-2025-11-22.md).
 
 ---
 
@@ -84,18 +85,21 @@ Listed in chronological story order:
 
 ### Target Platforms
 
-- **Primary:** PC / Steam.
-- **Secondary:** Mobile (iOS/Android) - Design should account for touch controls where possible.
+- **First:** Browser (opened from a link, including on a phone).
+- **Second:** Mobile.
+- **Third:** PC / Steam. One build and one tap scheme on all three.
 
 ### Development Timeline
 
-- **Phase 1:** First slice — Hub + _The Provider_ + _The Protector_ - 1 Month.
-- **Phase 2:** Vertical Slice (3 Archetypes) - 3 Months.
-- **Phase 3:** Full Production - 9-12 Months.
+Milestones are in [roadmap.md](../roadmap.md). No dates are committed.
+
+- **M1 Spark to Silence:** rough House + _The Partner_ + _The Protector_ (the Loss) + the House in grief.
+- **M2 The Whole Story, Rough:** every chapter as a short rough version, playable start to finish.
+- **M3+ Chapter depth**, then **Polish & Ship**.
 
 ### Technical Constraints
 
-- **Input:** Mouse/Touch-first design to support both PC and Mobile potential.
+- **Input:** One tap/click scheme everywhere. The House uses fixed viewpoints ([ADR-0003](../adr/0003-house-fixed-viewpoints.md)).
 - **Engine:** Godot 4.x.
 
 ---
@@ -168,7 +172,7 @@ Listed in chronological story order:
 
 ### MVP Definition
 
-A playable build featuring the **Hub** and **2 Polished Archetypes** (Provider + Protector) that demonstrates the emotional contrast.
+The first playable (M1, Spark to Silence) is a rough build of the **House**, **The Partner** and **The Protector** (the Loss) that demonstrates the emotional contrast: joy, then a loss the player cannot prevent, then the House reacting. Success criteria are in [roadmap.md](../roadmap.md).
 
 ### Success Metrics
 
@@ -181,9 +185,7 @@ A playable build featuring the **Hub** and **2 Polished Archetypes** (Provider +
 
 ### Immediate Actions
 
-1.  **Prototype the first slice:** Greybox Hub plus _The Provider_ (Bureaucracy Sim) and _The Protector_ (Pathfinder).
-2.  **Visual Style Guide:** Create a mood board for the New House and those 2 key archetypes.
-3.  **Narrative Outline:** Already captured in `gdd.md` and `narrative-design.md`; keep those documents as the source of truth for the 7 archetypes mapped onto the fertility timeline.
+See [roadmap.md](../roadmap.md). The 2025 next steps (prototype Provider + Protector, mood board, narrative outline) are superseded.
 
 ---
 

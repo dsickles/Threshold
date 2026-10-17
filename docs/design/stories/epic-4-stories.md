@@ -1,6 +1,8 @@
 # Epic 4: The Cost
 
-Stories for [epics.md](epics.md). When a story is built, its task file points at this file.
+Stories for [requirements.md](../requirements.md). When a story is built, its task file points at this file.
+
+> **2026-10-17:** Reference acceptance criteria for this chapter, copied from BMAD. They are not the build plan: build order is in [roadmap.md](../../roadmap.md), v1 scope in [scope.md](../../scope.md), and work is tracked in Linear. Lines changed to match later decisions are marked _(updated 2026-10-17)_.
 
 A player works the bills for that pregnancy, reads them in large type, stamps them on the desk, and still gets through when the due date runs out. This chapter does not replay conception. The score is synthwave. Leaving in the middle starts the chapter over.
 

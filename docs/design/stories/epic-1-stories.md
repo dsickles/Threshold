@@ -1,6 +1,8 @@
 # Epic 1: The Spark in the New House
 
-Stories for [epics.md](epics.md). When a story is built, its task file points at this file.
+Stories for [requirements.md](../requirements.md). When a story is built, its task file points at this file.
+
+> **2026-10-17:** Reference acceptance criteria for this chapter, copied from BMAD. They are not the build plan: build order is in [roadmap.md](../../roadmap.md), v1 scope in [scope.md](../../scope.md), and work is tracked in Linear. Lines changed to match later decisions are marked _(updated 2026-10-17)_.
 
 A player can walk the House in a browser, play The Partner, return to a House that has changed, and come back later to that same House. The rough chapter and the save come before the menus. The House's mood comes from ordinary fog, lamp light, color, corner shading, and sound. Volumetric fog is a PC extra and the House must still read without it.
 
@@ -18,9 +20,9 @@ So that I can look around before anything else asks me to play.
 **And** the House is lit by lamps and ordinary fog, and it still reads if volumetric fog is unavailable
 
 **Given** I am in the House
-**When** I tap the floor
-**Then** Leo walks to that point
-**And** a tap on a view target turns the view, the hit comes from the pointer, and a click is the same as a tap
+**When** I tap a viewpoint marker or doorway
+**Then** the camera glides to that framed shot _(updated 2026-10-17, ADR-0003: fixed viewpoints)_
+**And** a short drag turns the view a little, the hit comes from the pointer, and a click is the same as a tap
 
 **Given** a door, a chapter object, or the journal is in reach
 **When** I can tap it
@@ -189,8 +191,8 @@ So that the House holds a record of the chapter I finished.
 
 **Given** I have finished The Partner
 **When** I tap the journal
-**Then** the first entry is there, in the same words for every player
-**And** the closed-off reply and the open reply from the opening both leave that same entry
+**Then** the first entry is there
+**And** its wording follows the closed-off or open reply from the opening; the facts in it are the same for every player _(updated 2026-10-17, ADR-0004)_
 
 **Given** the journal is open
 **When** I look at the page

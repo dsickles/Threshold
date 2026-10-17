@@ -1,6 +1,8 @@
 # Epic 7: Carry the Weight
 
-Stories for [epics.md](epics.md). When a story is built, its task file points at this file.
+Stories for [requirements.md](../requirements.md). When a story is built, its task file points at this file.
+
+> **2026-10-17:** Reference acceptance criteria for this chapter, copied from BMAD. They are not the build plan: build order is in [roadmap.md](../../roadmap.md), v1 scope in [scope.md](../../scope.md), and work is tracked in Linear. Lines changed to match later decisions are marked _(updated 2026-10-17)_.
 
 A player carries the load with two hold zones, hears Maya, and can finish the chapter, including the crib with no instructions. This chapter is built after the others because physics in a phone browser is the risk. Leaving in the middle starts the chapter over.
 
@@ -20,7 +22,7 @@ So that Maya's laugh can break the tension.
 **Given** the beat offers a line
 **When** I answer in a closed-off way or an open way
 **Then** the spoken words can differ
-**And** the laugh still happens, and the journal words stay the same
+**And** the laugh still happens, and the journal wording follows the answer _(updated 2026-10-17, ADR-0004)_
 
 **Given** the beat is playing
 **When** I look for a label on the laugh

@@ -11,22 +11,24 @@ inputDocuments:
   - _bmad-output/planning-artifacts/epic-structure-decisions-2026-09-22.md
 ---
 
-# Threshold - Epic Breakdown
+# Threshold - Requirements and Epics
 
 ## Overview
 
-This file is the list of epics. Each epic's stories live in their own file. When a story is built, its task file points at that epic's stories file.
+**2026-10-17:** Copied from BMAD's `epics.md`. This file is now the **requirements inventory** (FR, NFR, UX-DR) plus the chapter content of each epic. It is **not the build plan**: build order is in [roadmap.md](../roadmap.md) ([ADR-0002](../adr/0002-build-order-spark-to-silence.md)), and what is in v1 is in [scope.md](../scope.md). Work is tracked in Linear. The stories in [stories/](stories/) are reference acceptance criteria for each chapter; tickets are written from them when a chapter is built.
+
+Lines changed on 2026-10-17 to match later decisions are marked _(updated 2026-10-17)_.
 
 | Epic | Stories |
 | --- | --- |
-| 1. The Spark in the New House | [epic-1-stories.md](epic-1-stories.md) |
-| 2. The Loss | [epic-2-stories.md](epic-2-stories.md) |
-| 3. The Long Haul | [epic-3-stories.md](epic-3-stories.md) |
-| 4. The Cost | [epic-4-stories.md](epic-4-stories.md) |
-| 5. Hear Them | [epic-5-stories.md](epic-5-stories.md) |
-| 6. Make Space | [epic-6-stories.md](epic-6-stories.md) |
-| 7. Carry the Weight | [epic-7-stories.md](epic-7-stories.md) |
-| 8. The Arrival | [epic-8-stories.md](epic-8-stories.md) |
+| 1. The Spark in the New House | [epic-1-stories.md](stories/epic-1-stories.md) |
+| 2. The Loss | [epic-2-stories.md](stories/epic-2-stories.md) |
+| 3. The Long Haul | [epic-3-stories.md](stories/epic-3-stories.md) |
+| 4. The Cost | [epic-4-stories.md](stories/epic-4-stories.md) |
+| 5. Hear Them | [epic-5-stories.md](stories/epic-5-stories.md) |
+| 6. Make Space | [epic-6-stories.md](stories/epic-6-stories.md) |
+| 7. Carry the Weight | [epic-7-stories.md](stories/epic-7-stories.md) |
+| 8. The Arrival | [epic-8-stories.md](stories/epic-8-stories.md) |
 
 ## Requirements Inventory
 
@@ -46,7 +48,7 @@ FR6: Three set-piece conversations exist. The Injection: Maya asks Leo to help w
 
 FR7: Dialogue offers Stoic or Vulnerable micro-choices. The choice does not change the plot. It changes the tone of that scene and the wording of the related Dad's Journal entry.
 
-FR8: Voice scope is Leo internal monologue (heavy) and dialogue (medium), Maya dialogue (medium), and other voices such as a boss or doctor muffled and indistinct so attention stays on the couple.
+FR8: Voice scope (later version) is Leo internal monologue (heavy) and dialogue (medium), Maya dialogue (medium), and other voices such as a boss or doctor muffled and indistinct so attention stays on the couple. _(updated 2026-10-17: v1 is text with subtitles, no voice acting; [ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md).)_
 
 FR9: Writing scope is about 5,000 words of dialogue and about 2,000 words of journal entries and flavor text.
 
@@ -56,11 +58,11 @@ FR11: Story Sequences are first-person narrative beats in the House, in the mann
 
 FR12: Each minigame lasts about 10–15 minutes. Seven archetypes plus hub exploration and story sequences land in 2–3 hours total.
 
-FR13: Most minigames fail forward. Failure may change the narrative outcome or raise Stress. It does not halt the story or show a game-over wall.
+FR13: Minigames fail forward. Each chapter has one result for every player. Failure may raise Stress inside the chapter. It does not halt the story or show a game-over wall. _(updated 2026-10-17: "may change the narrative outcome" removed, per 2026-09-22 O1.)_
 
-FR14: Each minigame may offer an optional Mastery goal. Mastery leaves an extra insight or memento in the House as an object, not a trophy toast.
+FR14: _(Not in v1; [ADR-0004](../adr/0004-journal-wording-varies-no-mastery.md).)_ Later: each minigame may offer an optional Mastery goal. Mastery leaves an extra insight or memento in the House as an object, not a trophy toast.
 
-FR15: Completing a minigame is the key that opens the next room or chapter. Named rooms and a floor plan are not specified and must not be invented.
+FR15: Completing a minigame is the key that opens the next room or chapter. Named rooms and a floor plan are not specified yet. A small floor plan is an open question for M1 (see [scope.md](../scope.md)) _(updated 2026-10-17)_.
 
 FR16: Chronological play order is The Partner (natural conception), The Protector (miscarriage), The Novice (six months of IVF), then The Provider, The Tuner, The Anchor, and The Mourner (the pregnancy wait), then The Ending.
 
@@ -98,7 +100,7 @@ FR32: Dad's Journal is an object in the House. Entries track medical facts and e
 
 FR33: Emotional pacing places a meditative chapter after high stress (The Mourner after The Provider) and uses Novice comedy and Tuner quiet joy to balance infertility and anxiety. Minigames adapt slightly so the player can complete the story.
 
-FR34: One pointer scheme on every platform. Tap walks, looks, and interacts. A click is a tap. Drag and hold exist only for Tuner knobs, Mourner placement, a short look, and Anchor hold zones. Keyboard Enter activates the focused menu control and is not a second way to move.
+FR34: One pointer scheme on every platform. In the House, tap moves between fixed viewpoints, a short drag looks, and tap interacts _(updated 2026-10-17, [ADR-0003](../adr/0003-house-fixed-viewpoints.md))_. A click is a tap. Drag and hold exist only for Tuner knobs, Mourner placement, a short look, and Anchor hold zones. Keyboard Enter activates the focused menu control and is not a second way to move.
 
 FR35: The score shifts genre with the chapter (synthwave for The Provider, acoustic or piano for The Mourner). Sound design includes domestic detail: rain, the fridge hum, and the heartbeat on the monitor.
 
@@ -108,13 +110,13 @@ FR36: Each minigame has its own visual skin. The House stays one grounded world.
 
 NFR1: Ship one build in this order: browser first, mobile second, PC/Steam third. PC/Steam uses the same tap scheme and the same HUD. It is not a separate mouse-look build and not the performance target the game is tuned for first.
 
-NFR2: The primary performance bar is a playable phone-width browser. On low-end devices, QualityManager may disable volumetric fog, SSAO, and expensive shaders, and may swap a Sobel outline for a cheaper unshaded outline. Outlines that show what can be tapped stay.
+NFR2: The primary performance bar is a playable phone-width browser. The browser build has no volumetric fog (PC-only extra; the House must read without it). On low-end devices, QualityManager may disable SSAO, ordinary fog, and expensive shaders, and may swap a Sobel outline for a cheaper unshaded outline. Outlines that show what can be tapped stay.
 
 NFR3: The engine is Godot 4.x and the language is GDScript. The expected team is 1–3 people, using a mix of custom and modified store assets.
 
 NFR4: There is no second movement scheme: no WASD House controls, no virtual stick, no mouse-look pointer lock, no gamepad or couch mode, and no control remapping in this pass.
 
-NFR5: Save and load must preserve a valid story. Mutually exclusive states, such as pregnant and miscarried at the same time, must not coexist. A failed save does not block play. The last good checkpoint still loads.
+NFR5: Save and load must preserve a valid story. A past miscarriage and a current pregnancy can both be true (2026-09-22 O2). Saves happen only between chapters. A failed save does not block play. The last good between-chapter save still loads. _(updated 2026-10-17)_
 
 NFR6: Accessibility for this pass is a hobby floor: tap targets at least 44px, subtitles on by default, Reflowed Reader View for long text, status never by hue alone, and a reduced-motion toggle. It is not a full AbleGamers checklist and does not include a colorblind filter suite.
 
@@ -126,14 +128,14 @@ NFR8: Dialogue stays near 5,000 words and journal or flavor text near 2,000 word
 
 - No starter template is specified. The first implementation story is a new Godot 4.x project and git repository, not a cloned kit.
 - Project layout under `res://` is `_core/` (audio, save_system, state_manager), `assets/`, `scenes/hub/`, `scenes/minigames/` (one folder per chapter), `scenes/ui/`, and `scripts/`.
-- `GameState.gd` is the brain. It tracks `current_act`, `minigames_completed`, narrative flags (`ivf_started`, `miscarriage_occurred`, `baby_born`), and house flags (at least `nursery_painted` and `boxes_packed`). `change_act` drives global music and lighting changes.
-- `AudioManager` modulates a procedural hum (fridge or furnace) from an anxiety level. That field is not in the `GameState` example and must be added to state rather than left as a one-off.
+- `GameState.gd` is the brain. It saves the ordered list of finished chapters, the Stoic/Vulnerable answers, and settings. One core table turns that list into story facts, House mood, House objects and journal entries. `change_act` drives global music and lighting changes. _(updated 2026-10-17; see game-architecture §2.1)_
+- `AudioManager` plays a recorded hum loop (fridge or furnace) whose pitch and volume follow the House mood. _(updated 2026-10-17: not generated sound; the browser's default audio mode drops it.)_
 - `HubManager.gd` is a visual state machine. The House is split into BaseLayer (walls), PropLayer (dynamic objects), and LightingLayer. On ready, nodes toggle from `GameState`. Example: after the miscarriage, hide the nursery crib and show boxes.
-- A unit-test suite runs on every save and load and rejects invalid `GameState`.
-- `HouseController.gd` moves a `CharacterBody3D` by a tap on the floor, changes view by a tap on a view target, and starts a chapter by a tap on a `MinigameTrigger`. The hit ray comes from the pointer, not the center of the camera. `Door`, `MinigameTrigger`, and `Journal` share an interactable base. The tappable object highlights. There is no crosshair.
-- `NarrativeTrigger.gd` uses `Area3D` volumes. On enter it plays one voiceover through `AudioManager`, shows a subtitle, and usually disables itself after one play, tracked in `GameState`. Critical beats may ease the camera toward a point of interest.
+- Automated tests cover the core table and save/load. _(updated 2026-10-17: invalid states cannot be saved because facts are derived from the finished-chapter list.)_
+- `HouseController.gd` moves the camera to a fixed viewpoint when one is tapped, allows a short look-drag, and starts a chapter by a tap on a `MinigameTrigger` _(updated 2026-10-17, ADR-0003)_. The hit ray comes from the pointer, not the center of the camera. `Door`, `MinigameTrigger`, and `Journal` share an interactable base. The tappable object highlights. There is no crosshair.
+- `NarrativeTrigger.gd` fires a story beat when the player arrives at a viewpoint or taps an object. It shows the lines as subtitles (text only in v1) and usually disables itself after one play, tracked in `GameState` _(updated 2026-10-17)_. Critical beats may ease the camera toward a point of interest.
 - `MinigameLoader.gd` unloads or pauses the House, loads the minigame scene, passes difficulty and settings, and writes win or loss back into `GameState`.
-- Chapter look comes from shared post-processing and shaders, not seven art pipelines. Provider: high-contrast black and white, rain, neon outlines on stamps and forms. Novice: saturation, Sobel outline, squash-and-stretch. Tuner: chromatic aberration, grain, fragmentation. House: realistic PBR plus volumetric fog as the grounding look. The GDD lines that allow a hand-drawn hub, or a neon crib as the Provider image, are not requirements.
+- Chapter look comes from shared post-processing and shaders, not seven art pipelines. Provider: high-contrast black and white, rain, neon outlines on stamps and forms. Novice: saturation, Sobel outline, squash-and-stretch. Tuner: chromatic aberration, grain, fragmentation. House: simple models, lamp light, ordinary fog, corner shading and sound as the grounding look; volumetric fog is a PC-only extra _(updated 2026-10-17)_. The GDD lines that allow a hand-drawn hub, or a neon crib as the Provider image, are not requirements.
 - `QualityManager.gd` detects hardware at launch and applies the high-end versus low-end split in NFR2.
 - Provider data is a `DocumentData` resource (text, type, valid codes, error flags) checked by a `DocumentValidator` against the player's stamp. Documents are Control nodes. Stamps are `TextureRect` marks for Approve and Deny. Act 2 may put more pages and smaller type on the desk texture. Smaller type must not be the phone reading path. Reflowed Reader View is.
 - Protector uses a `CharacterBody2D` runner and a `TileMap` path. Obstacles are the stitched set pieces in FR20.
@@ -142,9 +144,9 @@ NFR8: Dialogue stays near 5,000 words and journal or flavor text near 2,000 word
 - Tuner uses a `SignalShader` with uniforms for frequency, amplitude, and noise offset, driven by two Control knobs. Within tolerance, noise alpha falls and the image shows through.
 - Anchor uses `RigidBody3D` for Leo, `PhysicalBone3D` for limbs, and a `BalanceController` that applies torque in `_integrate_forces()`. Do not use `add_force()` in `_process()`. Physics jitter may be masked with a shivering animation. Input is the two hold zones in FR27. Architecture §4.6's "left/right triggers or keys" is superseded.
 - Mourner uses a drag-drop controller with item states `IN_BOX`, `HELD`, and `PLACED`, and placement zones. The pointer model is tap and drag, matching the one scheme. Final placement may be stored on `GameState.house_state`.
-- `SaveManager.gd` serializes `GameState` to JSON. The game auto-saves when a minigame completes. Every minigame implements `save_checkpoint()` for local state such as document progress or song position, including quit, crash, and the browser tab or phone going to the background.
-- If the scene fails to load, return to the title with Play, and with Continue when a checkpoint exists.
-- Build order is architecture §6. Phase 1: Godot project, git, `GameState`, `SaveManager`. Phase 2 first slice: playable 3D House, the tap controls, `MinigameLoader`, The Partner, and a return to a changed House. Phase 3: shader pipeline and House states wired to `GameState`. Phase 4 Batch 1: Provider, Protector, and Novice. Batch 2: Tuner and Mourner. Batch 3: Anchor. Then connect any remaining minigames to the House. Phase 5: dynamic audio mixing, save testing, and shader profiling against the browser and phone bar.
+- `SaveManager.gd` serializes `GameState` to JSON in browser storage. The game saves only when a chapter finishes. There are no mid-chapter checkpoints; leaving mid-chapter restarts it. _(updated 2026-10-17, per 2026-09-22 D6)_
+- If the scene fails to load, return to the title with Play, and with Continue when a save exists.
+- Build order: see [roadmap.md](../roadmap.md) _(updated 2026-10-17, ADR-0002)_.
 - Input, audio, and settings are shared across every genre.
 - Decision history is not a source. Do not reintroduce a deckbuilder, The Role Model, The Outsider, an apartment or calendar hub, 30-minute chapters, a Provider-first slice, or PC-primary controls.
 
@@ -160,7 +162,7 @@ UX-DR4: Contrast floor is ink on surface at least 4.5:1, and ink on the subtitle
 
 UX-DR5: `button-primary` is accent fill, surface label, 8px radius, at least 44px tall. Use one per screen when possible (Play on the title, Resume on pause). Pressed state is a slightly darker fill.
 
-UX-DR6: `button-quiet` is transparent, ink label, 1px border, at least 44px tall, for Settings, Continue, and other secondary actions. When there is no checkpoint, Continue is omitted. It is not a disabled control.
+UX-DR6: `button-quiet` is transparent, ink label, 1px border, at least 44px tall, for Settings, Continue, and other secondary actions. When there is no save, Continue is omitted. It is not a disabled control.
 
 UX-DR7: `panel` is surface-raised, 1px border, 8px radius. It is used for pause and Settings only. Panels never stack.
 
@@ -176,9 +178,9 @@ UX-DR12: `meter` is a rectangular track in the border color, filled with meter-b
 
 UX-DR13: `journal` is Dad's Journal. The opened page is display serif on surface-raised. Stoic or Vulnerable does not swap the skin.
 
-UX-DR14: `pause` is the scrim over the scene plus one panel: Resume, Settings, and back to title. It replaces whatever overlay was up. Default focus is Resume, with a 2px focus ring. Quitting to title mid-chapter asks for a second tap ("Leave this?"). Backgrounding the browser tab or interrupting the phone pauses and calls `save_checkpoint()`. Browser back returns to Settings or pause, not a broken scene stack. "Couldn't save." is a non-blocking line. Play continues, and the last checkpoint still loads.
+UX-DR14: `pause` is the scrim over the scene plus one panel: Resume, Settings, and back to title. It replaces whatever overlay was up. Default focus is Resume, with a 2px focus ring. Quitting to title mid-chapter asks for a second tap ("Leave this?"). Backgrounding the browser tab or interrupting the phone pauses, without saving _(updated 2026-10-17)_. Browser back returns to Settings or pause, not a broken scene stack. "Couldn't save." is a non-blocking line. Play continues, and the last between-chapter save still loads.
 
-UX-DR15: The title offers Play, Continue, and Settings over a faint view of the House. Play is the default focus. Continue is hidden when there is no checkpoint. Play with no save starts a new wander in the House.
+UX-DR15: The title offers Play, Continue, and Settings over a faint view of the House. Play is the default focus. Continue is hidden when there is no save. Play with no save starts a new wander in the House.
 
 UX-DR16: Settings, from the title or from pause, contains subtitles, reduced motion, and quality (QualityManager). It is one level deep.
 
@@ -196,13 +198,13 @@ UX-DR22: `provider-desk` lays documents out as Control pages on ink-colored pape
 
 UX-DR23: House overlay is subtitles and, when needed, a small pause control. No health, minimap, quest log, or stick. During a minigame the House chrome is gone and the chapter skin is up. Recurring HUD kinds keep their regions: status or resource top-start, a spatial map bottom-start only if that chapter truly needs one, primary action bottom-end, or center when the genre is the document itself.
 
-UX-DR24: Tap-to-move walks Leo to a point on the floor or navmesh. Tap-to-look taps a view target or uses a short drag. Both use the same control path on web and mobile. They are not separate components from the House controls.
+UX-DR24: Tap-to-move glides the camera to a tapped fixed viewpoint. Tap-to-look is a short drag at a viewpoint _(updated 2026-10-17, ADR-0003)_. Both use the same control path on web and mobile. They are not separate components from the House controls.
 
 UX-DR25: Menu focus draws a 2px focus ring on the focused Control. Default is Play on the title and Resume on pause. Enter activates that Control. Prompts use words or the object itself. No Xbox or PlayStation glyphs.
 
 UX-DR26: Reduced motion removes camera sway, hit-shake, and any required color-bleed animation. The Novice saturation change may be a cut or a slow fade. Tuner static may clear without a celebratory effect. Loss does not add juice.
 
-UX-DR27: First wander in the House can last minutes with no objective marker. The Trigger is noticed from light, sound, and `interact-highlight`. A Story Sequence may ease the camera toward a beat while the HUD stays empty except the subtitle bar. Leaving the tab resumes in the House, not at the title, once a checkpoint exists.
+UX-DR27: First wander in the House can last minutes with no objective marker. The Trigger is noticed from light, sound, and `interact-highlight`. A Story Sequence may ease the camera toward a beat while the HUD stays empty except the subtitle bar. Hiding the tab and returning resumes where the player was; closing it returns them to the House as of the last finished chapter.
 
 UX-DR28: The Loss presentation adds no care UI, warning, skip, or "Chapter failed. Try again?" After it, the House reads grief with `house-grief`. Hope in the House reads as glow biased toward `house-hope`. The Novice then starts gray and slow.
 
@@ -228,7 +230,7 @@ FR5: Epic 1 — The opening story beat uses couple shorthand. The shot scene is 
 
 FR6: Epic 2 (the quiet car), Epic 3 (the shot), Epic 7 (the crib). Write the quiet car and the numb stretch in Epic 3 in the same week.
 
-FR7: Epic 1 — One closed-off or open line in the opening. The spoken words can differ. The journal, the items, and the story stay the same. Later dialogue chapters may offer the same kind of line.
+FR7: Epic 1 — One closed-off or open line in the opening. The spoken words can differ. The matching journal wording can differ too (ADR-0004); the items and the story stay the same. Later dialogue chapters may offer the same kind of line.
 
 FR8: Epic 1 — Leo and Maya can be heard in the opening and in The Partner. Muffled outside voices belong to the chapters that need them.
 
@@ -242,7 +244,7 @@ FR12: Epic 1 owns The Partner's length. Each chapter epic owns its own stretch o
 
 FR13: Epic 1 — A miss in The Partner still finishes the song and the same ending. Each chapter epic moves the story on to its one ending.
 
-FR14: No epic grants a personal keepsake. A harder optional moment must leave the House objects the same for every player.
+FR14: Not in v1. No epic grants a personal keepsake.
 
 FR15: Epic 1 — Finishing The Partner lets the story move on. Named rooms are not invented. Later epics use the same rule.
 
@@ -278,7 +280,7 @@ FR30: Epic 8 — Hear the cry, hold the hand, and the House is the last room.
 
 FR31: Epic 1 — The House starts empty and cold and changes after The Partner, the same way for every player. Each later chapter epic adds its own change, also the same for every player.
 
-FR32: Epic 1 — The journal object, the blank page, and the first entry. The words are the same for every player. Later epics add their own entry, with the same rule.
+FR32: Epic 1 — The journal object, the blank page, and the first entry. The entry is the same for every player except its wording, which follows the Stoic/Vulnerable answer (ADR-0004). Later epics add their own entry, with the same rule.
 
 FR33: Checked as the game grows. In play order, the quiet unpacking follows the bills. Build order does not change that.
 
@@ -290,9 +292,11 @@ FR36: Epic 1 — The shared look setup, plus the House's own light and ordinary 
 
 ## Epic List
 
-Build order. Players still meet the chapters as Partner, Loss, Long Haul, Cost, Tuner, Anchor, Mourner, Arrival.
+_(updated 2026-10-17)_ The epics below are **chapter content units**, not the build order. Build order is in [roadmap.md](../roadmap.md). Epic 1's menus, settings, quality, save and look system move to M2 or later; its House, opening beat and Partner are in M1 along with Epic 2. The note below about the Anchor being built last is superseded: it gets a cheap test in M2.
 
-These calls override conflicting lines in the requirements inventory above: saves happen only between chapters; the House is built for the browser and volumetric fog is an extra on PC only; a chapter has one result; spoken dialogue may differ while items, journal words, and story beats stay the same; a save can hold a past loss and a current pregnancy; old test saves may fail to open; word count, pacing, and phone speed stay loose and ongoing.
+Original 2026-09-22 order: Players still meet the chapters as Partner, Loss, Long Haul, Cost, Tuner, Anchor, Mourner, Arrival.
+
+These calls override conflicting lines in the requirements inventory above: saves happen only between chapters; the House is built for the browser and volumetric fog is an extra on PC only; a chapter has one result; spoken dialogue and the matching journal wording may differ (ADR-0004, updated 2026-10-17) while items and story beats stay the same; a save can hold a past loss and a current pregnancy; old test saves may fail to open; word count, pacing, and phone speed stay loose and ongoing.
 
 ### Epic 1: The Spark in the New House
 
@@ -300,7 +304,7 @@ A player can walk the House in a browser, play The Partner, return to a House th
 
 **FRs covered:** FR1, FR2, FR3, FR4, FR5, FR7, FR8, FR10, FR11, FR12, FR13, FR15, FR18, FR31, FR32, FR34, FR35, FR36
 
-**Stories:** [epic-1-stories.md](epic-1-stories.md)
+**Stories:** [epic-1-stories.md](stories/epic-1-stories.md)
 
 ### Epic 2: The Loss
 
@@ -308,7 +312,7 @@ A player goes through the miscarriage with no warning, skip, or retry, sits in t
 
 **FRs covered:** FR6, FR19, FR20
 
-**Stories:** [epic-2-stories.md](epic-2-stories.md)
+**Stories:** [epic-2-stories.md](stories/epic-2-stories.md)
 
 ### Epic 3: The Long Haul
 
@@ -316,7 +320,7 @@ A player crosses the numb stretch after the loss, lives through six months of tr
 
 **FRs covered:** FR6, FR21, FR22
 
-**Stories:** [epic-3-stories.md](epic-3-stories.md)
+**Stories:** [epic-3-stories.md](stories/epic-3-stories.md)
 
 ### Epic 4: The Cost
 
@@ -324,7 +328,7 @@ A player works the bills for that pregnancy, reads them in large type, stamps th
 
 **FRs covered:** FR23, FR24, FR25
 
-**Stories:** [epic-4-stories.md](epic-4-stories.md)
+**Stories:** [epic-4-stories.md](stories/epic-4-stories.md)
 
 ### Epic 5: Hear Them
 
@@ -332,7 +336,7 @@ A player turns through the static until the baby comes through.
 
 **FRs covered:** FR26
 
-**Stories:** [epic-5-stories.md](epic-5-stories.md)
+**Stories:** [epic-5-stories.md](stories/epic-5-stories.md)
 
 ### Epic 6: Make Space
 
@@ -340,7 +344,7 @@ A player puts away the grief and the clutter from before the baby. The layout th
 
 **FRs covered:** FR29
 
-**Stories:** [epic-6-stories.md](epic-6-stories.md)
+**Stories:** [epic-6-stories.md](stories/epic-6-stories.md)
 
 ### Epic 7: Carry the Weight
 
@@ -348,7 +352,7 @@ A player carries the load with two hold zones, hears Maya, and can finish the ch
 
 **FRs covered:** FR6, FR27, FR28
 
-**Stories:** [epic-7-stories.md](epic-7-stories.md)
+**Stories:** [epic-7-stories.md](stories/epic-7-stories.md)
 
 ### Epic 8: The Arrival
 
@@ -356,7 +360,7 @@ A player hears the cry, holds the hand, and the House is the last room. Built af
 
 **FRs covered:** FR30
 
-**Stories:** [epic-8-stories.md](epic-8-stories.md)
+**Stories:** [epic-8-stories.md](stories/epic-8-stories.md)
 
 Epic 1 stands alone. Epics 2–7 need Epic 1. Epic 3 assumes Epic 2 has happened. Epic 8 needs Epic 1 and Epic 5, and it is built after every chapter epic. FR9, FR14, FR16, FR17, and FR33 are shared across the list as mapped above.
 

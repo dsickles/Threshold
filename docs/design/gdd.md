@@ -3,7 +3,8 @@
 **Author:** Dan (with Samus Shepard)
 **Game Type:** Narrative Anthology (Adventure / Multi-Genre)
 **Target Platform(s):** Browser (first), Mobile (second), PC / Steam (third)
-**Reconciled:** 2026-09-20 from the 2025-11-22 draft. Stale self-references (Deckbuilder USP, _The Outsider_, apartment hub, 30-minute minigames) were aligned with later planning decisions; see [decision-history.md](decision-history.md). **2026-09-22:** Platform order, the one tap scheme, the performance bar, and the development-epic build order were aligned with [game-architecture.md](game-architecture.md) and the UX spines ([DESIGN.md](ux-designs/ux-Threshold-2026-09-20/DESIGN.md), [EXPERIENCE.md](ux-designs/ux-Threshold-2026-09-20/EXPERIENCE.md)). First slice is the 3D House plus _The Partner_. Original: [archive/2025-11-22-original/bmm-gdd-Threshold-2025-11-22.md](archive/2025-11-22-original/bmm-gdd-Threshold-2025-11-22.md).
+**Reconciled:** 2026-09-20 from the 2025-11-22 draft. Stale self-references (Deckbuilder USP, _The Outsider_, apartment hub, 30-minute minigames) were aligned with later planning decisions; see [decision-history.md](decision-history.md). **2026-09-22:** Platform order, the one tap scheme, the performance bar, and the development-epic build order were aligned with [game-architecture.md](game-architecture.md) and the UX spines ([DESIGN.md](ux/DESIGN.md), [EXPERIENCE.md](ux/EXPERIENCE.md)). First slice is the 3D House plus _The Partner_. Original: [archive/2025-11-22-original/bmm-gdd-Threshold-2025-11-22.md](../../archive/2026-10-bmad/_bmad-output/planning-artifacts/archive/2025-11-22-original/bmm-gdd-Threshold-2025-11-22.md).
+**2026-10-17:** Copied out of BMAD into `docs/design/`. Updated for [ADR-0002](../adr/0002-build-order-spark-to-silence.md) (build order), [ADR-0003](../adr/0003-house-fixed-viewpoints.md) (fixed viewpoints), [ADR-0004](../adr/0004-journal-wording-varies-no-mastery.md) (journal wording, no Mastery in v1), and the 2026-09-22 rulings (one result per chapter, saves between chapters). What is in v1 is in [scope.md](../scope.md).
 
 ---
 
@@ -58,8 +59,8 @@ Most games about parenting are either comedic simulations or management tycoons.
 
 ### Win/Loss Conditions
 
-- **Narrative Progression:** Most minigames are "fail-forward" – failure results in a different narrative outcome or increased "Stress" but does not halt progress.
-- **Mastery:** Optional "Mastery" goals in each minigame unlock additional insights or mementos in the Hub.
+- **Narrative Progression:** Minigames are "fail-forward". Failure never halts progress. Each chapter has **one result**: every player gets the same story facts, House objects and big story beats. Failure may raise "Stress" inside the chapter (Stress is not yet defined; see [scope.md](../scope.md) open questions).
+- **Mastery:** _Not in v1 ([ADR-0004](../adr/0004-journal-wording-varies-no-mastery.md))._ Later idea: optional "Mastery" goals in each minigame unlock additional insights or mementos in the Hub.
 
 ---
 
@@ -167,12 +168,12 @@ Most games about parenting are either comedic simulations or management tycoons.
 ### Performance Requirements
 
 - **Delivery order:** Browser first, mobile second, PC/Steam third. One build.
-- **Primary bar:** Playable in a phone-width browser. On low-end devices, `QualityManager` may drop volumetric fog and expensive post-processing. Outlines that show what can be tapped stay.
+- **Primary bar:** Playable in a phone-width browser. The browser build cannot use volumetric fog at all, so the House is designed to read without it; volumetric fog is a PC-only extra. On low-end devices, `QualityManager` may drop expensive post-processing. Outlines that show what can be tapped stay.
 - **PC / Steam:** Same tap scheme and the same HUD. Not a separate mouse-look build, and not the performance target the game is tuned for first.
 
 ### Platform-Specific Details
 
-- **Input:** One pointer scheme on every platform. Tap to walk, look, and interact. A click is a tap. No WASD, no virtual stick, and no mouse-look.
+- **Input:** One pointer scheme on every platform. In the House, tap a viewpoint to move there ([ADR-0003](../adr/0003-house-fixed-viewpoints.md)), tap or short-drag to look, and tap an object to use it. A click is a tap. No WASD, no virtual stick, and no mouse-look.
 - **Keyboard:** Menus only. Enter activates the focused control. It is not a second way to move through the House.
 - **Drag and hold:** Only where the chapter is tactile: Tuner knobs, Mourner placement, a short look-drag, and Anchor left/right hold-zones.
 - **Documents:** Reflowed Reader View. Pinch-zoom is not how paperwork is read.
@@ -187,17 +188,7 @@ Most games about parenting are either comedic simulations or management tycoons.
 
 ## Development Epics
 
-Build order matches [game-architecture.md](game-architecture.md) §6 (2026-09-22). This list is the player-facing sequence. Technical phases stay in the architecture doc.
-
-### Epic Structure
-
-1.  **Core Framework:** Game state, save, and scene loading.
-2.  **First slice — The New House + The Partner:** Playable 3D House on the one tap scheme, the rhythm minigame, and a return to a House that has changed.
-3.  **Hub presentation:** House visual state tied to narrative progress, plus the shared shader and quality path.
-4.  **Provider, Protector, Novice:** Bureaucracy desk, forced-loss runner, and the micro-game set.
-5.  **Tuner and Mourner:** Frequency puzzle, then unpacking.
-6.  **Anchor:** Physics balance on the on-screen hold-zones, with Stability Assist.
-7.  **Polish & Ship:** Audio integration, save testing, and performance against the browser and phone bar.
+_Superseded 2026-10-17 by [ADR-0002](../adr/0002-build-order-spark-to-silence.md)._ The build order now lives in [roadmap.md](../roadmap.md): first a rough slice (Partner, Loss, the Silence, the House in grief), then every chapter as a rough version, then chapter depth, then polish. Players still meet the chapters in story order: Partner, Protector, Novice, Provider, Tuner, Anchor, Mourner, The Arrival.
 
 ---
 

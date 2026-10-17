@@ -1,6 +1,8 @@
 # Epic 3: The Long Haul
 
-Stories for [epics.md](epics.md). When a story is built, its task file points at this file.
+Stories for [requirements.md](../requirements.md). When a story is built, its task file points at this file.
+
+> **2026-10-17:** Reference acceptance criteria for this chapter, copied from BMAD. They are not the build plan: build order is in [roadmap.md](../../roadmap.md), v1 scope in [scope.md](../../scope.md), and work is tracked in Linear. Lines changed to match later decisions are marked _(updated 2026-10-17)_.
 
 A player crosses the numb stretch after the loss, lives through six months of treatment, helps with the shot, and ends on a positive test. The first batch is the framework plus three small games. This chapter does not replay The Partner. Write the numb stretch in the same week as the quiet car in Epic 2. Leaving in the middle starts the chapter over.
 
@@ -96,7 +98,7 @@ So that I can be afraid of hurting her and still be in the room.
 **Given** the beat offers a line
 **When** I answer in a closed-off way or an open way
 **Then** the spoken words can differ
-**And** the shot still happens, and the journal words stay the same
+**And** the shot still happens, and the journal wording follows the answer _(updated 2026-10-17, ADR-0004)_
 
 **Given** the beat is playing
 **When** I look for a label on the awkwardness

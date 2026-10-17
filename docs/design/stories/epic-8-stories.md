@@ -1,6 +1,8 @@
 # Epic 8: The Arrival
 
-Stories for [epics.md](epics.md). When a story is built, its task file points at this file.
+Stories for [requirements.md](../requirements.md). When a story is built, its task file points at this file.
+
+> **2026-10-17:** Reference acceptance criteria for this chapter, copied from BMAD. They are not the build plan: build order is in [roadmap.md](../../roadmap.md), v1 scope in [scope.md](../../scope.md), and work is tracked in Linear. Lines changed to match later decisions are marked _(updated 2026-10-17)_.
 
 A player hears the cry, holds the hand, and the House is the last room. The cry uses the knobs from Hear Them. The hand uses the rhythm from The Partner. A miss still moves the story on. This chapter does not own the word-count check. Leaving in the middle starts the ending over.
 

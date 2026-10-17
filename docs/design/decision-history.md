@@ -3,7 +3,9 @@
 **Created:** 2026-09-20
 **Purpose:** Record superseded planning decisions so later BMAD/GDS workflows treat the canonical docs as current truth without forgetting how they were reached.
 
-Verbatim November 2025 originals live in [archive/2025-11-22-original/](archive/2025-11-22-original/).
+**2026-10-17:** Moved off BMAD. This file now lives in `docs/design/` and keeps logging superseded decisions (entries 8 onward). New decisions are recorded as ADRs in [docs/adr/](../adr/); this file records what they replaced.
+
+Verbatim November 2025 originals live in [archive/2025-11-22-original/](../../archive/2026-10-bmad/_bmad-output/planning-artifacts/archive/2025-11-22-original/).
 
 The documents were written in one day, in this order: brainstorming session → game brief → GDD / narrative / architecture (with a pre-mortem from four agents). Later documents already contain most of the design that later replaced the brief. This file exists because the brief, ADR, and a few leftover GDD/architecture lines were never updated after those later documents landed.
 
@@ -95,6 +97,8 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ## 7. First slice is Hub + Provider + Protector, not The Novice
 
+> _Superseded twice: on 2026-09-22 by House + The Partner, then on 2026-10-17 by "Spark to Silence" (entry 8)._
+
 | | |
 |---|---|
 | **Was** | Brief MVP: Hub + Provider + Protector. Architecture Phase 2: build _The Novice_ (WarioWare) first; Protector slipped to production Batch 3. |
@@ -107,18 +111,71 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 8. First playable is "Spark to Silence"; whole game rough before depth (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | Epic 1 = 3D House + The Partner + title, pause, settings, quality, save, journal and look system. Then chapters in build order, Anchor last. |
+| **Became** | M1 = rough House + short Partner + the Loss + the Silence + House in grief. M2 = every chapter rough, start to finish. Then chapter depth, then polish. |
+| **Why** | The Partner alone tests only joy. The Loss is the biggest creative risk and needs the joy before it. Building the whole game rough early protects finishing it. |
+| **Record** | [ADR-0002](../adr/0002-build-order-spark-to-silence.md), [roadmap.md](../roadmap.md) |
+
+---
+
+## 9. House uses fixed viewpoints, not tap-to-walk (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | Tap the floor and Leo walks there (navmesh). |
+| **Became** | Tap a viewpoint; the camera glides to a framed shot. Short look-drag allowed. |
+| **Why** | Much less work for one person with AI-generated assets; hides asset flaws; frames story beats. |
+| **Record** | [ADR-0003](../adr/0003-house-fixed-viewpoints.md) |
+
+---
+
+## 10. Journal wording follows Stoic/Vulnerable; no Mastery in v1 (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | O1/O4: same journal words for every player. GDD/FR14: optional Mastery keepsakes. |
+| **Became** | The Stoic/Vulnerable answer changes the matching journal wording. Mastery moves to "Later". |
+| **Record** | [ADR-0004](../adr/0004-journal-wording-varies-no-mastery.md) |
+
+---
+
+## 11. AI-generated assets and text dialogue in v1 (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | Voice acting for Leo and Maya; asset source unspecified. |
+| **Became** | AI-generated art and audio; dialogue as text with subtitles. Voice moves to "Later". |
+| **Record** | [ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md) |
+
+---
+
+## 12. Story state is the list of finished chapters (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | A dictionary of narrative flags, checked by a test suite on every save/load for impossible combinations. |
+| **Became** | The save holds the ordered list of finished chapters (plus Stoic/Vulnerable answers and settings). One core table derives story facts, House mood and journal entries. Impossible states cannot be saved. |
+| **Why** | Follows directly from O1 (one result per chapter) and O2 (past and present facts together); simpler and safer. |
+| **Record** | [game-architecture.md](game-architecture.md) §2.1 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
 - Genre-as-metaphor anthology with seven chapters plus intro/outro.
 - Fail-forward progression and optional mastery goals.
-- PC/Steam primary, mobile secondary, mouse/touch-first.
+- ~~PC/Steam primary, mobile secondary, mouse/touch-first.~~ _Changed 2026-09-20 (UX pass): browser first, mobile second, PC/Steam third, one tap scheme._
 - Pre-mortem mitigations (QualityManager, Stability Assist as Maya's voice, reflowed invoice reader, `_integrate_forces()` smoothing, Novice tonal ramp) — those already lived in the GDD and architecture and stay there.
 
 ---
 
 ## How to use this in later GDS workflows
 
-- Treat `gdd.md`, `game-brief.md`, `narrative-design.md`, and `game-architecture.md` as current.
-- Treat `brainstorming-session-2025-11-22.md` and `docs/agent-reports/` as dated source material, not specs.
+- Treat the files in `docs/design/` and `docs/adr/` as current. Where they disagree, the newer decision wins (see `CLAUDE.md`).
+- The brainstorming session and agent reports are in `archive/2026-10-bmad/` as dated source material, not specs.
 - If a new workflow rediscovers "deckbuilder," "Role Model," "Outsider," or "9 months of pregnancy," it is reading archive or brainstorm text. Point it here.

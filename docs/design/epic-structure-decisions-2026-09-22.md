@@ -2,6 +2,8 @@
 
 Outcome of the party-mode pressure test of the working epic list. Dan made the calls marked **Decided**. The items that were **Open** were ruled on 2026-09-22 and are listed under "Ruled on 2026-09-22."
 
+> **Status on 2026-10-17:** Still in force: D3, D4, D5, D6, D7, O2, O3, O5, O6. **Superseded:** D1 and D2 (build order and Epic 1 contents) by [ADR-0002](../adr/0002-build-order-spark-to-silence.md). **Partly superseded:** O1 and O4, where they say journal words are the same for every player, by [ADR-0004](../adr/0004-journal-wording-varies-no-mastery.md) (the Stoic/Vulnerable answer now changes journal wording). The "Doc conflicts to fix later" list at the end was fixed in the `docs/design/` copies on 2026-10-17.
+
 This file does not edit `epics.md` or any other planning doc. Where a decision conflicts with an existing doc, it is listed under "Doc conflicts" so the docs can be updated later.
 
 ## Epic list (build order)
@@ -83,6 +85,8 @@ From the Godot 4.7 manual ([Overview of renderers](https://docs.godotengine.org/
 - An unofficial WebGPU fork of Godot exists. It is a beta, and Windows browsers are unfinished. Not used.
 
 ## Doc conflicts to fix later (not edited here)
+
+_Fixed 2026-10-17 in the `docs/design/` copies (game-architecture.md, requirements.md, ux/EXPERIENCE.md, gdd.md)._
 
 - `game-architecture.md` §5.1 and the Additional Requirements in `epics.md`: "every minigame implements `save_checkpoint()`" for quit, crash, and backgrounding. This conflicts with D6.
 - `EXPERIENCE.md` and UX-DR14: "Tab hidden / phone interrupt: `pause` + `save_checkpoint()`. Resume where they were." Under D6 the game still pauses, but it does not save mid-chapter, and a reload restarts the chapter.

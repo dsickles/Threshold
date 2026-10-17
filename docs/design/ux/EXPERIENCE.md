@@ -19,6 +19,8 @@ sources:
 
 # EXPERIENCE.md — Threshold
 
+**2026-10-17:** Copied out of BMAD into `docs/design/ux/`. Updated for saves only between chapters (2026-09-22 D6), fixed viewpoints ([ADR-0003](../../adr/0003-house-fixed-viewpoints.md)), no Mastery in v1 ([ADR-0004](../../adr/0004-journal-wording-varies-no-mastery.md)), and text dialogue in v1 ([ADR-0005](../../adr/0005-ai-assets-text-dialogue-v1.md)).
+
 Visual identity: `DESIGN.md`. Token references point at that file’s frontmatter, for example `{colors.ink}`. Spines win on conflict with mocks.
 
 ## Foundation
@@ -35,9 +37,9 @@ The House is the map. Menus are thin.
 
 | Surface | Reached from | Purpose |
 | --- | --- | --- |
-| Title | Cold open | Play / Continue / Settings. Continue hidden if no checkpoint. |
+| Title | Cold open | Play / Continue / Settings. Continue hidden if no save. |
 | The New House | Play, or after a minigame | Quiet explore. Minimal overlay. Object Triggers. Dad's Journal. Story Sequences. |
-| The Story Sequence | Volume in the House | First-person narrative beat (Edith Finch–style). Still tap to walk/look. |
+| The Story Sequence | Viewpoint or object in the House | First-person narrative beat (Edith Finch–style). Still tap to move between viewpoints and look. |
 | The Trigger | Tappable object | Starts the current chapter’s minigame. |
 | The Partner (The Spark) | First Trigger | Rhythm / Connection Nodes. |
 | The Protector (The Loss) | Trigger, no warning | Forced-loss runner. |
@@ -47,14 +49,14 @@ The House is the map. Menus are thin.
 | The Anchor (The Growth) | Trigger | `balance`; Maya’s Voice then Stability Assist. |
 | The Mourner (The Nesting) | Trigger | `drag-drop` unpack / let go. |
 | The Ending | Late House | Tuner + Partner mechanics reprise. |
-| Dad's Journal | Tappable Journal object | Entries; Stoic/Vulnerable changes tone only. |
+| Dad's Journal | Tappable Journal object | Entries; Stoic/Vulnerable changes the entry's wording only. |
 | pause | One control from anywhere | Resume / Settings / Back to title. Replaces; never stacks. |
 | Settings | Title or pause | Subtitles, reduced-motion, quality (QualityManager). |
 | Reflowed Reader View | Tap a Provider document | `reader-view`. Large-type reflow. Replaces the page, not a zoom. |
 
 Loop (verbatim from GDD): **Hub (The New House)** → **The Story Sequence** → **The Trigger** → **The Minigame** → **Resolution** (House transforms).
 
-Story Gates: finishing a minigame is the Key to the next room/chapter. Named rooms are not specified; do not invent a floor plan here.
+Story Gates: finishing a minigame is the Key to the next room/chapter. Named rooms are not specified here. A small floor plan is an open question for M1 (see [scope.md](../../scope.md)); it gets decided on purpose, not invented while building.
 
 Nothing in the House should require a nested menu to “go play the game.” The object is the door.
 
@@ -85,15 +87,15 @@ Behavioral. Visuals in DESIGN.md.Components.
 | Component | Use | Rules |
 | --- | --- | --- |
 | button-primary | Title, pause | Tap confirms. Default focus on Play (cold) or Resume (pause), 2px `{colors.focus-ring}`. |
-| button-quiet | Title, pause, Settings | Tap opens the secondary path. Continue is omitted when there is no checkpoint — not a disabled tease. |
+| button-quiet | Title, pause, Settings | Tap opens the secondary path. Continue is omitted when there is no save — not a disabled tease. |
 | panel | pause, Settings | Single column, one level deep. Never stacks on another panel. |
-| subtitle-bar | VO / dialogue | Shows while audio plays; then gone. On by default. |
+| subtitle-bar | Dialogue | Shows while the line plays (in v1, text only: long enough to read); then gone. On by default. |
 | interact-highlight | House objects | Tap the highlighted object (Door, MinigameTrigger, Journal). Off when nothing is in range. |
 | stamp | Provider | Tap Approve or Deny. Hold not required. Word mark is the cue, not hue. |
 | reader-view | Provider, especially phone | Display name **Reflowed Reader View**. Tap document → reflowed `{typography.reader.fontSize}` text. Dismiss returns to desk. If a page cannot reflow: stay on the desk, short “can’t enlarge this page.” |
 | meter | Provider top-start | Bank Account uses `{colors.meter-bank}`; drain / error uses `{colors.meter-stress}`. Number always visible. |
 | journal | Dad's Journal object | Tap to open. Empty: blank dated page, no prompt. First entry appears after a chapter. Stoic/Vulnerable changes words only. |
-| pause | Global | Replaces overlay. Auto-pause if the browser tab backgrounds (`save_checkpoint()`). |
+| pause | Global | Replaces overlay. Auto-pause as the browser tab loses focus (the browser freezes the game right after). Pausing never saves. |
 | knobs | Tuner | Large dials; value is the waveform, not a tooltip. |
 | rhythm-judgment | Partner | Tap in time with Connection Nodes. Perfect / Good / Miss near the hit. |
 | novice-shout | Novice | Short prompt, one gesture, next. Early games are slow and quiet. |
@@ -105,7 +107,7 @@ Behavioral. Visuals in DESIGN.md.Components.
 
 | State | Surface | Treatment |
 | --- | --- | --- |
-| Cold open | Title | Quiet; House already faintly visible under scrim. Play is default focus. Continue is hidden if no checkpoint. |
+| Cold open | Title | Quiet; House already faintly visible under scrim. Play is default focus. Continue is hidden if no save. |
 | No save | Title | Continue omitted. Play starts a new wander in the House. |
 | Menu focus | Title, pause, Settings | 2px `{colors.focus-ring}` on the focused Control. Default: Play (title) or Resume (pause). Keyboard Enter activates that Control. |
 | First wander | The New House | Minutes of nothing required. No objective marker. Trigger is an object that can be noticed. |
@@ -122,18 +124,18 @@ Behavioral. Visuals in DESIGN.md.Components.
 | Journal empty | Dad's Journal | Blank dated page. No “write something” prompt. |
 | Journal first entry | Dad's Journal | Entry appears after the last completed chapter. |
 | Journal tone | Dad's Journal | Stoic or Vulnerable changes the prose of that entry; no skin swap. |
-| Mastery | Optional | Extra insight or a memento appears in the House — an object, not a trophy toast. |
-| Tab hidden / phone interrupt | Any | `pause` + `save_checkpoint()`. Resume where they were. |
-| Couldn’t save | pause, Title | Non-blocking line: “Couldn’t save.” Last checkpoint still loads. Play is not blocked. |
-| Offline / reload | Any | Last checkpoint. Scene-load failure returns to Title with Play (and Continue if a checkpoint exists). |
+| Mastery | Not in v1 | Later idea: extra insight or a memento appears in the House — an object, not a trophy toast. |
+| Tab hidden / phone interrupt | Any | `pause`, no save. Returning to the same tab resumes where they were. Closing the tab mid-chapter restarts that chapter next time. |
+| Couldn’t save | pause, Title | Non-blocking line: “Couldn’t save.” The last between-chapter save still loads. Play is not blocked. |
+| Offline / reload | Any | Last between-chapter save. Scene-load failure returns to Title with Play (and Continue if a save exists). |
 | Low-end | Any | QualityManager may drop fog; outlines that aid clarity stay. |
 | Ending | The Ending | Tuner-to-hear / Partner-to-hold reprise. Skills, not a cutscene-only baby. |
 
 ## Interaction Primitives
 
-- **Tap** is the verb: walk, look, interact, stamp, hit a beat, start a micro-game.
-- **Tap-to-move** (House, The Story Sequence): tap a point on the floor / navmesh to walk there. One system on phone and desktop. No virtual stick. Not a DESIGN component.
-- **Tap-to-look** (House): tap a look target or drag a short look. Same Control path on web and mobile. Not a second scheme. Not a DESIGN component.
+- **Tap** is the verb: move between viewpoints, look, interact, stamp, hit a beat, start a micro-game.
+- **Tap-to-move** (House, The Story Sequence): tap a viewpoint marker or doorway; the camera glides to that framed shot ([ADR-0003](../../adr/0003-house-fixed-viewpoints.md)). One system on phone and desktop. No virtual stick. Not a DESIGN component.
+- **Tap-to-look** (House): at a viewpoint, drag a short look. Same Control path on web and mobile. Not a second scheme. Not a DESIGN component.
 - **Drag** only where the genre is tactile (`knobs`, `drag-drop`, look-drag).
 - **Hold** only for `balance` side-zones, not for “hold to confirm skip Loss” — Loss has no skip.
 - Destructive menu actions (quit to title mid-chapter) use a second tap: “Leave this?”
@@ -158,7 +160,7 @@ During Loss, do not add care-UI. The care is the run going quiet. During Story S
 
 **One scheme.** Pointer (finger or mouse). Click = tap.
 
-- Move: tap world to walk.
+- Move: tap a viewpoint to go there.
 - Look: tap/drag look. No mouse-look pointer-lock. No WASD as the House design (architecture’s `FirstPersonController` is a superseded default for this UX).
 - Interact: tap highlighted object.
 - A keyboard on a computer may activate the same focused Control (Enter) for menus only. It is not a second movement mode.
@@ -216,13 +218,13 @@ This is a hobby floor with portfolio honesty — not a full AbleGamers checklist
 Alex has never played this. They tap a link. Title. Play (Continue is hidden).
 
 1. They are in the House. It is quiet and a bit empty. Almost no HUD.
-2. A Volume fires **The Story Sequence**. `subtitle-bar` only. They still tap to walk and look.
-3. They tap the floor. Leo walks. They tap to look. They are not taught a stick.
+2. Arriving at a viewpoint starts **The Story Sequence**. `subtitle-bar` only. They still tap to move and look.
+3. They tap a spot in the room. The view glides there. They drag a little to look. They are not taught a stick.
 4. They notice something they can tap — The Trigger — because of `interact-highlight`, not a marker.
 5. **Climax:** **The Partner (The Spark)** starts. Hub overlay gone. One obvious tap-in-time (`rhythm-judgment`).
 6. They return. The House has changed a little. They can keep looking.
 
-Failure: they never find the object — the House still does not spawn a quest marker. Light, sound, and the object’s presence do the work. If they leave the tab, they resume in the House, not at the title.
+Failure: they never find the object — the House still does not spawn a quest marker. Light, sound, and the object’s presence do the work. If they hide the tab and come back, they resume where they were. If they close it, they return to the House as of their last finished chapter.
 
 ### Jordan, The Protector (The Loss), laptop
 
@@ -234,7 +236,7 @@ Jordan already knows the House. They tap a trigger like the others. There is no 
 4. **Climax:** silence. Rain. No “try again?” fighting for the click. Back in the House, which now reads grief (`{colors.house-grief}`).
 5. The next play (**The Novice (The Science)**) starts slow and gray, then gets chaotic as the long haul begins.
 
-Failure: rage-quit. Auto-save already wrote the chapter complete / the story moved. Returning does not force a warning; they are in the changed House.
+Failure: rage-quit mid-run. No save is written mid-chapter, so next time The Loss starts again from its beginning, with no warning screen. If they quit after the run has finished, the save is already written and they are in the changed House.
 
 ### Sam pays a bill on a phone (The Provider)
 

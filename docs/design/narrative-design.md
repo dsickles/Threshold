@@ -3,6 +3,7 @@
 **Author:** Dan (with Samus Shepard)
 **Game Type:** Narrative Anthology
 **Narrative Complexity:** High (Emotional, Metaphorical, Non-Linear)
+**2026-10-17:** Copied out of BMAD into `docs/design/`. Updated for one result per chapter (2026-09-22), [ADR-0004](../adr/0004-journal-wording-varies-no-mastery.md) (journal wording) and [ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md) (text dialogue in v1). Timeline aligned with the epics.
 
 ---
 
@@ -76,12 +77,12 @@ _Threshold_ is the story of a man trying to build a home for a family he isn't s
 ### Narrative-Gameplay Harmony
 
 - **Ludonarrative Consistency:** The mechanics _are_ the feelings. We don't tell the player "The insurance company is confusing," we force them to cross-reference three different forms in _The Provider_ to find a typo.
-- **Procedural Narrative:** In _The Provider_ and _The Protector_, the "Random" elements are actually stitched-together "Micro-Stories" (e.g., a sequence of bills telling the story of a specific injury) to prevent procedural blandness.
+- **Authored Narrative:** In _The Provider_ and _The Protector_, the bills and obstacles are a fixed, hand-written sequence, not random. A sequence of bills tells the story of one specific injury.
 - **Story Gates:** Completing a minigame is the "Key" to unlock the next room/chapter in the House.
 
 ### Player Agency
 
-- **Micro-Choices:** In dialogue, choosing to be "Stoic" or "Vulnerable." This doesn't change the plot, but changes the _tone_ of the scene and the entry in the Journal.
+- **Micro-Choices:** In dialogue, choosing to be "Stoic" (closed-off) or "Vulnerable" (open). This doesn't change the plot, the House objects, or the big story beats, but changes the _tone_ of the scene and the wording of the matching Journal entry ([ADR-0004](../adr/0004-journal-wording-varies-no-mastery.md)).
 
 ---
 
@@ -93,6 +94,8 @@ _Threshold_ is the story of a man trying to build a home for a family he isn't s
 - ~2,000 words of journal entries/flavor text.
 
 ### Voice Acting
+
+_Not in v1 ([ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md)): v1 dialogue is text with subtitles. The plan below is for a later version._
 
 - **Leo:** Internal Monologue (Heavy), Dialogue (Medium).
 - **Maya:** Dialogue (Medium).
@@ -108,8 +111,9 @@ _Threshold_ is the story of a man trying to build a home for a family he isn't s
 - **Month 2:** Miscarriage (_Protector_).
 - **Month 3-9:** **The Long Haul (IVF).** 6 months of retrievals. (_Novice_).
   - _Note:_ Starts desaturated and quiet. Color and chaos bleed in as the hormones take effect.
-- **Month 10:** Conception (_Provider_).
-- **Month 11-13:** The Wait (_Tuner, Anchor, Mourner_).
+- **End of Month 9:** Conception via IVF (positive test at the end of _The Novice_).
+- **Month 10:** The bills for the pregnancy (_Provider_).
+- **Month 11-13:** The Wait (_Tuner, Anchor, Mourner_, in that order).
 - **Month 14:** The Arrival.
 
 ### References

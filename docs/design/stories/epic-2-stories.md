@@ -1,6 +1,8 @@
 # Epic 2: The Loss
 
-Stories for [epics.md](epics.md). When a story is built, its task file points at this file.
+Stories for [requirements.md](../requirements.md). When a story is built, its task file points at this file.
+
+> **2026-10-17:** Reference acceptance criteria for this chapter, copied from BMAD. They are not the build plan: build order is in [roadmap.md](../../roadmap.md), v1 scope in [scope.md](../../scope.md), and work is tracked in Linear. Lines changed to match later decisions are marked _(updated 2026-10-17)_.
 
 A player goes through the miscarriage with no warning, skip, or retry, sits in the quiet car in the rain, and returns to a House in grief. Write this chapter's words in the same week as the numb stretch in Epic 3. The run is a flat tiled path. Leaving in the middle starts the chapter over.
 

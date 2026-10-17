@@ -5,7 +5,9 @@
 **Accepted:** 2026-09-20 (Godot 4.x remains the engine of record)
 **Context:** _Threshold_ is a Narrative Anthology requiring seamless transitions between a 3D Hub (The New House) and various 2D/3D Minigames (Bureaucracy Sim, Rhythm, Pathfinder, etc.).
 
-Original 2025-11-22 text (still proposing Godot, still referring to a deckbuilder) is archived at [_bmad-output/planning-artifacts/archive/2025-11-22-original/adr-001-engine-selection.md](../../_bmad-output/planning-artifacts/archive/2025-11-22-original/adr-001-engine-selection.md).
+Original 2025-11-22 text (still proposing Godot, still referring to a deckbuilder) is in the archive at `archive/2026-10-bmad/_bmad-output/planning-artifacts/archive/2025-11-22-original/adr-001-engine-selection.md`.
+
+**2026-10-17 note:** The platform order is now browser first, phone second, PC/Steam third. Godot still fits: it exports to the web. Web builds use only Godot's simpler Compatibility renderer, which limits some effects (see [docs/design/epic-structure-decisions-2026-09-22.md](../design/epic-structure-decisions-2026-09-22.md), "Browser facts").
 
 ## The Options
 
