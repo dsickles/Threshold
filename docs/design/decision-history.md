@@ -164,6 +164,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 13. Performance bar is headroom on Dan's iPhone, not a bought mid-range phone (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | Roadmap M1 criterion: "smooth on one chosen mid-range phone"; the benchmark phone was an open M0 question. |
+| **Became** | Dan's iPhone 17 Pro in Safari must show about 4× headroom (game work ≤ 4 ms per frame, 4× pixels still about 60 fps, memory and load limits), plus one spot check on a real mid-range Android before M1 playtests. |
+| **Why** | Dan has only flagship iPhones and chose not to buy a ~$400 test phone. Measuring spare capacity on a fast phone approximates a phone about 4× slower. |
+| **Record** | [scope.md](../scope.md) "Settled questions"; [roadmap.md](../roadmap.md) M1 criterion 1 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
