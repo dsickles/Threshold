@@ -20,13 +20,13 @@ This file is the list of epics. Each epic's stories live in their own file. When
 | Epic | Stories |
 | --- | --- |
 | 1. The Spark in the New House | [epic-1-stories.md](epic-1-stories.md) |
-| 2. The Loss | epic-2-stories.md, when written |
-| 3. The Long Haul | epic-3-stories.md, when written |
-| 4. The Cost | epic-4-stories.md, when written |
-| 5. Hear Them | epic-5-stories.md, when written |
-| 6. Make Space | epic-6-stories.md, when written |
-| 7. Carry the Weight | epic-7-stories.md, when written |
-| 8. The Arrival | epic-8-stories.md, when written |
+| 2. The Loss | [epic-2-stories.md](epic-2-stories.md) |
+| 3. The Long Haul | [epic-3-stories.md](epic-3-stories.md) |
+| 4. The Cost | [epic-4-stories.md](epic-4-stories.md) |
+| 5. Hear Them | [epic-5-stories.md](epic-5-stories.md) |
+| 6. Make Space | [epic-6-stories.md](epic-6-stories.md) |
+| 7. Carry the Weight | [epic-7-stories.md](epic-7-stories.md) |
+| 8. The Arrival | [epic-8-stories.md](epic-8-stories.md) |
 
 ## Requirements Inventory
 
@@ -308,7 +308,7 @@ A player goes through the miscarriage with no warning, skip, or retry, sits in t
 
 **FRs covered:** FR6, FR19, FR20
 
-**Stories:** epic-2-stories.md, when written
+**Stories:** [epic-2-stories.md](epic-2-stories.md)
 
 ### Epic 3: The Long Haul
 
@@ -316,7 +316,7 @@ A player crosses the numb stretch after the loss, lives through six months of tr
 
 **FRs covered:** FR6, FR21, FR22
 
-**Stories:** epic-3-stories.md, when written
+**Stories:** [epic-3-stories.md](epic-3-stories.md)
 
 ### Epic 4: The Cost
 
@@ -324,7 +324,7 @@ A player works the bills for that pregnancy, reads them in large type, stamps th
 
 **FRs covered:** FR23, FR24, FR25
 
-**Stories:** epic-4-stories.md, when written
+**Stories:** [epic-4-stories.md](epic-4-stories.md)
 
 ### Epic 5: Hear Them
 
@@ -332,7 +332,7 @@ A player turns through the static until the baby comes through.
 
 **FRs covered:** FR26
 
-**Stories:** epic-5-stories.md, when written
+**Stories:** [epic-5-stories.md](epic-5-stories.md)
 
 ### Epic 6: Make Space
 
@@ -340,7 +340,7 @@ A player puts away the grief and the clutter from before the baby. The layout th
 
 **FRs covered:** FR29
 
-**Stories:** epic-6-stories.md, when written
+**Stories:** [epic-6-stories.md](epic-6-stories.md)
 
 ### Epic 7: Carry the Weight
 
@@ -348,7 +348,7 @@ A player carries the load with two hold zones, hears Maya, and can finish the ch
 
 **FRs covered:** FR6, FR27, FR28
 
-**Stories:** epic-7-stories.md, when written
+**Stories:** [epic-7-stories.md](epic-7-stories.md)
 
 ### Epic 8: The Arrival
 
@@ -356,7 +356,7 @@ A player hears the cry, holds the hand, and the House is the last room. Built af
 
 **FRs covered:** FR30
 
-**Stories:** epic-8-stories.md, when written
+**Stories:** [epic-8-stories.md](epic-8-stories.md)
 
 Epic 1 stands alone. Epics 2–7 need Epic 1. Epic 3 assumes Epic 2 has happened. Epic 8 needs Epic 1 and Epic 5, and it is built after every chapter epic. FR9, FR14, FR16, FR17, and FR33 are shared across the list as mapped above.
 
