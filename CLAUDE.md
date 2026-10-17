@@ -74,7 +74,7 @@ Pinned engine: **Godot 4.7.2**, standard build (not .NET). Private test link: a 
 - **Run:** open `game/project.godot` in `Godot_v4.7.2-stable_win64.exe` and press Play (F5).
 - **Error check (no editor):** `powershell -ExecutionPolicy Bypass -File tools/check.ps1`. It runs Godot's built-in script check on every `.gd` file and exits non-zero on any error.
 - **Tests:** none yet. The test addon is chosen in M1, together with the core table.
-- **Export and publish:** `powershell -ExecutionPolicy Bypass -File tools/publish.ps1`. It error-checks, exports the "Web" preset (single-threaded) to `build/web/`, then runs one butler command: `butler push build/web dsickles/threshold:html5`. butler is logged in once on Dan's PC.
+- **Export and publish:** `powershell -ExecutionPolicy Bypass -File tools/publish.ps1`. It error-checks, exports the "Web" preset (single-threaded) to `build/web/` at the repo root (outside `game/`, so Godot never imports old builds), then runs one butler command: `butler push build/web dsickles/threshold:html5`. butler is logged in once on Dan's PC.
 - **Private test link:** https://dsickles.itch.io/threshold (restricted, password-protected; Dan holds the password, never write it in the repo).
 
 Automated tests cover the core table and save/load; everything else is checked by playing, including on Dan's phone.

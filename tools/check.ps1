@@ -3,7 +3,8 @@
 . (Join-Path $PSScriptRoot "paths.ps1")
 
 # Import first so new scripts get their .uid files and class names are known.
-& $Godot --headless --path $ProjectDir --import 2>&1 | Out-Null
+$importOutput = & $Godot --headless --path $ProjectDir --import 2>&1 | Out-String
+if ($LASTEXITCODE -ne 0) { Write-Host "Import failed:"; Write-Host $importOutput; exit 1 }
 
 $failed = 0
 $scripts = @(Get-ChildItem -Path $ProjectDir -Recurse -Filter *.gd |
