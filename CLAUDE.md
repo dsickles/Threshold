@@ -49,6 +49,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 - Keep the House and each chapter separate: a chapter must not reach into the House or another chapter, except through the shared systems in game-architecture.md.
 - Don't invent story, dialogue or journal wording. If a placeholder is needed, mark it clearly as a placeholder and tell Dan.
 - Don't delete or rewrite design docs. The one exception is fixing an out-of-date line after a decision (see "When documents disagree").
+- Dan follows along in Cursor. When only one session is writing, work in the main Threshold folder on a new branch, not a worktree. Use a worktree only when several sessions write at once, and tell Dan its full path so he can add it to his Cursor window (File → Add Folder to Workspace).
 
 ## Agent skills
 
@@ -66,6 +67,8 @@ Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.js
 
 ## Building and testing
 
-Not set up yet (milestone M0). When it is, record here: the pinned Godot version, how to run the game, how to check scripts for errors without opening the editor, how to run tests, how to export the web build, and where the private test link lives. Also add `.godot/` to `.gitignore` and commit Godot's `.uid` files alongside their scripts. Automated tests cover the core table and save/load; everything else is checked by playing, including on Dan's phone.
+Pinned engine: **Godot 4.7.2**, standard build (not .NET). Private test link: a password-protected itch.io page, uploaded with butler (see `docs/scope.md`, "Settled questions").
+
+Not set up yet (milestone M0). When it is, record here: how to run the game, how to check scripts for errors without opening the editor, how to run tests, how to export the web build, and where the private test link lives. Also add `.godot/` to `.gitignore` and commit Godot's `.uid` files alongside their scripts. Automated tests cover the core table and save/load; everything else is checked by playing, including on Dan's phone.
 
 Claude can't see the game running. End every change Dan needs to play with a short "what to look for" list: where to go, what to tap, and what should happen.

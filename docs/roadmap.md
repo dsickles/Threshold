@@ -8,10 +8,10 @@ Players always meet the chapters in story order: Partner, Protector (the Loss), 
 
 Get to the point where a change can be seen on a phone.
 
-- New Godot 4.x project in this repo (pin the exact version in `CLAUDE.md`).
-- A web build that opens from a private link on Dan's phone and on a laptop browser.
-- Three quick technical checks, each a throwaway test, not real game code:
-  1. A bare scene runs smoothly on Dan's phone browser.
+- New Godot 4.7.2 project in this repo (pinned in `CLAUDE.md`).
+- A web build that opens from a private link (password-protected itch.io page) on Dan's phone and on a laptop browser.
+- Three quick technical checks, each a throwaway test, not real game code (how each is judged is in [scope.md](scope.md), "Settled questions"):
+  1. A bare scene runs smoothly on Dan's phone browser and meets the iPhone headroom bar.
   2. Rhythm timing: taps line up with the sound actually heard on a phone browser.
   3. Fixed-viewpoint movement feels good by tap on a phone.
 
@@ -36,7 +36,7 @@ About 15 minutes, rough, played in one sitting.
 **Not in M1:** title and settings screens, quality setting, save/Continue, journal, chapter looks beyond one gray filter, final art.
 
 **Success criteria:**
-1. Runs from a link on Dan's phone and a laptop browser, smooth on one chosen mid-range phone.
+1. Runs from a link on Dan's phone and a laptop browser, meets the iPhone headroom bar in [scope.md](scope.md), and passes one spot check on a real mid-range Android. _(updated 2026-10-17: was "smooth on one chosen mid-range phone")_
 2. 5 people play it cold, with no instructions. At least 4 find the first object within about 3 minutes; nobody gets stuck moving around.
 3. Nobody says the rhythm "counted my tap wrong."
 4. Asked afterwards, most testers describe the Loss in emotional words, not "unfair." Nobody looks for a retry out of frustration. Nobody calls it cheap or exploitative.

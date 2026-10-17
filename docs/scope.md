@@ -43,5 +43,16 @@ The single answer to "is this in v1?". If a design doc describes something marke
 | What The Partner shows on screen, its song, and its beat chart | M1 |
 | What "Stress" is, whether it lasts beyond a chapter, and what it changes | M2 |
 | Anchor: scripted wobble or real physics | M2 (cheap test) |
-| Which mid-range phone is the performance benchmark | M0 |
-| Exact Godot 4.x version to pin | M0 |
+| Which automated-test addon to use for the core table and saves | M1 |
+
+## Settled questions
+
+| Question | Answer | Decided |
+|---|---|---|
+| Exact Godot 4.x version to pin | Godot **4.7.2** standard build (not .NET). Stay on it through v1; upgrade only if a bug forces it. | 2026-10-17 |
+| Which phone is the performance benchmark | No mid-range phone is bought. The bar is **headroom on Dan's iPhone 17 Pro (Safari)**, sized for a phone about 4× slower: (1) steady 60 fps for 2 minutes, no visible stutter; (2) the game's own work at or under 4 ms per frame (a quarter of the 16.7 ms budget), shown on screen; (3) a test-only "heavy" switch that draws 4× the pixels still holds about 60 fps; (4) under about 500 MB memory and under about 10 s to load on home Wi‑Fi. Before M1 playtests, one spot check on a real mid-range Android (a borrowed phone or a free cloud-device trial). | 2026-10-17 |
+| Which browsers must pass in M0 | Safari on Dan's iPhone 17 Pro and Chrome on Dan's laptop. His iPhone 17 and the Android spot check are extras. Chrome on iPhone uses Safari's engine, so it adds nothing. | 2026-10-17 |
+| Where the private test link lives | A restricted, password-protected itch.io page. Web builds are exported single-threaded (no special server headers needed). Builds are uploaded with butler, itch.io's official upload tool (approved outside tool). Dan owns the itch.io account and logs butler in himself. | 2026-10-17 |
+| How the rhythm-timing check is judged | A click track Dan taps along to; the screen shows average early/late. Passes if, after one fixed adjustment for the phone's sound delay, the average is within about 30 ms and nearly every tap would score Good. If it fails, a "tap along to calibrate" setting is proposed to Dan as a scope change. | 2026-10-17 |
+| How the fixed-viewpoint check is judged | By feel: a gray-box room with 3–4 viewpoints, tap to glide between them. Passes if Dan plus one or two people new to it move around without getting lost and without explanation. Settles the glide duration. | 2026-10-17 |
+| Automated tests in M0 | None. M0 only sets up Godot's built-in script error check. The test addon is chosen in M1 with the core table. | 2026-10-17 |
