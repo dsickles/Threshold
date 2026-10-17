@@ -1,6 +1,6 @@
 # Threshold Roadmap
 
-The order things get built in. Decided in [ADR-0002](adr/0002-build-order-spark-to-silence.md). What is in v1 at all is in [scope.md](scope.md). Day-to-day work is tracked in Linear: one Linear milestone per milestone below.
+The order things get built in. Decided in [ADR-0002](adr/0002-build-order-spark-to-silence.md). What is in v1 at all is in [scope.md](scope.md). Day-to-day work is tracked in Linear: one Linear project per milestone below, all under the Threshold initiative (see [agents/issue-tracker.md](agents/issue-tracker.md)).
 
 Players always meet the chapters in story order: Partner, Protector (the Loss), Novice (the Long Haul), Provider (the Cost), Tuner, Anchor, Mourner, The Arrival. The build order below is different on purpose.
 

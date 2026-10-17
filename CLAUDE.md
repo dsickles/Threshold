@@ -22,7 +22,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 | Requirements | [docs/design/requirements.md](docs/design/requirements.md) |
 | Per-chapter acceptance criteria | [docs/design/stories/](docs/design/stories/) (reference, not a plan) |
 | Playtest notes | [docs/playtests/](docs/playtests/) |
-| Work tracking | Linear (see "Agent skills" below once set up) |
+| Work tracking | Linear: Threshold initiative, one project per milestone (see "Agent skills" below) |
 
 `archive/` holds the old BMAD-era files exactly as they were. Do not read or use it unless Dan asks; reading it is blocked in `.claude/settings.json`.
 
@@ -41,6 +41,20 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 - The House must look right without volumetric fog. No Godot CompositorEffects (they don't run in the browser).
 - The UI never explains the metaphor.
 - Before starting a ticket, check it is v1 in docs/scope.md. If it isn't, ask Dan.
+
+## Agent skills
+
+### Issue tracker
+
+Linear, team DASSoft, under the Threshold initiative; one project per milestone, issues roll up to projects, `v1`/`later` labels, status Todo means ready. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Installed skills
+
+Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.json`; update with `npx skills@latest update`). Typical flow: `/grill-with-docs` to agree a milestone or decision → `/to-spec` → `/to-tickets` → `/implement` one ticket at a time. Also: `prototype`, `tdd` (core table and saves only), `diagnosing-bugs`, `/wait-what` (Dan asks for a plain re-explanation), `/handoff`. Claude Code also has a built-in `/code-review`; `/implement` is meant to use this repo's `code-review` skill.
 
 ## Building and testing
 
