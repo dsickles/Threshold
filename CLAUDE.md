@@ -17,6 +17,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 | What is in v1, what is Later, open questions | [docs/scope.md](docs/scope.md) |
 | Decisions and why | [docs/adr/](docs/adr/) (newest wins) and [docs/design/decision-history.md](docs/design/decision-history.md) |
 | Game design | [docs/design/gdd.md](docs/design/gdd.md), [narrative-design.md](docs/design/narrative-design.md), [game-brief.md](docs/design/game-brief.md) |
+| Story continuity (every object, room and fact across the chapters) | [docs/design/continuity-ledger.md](docs/design/continuity-ledger.md) |
 | Technical design | [docs/design/game-architecture.md](docs/design/game-architecture.md) |
 | UX | [docs/design/ux/EXPERIENCE.md](docs/design/ux/EXPERIENCE.md) (behavior), [DESIGN.md](docs/design/ux/DESIGN.md) (look) |
 | Requirements | [docs/design/requirements.md](docs/design/requirements.md) |
@@ -119,7 +120,7 @@ Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents
 
 ### Installed skills
 
-Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.json`; update with `npx skills@latest update`). Typical flow: `/grill-with-docs` to agree a milestone or decision → `/to-spec` → `/to-tickets` → `/implement` one ticket at a time. Also: `prototype`, `tdd` (core table and saves only), `diagnosing-bugs`, `/wait-what` (Dan asks for a plain re-explanation), `/handoff`. Claude Code also has a built-in `/code-review`; `/implement` is meant to use this repo's `code-review` skill.
+Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.json`; update with `npx skills@latest update`). Typical flow: `/grill-with-docs` to agree a milestone or decision → `/to-spec` → `/to-tickets` → `/implement` one ticket at a time. Threshold's own skill, not from Matt Pocock: `narrative-craft`, for any story-shaped design question (House changes, chapter objects, story beats, continuity); it never writes dialogue or journal wording. Also: `prototype`, `tdd` (core table and saves only), `diagnosing-bugs`, `/wait-what` (Dan asks for a plain re-explanation), `/handoff`. Claude Code also has a built-in `/code-review`; `/implement` is meant to use this repo's `code-review` skill.
 
 ## Building and testing
 

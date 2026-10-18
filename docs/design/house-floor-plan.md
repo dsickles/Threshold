@@ -1,152 +1,146 @@
 # The House: floor plan (draft)
 
-**Status:** Draft for Dan to edit, 2026-10-18. Not decided. Answers the open question in [scope.md](../scope.md): "The House's small floor plan: which rooms, where the chapter objects sit" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft".
+**Status:** Draft for Dan to edit, 2026-10-18 (third pass, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)). Not decided. Answers the open question in [scope.md](../scope.md): "The House's small floor plan: which rooms, where the chapter objects sit" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft".
 
-Built from: [ADR-0003](../adr/0003-house-fixed-viewpoints.md) (fixed viewpoints), [roadmap.md](../roadmap.md) M1 (2–3 rooms, lamp light, ordinary fog, warmer after the Partner, gray after the Loss), [gdd.md](gdd.md) Hub Evolution, [narrative-design.md](narrative-design.md) ("Story Gates: completing a minigame is the key to unlock the next room/chapter"), [epic-1-stories.md](stories/epic-1-stories.md), [epic-2-stories.md](stories/epic-2-stories.md) Story 2.4 (crib put away, boxes out), [EXPERIENCE.md](ux/EXPERIENCE.md) (first wander, no quest markers), [game-architecture.md](game-architecture.md) §2.
+Dan's direction, 2026-10-18: **3 bedrooms, 2 bathrooms.** The living room and kitchen are always open, because every house has them. The nursery is not near the front door. Think about where Leo starts, how he moves through the House as the story goes, and how places open up.
 
-Dan's direction, 2026-10-18: **3 bedrooms, 2 bathrooms.** The living room and kitchen are always open, because every house has them. The nursery is not near the front door. Think about where Leo starts, how he moves through the House as the story goes, and how places open up after each chapter.
+Every object and room here has a lifeline in the [continuity ledger](continuity-ledger.md). Lines marked **Dan** are his calls; the full list is at the end.
 
-Every line marked **Choice** is something I picked where the docs say nothing. Lines marked **Dan** are gaps only Dan can fill. The full list is at the end.
+## The feeling
 
-## The idea: the House opens from the front to the back
+Walking into a house that isn't home yet, and finding that the story walks you deeper into it, until the last room you reach is the one that was waiting at the end of the hall the whole time.
 
-The House is laid out like a real one-storey house: the shared rooms at the front, the private rooms at the back. The story walks Leo deeper into it.
+## Recommended concept: "The room for later"
 
-- **The front** (entry, living room, kitchen) is the everyday House. It is always open, from the first second to the last.
-- **The back hall and the main bedroom** are the couple's private life. They open after the opening story beat.
-- **The nursery** is the deepest room, the last door at the far end of the back hall. It is the future. It opens with hope after the Partner, shuts after the Loss, and is the last room the game ends in ("the House is the last room", FR30).
-- **Leo's den** (the third bedroom) is his old life, near the front door. It opens when the bills arrive (the Provider) and is cleared out in the Mourner.
+**Central image:** a shut door at the end of the hall. Behind it is the spare room, where Leo's old life was dumped on moving day. It is the last room to become what it is for. The nursery is made, at the end, by clearing out the life Leo had before: the game's arc from "Me" to "Us", as a room.
 
-So the House grows as the story does, and the room the player can't get into says as much as the rooms they can.
+### The shape of the House
 
-## Plan
+One storey, built front to back, like a real house: the shared rooms at the front, the private rooms behind, the spare room deepest of all.
 
 ```
-                          BACK (garden)
-   +----------------+--------------------------------+
-   |                |                                |
-   |   BEDROOM 2    |   BEDROOM 1 (main)             |
-   |   NURSERY      |   record player       +------+ |
-   |   (last room)  |                       |BATH 1| |
-   |                |                       |en-   | |
-   |                |                       |suite | |
-   +-------D--------+-----------D-----------+--D---+-+
-   |   n                        b   BACK HALL        |
-   +--------+--------+------------------------D------+  <- day one: boxes
-   |        |        |                                |     stacked here
-   | BATH 2 |BEDROOM 3|          KITCHEN     k1        |
-   | (hall) |Leo's den|        fridge, table           |
-   |        |        |                                |
-   +---D----+---D----+                                |
-   |                 |                                |
-   |  ENTRY    h1    D          LIVING ROOM  l1       |
-   |  [keys]         |          couch, big window     |
-   |                 |                                |
-   +-------D---------+--------------------------------+
-           ^ front door          FRONT (street)
+   BACK  +------------------------------------------------------+
+         |            BEDROOM 2: spare room -> nursery          |  deepest:
+         |                  (the shut door)                     |  the end of
+         |                         ^ n                          |  the hall
+         |                         |                            |
+         |  BEDROOM 1 (main) <-b-- BACK HALL --> BEDROOM 3      |  private:
+         |  + BATH 1 (en-suite)    |  BATH 2      (office)      |  opens with
+         |                         |                            |  the story
+         |                         | bh  (moving boxes block    |
+         |                         |      it on day one)        |
+         |  KITCHEN k1 <-------> LIVING ROOM l1                 |  shared:
+         |  fridge, table          couch, big window            |  always open
+         |                         ^                            |
+   FRONT |                     ENTRY h1  [car keys]             |
+         +---------------------- front door --------------------+
+                                   p  (porch: where the game starts)
 
-   D = doorway    h1, l1, k1, bh, b, n = viewpoints
+   h1, l1, k1, bh, b, n, p = viewpoints
 ```
 
-About 16 m by 12 m, one storey. **Choice:** one storey, because stairs are awkward to frame with fixed viewpoints. The front-to-back depth does the job a second floor would (the nursery is as far from the front door as it can be).
+About 16 m by 12 m. The back hall runs straight from the living room to the spare room's door, so from the moment the hall opens, the player can see that door at the end of it.
 
-Because the player only ever sees framed shots ([ADR-0003](../adr/0003-house-fixed-viewpoints.md)), each room only needs the walls and objects its viewpoints can see. Rooms can be open-backed sets, and a room that isn't open yet is just a closed door.
+Because the player only sees framed shots ([ADR-0003](../adr/0003-house-fixed-viewpoints.md)), each room only needs the walls its viewpoints can see. A room that isn't open yet is a shut door.
 
-## Where Leo starts
+### Where Leo starts
 
-**Choice:** just inside the front door (**h1**), on the evening they move in. The House is cold and full of boxes. From that first shot the player sees the entry with the hall table and its car keys, and through a wide doorway the living room with its big window. The kitchen is beyond. Nothing else is open, so there is nowhere to get lost. **Dan:** moving-in evening is a story choice.
+On the porch at dusk, looking at the front door, on the day they move in. The first tap of the game, right after "tap to begin", crosses the threshold. Inside, the entry is cold and full of boxes; through a wide doorway are the living room and the kitchen, and nothing else is open.
 
-## How the House opens up, chapter by chapter
+### How the House opens up
 
-The core table turns the finished-chapter list into the House mood, the open rooms and the active chapter object ([game-architecture.md](game-architecture.md) §2.1). A chapter never opens a room itself. An open door is a tappable viewpoint marker; a closed one isn't tappable and doesn't highlight ("if it cannot be tapped, it is not the path").
-
-| Point in the story | Rooms open | What changes | Active chapter object |
+| Point | Open | What the player finds | Next chapter object |
 |---|---|---|---|
-| Start | Entry, living room, kitchen | Cold: bare bulbs, cool light, boxes everywhere. Moving boxes stacked in the kitchen's doorway to the back hall. | None until the opening beat |
-| After the opening story beat | + back hall, main bedroom | The boxes in the back-hall doorway have been moved; a warm lamp is on at the end of the hall, in the bedroom | Record player (bedroom) |
-| After the Partner | + **nursery** | Warm (`house-hope`): lamps on, a rug, bed frame up. The **nursery door at the end of the hall stands open**, and inside is a crib, bought too early. The positive test is on the bedroom nightstand. | Car keys (entry) |
-| After the Loss | − nursery | Grief (`house-grief`, the one gray filter M1 allows): lamps dim, rain on the windows. **The nursery door is shut again** and can't be tapped. The test is gone. | None (the end of M1) |
-| After the Novice (M2) | (same) | Pregnant again. Color starts coming back. | Bills on the desk in Leo's den, which opens |
-| After the Provider (M2) | + Leo's den | | Baby monitor (bedroom nightstand) for the Tuner |
-| After the Tuner (M2) | + nursery again | The nursery reopens, full of the boxes it was shut on. A flat-pack crib is delivered to the entry. | Crib box (entry) for the Anchor |
-| After the Anchor (M2) | (same) | The crib stands in the nursery among the boxes | The boxes in the nursery and the den's clutter, for the Mourner |
-| After the Mourner (M2) | (same) | The nursery is finished; the den is cleared | Hospital bag by the front door, for the Arrival |
-| After the Arrival (M2) | (same) | The game ends in the nursery: the last room | — |
+| Start | Porch, entry, living room, kitchen | Cold: bare bulbs, boxes. Moving boxes stacked in the doorway to the back hall. | None until the opening beat |
+| After the opening beat (plays at l1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. | Record player |
+| After the Partner | + spare room doorway (n) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo's boxes pushed to one side, a corner cleared by the window, and on the windowsill one small thing for the baby (the onesie). | Car keys, on the entry table |
+| After the Loss | − spare room | Gray, rain on the windows. The test and the onesie are gone from view. **The spare room door is shut again** and can't be tapped. | None in M1 (the end of M1) |
+| After the Novice (M2) | + office | Colour bleeds back; the rain stops. Bills are piled on the office desk. | Bills |
+| After the Provider (M2) | | Bills filed. A monitor on the nightstand. | Baby monitor |
+| After the Tuner (M2) | + spare room again | The door is ajar again; behind it, Leo's boxes still. A flat-pack crib has arrived in the entry. | Crib box |
+| After the Anchor (M2) | | The crib stands built in the living room: the spare room isn't ready for it. | Leo's boxes in the spare room |
+| After the Mourner (M2) | | The spare room is the nursery. The crib is in it. Leo's old things are gone. A hospital bag waits by the door with the keys. | Hospital bag |
+| After the Arrival (M2) | | The game ends in the nursery: the last room. | — |
 
-Rows marked M2 are a sketch so M2 doesn't paint itself into a corner. Only the first four rows are built in M1.
+Only the first four rows are built in M1. The rest are a sketch so M2 doesn't paint itself into a corner.
 
-**Choices** in that table:
-- **The opening beat opens the back of the House.** It now has to play before the Partner can start (the earlier draft said it didn't). It gives the first wander a reason to happen in the living room, and makes the bedroom the first room the story opens.
-- **The nursery opens after the Partner and shuts after the Loss.** The most hopeful room in the House is the one that is taken away. Story 2.4 needs a crib that can be put away; shutting its room is a stronger way to show it than boxes alone.
-- **The crib arrives after the Partner** and is the same crib Leo puts back together in the Anchor ("The Panic"). **Dan:** the story meaning of that is yours.
-- **Rain starts after the Loss**, so the House keeps the sound of the Silence in the car.
-- **The two bathrooms are never chapter rooms.** The en-suite is where the test is taken (its door can stand ajar after the Partner); the hall bathroom is just there, as in a real house.
+### Why it works
 
-## Rooms
+- **The living room and kitchen never change their openness**, so the player always has a home base, and every change is seen against them.
+- **The spare room carries the story by being open or shut** (principle 3, absence; principle 6, navigation is narrative). Hope opens it, grief shuts it, hearing the baby opens it again, and Leo finishes it last.
+- **One crib, one lifeline.** It doesn't exist until the Anchor. Early hope is shown by something small and true to eight weeks (one small thing for the baby), not a crib. The small thing and the first test go into a box after the Loss and come back in the Mourner, when Leo clears the room. That fixes the duplicate crib.
+- **The keys bookend the story.** The Loss and the Arrival both start by leaving through the front door with the same keys. Same act, opposite outcome, and nothing about the keys warns the player.
+- **The office opens with the bills.** The fixer gets a room for providing at the moment the story turns to money.
 
-| Room | Opens | What it is for | Key objects |
-|---|---|---|---|
-| Entry | Start | Where Leo starts and leaves from. The Loss and the Arrival start here: both chapters start with leaving the House. | Hall table with the **car keys** (the Loss); later the crib box and the hospital bag |
-| Living room | Start | The everyday room. The opening story beat. | Couch, big window (rain after the Loss); Dad's Journal (M2) by the window |
-| Kitchen | Start | Open to the living room, so one shot shows both. Holds the House's sounds. | Fridge (the recorded hum; IVF drugs for the Novice), kitchen table |
-| Back hall | After the opening beat | Joins the private rooms; looks straight down at the nursery door | Boxes on day one |
-| Bedroom 1 (main) + Bath 1 (en-suite) | After the opening beat | The couple's room. The Partner starts here. | **Record player** on a moving box (the Partner); mattress on the floor, bed frame later; nightstand |
-| Bedroom 2: nursery | After the Partner; shut after the Loss; reopens after the Tuner | The future | Crib, then boxes, then the finished room |
-| Bedroom 3: Leo's den | After the Novice (M2) | Leo's old life: guitar, games console, old armchair, a desk | Bills (the Provider); clutter (the Mourner) |
-| Bath 2 (off the entry) | Never needed; a shut door in M1 | Ordinary, as in a real house; nothing in the story needs it | — |
+### Rooms
+
+| Room | Opens | What it is for |
+|---|---|---|
+| Porch | Start | Crossing the threshold. Seen only at the very start (M2 may bring it back for the Arrival). |
+| Entry | Start | Where the Loss and the Arrival begin: the keys, later the crib box and the hospital bag |
+| Living room | Start | Home base. The opening beat. The big window (rain). The crib stands here after the Anchor. Dad's Journal (M2). |
+| Kitchen | Start | The fridge (the hum; IVF medication for the Novice), the table |
+| Back hall | After the opening beat | Leads straight to the spare room's door |
+| Bedroom 1 (main) and Bath 1 (en-suite) | After the opening beat | The couple's room: the Partner and the Tuner start here |
+| Bath 2 (hall) | After the opening beat | Ordinary, as in any house; never a chapter room |
+| Bedroom 3: office | After the Novice | The Provider's desk |
+| Bedroom 2: spare room, then nursery | Ajar after the Partner, shut after the Loss, ajar after the Tuner, finished after the Mourner | The room for later |
+
+## Alternatives considered
+
+**"Upstairs" (two storeys).** The private rooms are upstairs, and the stairs are the threshold: a framed shot at the foot of the stairs looking up at a closed door. It is the stronger image if "levels" should mean floors, and climbing is a good verb for going deeper. It costs a staircase, a landing and more viewpoints, and makes M1 bigger.
+
+**"Nothing locks" (all rooms open from the start).** The story is told only by what changes inside the rooms, as in *Unpacking*. It is the simplest to navigate and the cheapest to build. But it loses the open and shut doors, which are the strongest tool the House has, and it doesn't answer Dan's ask that places open up.
 
 ## M1 build
 
-M1 is "2–3 rooms" in the roadmap. This plan builds the **front room** (entry, living room and kitchen as one open space), the **back hall**, the **main bedroom**, and the **nursery** seen from its doorway only. The den and both bathrooms are closed doors. That is three rooms plus a corridor and a doorway view, which is at the top of "2–3 rooms". **Dan:** OK, or should M1 drop the nursery view and show the crib some other way?
+The porch shot, the shared front (entry, living room and kitchen as one open space), the back hall, the main bedroom, and the spare room seen from its doorway only. The office and both bathrooms are shut doors. That is at the top of the roadmap's "2–3 rooms". **Dan:** see call 6.
 
 ### Viewpoints (M1)
 
-Six viewpoints. The player starts at **h1**.
-
-| Viewpoint | Where | What the shot shows | Open | Taps to |
-|---|---|---|---|---|
-| h1 Entry | Just inside the front door | The hall table and keys; the living room and its window through a wide doorway | Always | l1 |
-| l1 Living room | By the couch | The window, the kitchen beyond, and the boxes stacked in the back-hall doorway | Always | h1, k1 |
-| k1 Kitchen | By the fridge | Back across the room to the couch and the window; the back-hall doorway | Always | l1, h1, bh (once open) |
-| bh Back hall | Just inside the back hall | Straight down the hall to the nursery door at the end; the bedroom door with its lamp | After the opening beat | k1, b, n (while open) |
-| b Bedroom | Main bedroom doorway | The mattress, the record player on its box, the window, the en-suite door | After the opening beat | bh |
-| n Nursery door | The nursery doorway | Into the nursery: the crib | After the Partner, until the Loss | bh |
+| Viewpoint | What the shot shows | Open | Taps to |
+|---|---|---|---|
+| p Porch | The front door at dusk, the porch light | Start only | h1 (one way) |
+| h1 Entry | The entry table and keys; the living room through a wide doorway | Always | l1 |
+| l1 Living room | The window, the kitchen beyond, the doorway to the back hall | Always | h1, k1, bh (once open) |
+| k1 Kitchen | Back across the room to the couch and the window | Always | l1, h1 |
+| bh Back hall | Straight down the hall to the spare room door; the bedroom door with its lamp | After the opening beat | l1, b, n (while open) |
+| b Bedroom | The mattress, the record player on its box, the nightstand, the window | After the opening beat | bh |
+| n Spare room doorway | Into the spare room: the boxes, the cleared corner, the windowsill | After the Partner, until the Loss | bh |
 
 The glide duration is settled by the M0 fixed-viewpoint check (DAS-69), not here.
 
-## Getting the player to the first chapter object
+### Getting to the first chapter object
 
-Roadmap success criterion 2: at least 4 of 5 cold testers find the first object within about 3 minutes, with no markers. The docs say light and sound do this work, not UI.
+Roadmap success criterion 2: at least 4 of 5 cold testers find the first object within about 3 minutes, with no markers. The path is one way forward, lit by one warm light: porch → entry → living room (the opening beat plays) → the back hall opens and a lamp shows in the bedroom → the record player crackles and highlights. Nothing else in the cold House is warm.
 
-**Choice:** the path is short and has only one way forward. From h1 the only open way is into the living room (1 tap). Arriving at l1 plays the opening beat. After it, the boxes in the back-hall doorway are gone and a warm lamp shows down the hall. That lamp is the only warm light in the cold House. In the bedroom the record player gives a faint crackle and highlights (`interact-highlight`). At least four taps from the start, all along one lit path.
+### What the player sees of Leo and Maya
 
-## Where the opening story beat sits
-
-It fires the first time the player arrives at **l1** (living room). Maya's lines appear as subtitles. When it ends, the back of the House opens (see above).
-
-**Choice:** nobody is shown in the House in M1. Maya's lines appear as subtitles only, as if she is in the next room. The House is first person, so Leo is never seen. This keeps M1 free of character models and animation. **Dan:** whether Maya is ever seen in the House is a feel and story call.
+Nobody is shown in the House in M1. Maya's lines in the opening beat are subtitles, as if she is in the next room. The House is first person, so Leo is never seen. This keeps M1 free of character models.
 
 ## Checks this plan must pass
 
-These come from the roadmap and stories. None is optional.
+From the roadmap and stories. None is optional.
 
 - **M1 success criterion 2:** 5 cold testers, no instructions. At least 4 find the record player within about 3 minutes. Nobody gets stuck moving around.
 - **M1 success criterion 5:** most testers notice the House changed, without being asked.
-- **No dead ends:** from every open viewpoint, the player can get back to the entry, and every open room is reachable (checked by playing on Dan's phone and laptop at each of the four M1 points in the story).
-- **Closed rooms are never tappable and never highlight**, and a room that shuts (the nursery after the Loss) can't be reached by any route.
+- **No dead ends:** at each of the M1 points in the story (start, after the opening beat, after the Partner, after the Loss), every open room can be reached and the player can always get back to the living room. Checked by playing on Dan's phone and laptop.
+- **Shut rooms are never tappable and never highlight**, and the spare room can't be reached by any route after the Loss.
 - **The House reads without volumetric fog** (CLAUDE.md rule): lamp light and ordinary fog only, no CompositorEffects.
-- **Tap targets at least 44 px**; viewpoint markers and objects never rely on hover.
-- **Core table automated tests:** each M1 point in the story (start, after the opening beat, after the Partner, after the Loss) gives the right House mood, open rooms and active chapter object. (The test addon is still an open M1 question in [scope.md](../scope.md).)
+- **Tap targets at least 44 px**; nothing relies on hover.
+- **Core table automated tests:** each M1 point gives the right House mood, open rooms and next chapter object. (The test addon is still an open M1 question in [scope.md](../scope.md).)
 
-## Gaps only Dan can fill
+## Dan's calls
 
-1. **The two M1 chapter objects:** record player for the Partner, car keys for the Loss. Keep, or pick others?
-2. **The errand behind the keys** (where they are driving when the Loss happens).
-3. **The crib:** bought too early after the Partner, and the same crib Leo rebuilds in the Anchor?
-4. **The nursery shutting after the Loss** and reopening after the Tuner (when the pregnancy feels real). Right moments?
-5. **Moving-in evening** as the start.
-6. **Leo's den** as the third bedroom, opening for the Provider.
-7. **The M1 build size:** three rooms plus a corridor and the nursery doorway view.
-8. **Is Maya ever seen in the House?** (Default for M1: no.)
-9. **The end of M1:** after the House in grief there is no next chapter object. Leave the player in the gray House, or end on a card? (Default: leave them in the House; no text.)
-10. **The words of the opening beat** and its closed-off/open line. Not drafted here; CLAUDE.md says Claude doesn't invent story or dialogue.
+Each has my recommended answer.
+
+1. **The spare room as "the room for later"**, holding Leo's old life until he clears it for the baby. *Recommended: yes.*
+2. **No crib until the Anchor;** early hope shown by one small thing for the baby (a onesie) on the spare room windowsill. What the small thing is, and who bought it, is yours. *Recommended: yes, a onesie, left there by Maya.*
+3. **The memory box:** after the Loss the test and the onesie go into a shoebox in the spare room, found again in the Mourner. What Leo does with it then is yours. *Recommended: yes; decide its ending when the Mourner is written.*
+4. **Starting on the porch** at dusk on moving day, so the first tap crosses the threshold. *Recommended: yes.*
+5. **The keys start both the Loss and the Arrival.** The errand behind the Loss is yours. *Recommended: yes.*
+6. **M1 build size:** porch shot, shared front, back hall, main bedroom, and the spare room doorway. *Recommended: yes.*
+7. **One storey, not "Upstairs".** *Recommended: one storey, for M1 cost. Say if you meant floors by "levels".*
+8. **The record player's later life** (does it play again in the Arrival, or get packed away with Leo's old things?). *Recommended: decide with the Arrival.*
+9. **The end of M1:** leave the player in the gray House with no next object, or end on a card? *Recommended: leave them in the House, no text.*
+10. **The words of the opening beat** and its closed-off/open line. Not drafted; the skill never writes story words.
