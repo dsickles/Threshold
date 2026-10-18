@@ -3,6 +3,7 @@ extends Control
 ## Throwaway M0 scaffolding, not game code. The checks themselves come in
 ## DAS-67 (Smoothness), DAS-68 (Rhythm timing) and DAS-69 (Viewpoints).
 
+const SMOOTHNESS_SCENE := "res://scenes/m0_checks/smoothness/smoothness_check.tscn"
 const RHYTHM_CHECK := preload("res://scenes/ui/m0_rhythm_check.tscn")
 
 @onready var _begin_button: Button = %BeginButton
@@ -13,7 +14,8 @@ const RHYTHM_CHECK := preload("res://scenes/ui/m0_rhythm_check.tscn")
 func _ready() -> void:
 	_menu.hide()
 	_begin_button.pressed.connect(_on_begin_pressed)
-	for button: Button in [%SmoothnessButton, %ViewpointsButton]:
+	%SmoothnessButton.pressed.connect(get_tree().change_scene_to_file.bind(SMOOTHNESS_SCENE))
+	for button: Button in [%ViewpointsButton]:
 		button.pressed.connect(_on_check_pressed.bind(button.text))
 	%RhythmButton.pressed.connect(_open_check.bind(RHYTHM_CHECK))
 

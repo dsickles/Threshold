@@ -57,6 +57,10 @@ When a ticket is done and you tell Dan what comes next, never say "use the same 
 
 1. Look in Linear for tickets in the current milestone that are Todo, labelled `v1`, and whose blockers are all Done.
 2. Decide which of them can run at the same time. Two tickets can run in parallel only if neither needs the other's result and they won't edit the same files. If they would share a file (for example, each adds its button to the M0 menu), say so and say which to merge first. If unsure, run them one after another. Parallel sessions share one itch.io page and each upload replaces the last, so tell Dan which session's build is live.
+   - **Agree the merge plan before any parallel session starts.** Before giving the prompts, write a short merge plan and wait for Dan to OK it. Don't leave it to the end of a session, where it is easy to miss.
+     - **GitHub:** the order the branches merge into main, which shared files will conflict, and who fixes each conflict. Default: the first branch merges as-is; each later branch pulls the new main, fixes conflicts and re-checks before its PR is merged.
+     - **itch.io:** who uploads and when. Default: one build is live at a time. Each session waits for Dan to say "upload", Dan tests it on the phone, then that branch merges and the next session uploads. Once everything is merged, upload once more from main so the live build has it all.
+     - Put each session's part of the plan into its prompt (its place in the merge order, and "don't upload until Dan says"), so no session merges or uploads out of turn.
 3. Give one prompt per session, each in its own code block, and say which session it is for. If only one ticket should run now, give one prompt and say which ticket follows.
    - **First (or only) session:** the main folder, `C:\Users\Sickl\.cursor\DASSoft\Threshold`.
    - **Each extra parallel session:** its own worktree next to it, named after the ticket (for example `C:\Users\Sickl\.cursor\DASSoft\Threshold-das-68`). Remind Dan to add that folder to Cursor (File → Add Folder to Workspace).
