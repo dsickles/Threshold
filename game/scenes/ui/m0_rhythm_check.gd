@@ -10,9 +10,11 @@ extends Control
 const RECENT_TAPS := 20
 # Placeholder: the real Good window is decided when the Partner is built.
 const GOOD_WINDOW_MS := 100.0
-const DELAY_STEP_MS := 5.0
-# A quarter beat. Near half a beat, late taps would wrap round to read early.
-const DELAY_LIMIT_MS := 150.0
+const FINE_STEP_MS := 5.0
+const COARSE_STEP_MS := 25.0
+# Half a beat. Offsets are measured around the current adjustment, so any
+# value works; past half a beat it would only repeat the other side.
+const DELAY_LIMIT_MS := 300.0
 
 var _beat_seconds: float
 var _output_latency_seconds := -1.0  # Unknown until the click first starts.
@@ -35,8 +37,10 @@ func _ready() -> void:
 	_beat_seconds = _player.stream.get_length()
 	_start_button.pressed.connect(_on_start_pressed)
 	_tap_pad.button_down.connect(_on_tap)
-	%DelayDownButton.pressed.connect(_change_delay.bind(-DELAY_STEP_MS))
-	%DelayUpButton.pressed.connect(_change_delay.bind(DELAY_STEP_MS))
+	%DelayDownCoarseButton.pressed.connect(_change_delay.bind(-COARSE_STEP_MS))
+	%DelayDownButton.pressed.connect(_change_delay.bind(-FINE_STEP_MS))
+	%DelayUpButton.pressed.connect(_change_delay.bind(FINE_STEP_MS))
+	%DelayUpCoarseButton.pressed.connect(_change_delay.bind(COARSE_STEP_MS))
 	%ClearButton.pressed.connect(_on_clear_pressed)
 	%BackButton.pressed.connect(queue_free)
 	_tap_pad.disabled = true
@@ -87,7 +91,7 @@ func _wrap_to_beat(seconds: float) -> float:
 
 
 func _refresh() -> void:
-	_delay_value.text = "%+d ms" % roundi(_delay_ms)
+	_delay_value.text = "Sound delay: %+d ms (taps late: press +)" % roundi(_delay_ms)
 	var latency_text := "Reported sound delay: unknown until the click starts"
 	if _output_latency_seconds >= 0.0:
 		latency_text = "Reported sound delay: %d ms" % roundi(_output_latency_seconds * 1000.0)

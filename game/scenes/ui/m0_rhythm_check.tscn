@@ -64,33 +64,43 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 22
 autowrap_mode = 3
 
-[node name="DelayLabel" type="Label" parent="Margin/Columns/Controls"]
+[node name="DelayValue" type="Label" parent="Margin/Columns/Controls"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Sound delay (taps late: press +)"
+text = "Sound delay: +0 ms (taps late: press +)"
 
 [node name="DelayRow" type="HBoxContainer" parent="Margin/Columns/Controls"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="DelayDownButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
+[node name="DelayDownCoarseButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(110, 110)
-layout_mode = 2
-text = "−5"
-
-[node name="DelayValue" type="Label" parent="Margin/Columns/Controls/DelayRow"]
-unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "+0 ms"
-horizontal_alignment = 1
+text = "−25"
+
+[node name="DelayDownButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "−5"
 
 [node name="DelayUpButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(110, 110)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
+size_flags_horizontal = 3
 text = "+5"
+
+[node name="DelayUpCoarseButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "+25"
 
 [node name="BottomRow" type="HBoxContainer" parent="Margin/Columns/Controls"]
 layout_mode = 2
