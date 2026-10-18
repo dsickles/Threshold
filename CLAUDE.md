@@ -51,6 +51,42 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 - Don't delete or rewrite design docs. The one exception is fixing an out-of-date line after a decision (see "When documents disagree").
 - Dan follows along in Cursor. When only one session is writing, work in the main Threshold folder on a new branch, not a worktree. Use a worktree only when several sessions write at once, and tell Dan its full path so he can add it to his Cursor window (File → Add Folder to Workspace).
 
+## Suggesting the next ticket
+
+When a ticket is done and you tell Dan what comes next, never say "use the same opening steps". Give him the exact prompts to paste.
+
+1. Look in Linear for tickets in the current milestone that are Todo, labelled `v1`, and whose blockers are all Done.
+2. Decide which of them can run at the same time. Two tickets can run in parallel only if neither needs the other's result and they won't edit the same files. If they would share a file (for example, each adds its button to the M0 menu), say so and say which to merge first. If unsure, run them one after another. Parallel sessions share one itch.io page and each upload replaces the last, so tell Dan which session's build is live.
+3. Give one prompt per session, each in its own code block, and say which session it is for. If only one ticket should run now, give one prompt and say which ticket follows.
+   - **First (or only) session:** the main folder, `C:\Users\Sickl\.cursor\DASSoft\Threshold`.
+   - **Each extra parallel session:** its own worktree next to it, named after the ticket (for example `C:\Users\Sickl\.cursor\DASSoft\Threshold-das-68`). Remind Dan to add that folder to Cursor (File → Add Folder to Workspace).
+   - Use the ticket's Linear branch name (`gitBranchName`).
+
+Prompt for the main folder (fill in the `<...>` parts):
+
+```
+Before doing anything else, check where you are:
+
+1. Run "git rev-parse --show-toplevel" and "git branch --show-current" and tell me the results.
+2. The folder must be exactly C:\Users\Sickl\.cursor\DASSoft\Threshold, not any worktree. If you are anywhere else, stop and tell me; don't create or enter a worktree.
+3. Run "git status" and show me. If there are uncommitted changes you didn't make, stop and ask me.
+4. Switch to main, pull the latest, and make a new branch named <linear-branch-name>.
+
+Then run /implement <DAS-n>. Start with step-by-step instructions for any parts only I can do.
+```
+
+Prompt for a parallel worktree session:
+
+```
+Before doing anything else, set up and check your own worktree:
+
+1. In C:\Users\Sickl\.cursor\DASSoft\Threshold, run "git fetch origin", then "git worktree add C:\Users\Sickl\.cursor\DASSoft\Threshold-<das-n> -b <linear-branch-name> origin/main". If the folder or branch already exists, stop and tell me.
+2. Work only inside C:\Users\Sickl\.cursor\DASSoft\Threshold-<das-n>. Never edit files in the main Threshold folder.
+3. Run "git rev-parse --show-toplevel", "git branch --show-current" and "git status" there and show me the results.
+
+Then run /implement <DAS-n>. Start with step-by-step instructions for any parts only I can do. Another session is working on <other DAS-n> at the same time; don't touch <shared files, if any>.
+```
+
 ## Agent skills
 
 ### Issue tracker
