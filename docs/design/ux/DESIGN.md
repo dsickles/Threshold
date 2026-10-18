@@ -191,7 +191,7 @@ Godot **Control** theme. Two families, not a poster.
 - **Source Sans 3** (`{typography.body}`, `{typography.subtitle}`) — menus, subtitles, buttons.
 - **IBM Plex Mono** (`{typography.numeric}`) — Due Date, Bank Account, timers, rhythm judgments. Digits must not dance.
 
-Scale from 16px body: 16 / 18 subtitle / 20 reader (`{typography.reader.fontSize}`) / 28 micro-shout / 32 display. Novice shouts (`{typography.micro-shout}`) are the only all-caps, high-weight overlay. They are a chapter costume, not a hub voice.
+Scale from 16px body: 16 / 18 subtitle / 20 reader (`{typography.reader.fontSize}`) / 28 micro-shout / 32 display. These sizes are what the player sees on a sideways phone, not sizes on the 1280×720 layout: the layout shrinks to about 56% on an iPhone, so the shared theme scales them up to match (2026-10-18, DAS-72). Every screen uses that one shared theme for buttons and text. Novice shouts (`{typography.micro-shout}`) are the only all-caps, high-weight overlay. They are a chapter costume, not a hub voice.
 
 **Reflowed Reader View** uses `{typography.reader}` on `{colors.ink}` paper (`{components.reader-view}`), never a zoomed screenshot of 10-point type.
 
@@ -233,7 +233,7 @@ Focus is a 2px `{colors.focus-ring}` on the focused Control. Same ring for tap-f
 Shared kebab-case names with EXPERIENCE.md Component Patterns. Visual spec here; behavior there.
 
 - **button-primary** — `{components.button-primary}`. `{colors.accent}` fill, `{colors.surface}` label, `{rounded.md}`, min-height 44px. One per screen when possible (Play, Resume). Pressed: slightly darker fill.
-- **button-quiet** — `{components.button-quiet}`. Transparent, `{colors.ink}` label, 1px `{colors.border}`. Settings, Continue, secondary. Disabled Continue (no save): `{colors.ink-muted}` and not tappable — or omit the control.
+- **button-quiet** — `{components.button-quiet}`. Transparent, `{colors.ink}` label, 1px `{colors.border}`. Settings, Continue, secondary. Also any list of equal choices, such as a menu of checks or chapters. Disabled Continue (no save): `{colors.ink-muted}` and not tappable — or omit the control.
 - **panel** — `{components.panel}`. `{colors.surface-raised}`, 1px `{colors.border}`, `{rounded.md}`. Pause and Settings only.
 - **subtitle-bar** — `{components.subtitle-bar}`. `{colors.ink}` on `{colors.subtitle-bg}` at `{typography.subtitle.fontSize}`. Bottom-center. No nameplate in the House.
 - **interact-highlight** — outline or warmth on the object, `{colors.accent}`. No persistent crosshair in the House. Off when nothing is in range.
