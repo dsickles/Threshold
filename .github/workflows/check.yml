@@ -1,6 +1,7 @@
 # Runs on PRs (and on main after a merge) that touch the game, the build
-# tools or this workflow: error-checks every script with Godot 4.7.2 and
-# makes sure the "Web" export still builds. Docs-only changes skip it.
+# tools or this workflow: error-checks every script with Godot 4.7.2, runs
+# the headless tests in game/tests/ and makes sure the "Web" export still
+# builds. Docs-only changes skip it.
 # Reuses tools/publish.sh without --upload, so CI never touches itch.io.
 name: Check
 
@@ -40,5 +41,5 @@ jobs:
             ~/.local/share/godot/export_templates
           key: godot-${{ runner.os }}-${{ hashFiles('tools/publish.sh') }}
 
-      - name: Error check and web export
+      - name: Error check, tests and web export
         run: bash tools/publish.sh
