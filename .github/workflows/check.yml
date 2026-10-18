@@ -1,0 +1,35 @@
+# Runs on every PR (and on main after a merge): error-checks every script
+# with Godot 4.7.2 and makes sure the "Web" export still builds.
+# Reuses tools/publish.sh without --upload, so CI never touches itch.io.
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-and-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # Godot and the web templates are a large download; keep them between runs.
+      # The key changes whenever publish.sh (and so the pinned version) changes.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/threshold-tools
+            ~/.local/share/godot/export_templates
+          key: godot-${{ runner.os }}-${{ hashFiles('tools/publish.sh') }}
+
+      - name: Error check and web export
+        run: bash tools/publish.sh
