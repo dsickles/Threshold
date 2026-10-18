@@ -219,6 +219,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 18. Browser tests from M0 (2026-10-18)
+
+| | |
+|---|---|
+| **Was** | No automated tests in M0; only Godot's script error check. |
+| **Became** | Playwright plays the exported web build in Chromium on every PR, at laptop and phone sizes, and checks it loads, has no console errors, starts sound only after a tap, and opens and leaves each screen. A test-only probe (web, `?probe` only) tells the tests what is on the canvas. |
+| **Why** | So threads can prove more of their own work before it reaches Dan. Dan's call, 2026-10-18. His phone tests still decide feel, timing and Safari. |
+| **Record** | [scope.md](../scope.md) Settled questions, [tests/web/README.md](../../tests/web/README.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

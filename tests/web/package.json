@@ -1,0 +1,11 @@
+{
+  "name": "threshold-web-tests",
+  "private": true,
+  "description": "Browser tests for the exported web build. See README.md.",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}
