@@ -1,0 +1,137 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/m0_rhythm_check.gd" id="1_script"]
+[ext_resource type="AudioStream" path="res://assets/audio/m0_click.wav" id="2_click"]
+
+[node name="M0RhythmCheck" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.11, 0.098, 0.086, 1)
+
+[node name="ClickPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("2_click")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="Columns" type="HBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="Controls" type="VBoxContainer" parent="Margin/Columns"]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="TopRow" type="HBoxContainer" parent="Margin/Columns/Controls"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="StartButton" type="Button" parent="Margin/Columns/Controls/TopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Start click"
+
+[node name="ClockButton" type="Button" parent="Margin/Columns/Controls/TopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Clock: Godot"
+
+[node name="Results" type="Label" parent="Margin/Columns/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+autowrap_mode = 3
+
+[node name="DelayValue" type="Label" parent="Margin/Columns/Controls"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Sound delay: +0 ms (taps late: press +)"
+
+[node name="DelayRow" type="HBoxContainer" parent="Margin/Columns/Controls"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DelayDownCoarseButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "−25"
+
+[node name="DelayDownButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "−5"
+
+[node name="DelayUpButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "+5"
+
+[node name="DelayUpCoarseButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "+25"
+
+[node name="BottomRow" type="HBoxContainer" parent="Margin/Columns/Controls"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ClearButton" type="Button" parent="Margin/Columns/Controls/BottomRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Clear taps"
+
+[node name="BackButton" type="Button" parent="Margin/Columns/Controls/BottomRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Back"
+
+[node name="TapPad" type="Button" parent="Margin/Columns"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+action_mode = 0
+text = "Tap here"

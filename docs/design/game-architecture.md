@@ -141,7 +141,7 @@ To achieve the "Familiar yet Novel" aesthetic without 7 distinct asset pipelines
 ### 4.4 The Partner (Rhythm)
 
 - **Core System:** `Conductor.gd` (Singleton for this scene).
-- **Logic:** Tracks song position using `AudioServer.get_time_since_last_mix()` - `AudioServer.get_output_latency()` for precision.
+- **Logic:** On the web, plays the song through the browser's audio system and times each tap from the touch's own timestamp against the browser's output clock ([ADR-0006](../adr/0006-partner-browser-audio-clock.md)). Native builds track song position with `AudioServer.get_time_since_last_mix()` - `AudioServer.get_output_latency()`. A per-device offset from the "tap along to calibrate" step is applied on top.
 - **Data:** Beatmaps stored as JSON arrays of timestamps.
 - **Input:** `InputListener` checks the difference between `current_song_time` and `target_beat_time` to determine "Perfect/Good/Miss".
 
