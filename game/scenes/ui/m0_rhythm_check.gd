@@ -8,14 +8,14 @@ extends Control
 ## distance to the nearest click.
 
 const RECENT_TAPS := 20
-const TIGHT_WINDOW_MS := 50.0
 # Placeholder: the real Good window is decided when the Partner is built.
 const GOOD_WINDOW_MS := 100.0
 const DELAY_STEP_MS := 5.0
-const DELAY_LIMIT_MS := 300.0
+# A quarter beat. Near half a beat, late taps would wrap round to read early.
+const DELAY_LIMIT_MS := 150.0
 
 var _beat_seconds: float
-var _output_latency: float
+var _output_latency_seconds := -1.0  # Unknown until the click first starts.
 var _delay_ms := 0.0
 # Offsets in seconds before the delay adjustment, so changing the adjustment
 # re-scores taps already made.
@@ -50,7 +50,7 @@ func _on_start_pressed() -> void:
 		_tap_pad.disabled = true
 		return
 	# Read once: it can be slow, and it doesn't change while playing.
-	_output_latency = AudioServer.get_output_latency()
+	_output_latency_seconds = AudioServer.get_output_latency()
 	_player.play()
 	_start_button.text = "Stop click"
 	_tap_pad.disabled = false
@@ -61,7 +61,7 @@ func _on_tap() -> void:
 	if not _player.playing:
 		return
 	var heard := _player.get_playback_position() \
-			+ AudioServer.get_time_since_last_mix() - _output_latency
+			+ AudioServer.get_time_since_last_mix() - _output_latency_seconds
 	_raw_offsets.append(_wrap_to_beat(heard))
 	if _raw_offsets.size() > RECENT_TAPS:
 		_raw_offsets.pop_front()
@@ -88,7 +88,9 @@ func _wrap_to_beat(seconds: float) -> float:
 
 func _refresh() -> void:
 	_delay_value.text = "%+d ms" % roundi(_delay_ms)
-	var latency_text := "Reported sound delay: %d ms" % roundi(_output_latency * 1000.0)
+	var latency_text := "Reported sound delay: unknown until the click starts"
+	if _output_latency_seconds >= 0.0:
+		latency_text = "Reported sound delay: %d ms" % roundi(_output_latency_seconds * 1000.0)
 	if _raw_offsets.is_empty():
 		_results.text = "Tap along to the click.\n\n%s" % latency_text
 		return
@@ -102,12 +104,9 @@ func _refresh() -> void:
 		mean += offset
 	mean /= count
 	var variance := 0.0
-	var tight := 0
 	var good := 0
 	for offset in offsets_ms:
 		variance += (offset - mean) ** 2
-		if absf(offset) <= TIGHT_WINDOW_MS:
-			tight += 1
 		if absf(offset) <= GOOD_WINDOW_MS:
 			good += 1
 	var spread := sqrt(variance / count)
@@ -116,7 +115,6 @@ func _refresh() -> void:
 		"Last %d taps" % count,
 		"Average: %s" % _describe(mean),
 		"Spread: ±%d ms" % roundi(spread),
-		"Within ±%d ms: %d of %d" % [roundi(TIGHT_WINDOW_MS), tight, count],
 		"Within ±%d ms (Good, placeholder): %d of %d" % [roundi(GOOD_WINDOW_MS), good, count],
 		"",
 		latency_text,

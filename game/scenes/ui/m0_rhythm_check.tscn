@@ -53,13 +53,13 @@ text = "Rhythm timing"
 
 [node name="StartButton" type="Button" parent="Margin/Columns/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 text = "Start click"
 
 [node name="Results" type="Label" parent="Margin/Columns/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 210)
+custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 autowrap_mode = 3
@@ -67,7 +67,7 @@ autowrap_mode = 3
 [node name="DelayLabel" type="Label" parent="Margin/Columns/Controls"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Sound delay adjustment"
+text = "Sound delay (taps late: press +)"
 
 [node name="DelayRow" type="HBoxContainer" parent="Margin/Columns/Controls"]
 layout_mode = 2
@@ -75,7 +75,7 @@ theme_override_constants/separation = 12
 
 [node name="DelayDownButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(110, 80)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 text = "−5"
 
@@ -88,7 +88,7 @@ horizontal_alignment = 1
 
 [node name="DelayUpButton" type="Button" parent="Margin/Columns/Controls/DelayRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(110, 80)
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 text = "+5"
 
@@ -98,14 +98,14 @@ theme_override_constants/separation = 12
 
 [node name="ClearButton" type="Button" parent="Margin/Columns/Controls/BottomRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Clear taps"
 
 [node name="BackButton" type="Button" parent="Margin/Columns/Controls/BottomRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Back"
