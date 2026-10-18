@@ -175,6 +175,28 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 14. Rhythm chapters get a "tap along to calibrate" step (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | One fixed adjustment for the phone's sound delay was expected to be enough; calibration was only a fallback to propose if the M0 rhythm check failed. |
+| **Became** | A "tap along to calibrate" step is in v1. |
+| **Why** | M0 Check 2 (DAS-68): laptop Chrome held steady at about −65 ms, but iPhone Safari with Godot's clock needed about −150 ms and the average drifted while Dan tapped on the beat, so no single fixed number worked. |
+| **Record** | [scope.md](../scope.md) v1 table and "Settled questions" |
+
+---
+
+## 15. Sound plays even in iPhone silent mode (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | Nothing decided; Safari's default lets the ring/silent switch mute web audio, so a player in silent mode heard nothing. |
+| **Became** | The web build sets Safari's audio session to "playback", so the game's sound plays in silent mode. |
+| **Why** | Dan's call during the M0 rhythm check (DAS-68), where the setting was first added for testing. Rhythm chapters depend on sound. |
+| **Record** | [scope.md](../scope.md) v1 table |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
