@@ -12,7 +12,7 @@ const BROWSER_JS := """
 window.partnerConductor = window.partnerConductor || (function () {
 	var ctx = new (window.AudioContext || window.webkitAudioContext)();
 	var buf = null, src = null, t0 = 0, lastTouch = -1;
-	var active = false, playing = false, failed = false, hiddenPause = false;
+	var active = false, playing = false, failed = false, hiddenPause = false, ended = false;
 	// Browsers only start sound inside a real touch handler, and Godot sees
 	// the touch a frame later, so unlock and timestamp here.
 	function onTouch(e) {
@@ -68,6 +68,9 @@ window.partnerConductor = window.partnerConductor || (function () {
 			src = ctx.createBufferSource();
 			src.buffer = buf;
 			src.connect(ctx.destination);
+			var mine = src;  // Ignore the end of a song stopped by a restart.
+			src.onended = function () { if (src === mine) { ended = true; } };
+			ended = false;
 			t0 = ctx.currentTime + 0.1;
 			src.start(t0);
 			playing = true;
@@ -78,6 +81,7 @@ window.partnerConductor = window.partnerConductor || (function () {
 			hiddenPause = false;
 		},
 		// 'interrupted' is Safari's state for a phone call or another app's sound.
+		ended: function () { return ended; },
 		paused: function () { return playing && (hiddenPause || ctx.state === 'interrupted'); },
 		songTime: function () { return playing ? heardAt(performance.now()) : -1; },
 		tapTime: function () {
@@ -166,6 +170,16 @@ func is_paused() -> bool:
 	if uses_browser_clock:
 		return JavaScriptBridge.eval("window.partnerConductor.paused()", true)
 	return _player.stream_paused
+
+
+## True once the whole song file has played, in case it is shorter than the
+## chart says.
+func has_song_ended() -> bool:
+	if not _playing:
+		return false
+	if uses_browser_clock:
+		return JavaScriptBridge.eval("window.partnerConductor.ended()", true) == true
+	return _native_finished
 
 
 func song_time() -> float:

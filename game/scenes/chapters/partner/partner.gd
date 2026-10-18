@@ -23,6 +23,10 @@ const MISS_SOUNDS: Array[AudioStream] = [  # PLACEHOLDER for the awkward laughte
 # half the closest gap between notes (250 ms) so one tap can't count twice.
 const PERFECT_WINDOW := 0.050
 const GOOD_WINDOW := 0.110
+# A tap reaches the game a little after the touch it is timed from, so a note
+# waits this much longer before it counts as missed. Judging still uses
+# GOOD_WINDOW. GOOD_WINDOW + MISS_GRACE must stay under the 250 ms gap.
+const MISS_GRACE := 0.100
 # How far an intro tap may be from its note and still set the sound delay.
 const CALIBRATION_WINDOW := 0.250
 const MAX_SOUND_DELAY := 0.250
@@ -52,8 +56,10 @@ var _next := 0  # First note not yet passed the ring.
 var _passed := 0  # Notes hit or missed so far, for the glow's growth.
 var _intro_end := 0.0
 var _song_length := 0.0
-var _silent_bar := Vector2(94.0, 96.0)  # Bar 48: no heartbeat in the stumble.
+var _song_start := 0.0  # Where bar 1 beat 1 falls in the song file.
+var _silent: Array[Vector2] = []  # Bars where the band stops: no heartbeat.
 var _calibration: Array[float] = []
+static var _calibrated := false  # A replay's calibration starts from the last delay.
 var _last_laugh := -INF
 var _last_laugh_index := -1
 var _flash := 0.0
@@ -79,12 +85,16 @@ func _ready() -> void:
 func _load_chart() -> void:
 	var chart: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CHART_PATH))
 	var offset: float = chart.start_offset_ms / 1000.0
+	_song_start = offset
 	for ms: float in chart.notes_ms:
 		_notes.append(offset + ms / 1000.0)
 	_judged.resize(_notes.size())
 	_intro_end = offset + chart.intro_end_ms / 1000.0
 	_song_length = offset + chart.song_length_ms / 1000.0
-	_silent_bar += Vector2(offset, offset)
+	for span: Array in chart.silent_ms:
+		_silent.append(Vector2(offset + span[0] / 1000.0, offset + span[1] / 1000.0))
+	if _calibrated:
+		_calibration.append(_sound_delay)
 	for i in range(1, _notes.size()):
 		if _notes[i] - _notes[i - 1] < 2.0 * GOOD_WINDOW:
 			push_error("Partner chart: notes %d and %d are too close to judge apart" % [i - 1, i])
@@ -112,6 +122,9 @@ func _input(event: InputEvent) -> void:
 
 func _on_tap() -> void:
 	match _state:
+		State.LOADING:
+			if _conductor.has_failed():
+				queue_free()  # Back to whatever opened the chapter.
 		State.WAITING:
 			_state = State.PLAYING
 			_conductor.start()
@@ -133,7 +146,7 @@ func _process(delta: float) -> void:
 			if _state == State.PLAYING:
 				_song_time = _conductor.song_time()
 				_mark_misses()
-				if _song_time >= _song_length:
+				if _song_time >= _song_length or _conductor.has_song_ended():
 					_conductor.stop()
 					_state = State.TEST_SHOWN
 					_test_shown_at = Time.get_ticks_msec() / 1000.0
@@ -179,6 +192,7 @@ func _calibrate(raw: float) -> void:
 	if absf(nearest) > CALIBRATION_WINDOW:
 		return
 	_calibration.append(nearest)
+	_calibrated = true
 	var sorted := _calibration.duplicate()
 	sorted.sort()
 	var mid := sorted.size() / 2
@@ -190,7 +204,7 @@ func _calibrate(raw: float) -> void:
 
 func _mark_misses() -> void:
 	var t := _song_time - _sound_delay
-	while _next < _notes.size() and _notes[_next] + GOOD_WINDOW < t:
+	while _next < _notes.size() and _notes[_next] + GOOD_WINDOW + MISS_GRACE < t:
 		if _judged[_next] == Judged.PENDING:
 			_judged[_next] = Judged.MISSED
 			_passed += 1
@@ -260,8 +274,8 @@ func _draw() -> void:
 	# The heart: swells on each heartbeat, grows and warms as the song goes on.
 	var pulse := 0.0
 	if _state == State.PLAYING or _state == State.PAUSED:
-		if not (t >= _silent_bar.x and t < _silent_bar.y) and t < _notes[-1]:
-			pulse = exp(-fposmod(t, HEARTBEAT) * 6.0)
+		if not _is_silent(t) and t < _notes[-1]:
+			pulse = exp(-fposmod(t - _song_start, HEARTBEAT) * 6.0)
 	else:
 		pulse = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 2.0)  # Waiting.
 	var radius := ring * (0.45 + 0.4 * progress) * (1.0 + 0.12 * pulse + 0.1 * _flash)
@@ -285,6 +299,13 @@ func _draw() -> void:
 		var fill_color := HOPE
 		fill_color.a = fill
 		draw_circle(c, lerpf(radius, cover, ease(fill, 0.4)), fill_color)
+
+
+func _is_silent(t: float) -> bool:
+	for span in _silent:
+		if t >= span.x and t < span.y:
+			return true
+	return false
 
 
 # Connection Nodes: lights that drift in from the left and right edges, in

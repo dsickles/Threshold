@@ -69,6 +69,12 @@ done < <(find "$PROJECT_DIR" -name '*.gd' -not -path '*/.godot/*' | sort)
 if [ "$failed" -gt 0 ]; then echo "$failed script(s) failed."; exit 1; fi
 echo "All scripts passed."
 
+# Headless checks with a fake clock (no test addon yet; that is chosen in M1).
+if ! output=$("$GODOT" --headless --path "$PROJECT_DIR" --script res://tests/partner_ending_check.gd 2>&1); then
+    echo "Partner ending check failed:"; echo "$output"; exit 1
+fi
+echo "Partner ending check passed."
+
 # Export, outside game/ so Godot never imports the previous build.
 rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"

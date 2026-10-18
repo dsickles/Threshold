@@ -69,6 +69,8 @@ def main():
         "start_offset_ms": START_OFFSET_MS,
         "intro_end_ms": INTRO_BARS * 4 * BEAT_MS,
         "song_length_ms": BARS * 4 * BEAT_MS,
+        # [start, end) in ms from bar 1 beat 1, where the band (and heartbeat) stops.
+        "silent_ms": [[(b - 1) * 4 * BEAT_MS, b * 4 * BEAT_MS] for b in sorted(SILENT_BARS)],
         "notes_ms": notes,
     }
     out = pathlib.Path(__file__).resolve().parents[2] / "game/scenes/chapters/partner/beat_chart.json"

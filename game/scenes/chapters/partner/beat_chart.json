@@ -4,6 +4,12 @@
  "start_offset_ms": 0,
  "intro_end_ms": 16000,
  "song_length_ms": 208000,
+ "silent_ms": [
+  [
+   94000,
+   96000
+  ]
+ ],
  "notes_ms": [
   4000,
   5000,
