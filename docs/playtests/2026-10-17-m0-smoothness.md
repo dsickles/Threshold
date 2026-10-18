@@ -40,15 +40,18 @@ Heavy on (more drawing) read *lower* than Heavy off, 3.84 against 4.3 ms. That p
 
 ### Re-test (new game-work timing and shadow switch)
 
-To fill in. Numbers at 2:00 on the iPhone 17 Pro, Safari.
+2026-10-18, iPhone 17 Pro, Safari, itch.io build. Numbers at 2:00.
 
-| Run | FPS average | Worst frame, hitches | Game work average | Godot's timer |
-|---|---|---|---|---|
-| Heavy off, shadow on | | | | |
-| Heavy on, shadow on | | | | |
-| Heavy on, shadow off | | | | |
+| Run | FPS average | Worst frame, hitches | Game work average | Godot's timer | Memory | Load |
+|---|---|---|---|---|---|---|
+| Heavy off, shadow on | 60 | 210 ms, 3 hitches | **0.25 ms (pass)** | 4.03 ms | 70 MB | 0.5 s |
+| Heavy on, shadow on | **60.1 (pass)** | 23 ms, hitches not noted | 0.17 ms | 3.22 ms | 130 MB | 0.5 s |
+| Heavy on, shadow off | 54.2 | 23,873 ms, 12 hitches | not noted | not noted | | |
 
-If Heavy with the shadow off holds about 60 fps, the shadow is the cost and a cheaper shadow is the fix. If not, the cost is the pixel count, and drawing the 3D a little less sharp on slower phones is a scope decision for Dan.
+- **Game work** passes easily: 0.25 ms against a 4 ms bar. The first test's 4.3 ms was the measuring method, not the room.
+- **Heavy** held 60.1 fps with the shadow on, so the shadow is not the problem. But the first test gave 55.3 fps on the same setting, so the two Heavy runs disagree.
+- **Heavy, shadow off** doesn't count: a 23.9-second frame means the game was paused (the tab or app was left, or the screen locked) during the run.
+- **Heavy off** had one 210 ms frame. That is long enough to see as a jump, if it wasn't a pause too.
 
 ## Dan's verdict
 
