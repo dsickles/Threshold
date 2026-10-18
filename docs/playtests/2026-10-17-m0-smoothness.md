@@ -20,17 +20,21 @@ Hold the phone sideways. The buttons are sized for a sideways phone (about 60 px
 
 ## Results
 
-To fill in after the test. Device, browser, and the numbers at 2:00.
+Tested 2026-10-18 from the itch.io build. Numbers at 2:00.
 
-| Bar | iPhone 17 Pro, Safari, Heavy off | iPhone 17 Pro, Safari, Heavy on | Laptop Chrome |
+| Bar | iPhone 17 Pro, Safari, Heavy off | iPhone 17 Pro, Safari, Heavy on | Desktop Chrome (stands in for laptop) |
 |---|---|---|---|
-| Steady 60 fps for 2 min (avg FPS, hitches) | | | |
-| Game work ≤ 4 ms average | | (not judged) | |
-| Heavy still about 60 fps | (n/a) | | (n/a) |
-| Memory under about 500 MB | | | |
-| Load under about 10 s on home Wi‑Fi | | (n/a) | |
-| Proof square green with Heavy on | (n/a) | | |
-| Visible stutter? | | | |
+| Steady 60 fps for 2 min | **Pass**: 59.9 average (worst frame and hitches not noted) | 55.3 average, worst frame 26 ms, 1 hitch | 60 fps (other numbers not noted) |
+| Game work ≤ 4 ms average | **Fail as shown**: 4.3 ms | 3.84 ms (not judged) | not noted |
+| Heavy still about 60 fps | (n/a) | **Near miss**: 55.3, about 8% under 60 | (n/a) |
+| Memory under about 500 MB | **Pass**: 70 MB | **Pass**: 130 MB | not noted |
+| Load under about 10 s on home Wi‑Fi | **Pass**: 1.2 s | 1.2 s | not noted |
+| Proof square green with Heavy on | (n/a) | not noted (3D drawn at 4500 x 1752, 2x the 2250 x 876 of Heavy off) | |
+| Visible stutter? | None seen | not noted | not noted |
+
+### Why game work reads over the bar
+
+Heavy on (more drawing) read *lower* than Heavy off, 3.84 against 4.3 ms. That points at the measurement, not the room. The number is each second's slowest frame, not a true average. And the check's own readout (rebuilding the text panel and asking the browser for memory, four times a second) runs inside the very work being timed, so the slowest frame of every second is probably the one where the readout updates. The room itself does almost nothing per frame.
 
 ## Dan's verdict
 
