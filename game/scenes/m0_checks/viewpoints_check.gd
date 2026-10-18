@@ -27,12 +27,17 @@ const PROPS: Array[Array] = [
 	[Vector3(0.0, 1.05, 3.45), Vector3(1.2, 2.1, 0.05), Color(0.3, 0.24, 0.18)],  # Door
 ]
 
+# A glide turns to face the tapped spot, moves there still facing it, then
+# turns to that viewpoint's framed shot. These are where each part ends.
+const TURN_END := 0.2
+const MOVE_END := 0.8
+
 const GLIDE_MIN := 0.2
 const GLIDE_MAX := 3.0
 const GLIDE_STEP := 0.2
 const RING_SIZE := 110.0
 
-var _glide_seconds := 1.0
+var _glide_seconds := 2.0
 var _current := 0
 var _camera: Camera3D
 var _tween: Tween
@@ -70,12 +75,23 @@ func _go_to(index: int) -> void:
 		_tween.kill()
 	var from := _camera.global_transform
 	var to := _viewpoint_transform(index)
-	_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_tween.tween_method(_apply_glide.bind(from, to), 0.0, 1.0, _glide_seconds)
+	var heading := to.origin - from.origin
+	heading.y = 0.0
+	var facing := from.looking_at(from.origin + heading, Vector3.UP).basis
+	_tween = create_tween()
+	_tween.tween_method(_apply_glide.bind(from, facing, to), 0.0, 1.0, _glide_seconds)
 
 
-func _apply_glide(t: float, from: Transform3D, to: Transform3D) -> void:
-	_camera.global_transform = from.interpolate_with(to, t)
+func _apply_glide(t: float, from: Transform3D, facing: Basis, to: Transform3D) -> void:
+	var basis: Basis
+	if t < TURN_END:
+		basis = from.basis.slerp(facing, smoothstep(0.0, TURN_END, t))
+	elif t < MOVE_END:
+		basis = facing
+	else:
+		basis = facing.slerp(to.basis, smoothstep(MOVE_END, 1.0, t))
+	var move := smoothstep(TURN_END, MOVE_END, t)
+	_camera.global_transform = Transform3D(basis, from.origin.lerp(to.origin, move))
 
 
 # Each viewpoint gets a ring on the floor in the 3D room and a tappable button
