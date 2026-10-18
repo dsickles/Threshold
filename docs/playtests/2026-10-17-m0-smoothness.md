@@ -47,15 +47,22 @@ Heavy on (more drawing) read *lower* than Heavy off, 3.84 against 4.3 ms. That p
 | Heavy off, shadow on | 60 | 210 ms, 3 hitches | **0.25 ms (pass)** | 4.03 ms | 70 MB | 0.5 s |
 | Heavy on, shadow on | **60.1 (pass)** | 23 ms, hitches not noted | 0.17 ms | 3.22 ms | 130 MB | 0.5 s |
 | Heavy on, shadow off | 54.2 | 23,873 ms, 12 hitches | not noted | not noted | | |
+| Heavy on, shadow on (third Heavy run) | **51.8 (fail)** | 180 ms, 27 hitches | 0.17 ms | 4.34 ms | 153 MB | 0.2 s |
 
 - **Game work** passes easily: 0.25 ms against a 4 ms bar. The first test's 4.3 ms was the measuring method, not the room.
 - **Heavy** held 60.1 fps with the shadow on, so the shadow is not the problem. But the first test gave 55.3 fps on the same setting, so the two Heavy runs disagree.
 - **Heavy, shadow off** doesn't count: a 23.9-second frame means the game was paused (the tab or app was left, or the screen locked) during the run.
 - **Heavy off** had one 210 ms frame. That is long enough to see as a jump, if it wasn't a pause too.
+- **Third Heavy run** (2026-10-18, held sideways for most of the run; turned upright only for the screenshot at the end, so it ends showing 3D drawn at 2412 x 4284): 51.8 fps, well under 60. The three Heavy runs read 55.3, 60.1 and 51.8. Game work stays tiny, so the cost is all in drawing pixels, and the spread between runs looks like the phone warming up or background work rather than the game.
 
 ## Dan's verdict
 
-To fill in.
+Decided with Dan in the project thread, 2026-10-18.
+
+- **Passes:** steady 60 fps with Heavy off, game work (0.25 ms against 4 ms), memory, load, and the proof square turning green on the iPhone.
+- **Fails: Heavy still about 60 fps.** Three runs gave 55.3, 60.1 and 51.8 fps. The bar is not loosened.
+- **Known fix, not built in M0:** the quality setting already in v1 (see [../scope.md](../scope.md)) lowers how many pixels the 3D view draws on slower phones, which is exactly the load Heavy adds. The mid-range Android spot check before M1 playtests decides whether a real slower phone needs it.
+- M0 Check 1 is done; no more Heavy re-runs.
 
 ## If a bar fails
 
