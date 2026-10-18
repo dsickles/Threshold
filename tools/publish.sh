@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Cloud (Linux) version of check.ps1 + publish.ps1, for Claude threads.
 # Installs Godot 4.7.2, its web export templates and butler if missing
-# (via tools/godot-setup.sh),
-# error-checks every script, exports the "Web" preset to build/web/,
-# and uploads to itch.io only when run with --upload (after Dan says "upload").
+# (via tools/godot-setup.sh), error-checks every script, runs the tests
+# (tools/test.sh), exports the "Web" preset to build/web/, and uploads to
+# itch.io only when run with --upload (after Dan says "upload").
 #
-#   bash tools/publish.sh            # install, check, export
+#   bash tools/publish.sh            # install, check, test, export
 #   bash tools/publish.sh --upload   # ...and push to dsickles/threshold:html5
 #
 # Needs: network access to github.com and broth.itch.zone / itch.io,
@@ -41,6 +41,9 @@ while IFS= read -r file; do
 done < <(find "$PROJECT_DIR" -name '*.gd' -not -path '*/.godot/*' | sort)
 if [ "$failed" -gt 0 ]; then echo "$failed script(s) failed."; exit 1; fi
 echo "All scripts passed."
+
+# Headless gameplay and logic tests (game/tests/).
+GODOT="$GODOT" bash "$REPO_DIR/tools/test.sh"
 
 # Export, outside game/ so Godot never imports the previous build.
 rm -rf "$OUT_DIR"
