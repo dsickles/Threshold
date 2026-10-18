@@ -3,11 +3,12 @@ extends Control
 ## the taps land. Throwaway M0 scaffolding, not game code.
 ##
 ## Two clocks, to compare on a phone:
-## - Godot: the Partner's planned method (architecture 4.4): playback position
-##   + time since last mix - output latency. Drifted on iPhone Safari.
-## - Browser (web only): the click is scheduled in the browser's own audio
-##   system, and a tap is timed from the touch itself against the browser's
-##   record of what the speaker is playing right now.
+## - Godot (the default): the Partner's planned method (architecture 4.4):
+##   playback position + time since last mix - output latency. Drifted on
+##   iPhone Safari.
+## - Browser (web only, the comparison toggle): the click is scheduled in the
+##   browser's own audio system, and a tap is timed from the touch itself
+##   against the browser's record of what the speaker is playing right now.
 ## The click is exactly one beat long and loops, so a tap's offset is its
 ## distance to the nearest click.
 
@@ -17,18 +18,17 @@ const LISTED_TAPS := 10
 const GOOD_WINDOW_MS := 100.0
 const FINE_STEP_MS := 5.0
 const COARSE_STEP_MS := 25.0
-# Half a beat. Offsets are measured around the current adjustment, so any
-# value works; past half a beat it would only repeat the other side.
-const DELAY_LIMIT_MS := 300.0
 
 # Runs once in the page. Keeps its own AudioContext, separate from Godot's.
 const BROWSER_CLOCK_JS := """
 window.m0Click = window.m0Click || (function () {
 	var ctx = new (window.AudioContext || window.webkitAudioContext)();
-	var buf = null, src = null, t0 = 0, lastTouch = -1, method = '';
+	var buf = null, src = null, t0 = 0, lastTouch = -1, method = '', active = false;
 	// Browsers only allow sound to start inside a real touch handler, and
 	// Godot handles input a frame later, so unlock and timestamp here.
+	// Only while the check is open, so this context sleeps the rest of the time.
 	function onTouch(e) {
+		if (!active) { return; }
 		if (e.type === 'pointerdown') { lastTouch = e.timeStamp; }
 		if (ctx.state !== 'running') { ctx.resume(); }
 	}
@@ -36,6 +36,13 @@ window.m0Click = window.m0Click || (function () {
 		window.addEventListener(type, onTouch, true);
 	});
 	return {
+		open: function () { active = true; },
+		close: function () {
+			this.stop();
+			active = false;
+			lastTouch = -1;
+			ctx.suspend();
+		},
 		load: function (b64, rate) {
 			var bytes = atob(b64), n = bytes.length / 2;
 			buf = ctx.createBuffer(1, n, rate);
@@ -78,10 +85,13 @@ window.m0Click = window.m0Click || (function () {
 
 var _beat_seconds: float
 var _browser_available := OS.has_feature("web")
-var _use_browser_clock := _browser_available
+var _use_browser_clock := false
 var _running := false
 var _output_latency_seconds := -1.0  # Godot clock; unknown until it starts.
 var _delay_ms := 0.0
+# Half a beat. Offsets are measured around the current adjustment, so any
+# value works; past half a beat it would only repeat the other side.
+var _delay_limit_ms: float
 # Offsets in seconds before the delay adjustment, so changing the adjustment
 # re-scores taps already made.
 var _raw_offsets: Array[float] = []
@@ -100,8 +110,10 @@ func _ready() -> void:
 	_player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 	var click: AudioStreamWAV = _player.stream
 	_beat_seconds = click.get_length()
+	_delay_limit_ms = _beat_seconds * 1000.0 / 2.0
 	if _browser_available:
 		JavaScriptBridge.eval(BROWSER_CLOCK_JS, true)
+		JavaScriptBridge.eval("window.m0Click.open()", true)
 		JavaScriptBridge.eval("window.m0Click.load('%s', %d)"
 				% [Marshalls.raw_to_base64(click.data), click.mix_rate], true)
 	_clock_button.disabled = not _browser_available
@@ -119,6 +131,8 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_set_running(false)
+	if _browser_available:
+		JavaScriptBridge.eval("window.m0Click.close()", true)
 
 
 func _on_start_pressed() -> void:
@@ -156,8 +170,13 @@ func _on_tap() -> void:
 		return
 	var heard: float
 	if _use_browser_clock:
-		heard = JavaScriptBridge.eval("window.m0Click.lastTapTime()", true)
+		var tap_time: Variant = JavaScriptBridge.eval("window.m0Click.lastTapTime()", true)
+		if tap_time == null:
+			return  # The browser side failed; skip this tap.
+		heard = tap_time
 	else:
+		# Read when Godot handles the press, a frame or more after the touch;
+		# the browser clock uses the touch's own time.
 		heard = _player.get_playback_position() \
 				+ AudioServer.get_time_since_last_mix() - _output_latency_seconds
 	_raw_offsets.append(_wrap_to_beat(heard))
@@ -167,7 +186,7 @@ func _on_tap() -> void:
 
 
 func _change_delay(step_ms: float) -> void:
-	_delay_ms = clampf(_delay_ms + step_ms, -DELAY_LIMIT_MS, DELAY_LIMIT_MS)
+	_delay_ms = clampf(_delay_ms + step_ms, -_delay_limit_ms, _delay_limit_ms)
 	_refresh()
 
 
