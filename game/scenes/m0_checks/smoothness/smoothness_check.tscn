@@ -1,0 +1,310 @@
+[gd_scene load_steps=24 format=3]
+
+[ext_resource type="Script" path="res://scenes/m0_checks/smoothness/smoothness_check.gd" id="1_script"]
+[ext_resource type="Shader" path="res://scenes/m0_checks/smoothness/heavy_check.gdshader" id="2_proof"]
+
+[sub_resource type="Environment" id="Environment_room"]
+background_mode = 1
+background_color = Color(0.05, 0.045, 0.04, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.32, 0.34, 0.4, 1)
+ambient_light_energy = 0.35
+tonemap_mode = 2
+fog_enabled = true
+fog_light_color = Color(0.3, 0.28, 0.26, 1)
+fog_density = 0.04
+
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+albedo_color = Color(0.62, 0.6, 0.57, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Mat_floor"]
+albedo_color = Color(0.42, 0.38, 0.34, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_furniture"]
+albedo_color = Color(0.5, 0.48, 0.46, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_dark"]
+albedo_color = Color(0.28, 0.27, 0.26, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="Mat_shade"]
+albedo_color = Color(1, 0.86, 0.62, 1)
+emission_enabled = true
+emission = Color(1, 0.78, 0.5, 1)
+emission_energy_multiplier = 1.5
+
+[sub_resource type="BoxMesh" id="Mesh_floor"]
+size = Vector3(6, 0.1, 8)
+
+[sub_resource type="BoxMesh" id="Mesh_side_wall"]
+size = Vector3(0.1, 3, 8)
+
+[sub_resource type="BoxMesh" id="Mesh_end_wall"]
+size = Vector3(6, 3, 0.1)
+
+[sub_resource type="BoxMesh" id="Mesh_table"]
+size = Vector3(1.6, 0.08, 0.9)
+
+[sub_resource type="BoxMesh" id="Mesh_leg"]
+size = Vector3(0.08, 0.72, 0.08)
+
+[sub_resource type="BoxMesh" id="Mesh_sofa"]
+size = Vector3(2.2, 0.8, 0.9)
+
+[sub_resource type="BoxMesh" id="Mesh_shelf"]
+size = Vector3(1.2, 2, 0.4)
+
+[sub_resource type="BoxMesh" id="Mesh_box"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="CylinderMesh" id="Mesh_pole"]
+top_radius = 0.03
+bottom_radius = 0.03
+height = 1.5
+
+[sub_resource type="CylinderMesh" id="Mesh_lamp_shade"]
+top_radius = 0.18
+bottom_radius = 0.28
+height = 0.35
+
+[sub_resource type="QuadMesh" id="Mesh_proof"]
+size = Vector2(0.05, 0.05)
+
+[sub_resource type="ShaderMaterial" id="Mat_proof"]
+render_priority = 1
+shader = ExtResource("2_proof")
+shader_parameter/screen_width = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
+content_margin_left = 24.0
+content_margin_top = 16.0
+content_margin_right = 24.0
+content_margin_bottom = 16.0
+bg_color = Color(0.165, 0.145, 0.125, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.239, 0.22, 0.196, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
+content_margin_left = 24.0
+content_margin_top = 16.0
+content_margin_right = 24.0
+content_margin_bottom = 16.0
+bg_color = Color(0.239, 0.22, 0.196, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.769, 0.647, 0.455, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.11, 0.098, 0.086, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="Theme" id="Theme_check"]
+default_font_size = 24
+Button/colors/font_color = Color(0.957, 0.937, 0.902, 1)
+Button/colors/font_hover_color = Color(0.957, 0.937, 0.902, 1)
+Button/colors/font_pressed_color = Color(0.957, 0.937, 0.902, 1)
+Button/colors/font_focus_color = Color(0.957, 0.937, 0.902, 1)
+Button/colors/font_hover_pressed_color = Color(0.957, 0.937, 0.902, 1)
+Button/font_sizes/font_size = 32
+Button/styles/focus = SubResource("StyleBoxFlat_normal")
+Button/styles/hover = SubResource("StyleBoxFlat_normal")
+Button/styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
+Button/styles/normal = SubResource("StyleBoxFlat_normal")
+Button/styles/pressed = SubResource("StyleBoxFlat_pressed")
+Label/colors/font_color = Color(0.957, 0.937, 0.902, 1)
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="SmoothnessCheck" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_room")
+
+[node name="Room" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -2)
+mesh = SubResource("Mesh_floor")
+surface_material_override/0 = SubResource("Mat_floor")
+
+[node name="Ceiling" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.05, -2)
+mesh = SubResource("Mesh_floor")
+surface_material_override/0 = SubResource("Mat_wall")
+
+[node name="LeftWall" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.5, -2)
+mesh = SubResource("Mesh_side_wall")
+surface_material_override/0 = SubResource("Mat_wall")
+
+[node name="RightWall" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1.5, -2)
+mesh = SubResource("Mesh_side_wall")
+surface_material_override/0 = SubResource("Mat_wall")
+
+[node name="BackWall" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -6)
+mesh = SubResource("Mesh_end_wall")
+surface_material_override/0 = SubResource("Mat_wall")
+
+[node name="FrontWall" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 2)
+mesh = SubResource("Mesh_end_wall")
+surface_material_override/0 = SubResource("Mat_wall")
+
+[node name="Table" type="Node3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0, -2.5)
+
+[node name="Top" type="MeshInstance3D" parent="Room/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0)
+mesh = SubResource("Mesh_table")
+surface_material_override/0 = SubResource("Mat_dark")
+
+[node name="Leg1" type="MeshInstance3D" parent="Room/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.72, 0.36, -0.37)
+mesh = SubResource("Mesh_leg")
+surface_material_override/0 = SubResource("Mat_dark")
+
+[node name="Leg2" type="MeshInstance3D" parent="Room/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72, 0.36, -0.37)
+mesh = SubResource("Mesh_leg")
+surface_material_override/0 = SubResource("Mat_dark")
+
+[node name="Leg3" type="MeshInstance3D" parent="Room/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.72, 0.36, 0.37)
+mesh = SubResource("Mesh_leg")
+surface_material_override/0 = SubResource("Mat_dark")
+
+[node name="Leg4" type="MeshInstance3D" parent="Room/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72, 0.36, 0.37)
+mesh = SubResource("Mesh_leg")
+surface_material_override/0 = SubResource("Mat_dark")
+
+[node name="Sofa" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.4, -5.4)
+mesh = SubResource("Mesh_sofa")
+surface_material_override/0 = SubResource("Mat_furniture")
+
+[node name="Shelf" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2.75, 1, -3.5)
+mesh = SubResource("Mesh_shelf")
+surface_material_override/0 = SubResource("Mat_furniture")
+
+[node name="Box1" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(0.92388, 0, 0.382683, 0, 1, 0, -0.382683, 0, 0.92388, -2.2, 0.25, -1.2)
+mesh = SubResource("Mesh_box")
+surface_material_override/0 = SubResource("Mat_furniture")
+
+[node name="Box2" type="MeshInstance3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.15, 0.75, -1.25)
+mesh = SubResource("Mesh_box")
+surface_material_override/0 = SubResource("Mat_dark")
+
+[node name="Lamp" type="Node3D" parent="Room"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0, -5.2)
+
+[node name="Pole" type="MeshInstance3D" parent="Room/Lamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+mesh = SubResource("Mesh_pole")
+surface_material_override/0 = SubResource("Mat_dark")
+
+[node name="Shade" type="MeshInstance3D" parent="Room/Lamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_lamp_shade")
+surface_material_override/0 = SubResource("Mat_shade")
+
+[node name="Light" type="OmniLight3D" parent="Room/Lamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.25)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 2.5
+shadow_enabled = true
+omni_range = 9.0
+
+[node name="Camera" type="Camera3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 1.4)
+fov = 70.0
+
+[node name="ProofSquare" type="MeshInstance3D" parent="Camera"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.27, -0.5)
+cast_shadow = 0
+mesh = SubResource("Mesh_proof")
+material_override = SubResource("Mat_proof")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="Hud"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = SubResource("Theme_check")
+
+[node name="StatsPanel" type="PanelContainer" parent="Hud/Root"]
+layout_mode = 1
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 584.0
+offset_bottom = 300.0
+mouse_filter = 2
+
+[node name="Stats" type="Label" parent="Hud/Root/StatsPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Smoothness"
+
+[node name="Buttons" type="HBoxContainer" parent="Hud/Root"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -544.0
+offset_top = -134.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 16
+
+[node name="HeavyButton" type="Button" parent="Hud/Root/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(252, 110)
+layout_mode = 2
+toggle_mode = true
+text = "Heavy: off"
+
+[node name="BackButton" type="Button" parent="Hud/Root/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(252, 110)
+layout_mode = 2
+text = "Back to menu"
