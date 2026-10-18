@@ -197,6 +197,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 16. The Partner times taps with the browser's audio clock on the web (2026-10-18)
+
+| | |
+|---|---|
+| **Was** | The Partner tracked song position with Godot's mix clock minus output latency (game-architecture 4.4). |
+| **Became** | On the web it uses the browser's own audio clock and the touch's timestamp; native builds keep Godot's clock. |
+| **Why** | M0 Check 2 (DAS-68) on iPhone Safari: Godot's clock needed about −150 ms and drifted one way; the browser clock needed about −70 ms, kept nearly every tap Good and wandered rather than drifted. Dan's call, 2026-10-18. |
+| **Record** | [ADR-0006](../adr/0006-partner-browser-audio-clock.md), [game-architecture.md](game-architecture.md) 4.4 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
