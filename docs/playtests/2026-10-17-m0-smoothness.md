@@ -8,10 +8,13 @@ Yes. The heavy switch draws the 3D room at twice the screen's width and height (
 
 ## How the numbers are measured
 
+Hold the phone sideways. The buttons are sized for a sideways phone (about 60 px tall); held upright they shrink below 44 px.
+
+- **The first 2 seconds of each run are not counted** in any average, the worst frame or hitches (shaders get built then).
 - **FPS:** frames drawn per second. "Average" is over the current run.
-- **Worst frame / hitches:** the slowest single frame, and how many frames took over 25 ms (one missed frame at 60 fps). The first 2 seconds of a run are not counted (shaders get built then).
-- **Game work:** Godot's built-in process timer (the game's own work in a frame). Godot updates it once a second, so the readout is sampled once a second. In the laptop preview this number rose with Heavy on, so it may include some waiting on the graphics card. The 4 ms bar is judged with Heavy off.
-- **Memory:** Godot's own memory in the page plus its graphics memory. Safari's own overhead is not included, so treat it as a floor, not the whole picture.
+- **Worst frame / hitches:** the slowest single frame, and how many frames took over 25 ms (one missed frame at 60 fps), timed with the real clock.
+- **Game work:** Godot's built-in process timer (the game's own work in a frame). Godot updates it once a second and, as far as I know, reports the slowest frame of that second, so the average shown is an average of each second's slowest frame. That makes it stricter than a true average: a pass is a real pass, and a near-miss is worth a second look before calling it a fail. In the laptop preview this number rose with Heavy on, so it may include some waiting on the graphics card. The 4 ms bar is judged with Heavy off.
+- **Memory:** the memory the page has set aside for Godot (it only grows, never shrinks) plus Godot's graphics memory. Safari's own overhead is not included, so it is a rough figure, not the whole picture.
 - **Load:** seconds from opening the game page to the engine starting. For a fair number, use a private tab so nothing is cached.
 - Turning Heavy on or off starts a new run (the timer goes back to 0:00).
 

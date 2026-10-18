@@ -26,7 +26,8 @@ const HEAVY_SCALE := 2.0
 
 var _camera_start: Vector3
 var _look_target := Vector3(0.0, 1.0, -1.5)
-var _time := 0.0
+var _sway_time := 0.0
+var _last_frame_usec := 0
 var _load_s := -1.0
 
 var _elapsed := 0.0
@@ -48,18 +49,21 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_time += delta
+	_sway_time += delta
 	# Slow sway so any stutter is easy to see.
-	_camera.position = _camera_start + Vector3(sin(_time * 0.5) * 0.8, sin(_time * 0.3) * 0.1, 0.0)
+	_camera.position = _camera_start + Vector3(sin(_sway_time * 0.5) * 0.8, sin(_sway_time * 0.3) * 0.1, 0.0)
 	_camera.look_at(_look_target)
 
 	var screen_width := float(get_window().size.x)
 	(_proof_square.material_override as ShaderMaterial).set_shader_parameter("screen_width", screen_width)
 
+	# Real clock time, because Godot smooths delta and that can hide hitches.
+	var now_usec := Time.get_ticks_usec()
+	var frame_ms := (now_usec - _last_frame_usec) / 1000.0
+	_last_frame_usec = now_usec
 	_elapsed += delta
-	_frames += 1
 	if _elapsed > WARMUP_SECONDS:
-		var frame_ms := delta * 1000.0
+		_frames += 1
 		_worst_ms = maxf(_worst_ms, frame_ms)
 		if frame_ms > HITCH_MS:
 			_hitches += 1
@@ -81,10 +85,13 @@ func _stats_text() -> String:
 	lines.append("Smoothness: %s" % ("HEAVY (4x pixels)" if heavy else "normal"))
 	var run_note := "done" if _elapsed >= RUN_SECONDS else "keep going"
 	lines.append("Time %s of %s (%s)" % [_clock(_elapsed), _clock(RUN_SECONDS), run_note])
-	lines.append("FPS %d now, %.1f average" % [Engine.get_frames_per_second(), _frames / maxf(_elapsed, 0.001)])
+	var counted_s := _elapsed - WARMUP_SECONDS
+	var fps_avg := "%.1f" % (_frames / counted_s) if counted_s > 0.0 else "-"
+	lines.append("FPS %d now, %s average" % [Engine.get_frames_per_second(), fps_avg])
 	lines.append("Worst frame %.0f ms, hitches %d" % [_worst_ms, _hitches])
 	var work_avg := "%.2f" % (_work_ms_total / _work_samples) if _work_samples > 0 else "-"
 	lines.append("Game work %.2f ms now, %s average (bar %.0f)" % [_work_ms_now(), work_avg, WORK_BAR_MS])
+	lines.append("  (slowest frame of each second)")
 	lines.append("Memory %s (bar %.0f MB)" % [_memory_text(), MEMORY_BAR_MB])
 	lines.append("Load %s (bar %.0f s)" % ["%.1f s" % _load_s if _load_s >= 0.0 else "n/a", LOAD_BAR_S])
 	lines.append("3D drawn at %d x %d" % [roundi(window_size.x * scale), roundi(window_size.y * scale)])
@@ -92,6 +99,7 @@ func _stats_text() -> String:
 
 
 # Godot's built-in process timer: the game's own work in a frame, in ms.
+# Godot reports the slowest frame of the last second, so this runs high.
 func _work_ms_now() -> float:
 	return Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
 
@@ -136,6 +144,7 @@ func _reset_run() -> void:
 	_work_ms_total = 0.0
 	_next_work_sample = WARMUP_SECONDS
 	_next_stats_refresh = 0.0
+	_last_frame_usec = Time.get_ticks_usec()
 	_worst_ms = 0.0
 	_hitches = 0
 

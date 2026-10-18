@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scenes/m0_checks/smoothness/smoothness_check.gd" id="1_script"]
 [ext_resource type="Shader" path="res://scenes/m0_checks/smoothness/heavy_check.gdshader" id="2_proof"]
@@ -110,6 +110,18 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.769, 0.647, 0.455, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 16.0
 content_margin_top = 12.0
@@ -129,7 +141,7 @@ Button/colors/font_pressed_color = Color(0.957, 0.937, 0.902, 1)
 Button/colors/font_focus_color = Color(0.957, 0.937, 0.902, 1)
 Button/colors/font_hover_pressed_color = Color(0.957, 0.937, 0.902, 1)
 Button/font_sizes/font_size = 32
-Button/styles/focus = SubResource("StyleBoxFlat_normal")
+Button/styles/focus = SubResource("StyleBoxFlat_focus")
 Button/styles/hover = SubResource("StyleBoxFlat_normal")
 Button/styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
 Button/styles/normal = SubResource("StyleBoxFlat_normal")
@@ -273,7 +285,7 @@ layout_mode = 1
 offset_left = 24.0
 offset_top = 24.0
 offset_right = 584.0
-offset_bottom = 300.0
+offset_bottom = 330.0
 mouse_filter = 2
 
 [node name="Stats" type="Label" parent="Hud/Root/StatsPanel"]
