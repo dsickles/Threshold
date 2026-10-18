@@ -118,6 +118,7 @@ Pinned engine: **Godot 4.7.2**, standard build (not .NET). Private test link: a 
 - **Tests:** none yet. The test addon is chosen in M1, together with the core table.
 - **Export and publish:** `powershell -ExecutionPolicy Bypass -File tools/publish.ps1`. It error-checks, exports the "Web" preset (single-threaded) to `build/web/` at the repo root (outside `game/`, so Godot never imports old builds), then runs one butler command: `butler push build/web dsickles/threshold:html5`. butler is logged in once on Dan's PC.
 - **Cloud (Claude threads):** `bash tools/publish.sh` installs Godot 4.7.2, the web export templates and butler if they are missing, then error-checks and exports the same way. Add `--upload` to push to itch.io, only after Dan says "upload"; the build's version on itch is the branch's last part plus its commit. The cloud environment must allow github.com and itch.io downloads and have `BUTLER_API_KEY` set.
+- **Automatic PR checks:** `.github/workflows/check.yml` runs `bash tools/publish.sh` (no `--upload`) on every PR and on main, so a PR shows a red X if any script has an error or the web export breaks. CI never uploads to itch.io.
 - **Private test link:** https://dsickles.itch.io/threshold (restricted, password-protected; Dan holds the password, never write it in the repo).
 
 Automated tests cover the core table and save/load; everything else is checked by playing, including on Dan's phone.
