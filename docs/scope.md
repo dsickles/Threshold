@@ -41,8 +41,8 @@ The single answer to "is this in v1?". If a design doc describes something marke
 
 | Question | Needed by |
 |---|---|
-| The House's small floor plan: which rooms, where the chapter objects sit | M1 |
-| What The Partner shows on screen, its song, and its beat chart | M1 |
+| The House's small floor plan: which rooms, where the chapter objects sit (draft: [design/house-floor-plan.md](design/house-floor-plan.md)) | M1 |
+| What The Partner shows on screen, its song, and its beat chart (draft: [design/partner-song-and-beat-chart.md](design/partner-song-and-beat-chart.md)) | M1 |
 | What "Stress" is, whether it lasts beyond a chapter, and what it changes | M2 |
 | Anchor: scripted wobble or real physics | M2 (cheap test) |
 | Which automated-test addon to use for the core table and saves | M1 |
