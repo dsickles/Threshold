@@ -1,6 +1,6 @@
 extends Node3D
-## M0 check 3 (DAS-69): a gray-box room with four viewpoints. Tap a ring to
-## glide the camera there. On-screen buttons change the glide duration so Dan
+## M0 check 3 (DAS-69): a gray-box room with four viewpoints. Tap a ring on a
+## thing to glide to a view looking at it. On-screen buttons change the glide duration so Dan
 ## can pick the one that feels right. Throwaway M0 scaffolding, not the House.
 
 const MENU_SCENE := "res://scenes/ui/m0_menu.tscn"
@@ -9,13 +9,17 @@ const ACCENT := Color(0.769, 0.647, 0.455)
 const ROOM_SIZE := Vector3(10.0, 3.0, 7.0)
 const EYE_HEIGHT := 1.6
 
-# Where each viewpoint stands and what it looks at.
+# Each viewpoint frames one thing: its ring sits on "focus", and the camera
+# stands at "stand" looking at it.
 const VIEWPOINTS: Array[Dictionary] = [
-	{"stand": Vector3(0.0, 0.0, 3.0), "look_at": Vector3(0.0, 1.0, -1.0)},  # Doorway
-	{"stand": Vector3(-4.0, 0.0, -2.5), "look_at": Vector3(0.0, 1.0, 2.0)},  # Window
-	{"stand": Vector3(3.8, 0.0, -2.5), "look_at": Vector3(-1.0, 1.0, 1.0)},  # Table
-	{"stand": Vector3(-3.8, 0.0, 2.3), "look_at": Vector3(2.0, 1.0, -1.5)},  # Armchair
+	{"focus": Vector3(-4.9, 1.6, -1.0), "stand": Vector3(-1.6, 0.0, 0.2)},  # Window
+	{"focus": Vector3(1.6, 0.8, -2.3), "stand": Vector3(2.4, 0.0, 0.6)},  # Table
+	{"focus": Vector3(-4.3, 0.9, 0.6), "stand": Vector3(-1.4, 0.0, 2.2)},  # Armchair
+	{"focus": Vector3(0.0, 1.4, -3.1), "stand": Vector3(-0.6, 0.0, 0.4)},  # Shelf
 ]
+# Where you start: in the doorway, looking into the room.
+const START_STAND := Vector3(0.0, 0.0, 3.0)
+const START_LOOK_AT := Vector3(0.0, 1.0, -1.0)
 
 # Gray-box furniture: [centre, size, colour].
 const PROPS: Array[Array] = [
@@ -24,21 +28,18 @@ const PROPS: Array[Array] = [
 	[Vector3(0.0, 1.0, -3.3), Vector3(2.4, 2.0, 0.4), Color(0.4, 0.38, 0.34)],  # Shelf
 	[Vector3(4.7, 0.5, 2.2), Vector3(0.6, 1.0, 1.4), Color(0.38, 0.36, 0.33)],  # Cabinet
 	[Vector3(-4.95, 1.6, -1.0), Vector3(0.05, 1.2, 1.8), Color(0.75, 0.8, 0.85)],  # Window
-	[Vector3(0.0, 1.05, 3.45), Vector3(1.2, 2.1, 0.05), Color(0.3, 0.24, 0.18)],  # Door
 ]
-
-# A glide turns to face the tapped spot, moves there still facing it, then
-# turns to that viewpoint's framed shot. These are where each part ends.
-const TURN_END := 0.2
-const MOVE_END := 0.8
 
 const GLIDE_MIN := 0.2
 const GLIDE_MAX := 3.0
 const GLIDE_STEP := 0.2
 const RING_SIZE := 110.0
+const EDGE_MARGIN := 24.0
+# Keeps pinned rings clear of the Back and glide buttons along the top.
+const TOP_CLEAR := 160.0
 
 var _glide_seconds := 2.0
-var _current := 0
+var _current := -1
 var _camera: Camera3D
 var _tween: Tween
 var _rings: Array[Button] = []
@@ -50,7 +51,7 @@ func _ready() -> void:
 	_camera = Camera3D.new()
 	_camera.fov = 70.0
 	add_child(_camera)
-	_camera.global_transform = _viewpoint_transform(_current)
+	_camera.global_transform = _look_from(START_STAND, START_LOOK_AT)
 	_build_ui()
 
 
@@ -63,8 +64,12 @@ func _process(_delta: float) -> void:
 
 func _viewpoint_transform(index: int) -> Transform3D:
 	var vp: Dictionary = VIEWPOINTS[index]
-	var eye: Vector3 = vp.stand + Vector3.UP * EYE_HEIGHT
-	return Transform3D.IDENTITY.translated(eye).looking_at(vp.look_at, Vector3.UP)
+	return _look_from(vp.stand, vp.focus)
+
+
+func _look_from(stand: Vector3, target: Vector3) -> Transform3D:
+	var eye := stand + Vector3.UP * EYE_HEIGHT
+	return Transform3D.IDENTITY.translated(eye).looking_at(target, Vector3.UP)
 
 
 func _go_to(index: int) -> void:
@@ -75,36 +80,58 @@ func _go_to(index: int) -> void:
 		_tween.kill()
 	var from := _camera.global_transform
 	var to := _viewpoint_transform(index)
-	var heading := to.origin - from.origin
-	heading.y = 0.0
-	var facing := from.looking_at(from.origin + heading, Vector3.UP).basis
-	_tween = create_tween()
-	_tween.tween_method(_apply_glide.bind(from, facing, to), 0.0, 1.0, _glide_seconds)
+	_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_tween.tween_method(_apply_glide.bind(from, to), 0.0, 1.0, _glide_seconds)
 
 
-func _apply_glide(t: float, from: Transform3D, facing: Basis, to: Transform3D) -> void:
-	var basis: Basis
-	if t < TURN_END:
-		basis = from.basis.slerp(facing, smoothstep(0.0, TURN_END, t))
-	elif t < MOVE_END:
-		basis = facing
-	else:
-		basis = facing.slerp(to.basis, smoothstep(MOVE_END, 1.0, t))
-	var move := smoothstep(TURN_END, MOVE_END, t)
-	_camera.global_transform = Transform3D(basis, from.origin.lerp(to.origin, move))
+func _apply_glide(t: float, from: Transform3D, to: Transform3D) -> void:
+	_camera.global_transform = from.interpolate_with(to, t)
 
 
-# Each viewpoint gets a ring on the floor in the 3D room and a tappable button
-# drawn over it, so the target stays at least 44px however far away it is.
+# Each viewpoint gets a tappable ring drawn over the thing it frames, so the
+# target stays at least 44px however far away it is. A thing out of view gets
+# its ring pinned to the screen edge on its side, with an arrow, so there is
+# always somewhere visible to go.
 func _place_rings() -> void:
 	var screen := get_viewport().get_visible_rect()
+	var half := RING_SIZE / 2.0
+	var area := Rect2(
+		Vector2(EDGE_MARGIN + half, TOP_CLEAR + half),
+		screen.size - Vector2(2.0 * (EDGE_MARGIN + half), TOP_CLEAR + EDGE_MARGIN + 2.0 * half))
+	var pinned_left: Array[Button] = []
+	var pinned_right: Array[Button] = []
 	for i in _rings.size():
 		var ring := _rings[i]
-		var floor_point: Vector3 = VIEWPOINTS[i].stand + Vector3.UP * 0.02
-		var in_front := i != _current and not _camera.is_position_behind(floor_point)
-		var point := _camera.unproject_position(floor_point)
-		ring.visible = in_front and screen.grow(RING_SIZE).has_point(point)
+		ring.visible = i != _current
+		var focus: Vector3 = VIEWPOINTS[i].focus
+		var point := _camera.unproject_position(focus)
+		if _camera.is_position_behind(focus):
+			var local := _camera.global_transform.affine_inverse() * focus
+			point = Vector2(screen.size.x if local.x > 0.0 else 0.0, screen.size.y / 2.0)
+		ring.text = ""
+		if ring.visible and not area.has_point(point):
+			point = point.clamp(area.position, area.end)
+			var right := point.x > screen.size.x / 2.0
+			ring.text = "›" if right else "‹"
+			(pinned_right if right else pinned_left).append(ring)
 		ring.position = point - ring.size / 2.0
+	for side in [pinned_left, pinned_right]:
+		_spread(side, area)
+
+
+# Pinned rings on the same edge would sit on top of each other, so stack them.
+func _spread(rings: Array[Button], area: Rect2) -> void:
+	if rings.size() < 2:
+		return
+	rings.sort_custom(func(a: Button, b: Button) -> bool: return a.position.y < b.position.y)
+	var gap := RING_SIZE + 16.0
+	var mid := 0.0
+	for ring in rings:
+		mid += ring.position.y
+	mid /= rings.size()
+	var top := clampf(mid - gap * (rings.size() - 1) / 2.0, area.position.y - RING_SIZE / 2.0, area.end.y - RING_SIZE / 2.0 - gap * (rings.size() - 1))
+	for k in rings.size():
+		rings[k].position.y = top + gap * k
 
 
 func _set_glide(seconds: float) -> void:
@@ -140,22 +167,6 @@ func _build_room() -> void:
 	_add_box(Vector3(half.x + 0.05, half.y, 0.0), Vector3(0.1, ROOM_SIZE.y, ROOM_SIZE.z), wall)
 	for prop in PROPS:
 		_add_box(prop[0], prop[1], prop[2])
-
-	for vp in VIEWPOINTS:
-		var disc := CylinderMesh.new()
-		disc.top_radius = 0.35
-		disc.bottom_radius = 0.35
-		disc.height = 0.02
-		var mat := StandardMaterial3D.new()
-		mat.albedo_color = ACCENT
-		mat.emission_enabled = true
-		mat.emission = ACCENT
-		mat.emission_energy_multiplier = 0.4
-		disc.material = mat
-		var mesh := MeshInstance3D.new()
-		mesh.mesh = disc
-		mesh.position = vp.stand + Vector3.UP * 0.01
-		add_child(mesh)
 
 
 func _add_box(centre: Vector3, size: Vector3, colour: Color) -> void:
@@ -193,6 +204,7 @@ func _build_ui() -> void:
 		for state in ["normal", "hover"]:
 			ring.add_theme_stylebox_override(state, ring_style)
 		ring.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+		ring.add_theme_font_size_override("font_size", 56)
 		for state in ["pressed", "hover_pressed"]:
 			ring.add_theme_stylebox_override(state, ring_pressed)
 		ring.pressed.connect(_go_to.bind(i))
