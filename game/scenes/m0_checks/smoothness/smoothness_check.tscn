@@ -249,7 +249,8 @@ cast_shadow = 0
 mesh = SubResource("Mesh_lamp_shade")
 surface_material_override/0 = SubResource("Mat_shade")
 
-[node name="Light" type="OmniLight3D" parent="Room/Lamp"]
+[node name="LampLight" type="OmniLight3D" parent="Room/Lamp"]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.25)
 light_color = Color(1, 0.8, 0.55, 1)
 light_energy = 2.5
@@ -300,7 +301,7 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -544.0
+offset_left = -812.0
 offset_top = -134.0
 offset_right = -24.0
 offset_bottom = -24.0
@@ -314,6 +315,13 @@ custom_minimum_size = Vector2(252, 110)
 layout_mode = 2
 toggle_mode = true
 text = "Heavy: off"
+
+[node name="ShadowButton" type="Button" parent="Hud/Root/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(252, 110)
+layout_mode = 2
+toggle_mode = true
+text = "Shadow: on"
 
 [node name="BackButton" type="Button" parent="Hud/Root/Buttons"]
 unique_name_in_owner = true

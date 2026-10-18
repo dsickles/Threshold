@@ -13,10 +13,12 @@ Hold the phone sideways. The buttons are sized for a sideways phone (about 60 px
 - **The first 2 seconds of each run are not counted** in any average, the worst frame or hitches (shaders get built then).
 - **FPS:** frames drawn per second. "Average" is over the current run.
 - **Worst frame / hitches:** the slowest single frame, and how many frames took over 25 ms (one missed frame at 60 fps), timed with the real clock.
-- **Game work:** Godot's built-in process timer (the game's own work in a frame). Godot updates it once a second and, as far as I know, reports the slowest frame of that second, so the average shown is an average of each second's slowest frame. That makes it stricter than a true average: a pass is a real pass, and a near-miss is worth a second look before calling it a fail. In the laptop preview this number rose with Heavy on, so it may include some waiting on the graphics card. The 4 ms bar is judged with Heavy off.
+- **Game work** (judged against the 4 ms bar): the real average, every frame, of the time from the start of Godot's per-frame update (physics first, then everything else) to just before drawing. The check's own readout runs after drawing, so it is not counted. Changed after the first phone test (2026-10-18), because the first version averaged each second's *slowest* frame and timed the readout too.
+- **Godot's timer** (for reference, not judged): Godot's built-in process timer. It reports the slowest frame of each second and also covers some of Godot's own housekeeping, so it reads higher than Game work.
+- **Shadow switch** (test-only): turns the lamp's shadow off, to see how much of the drawing cost is the shadow.
 - **Memory:** the memory the page has set aside for Godot (it only grows, never shrinks) plus Godot's graphics memory. Safari's own overhead is not included, so it is a rough figure, not the whole picture.
 - **Load:** seconds from opening the game page to the engine starting. For a fair number, use a private tab so nothing is cached.
-- Turning Heavy on or off starts a new run (the timer goes back to 0:00).
+- Turning Heavy or Shadow on or off starts a new run (the timer goes back to 0:00).
 
 ## Results
 
@@ -35,6 +37,18 @@ Tested 2026-10-18 from the itch.io build. Numbers at 2:00.
 ### Why game work reads over the bar
 
 Heavy on (more drawing) read *lower* than Heavy off, 3.84 against 4.3 ms. That points at the measurement, not the room. The number is each second's slowest frame, not a true average. And the check's own readout (rebuilding the text panel and asking the browser for memory, four times a second) runs inside the very work being timed, so the slowest frame of every second is probably the one where the readout updates. The room itself does almost nothing per frame.
+
+### Re-test (new game-work timing and shadow switch)
+
+To fill in. Numbers at 2:00 on the iPhone 17 Pro, Safari.
+
+| Run | FPS average | Worst frame, hitches | Game work average | Godot's timer |
+|---|---|---|---|---|
+| Heavy off, shadow on | | | | |
+| Heavy on, shadow on | | | | |
+| Heavy on, shadow off | | | | |
+
+If Heavy with the shadow off holds about 60 fps, the shadow is the cost and a cheaper shadow is the fix. If not, the cost is the pixel count, and drawing the 3D a little less sharp on slower phones is a scope decision for Dan.
 
 ## Dan's verdict
 
