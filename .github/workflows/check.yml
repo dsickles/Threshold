@@ -1,12 +1,21 @@
-# Runs on every PR (and on main after a merge): error-checks every script
-# with Godot 4.7.2 and makes sure the "Web" export still builds.
+# Runs on PRs (and on main after a merge) that touch the game, the build
+# tools or this workflow: error-checks every script with Godot 4.7.2 and
+# makes sure the "Web" export still builds. Docs-only changes skip it.
 # Reuses tools/publish.sh without --upload, so CI never touches itch.io.
 name: Check
 
 on:
   pull_request:
+    paths:
+      - 'game/**'
+      - 'tools/**'
+      - '.github/workflows/check.yml'
   push:
     branches: [main]
+    paths:
+      - 'game/**'
+      - 'tools/**'
+      - '.github/workflows/check.yml'
 
 permissions:
   contents: read
