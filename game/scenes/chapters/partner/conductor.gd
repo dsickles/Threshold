@@ -1,0 +1,195 @@
+extends Node
+## The Partner's Conductor: plays the song and answers two questions, "how far
+## into the song is the sound the player hears right now?" and "how far into
+## the song was the latest tap?". It hides which clock answers them
+## (ADR-0006): the browser's audio clock on the web, Godot's clock elsewhere.
+## Switching clocks is a change to this file only.
+##
+## Song times are seconds from the start of the song file; -1 means not playing.
+
+# Runs once in the page. Its own AudioContext, separate from Godot's.
+const BROWSER_JS := """
+window.partnerConductor = window.partnerConductor || (function () {
+	var ctx = new (window.AudioContext || window.webkitAudioContext)();
+	var buf = null, src = null, t0 = 0, lastTouch = -1;
+	var active = false, playing = false, failed = false, hiddenPause = false;
+	// Browsers only start sound inside a real touch handler, and Godot sees
+	// the touch a frame later, so unlock and timestamp here.
+	function onTouch(e) {
+		if (!active) { return; }
+		if (e.type === 'pointerdown') { lastTouch = e.timeStamp; }
+		if (ctx.state !== 'running' && !document.hidden) {
+			hiddenPause = false;
+			ctx.resume();
+		}
+	}
+	['pointerdown', 'touchend', 'click'].forEach(function (type) {
+		window.addEventListener(type, onTouch, true);
+	});
+	// Hiding the tab pauses the song; the chart follows the song's clock, so
+	// they stay in step. A tap resumes it (see onTouch).
+	document.addEventListener('visibilitychange', function () {
+		if (active && playing && document.hidden) {
+			hiddenPause = true;
+			ctx.suspend();
+		}
+	});
+	function heardAt(perfMs) {
+		if (ctx.state === 'running' && ctx.getOutputTimestamp) {
+			var ts = ctx.getOutputTimestamp();
+			if (ts.contextTime > 0) {
+				return ts.contextTime + (perfMs - ts.performanceTime) / 1000 - t0;
+			}
+		}
+		var latency = ctx.outputLatency || ctx.baseLatency || 0;
+		var ago = ctx.state === 'running' ? (performance.now() - perfMs) / 1000 : 0;
+		return ctx.currentTime - ago - latency - t0;
+	}
+	return {
+		open: function () { active = true; },
+		close: function () {
+			this.stop();
+			active = false;
+			lastTouch = -1;
+			ctx.suspend();
+		},
+		load: function (b64) {
+			buf = null;
+			failed = false;
+			var bytes = atob(b64), data = new Uint8Array(bytes.length);
+			for (var i = 0; i < bytes.length; i++) { data[i] = bytes.charCodeAt(i); }
+			ctx.decodeAudioData(data.buffer,
+				function (decoded) { buf = decoded; },
+				function () { failed = true; });
+		},
+		state: function () { return failed ? 'failed' : (buf ? 'ready' : 'loading'); },
+		start: function () {
+			this.stop();
+			src = ctx.createBufferSource();
+			src.buffer = buf;
+			src.connect(ctx.destination);
+			t0 = ctx.currentTime + 0.1;
+			src.start(t0);
+			playing = true;
+		},
+		stop: function () {
+			if (src) { src.stop(); src.disconnect(); src = null; }
+			playing = false;
+			hiddenPause = false;
+		},
+		// 'interrupted' is Safari's state for a phone call or another app's sound.
+		paused: function () { return playing && (hiddenPause || ctx.state === 'interrupted'); },
+		songTime: function () { return playing ? heardAt(performance.now()) : -1; },
+		tapTime: function () {
+			if (!playing) { return -1; }
+			// A touch older than a few frames isn't this tap; use now.
+			var now = performance.now();
+			return heardAt(lastTouch >= 0 && now - lastTouch < 100 ? lastTouch : now);
+		}
+	};
+})();
+"""
+
+var uses_browser_clock := OS.has_feature("web")
+
+var _player: AudioStreamPlayer
+var _output_latency := 0.0
+var _playing := false
+var _native_finished := false
+
+
+## Hands the Conductor its song. On the web, the browser decodes it in the
+## background; wait for is_ready() before start().
+func load_song(stream: AudioStreamMP3) -> void:
+	if uses_browser_clock:
+		JavaScriptBridge.eval(BROWSER_JS, true)
+		JavaScriptBridge.eval("window.partnerConductor.open()", true)
+		JavaScriptBridge.eval("window.partnerConductor.load('%s')"
+				% Marshalls.raw_to_base64(stream.data), true)
+		return
+	_player = AudioStreamPlayer.new()
+	_player.stream = stream
+	# Stream playback runs through Godot's mixer, which the clock reading needs.
+	_player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
+	# Once the song ends, the playback position jumps back to 0.
+	_player.finished.connect(func() -> void: _native_finished = true)
+	add_child(_player)
+
+
+func is_ready() -> bool:
+	if uses_browser_clock:
+		return JavaScriptBridge.eval("window.partnerConductor.state()", true) == "ready"
+	return _player != null
+
+
+## True if the browser could not decode the song.
+func has_failed() -> bool:
+	return uses_browser_clock \
+			and JavaScriptBridge.eval("window.partnerConductor.state()", true) == "failed"
+
+
+func start() -> void:
+	_playing = true
+	if uses_browser_clock:
+		JavaScriptBridge.eval("window.partnerConductor.start()", true)
+		return
+	# Read once: it can be slow, and it doesn't change while playing.
+	_output_latency = AudioServer.get_output_latency()
+	_native_finished = false
+	_player.play()
+
+
+func stop() -> void:
+	_playing = false
+	if uses_browser_clock:
+		JavaScriptBridge.eval("window.partnerConductor.close()", true)
+	elif _player:
+		_player.stop()
+
+
+## Native builds pause here when the window loses focus. The web pauses on
+## its own when the tab is hidden.
+func pause() -> void:
+	if _playing and not uses_browser_clock:
+		_player.stream_paused = true
+
+
+## Native only: the web resumes inside the touch handler itself.
+func resume() -> void:
+	if not uses_browser_clock and _player:
+		_player.stream_paused = false
+
+
+func is_paused() -> bool:
+	if not _playing:
+		return false
+	if uses_browser_clock:
+		return JavaScriptBridge.eval("window.partnerConductor.paused()", true)
+	return _player.stream_paused
+
+
+func song_time() -> float:
+	if not _playing:
+		return -1.0
+	if uses_browser_clock:
+		var t: Variant = JavaScriptBridge.eval("window.partnerConductor.songTime()", true)
+		return t if t != null else -1.0
+	if _native_finished:
+		return _player.stream.get_length()
+	return _player.get_playback_position() \
+			+ AudioServer.get_time_since_last_mix() - _output_latency
+
+
+## Song time of the tap being handled now. On the web it comes from the touch
+## event's own timestamp; natively it is read when Godot handles the press.
+func tap_time() -> float:
+	if not _playing:
+		return -1.0
+	if uses_browser_clock:
+		var t: Variant = JavaScriptBridge.eval("window.partnerConductor.tapTime()", true)
+		return t if t != null else -1.0
+	return song_time()
+
+
+func _exit_tree() -> void:
+	stop()
