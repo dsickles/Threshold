@@ -55,6 +55,8 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 
 When a ticket is done and you tell Dan what comes next, never say "use the same opening steps". Give him the exact prompts to paste.
 
+**In a Claude Project (claude.ai), not a desktop session:** skip the prompts and worktrees below. Each ticket gets its own thread with a fresh context, so tell Dan the exact line to post in the project chat (for example "Do DAS-69"), one per ticket. Steps 1–2 below still apply: check which tickets are ready, which can run in parallel, and agree the merge plan first. The cloud can't run Godot or butler, so error checks, exports and itch.io uploads still happen on Dan's PC; say so whenever a ticket needs them. Anything a later thread must know goes in the repo or Linear, not just the thread.
+
 1. Look in Linear for tickets in the current milestone that are Todo, labelled `v1`, and whose blockers are all Done.
 2. Decide which of them can run at the same time. Two tickets can run in parallel only if neither needs the other's result and they won't edit the same files. If they would share a file (for example, each adds its button to the M0 menu), say so and say which to merge first. If unsure, run them one after another. Parallel sessions share one itch.io page and each upload replaces the last, so tell Dan which session's build is live.
    - **Agree the merge plan before any parallel session starts.** Before giving the prompts, write a short merge plan and wait for Dan to OK it. Don't leave it to the end of a session, where it is easy to miss.
