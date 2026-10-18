@@ -47,21 +47,29 @@ layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="Margin/Columns/Controls"]
+[node name="TopRow" type="HBoxContainer" parent="Margin/Columns/Controls"]
 layout_mode = 2
-text = "Rhythm timing"
+theme_override_constants/separation = 12
 
-[node name="StartButton" type="Button" parent="Margin/Columns/Controls"]
+[node name="StartButton" type="Button" parent="Margin/Columns/Controls/TopRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Start click"
+
+[node name="ClockButton" type="Button" parent="Margin/Columns/Controls/TopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Clock: browser"
 
 [node name="Results" type="Label" parent="Margin/Columns/Controls"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 20
 autowrap_mode = 3
 
 [node name="DelayValue" type="Label" parent="Margin/Columns/Controls"]

@@ -2,12 +2,17 @@ extends Control
 ## M0 check 2 (DAS-68): tap along to a click track and see how early or late
 ## the taps land. Throwaway M0 scaffolding, not game code.
 ##
-## Tap time is read from the sound clock the same way the Partner will
-## (architecture 4.4): playback position + time since last mix - output latency.
-## The click file is exactly one beat long and loops, so a tap's offset is its
+## Two clocks, to compare on a phone:
+## - Godot: the Partner's planned method (architecture 4.4): playback position
+##   + time since last mix - output latency. Drifted on iPhone Safari.
+## - Browser (web only): the click is scheduled in the browser's own audio
+##   system, and a tap is timed from the touch itself against the browser's
+##   record of what the speaker is playing right now.
+## The click is exactly one beat long and loops, so a tap's offset is its
 ## distance to the nearest click.
 
 const RECENT_TAPS := 20
+const LISTED_TAPS := 10
 # Placeholder: the real Good window is decided when the Partner is built.
 const GOOD_WINDOW_MS := 100.0
 const FINE_STEP_MS := 5.0
@@ -16,8 +21,66 @@ const COARSE_STEP_MS := 25.0
 # value works; past half a beat it would only repeat the other side.
 const DELAY_LIMIT_MS := 300.0
 
+# Runs once in the page. Keeps its own AudioContext, separate from Godot's.
+const BROWSER_CLOCK_JS := """
+window.m0Click = window.m0Click || (function () {
+	var ctx = new (window.AudioContext || window.webkitAudioContext)();
+	var buf = null, src = null, t0 = 0, lastTouch = -1, method = '';
+	// Browsers only allow sound to start inside a real touch handler, and
+	// Godot handles input a frame later, so unlock and timestamp here.
+	function onTouch(e) {
+		if (e.type === 'pointerdown') { lastTouch = e.timeStamp; }
+		if (ctx.state !== 'running') { ctx.resume(); }
+	}
+	['pointerdown', 'touchend', 'click'].forEach(function (type) {
+		window.addEventListener(type, onTouch, true);
+	});
+	return {
+		load: function (b64, rate) {
+			var bytes = atob(b64), n = bytes.length / 2;
+			buf = ctx.createBuffer(1, n, rate);
+			var data = buf.getChannelData(0);
+			for (var i = 0; i < n; i++) {
+				var v = bytes.charCodeAt(2 * i) | (bytes.charCodeAt(2 * i + 1) << 8);
+				data[i] = (v >= 32768 ? v - 65536 : v) / 32768;
+			}
+		},
+		start: function () {
+			this.stop();
+			src = ctx.createBufferSource();
+			src.buffer = buf;
+			src.loop = true;
+			src.connect(ctx.destination);
+			t0 = ctx.currentTime + 0.1;
+			src.start(t0);
+		},
+		stop: function () {
+			if (src) { src.stop(); src.disconnect(); src = null; }
+		},
+		// Seconds from the first click to the moment the tap was heard.
+		lastTapTime: function () {
+			var touch = lastTouch >= 0 ? lastTouch : performance.now();
+			if (ctx.getOutputTimestamp) {
+				var ts = ctx.getOutputTimestamp();
+				if (ts.contextTime > 0) {
+					method = 'output timestamp';
+					return ts.contextTime + (touch - ts.performanceTime) / 1000 - t0;
+				}
+			}
+			method = 'current time';
+			var latency = ctx.outputLatency || ctx.baseLatency || 0;
+			return ctx.currentTime - (performance.now() - touch) / 1000 - latency - t0;
+		},
+		method: function () { return method; }
+	};
+})();
+"""
+
 var _beat_seconds: float
-var _output_latency_seconds := -1.0  # Unknown until the click first starts.
+var _browser_available := OS.has_feature("web")
+var _use_browser_clock := _browser_available
+var _running := false
+var _output_latency_seconds := -1.0  # Godot clock; unknown until it starts.
 var _delay_ms := 0.0
 # Offsets in seconds before the delay adjustment, so changing the adjustment
 # re-scores taps already made.
@@ -25,17 +88,25 @@ var _raw_offsets: Array[float] = []
 
 @onready var _player: AudioStreamPlayer = %ClickPlayer
 @onready var _start_button: Button = %StartButton
+@onready var _clock_button: Button = %ClockButton
 @onready var _tap_pad: Button = %TapPad
 @onready var _results: Label = %Results
 @onready var _delay_value: Label = %DelayValue
 
 
 func _ready() -> void:
-	# Stream playback runs through Godot's mixer, which the sound-clock reading
+	# Stream playback runs through Godot's mixer, which the Godot clock reading
 	# depends on. The web default (samples) bypasses it.
 	_player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
-	_beat_seconds = _player.stream.get_length()
+	var click: AudioStreamWAV = _player.stream
+	_beat_seconds = click.get_length()
+	if _browser_available:
+		JavaScriptBridge.eval(BROWSER_CLOCK_JS, true)
+		JavaScriptBridge.eval("window.m0Click.load('%s', %d)"
+				% [Marshalls.raw_to_base64(click.data), click.mix_rate], true)
+	_clock_button.disabled = not _browser_available
 	_start_button.pressed.connect(_on_start_pressed)
+	_clock_button.pressed.connect(_on_clock_pressed)
 	_tap_pad.button_down.connect(_on_tap)
 	%DelayDownCoarseButton.pressed.connect(_change_delay.bind(-COARSE_STEP_MS))
 	%DelayDownButton.pressed.connect(_change_delay.bind(-FINE_STEP_MS))
@@ -43,29 +114,52 @@ func _ready() -> void:
 	%DelayUpCoarseButton.pressed.connect(_change_delay.bind(COARSE_STEP_MS))
 	%ClearButton.pressed.connect(_on_clear_pressed)
 	%BackButton.pressed.connect(queue_free)
-	_tap_pad.disabled = true
-	_refresh()
+	_set_running(false)
+
+
+func _exit_tree() -> void:
+	_set_running(false)
 
 
 func _on_start_pressed() -> void:
-	if _player.playing:
+	_set_running(not _running)
+
+
+func _on_clock_pressed() -> void:
+	_set_running(false)
+	_use_browser_clock = not _use_browser_clock
+	_raw_offsets.clear()
+	_refresh()
+
+
+func _set_running(running: bool) -> void:
+	if running:
+		if _use_browser_clock:
+			JavaScriptBridge.eval("window.m0Click.start()", true)
+		else:
+			# Read once: it can be slow, and it doesn't change while playing.
+			_output_latency_seconds = AudioServer.get_output_latency()
+			_player.play()
+	else:
 		_player.stop()
-		_start_button.text = "Start click"
-		_tap_pad.disabled = true
-		return
-	# Read once: it can be slow, and it doesn't change while playing.
-	_output_latency_seconds = AudioServer.get_output_latency()
-	_player.play()
-	_start_button.text = "Stop click"
-	_tap_pad.disabled = false
+		if _browser_available:
+			JavaScriptBridge.eval("window.m0Click.stop()", true)
+	_running = running
+	_start_button.text = "Stop click" if running else "Start click"
+	_clock_button.text = "Clock: browser" if _use_browser_clock else "Clock: Godot"
+	_tap_pad.disabled = not running
 	_refresh()
 
 
 func _on_tap() -> void:
-	if not _player.playing:
+	if not _running:
 		return
-	var heard := _player.get_playback_position() \
-			+ AudioServer.get_time_since_last_mix() - _output_latency_seconds
+	var heard: float
+	if _use_browser_clock:
+		heard = JavaScriptBridge.eval("window.m0Click.lastTapTime()", true)
+	else:
+		heard = _player.get_playback_position() \
+				+ AudioServer.get_time_since_last_mix() - _output_latency_seconds
 	_raw_offsets.append(_wrap_to_beat(heard))
 	if _raw_offsets.size() > RECENT_TAPS:
 		_raw_offsets.pop_front()
@@ -90,13 +184,19 @@ func _wrap_to_beat(seconds: float) -> float:
 	return offset
 
 
+func _clock_text() -> String:
+	if _use_browser_clock:
+		var method: String = JavaScriptBridge.eval("window.m0Click.method()", true)
+		return "Clock: browser (%s)" % (method if method != "" else "no taps yet")
+	if _output_latency_seconds < 0.0:
+		return "Clock: Godot (reported delay unknown until started)"
+	return "Clock: Godot (reported delay %d ms)" % roundi(_output_latency_seconds * 1000.0)
+
+
 func _refresh() -> void:
 	_delay_value.text = "Sound delay: %+d ms (taps late: press +)" % roundi(_delay_ms)
-	var latency_text := "Reported sound delay: unknown until the click starts"
-	if _output_latency_seconds >= 0.0:
-		latency_text = "Reported sound delay: %d ms" % roundi(_output_latency_seconds * 1000.0)
 	if _raw_offsets.is_empty():
-		_results.text = "Tap along to the click.\n\n%s" % latency_text
+		_results.text = "Tap along to the click.\n\n%s" % _clock_text()
 		return
 
 	var offsets_ms: Array[float] = []
@@ -115,13 +215,16 @@ func _refresh() -> void:
 			good += 1
 	var spread := sqrt(variance / count)
 
+	var newest := PackedStringArray()
+	for i in range(count - 1, maxi(count - LISTED_TAPS, 0) - 1, -1):
+		newest.append("%+d" % roundi(offsets_ms[i]))
+
 	var lines := PackedStringArray([
-		"Last %d taps" % count,
-		"Average: %s" % _describe(mean),
+		"Last %d taps. Average: %s" % [count, _describe(mean)],
 		"Spread: ±%d ms" % roundi(spread),
 		"Within ±%d ms (Good, placeholder): %d of %d" % [roundi(GOOD_WINDOW_MS), good, count],
-		"",
-		latency_text,
+		"Newest first: %s" % " ".join(newest),
+		_clock_text(),
 	])
 	_results.text = "\n".join(lines)
 
