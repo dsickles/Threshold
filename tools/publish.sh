@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Cloud (Linux) version of check.ps1 + publish.ps1, for Claude threads.
-# Installs Godot 4.7.2, its web export templates and butler if missing,
-# error-checks every script, runs the tests (tools/test.sh), exports the
-# "Web" preset to build/web/, and uploads to itch.io only when run with
-# --upload (after Dan says "upload").
+# Installs Godot 4.7.2, its web export templates and butler if missing
+# (via tools/godot-setup.sh), error-checks every script, runs the tests
+# (tools/test.sh), exports the "Web" preset to build/web/, and uploads to
+# itch.io only when run with --upload (after Dan says "upload").
 #
 #   bash tools/publish.sh            # install, check, test, export
 #   bash tools/publish.sh --upload   # ...and push to dsickles/threshold:html5
@@ -12,46 +12,18 @@
 # and BUTLER_API_KEY set in the environment for --upload.
 set -euo pipefail
 
-GODOT_VERSION="4.7.2"
 ITCH_TARGET="dsickles/threshold:html5"
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PROJECT_DIR="$REPO_DIR/game"
 OUT_DIR="$REPO_DIR/build/web"
-TOOLS_DIR="${THRESHOLD_TOOLS:-$HOME/.cache/threshold-tools}"
-GODOT="${GODOT:-$TOOLS_DIR/Godot_v${GODOT_VERSION}-stable_linux.x86_64}"
-BUTLER="${BUTLER:-$TOOLS_DIR/butler/butler}"
-TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
-RELEASES="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable"
 
 upload=false
 [ "${1:-}" = "--upload" ] && upload=true
 
-mkdir -p "$TOOLS_DIR"
-
-if [ ! -x "$GODOT" ]; then
-    echo "Installing Godot $GODOT_VERSION..."
-    curl -sSfL -o "$TOOLS_DIR/godot.zip" "$RELEASES/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
-    unzip -oq "$TOOLS_DIR/godot.zip" -d "$TOOLS_DIR"
-    rm "$TOOLS_DIR/godot.zip"
-    chmod +x "$GODOT"
-fi
-
-if [ ! -f "$TEMPLATES_DIR/web_nothreads_release.zip" ]; then
-    echo "Installing web export templates (large download)..."
-    curl -sSfL -o "$TOOLS_DIR/templates.tpz" "$RELEASES/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
-    mkdir -p "$TEMPLATES_DIR"
-    # Only the web templates and version file; the rest is over 1 GB of other platforms.
-    unzip -oqj "$TOOLS_DIR/templates.tpz" 'templates/web_*' 'templates/version.txt' -d "$TEMPLATES_DIR"
-    rm "$TOOLS_DIR/templates.tpz"
-fi
-
-if $upload && [ ! -x "$BUTLER" ]; then
-    echo "Installing butler..."
-    curl -sSfL -o "$TOOLS_DIR/butler.zip" "https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default"
-    unzip -oq "$TOOLS_DIR/butler.zip" -d "$TOOLS_DIR/butler"
-    rm "$TOOLS_DIR/butler.zip"
-    chmod +x "$BUTLER"
-fi
+# Install whatever is missing; this also sets $GODOT and $BUTLER.
+setup_args=(--templates)
+$upload && setup_args+=(--butler)
+source "$REPO_DIR/tools/godot-setup.sh" "${setup_args[@]}"
 
 # Error check, same as check.ps1: import first, then check each script.
 "$GODOT" --headless --path "$PROJECT_DIR" --import > /dev/null 2>&1 || { echo "Import failed."; exit 1; }

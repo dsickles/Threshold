@@ -6,19 +6,20 @@
 #   bash tools/test.sh            # every test
 #   bash tools/test.sh rhythm     # only tests whose file or name contains "rhythm"
 #
-# Uses the Godot that tools/publish.sh installs (or $GODOT). Run publish.sh
-# once first in a fresh container.
+# Installs Godot first if it is missing (tools/godot-setup.sh), or uses $GODOT.
 set -euo pipefail
 
-GODOT_VERSION="4.7.2"
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PROJECT_DIR="$REPO_DIR/game"
-TOOLS_DIR="${THRESHOLD_TOOLS:-$HOME/.cache/threshold-tools}"
-GODOT="${GODOT:-$TOOLS_DIR/Godot_v${GODOT_VERSION}-stable_linux.x86_64}"
 # A test that waits forever must not hang CI.
 LIMIT_SECONDS=300
 
-[ -x "$GODOT" ] || { echo "Godot not found at $GODOT. Run bash tools/publish.sh once first."; exit 1; }
+# Install Godot if missing. Sourced with no arguments, so it doesn't see the
+# test filter, which is put back afterwards.
+filter=("$@")
+set --
+source "$REPO_DIR/tools/godot-setup.sh"
+set -- "${filter[@]}"
 "$GODOT" --headless --path "$PROJECT_DIR" --import > /dev/null 2>&1 || { echo "Import failed."; exit 1; }
 
 failed=0
