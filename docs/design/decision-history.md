@@ -175,6 +175,39 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 14. Rhythm chapters get a "tap along to calibrate" step (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | One fixed adjustment for the phone's sound delay was expected to be enough; calibration was only a fallback to propose if the M0 rhythm check failed. |
+| **Became** | A "tap along to calibrate" step is in v1. |
+| **Why** | M0 Check 2 (DAS-68): laptop Chrome held steady at about −65 ms, but iPhone Safari with Godot's clock needed about −150 ms and the average drifted while Dan tapped on the beat, so no single fixed number worked. |
+| **Record** | [scope.md](../scope.md) v1 table and "Settled questions" |
+
+---
+
+## 15. Sound plays even in iPhone silent mode (2026-10-17)
+
+| | |
+|---|---|
+| **Was** | Nothing decided; Safari's default lets the ring/silent switch mute web audio, so a player in silent mode heard nothing. |
+| **Became** | The web build sets Safari's audio session to "playback", so the game's sound plays in silent mode. |
+| **Why** | Dan's call during the M0 rhythm check (DAS-68), where the setting was first added for testing. Rhythm chapters depend on sound. |
+| **Record** | [scope.md](../scope.md) v1 table |
+
+---
+
+## 16. The Partner times taps with the browser's audio clock on the web (2026-10-18)
+
+| | |
+|---|---|
+| **Was** | The Partner tracked song position with Godot's mix clock minus output latency (game-architecture 4.4). |
+| **Became** | On the web it uses the browser's own audio clock and the touch's timestamp; native builds keep Godot's clock. |
+| **Why** | M0 Check 2 (DAS-68) on iPhone Safari: Godot's clock needed about −150 ms and drifted one way; the browser clock needed about −70 ms, kept nearly every tap Good and wandered rather than drifted. Dan's call, 2026-10-18. |
+| **Record** | [ADR-0006](../adr/0006-partner-browser-audio-clock.md), [game-architecture.md](game-architecture.md) 4.4 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
