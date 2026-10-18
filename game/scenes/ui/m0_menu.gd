@@ -4,6 +4,7 @@ extends Control
 ## DAS-67 (Smoothness), DAS-68 (Rhythm timing) and DAS-69 (Viewpoints).
 
 const SMOOTHNESS_SCENE := "res://scenes/m0_checks/smoothness/smoothness_check.tscn"
+const VIEWPOINTS_SCENE := "res://scenes/m0_checks/viewpoints_check.tscn"
 
 @onready var _begin_button: Button = %BeginButton
 @onready var _menu: Control = %Menu
@@ -14,8 +15,8 @@ func _ready() -> void:
 	_menu.hide()
 	_begin_button.pressed.connect(_on_begin_pressed)
 	%SmoothnessButton.pressed.connect(get_tree().change_scene_to_file.bind(SMOOTHNESS_SCENE))
-	for button: Button in [%RhythmButton, %ViewpointsButton]:
-		button.pressed.connect(_on_check_pressed.bind(button.text))
+	%ViewpointsButton.pressed.connect(get_tree().change_scene_to_file.bind(VIEWPOINTS_SCENE))
+	%RhythmButton.pressed.connect(_on_check_pressed.bind(%RhythmButton.text))
 
 
 # Browsers play no sound until the first tap, so everything starts from here.
