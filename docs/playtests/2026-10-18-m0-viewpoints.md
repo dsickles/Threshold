@@ -20,8 +20,6 @@ From the M0 menu, Viewpoints opens a gray-box room (placeholder shapes, not the 
 |---|---|---|---|
 | Dan | iPhone 17 Pro Safari | No | |
 | Dan | Laptop Chrome | No | |
-| Tester 1 (new to it) | | | Not yet run. |
-| Tester 2 (new to it) | | | Not yet run. |
 
 **Chosen glide duration: 2.0 s** on both platforms. It is now the default.
 
@@ -29,4 +27,4 @@ From the M0 menu, Viewpoints opens a gray-box room (placeholder shapes, not the 
 
 2026-10-18: the edge arrows read clearly, and movement with the 2 s glide is good. He likes that pressing a circle means you start looking closer at that thing, because later, when the thing starts a task, it won't be jarring that you didn't fly behind it.
 
-Pending: the one or two new testers.
+**Pass.** No other testers: Dan is developing and testing solo for now, so the "one or two people new to it" part of the bar was dropped for this check (decision-history entry 17).

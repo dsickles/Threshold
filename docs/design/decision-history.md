@@ -208,6 +208,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 17. M0 viewpoint check judged by Dan alone; tap a thing to look at it (2026-10-18)
+
+| | |
+|---|---|
+| **Was** | The viewpoint check passed only if Dan plus one or two people new to it moved around without getting lost. Viewpoints were spots you tapped to stand on. |
+| **Became** | Dan judged it alone and passed it. A viewpoint frames one thing: you tap the thing and glide to a view looking at it; things out of view pin their ring to the screen edge with an arrow. Glide 2.0 s. |
+| **Why** | Dan is developing and testing solo for now, so there are no other testers. Standing on the tapped spot went against what he expects; looking at what you tapped also fits later, when a tapped thing starts a task. Dan's call, 2026-10-18 (DAS-69). |
+| **Record** | [scope.md](../scope.md) Settled questions, [2026-10-18 viewpoints playtest](../playtests/2026-10-18-m0-viewpoints.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
