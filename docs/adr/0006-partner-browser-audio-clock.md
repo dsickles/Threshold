@@ -16,3 +16,4 @@ The M0 rhythm check (DAS-68, [playtest note](../playtests/2026-10-17-m0-rhythm.m
 - The browser clock exists only in the web build. Native builds (PC/Steam, later) use Godot's clock, which held steady in laptop Chrome; the Conductor hides which clock is in use from the rest of the chapter.
 - Browsers only start audio inside a real touch handler, so the Partner's page script unlocks and timestamps touches itself, as the M0 check does.
 - No new addon or library: `JavaScriptBridge` ships with Godot.
+- Revisit once the Partner is playable: compare both clocks on the iPhone in the real chapter. The comparison here is thin, since the Godot-clock run on the iPhone has no tap numbers. Because the Conductor hides the clock, switching is a change to one file.
