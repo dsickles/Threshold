@@ -1,6 +1,6 @@
 # The Partner: screen, song and beat chart (draft)
 
-**Status:** Draft for Dan to edit, 2026-10-18. Not decided. Answers the open question in [scope.md](../scope.md): "What The Partner shows on screen, its song, and its beat chart" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft".
+**Status:** Draft for Dan to edit, 2026-10-18. Gaps 1, 2 and 4 and part of 3 decided by Dan on 2026-10-19 (see "Gaps only Dan can fill"); the rest is not decided. Answers the open question in [scope.md](../scope.md): "What The Partner shows on screen, its song, and its beat chart" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft".
 
 Built from: [roadmap.md](../roadmap.md) M1 ("a short Partner (3–4 minutes): one song, one beat chart, missed taps as awkward laughter"), [gdd.md](gdd.md) §1 The Partner, [requirements.md](requirements.md) FR18, UX-DR18 and UX-DR29, [epic-1-stories.md](stories/epic-1-stories.md) Story 1.2, [game-architecture.md](game-architecture.md) §4.4, [ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md) (AI music, no voice acting), the M0 rhythm check (DAS-68) and [ADR-0006](../adr/0006-partner-browser-audio-clock.md) (the browser's audio clock).
 
@@ -146,10 +146,10 @@ These come from the roadmap and stories. None is optional, and the ones that nee
 
 ## Gaps only Dan can fill
 
-1. **Abstract light and heartbeat, or show the couple?** (Recommended: abstract.)
-2. **The song's genre and mood.** (Draft: warm neo-soul, instrumental, 120 BPM.)
-3. **Laughter:** do wordless laughs count as sound effects under ADR-0005, and whose laughs are they?
-4. **Calibration inside the intro, or its own screen?** (Recommended: inside the intro.)
+1. ~~Abstract light and heartbeat, or show the couple?~~ **Decided (Dan, 2026-10-19): abstract light and heartbeat.**
+2. ~~The song's genre and mood.~~ **Decided (Dan, 2026-10-19): warm neo-soul, instrumental, 120 BPM.**
+3. **Laughter:** wordless laughs count as sound effects under ADR-0005, not voice acting (**decided, Dan, 2026-10-19**). Still open: whose laughs are they?
+4. ~~Calibration inside the intro, or its own screen?~~ **Decided (Dan, 2026-10-19): inside the intro.**
 5. **The bar-48 stumble:** keep or cut, and what it means.
 6. **The test moment:** any words, where the test is, how long it holds.
 7. **Orientation** for the whole game (sideways or upright). This screen works either way.

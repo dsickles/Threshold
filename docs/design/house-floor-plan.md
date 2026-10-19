@@ -1,6 +1,6 @@
 # The House: floor plan (draft)
 
-**Status:** Draft for Dan to edit, 2026-10-18 (third pass, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)). Not decided. Answers the open question in [scope.md](../scope.md): "The House's small floor plan: which rooms, where the chapter objects sit" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft".
+**Status:** Draft for Dan to edit, 2026-10-18 (third pass, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)). Most of Dan's calls were decided on 2026-10-19 (see "Dan's calls" at the end); the spare room's role, the memory box, the House objects and the record player's later life are still open. Answers the open question in [scope.md](../scope.md): "The House's small floor plan: which rooms, where the chapter objects sit" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft".
 
 Dan's direction, 2026-10-18: **3 bedrooms, 2 bathrooms.** The living room and kitchen are always open, because every house has them. The nursery is not near the front door. Think about where Leo starts, how he moves through the House as the story goes, and how places open up.
 
@@ -42,7 +42,7 @@ On the porch at dusk (view P), looking at the front door, on the day they move i
 | After the Provider (M2) | | Bills filed. A monitor on the nightstand. | Baby monitor |
 | After the Tuner (M2) | + spare room again | **The boxes against the spare room door are gone** and the door is ajar again; behind it, Leo's boxes still. A flat-pack crib has arrived in the entry. | Crib box |
 | After the Anchor (M2) | | The crib stands built in the living room: the spare room isn't ready for it. | Leo's boxes in the spare room |
-| After the Mourner (M2) | | The spare room is the nursery. The crib is in it. Leo's old things are gone. A hospital bag waits by the door with the keys. | Hospital bag |
+| After the Mourner (M2) | | The spare room is the nursery. The crib is in it. Leo's old things are gone. A hospital bag waits by the front door; the car keys are in a little basket on the kitchen counter, not on the entry table where they started the Loss. | Hospital bag |
 | After the Arrival (M2) | | The game ends in the nursery: the last room. | — |
 
 Only the first four rows are built in M1. The rest are a sketch so M2 doesn't paint itself into a corner.
@@ -53,7 +53,7 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 - **The spare room carries the story by being open or blocked** (principle 3, absence; principle 6, navigation is narrative). Hope opens it; grief shuts it and stacks boxes against it; hearing the baby clears them; Leo finishes it last. Boxes are the House's own language: they are everywhere on moving day, so a wall of them in front of a door reads as "not yet" or "not now" without a lock or a word (Dan, 2026-10-19).
 - **The office is blocked by boxes too, until the bills come.** Leo puts off the room for providing until he can't.
 - **One crib, one lifeline.** It doesn't exist until the Anchor. Early hope is shown by something small and true to eight weeks (one small thing for the baby), not a crib. The small thing and the first test go into a box after the Loss and come back in the Mourner, when Leo clears the room. That fixes the duplicate crib.
-- **The keys bookend the story.** The Loss and the Arrival both start by leaving through the front door with the same keys. Same act, opposite outcome, and nothing about the keys warns the player.
+- **The keys bookend the story.** The Loss and the Arrival both start by leaving through the front door with the same keys. Same act, opposite outcome, and nothing about the keys warns the player. **Dan, 2026-10-19:** one item may start more than one chapter, but only from a different place each time. So for the Loss the keys lie loose on the entry table; for the Arrival they sit in a little basket on the kitchen counter (by then the couple have a place for things). Exact spot for the Arrival: proposed.
 - **The office opens with the bills.** The fixer gets a room for providing at the moment the story turns to money.
 
 ### Rooms
@@ -78,7 +78,7 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 
 ## M1 build
 
-The porch shot, the shared front (entry, living room and kitchen as one open space), the back hall, the main bedroom, and the spare room seen from its doorway only. The office and both bathrooms are shut doors. That is at the top of the roadmap's "2–3 rooms". **Dan:** see call 6.
+The porch shot, the shared front (entry, living room and kitchen as one open space), the back hall, the main bedroom, and the spare room seen from its doorway only. The office and both bathrooms are shut doors. That is at the top of the roadmap's "2–3 rooms". Decided (Dan, 2026-10-19).
 
 ### Views (M1)
 
@@ -117,7 +117,7 @@ How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-vie
 
 Made with the narrative-craft skill. House objects reward looking. They are never required, scored or saved, each has one action, and each has a lifeline in the [continuity ledger](continuity-ledger.md). **Dan** writes any words on them; until then they are placeholders.
 
-**How many (recommended):** at any point, **2 to 3 House objects in each open room**, and on every return to the House **3 to 5 of them new or changed**, spread over different rooms, with at least one in a room the player already knows (principle 2: change the familiar). Across the whole game that is about 25 to 30 objects, many of them the same object changing. M1 has 13, several of which change.
+**How many (decided, Dan, 2026-10-19):** at any point, **2 to 3 House objects in each open room**, and on every return to the House **3 to 5 of them new or changed**, spread over different rooms, with at least one in a room the player already knows (principle 2: change the familiar). Across the whole game that is about 25 to 30 objects, many of them the same object changing. M1 has 13, several of which change.
 
 #### Start (moving day, cold)
 
@@ -154,7 +154,7 @@ The pizza box is gone.
 |---|---|---|---|
 | The car keys, dropped | Entry floor by the door (E1) | Pick them up and put them on the table | They came in and let them fall. The same keys that started the Loss. |
 | The fridge | Kitchen (K2) | Open it: dishes of food from family, one with a note (Dan's words). Its door is bare: the card is gone. | What people do after a loss: kind, a little awkward, the dark stretch's human beat. And absence: the plan was taken down. |
-| A blanket and pillow on the couch | Living room (L4) | Fold the blanket | Someone has been sleeping out here. **Dan:** whether that is Leo is story (call 13). |
+| A blanket and pillow on the couch | Living room (L4) | Fold the blanket | Leo has been sleeping out here (Dan, 2026-10-19). Nothing says so; the player works it out. |
 | The window in rain | Living room (L2) | Draw the curtain: rain | The Silence in the car, carried into the House. |
 | Boxes against the spare room door | Back hall (H1) | Look; they can't be moved | Grief shuts the room. |
 
@@ -169,6 +169,8 @@ Each return keeps to the same rule (3–5 new or changed). Ideas to start from, 
 Roadmap success criterion 2: at least 4 of 5 cold testers find the first object within about 3 minutes, with no markers. The shortest path is six taps: the front door (P to E1), the living room doorway (L1, the opening beat plays), the back-hall opening (H1), the bedroom door (B1), the record player (its close-up), and tapping it again to start. Nothing else in the cold House is warm: the lamp in the bedroom pulls the eye from L3 and H1, and the record player crackles. The House objects are side paths, not detours the player must take.
 
 ### What the player sees of Leo and Maya
+
+M1 ends after the Loss with the player left in the gray House, with no next chapter object and no "end of demo" card (Dan, 2026-10-19).
 
 Nobody is shown in the House in M1. Maya's lines in the opening beat are subtitles, as if she is in the next room. The House is first person, so Leo is never seen. This keeps M1 free of character models.
 
@@ -187,20 +189,20 @@ From the roadmap and stories. None is optional.
 
 ## Dan's calls
 
-Each has my recommended answer.
+Answered by Dan on 2026-10-19 unless marked open. Open ones have my recommended answer.
 
-1. **The spare room as "the room for later"**, holding Leo's old life until he clears it for the baby. *Recommended: yes.*
-2. **No crib until the Anchor;** early hope shown by one small thing for the baby (a onesie) on the spare room windowsill. What the small thing is, and who bought it, is yours. *Recommended: yes, a onesie, left there by Maya.*
-3. **The memory box:** after the Loss the test and the onesie go into a shoebox in the spare room, found again in the Mourner. What Leo does with it then is yours. *Recommended: yes; decide its ending when the Mourner is written.*
-4. **Starting on the porch** at dusk on moving day, so the first tap crosses the threshold. *Recommended: yes.*
-5. **The keys start both the Loss and the Arrival.** The errand behind the Loss is yours. *Recommended: yes.*
-6. **M1 build size:** porch shot, shared front, back hall, main bedroom, and the spare room doorway. *Recommended: yes.*
-7. **One storey, not "Upstairs".** *Recommended: one storey, for M1 cost. Say if you meant floors by "levels".*
-8. **The record player's later life** (does it play again in the Arrival, or get packed away with Leo's old things?). *Recommended: decide with the Arrival.*
-9. **The end of M1:** leave the player in the gray House with no next object, or end on a card? *Recommended: leave them in the House, no text.*
-10. **The words of the opening beat** and its closed-off/open line. Not drafted; the skill never writes story words.
-11. ~~The wrapped photo~~ Decided 2026-10-19: yes, the player sees them in the photo.
-12. **The 13 M1 House objects** above, staggered across Start, the opening beat, the Partner and the Loss. *Recommended: yes; you write the box label, Maya's list, the fridge card and the note on the dish.*
-13. **The blanket on the couch after the Loss:** someone sleeping in the living room. Is it Leo? *Recommended: yes; it says a lot without a word, and it's yours to decide.*
-14. **The rule of thumb:** 2–3 House objects per open room, 3–5 new or changed on every return. *Recommended: yes, and check it against pacing in M2.*
-15. **"Immediately available":** I read it as "the next chapter object works as soon as the player is back, and is never gated behind House objects". The record player still waits for the opening beat, which is on the only path. *Recommended: keep the opening beat first.*
+1. **Open: the spare room as "the room for later".** Draft: on moving day Leo's pre-baby things are put in the spare room; it isn't obviously a nursery at first, the onesie appears there after the Partner, and the Mourner is Leo clearing his old things out to make it the nursery. Dan, 2026-10-19: unsure. He likes the onesie moment being in that room, wants the room not to read as a nursery straight away, and thinks the Mourner may need another angle. *Recommended: keep the draft for M1, since M1 only needs the spare room up to the Loss, and settle the Mourner's angle when the Mourner is designed.*
+2. **Decided:** no crib until the Anchor; the onesie stands for early hope. Who bought it is still open (draft: Maya).
+3. **Open: the memory box.** After the Loss the test and the onesie go into a shoebox in the spare room, found again in the Mourner. *Recommended: yes; decide its ending with the Mourner (tied to call 1).*
+4. **Decided:** the game starts on the porch at dusk on moving day.
+5. **Decided:** the keys start both the Loss and the Arrival, from different places (one item may start several chapters, but from a different place each time). Still open: the errand behind the Loss.
+6. **Decided:** the M1 build size above.
+7. **Decided:** one storey.
+8. **Open: the record player's later life** (does it play again in the Arrival, or get packed away?). *Recommended: decide with the Arrival.*
+9. **Decided:** M1 ends in the gray House, with no card.
+10. **Decided: there is an opening beat**, playing on first arrival in the living room and opening the back hall. Its words are Dan's to write.
+11. **Decided:** the wrapped photo; the player sees Leo and Maya in it.
+12. **Open: the 13 M1 House objects** above. *Recommended: yes; Dan writes the box label, Maya's list, the fridge card and the note on the dish.*
+13. **Decided:** the blanket on the couch: Leo slept there.
+14. **Decided:** the rule of thumb (2–3 House objects per open room, 3–5 new or changed on every return).
+15. **Decided:** the opening beat comes before the record player works; after that, every chapter object works as soon as the player is back.

@@ -73,6 +73,8 @@
 <text x="422.0" y="392.0" font-size="10.5" fill="#8B3A32" text-anchor="start">records</text>
 <rect x="169.0" y="99.0" width="10" height="10" fill="#8B3A32"/>
 <text x="182.0" y="108.0" font-size="10.5" fill="#8B3A32" text-anchor="start">Maya's list</text>
+<rect x="169.0" y="151.0" width="10" height="10" fill="#8B3A32"/>
+<text x="166.0" y="160.0" font-size="10.5" fill="#8B3A32" text-anchor="end">test (after the Partner)</text>
 <polygon points="110.0,536.0 114.8,551.2 105.2,551.2" fill="#0E7A4F"/>
 <circle cx="110" cy="560.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
 <text x="110" y="563.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">P</text>
