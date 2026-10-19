@@ -34,6 +34,8 @@ Every existing test this PR edits or deletes, and why. Write "None" if none. Any
 
 ## Local checks
 
+itch.io build: <short sha of the head commit>, threshold-review (or "itch.io build: none" if the PR doesn't change the game)
+
 Pasted output of any check that ran only on a machine and not in CI (for example `tools/check.ps1`). Write "None" if everything ran in CI.
 
 ## Self-review

@@ -16,7 +16,8 @@ Open each PR as a **draft**. It leaves draft (is marked "Ready for review") only
 3. **Tests that changed are listed.** Any existing test edited or deleted, any removed assert, wider tolerance, skip or test that no longer runs, goes under "Tests changed" with the reason.
 4. **A self-review pass is done.** Before leaving draft, reread the whole diff against the ticket (not against your own plan), as if you were a reviewer seeing it cold. Run the repo's checks on the final commit, confirm each proof exists on that commit, and check CLAUDE.md's "Rules that must not break". Fix what you find, then record it in the "Self-review" section.
 5. **CI is green on the latest commit.** The proof column points at that run, not an older one, and at tests CI actually runs (Hopper checks the test count in the log).
-6. **The other template sections are filled in.** "Depends on and merge order" (other open PRs this one needs or overlaps, which merges first, and which PR removes any code the two duplicate), "Out-of-scope changes" (anything not asked for by the ticket, or "None"), and "Local checks" (pasted output of any check that only ran on a machine, not in CI).
+6. **A review build is on itch.io.** For any PR that changes `game/`, run `bash tools/publish.sh --review` on the head commit. It uploads to the private review page (https://dsickles.itch.io/threshold-review), not the main page, so it needs no "upload" from Dan. Under "Local checks" write `itch.io build: <short sha>, threshold-review`, or `itch.io build: none` for a PR with no game change. Hopper loads that build and runs the flows the PR touches; a failure there is a required change. She can't hear sound, use real touch or judge rhythm timing to the frame, so those stay "Needs Dan's device" rows.
+7. **The other template sections are filled in.** "Depends on and merge order" (other open PRs this one needs or overlaps, which merges first, and which PR removes any code the two duplicate), "Out-of-scope changes" (anything not asked for by the ticket, or "None"), and "Local checks" (pasted output of any check that only ran on a machine, not in CI).
 
 If a later push changes what a criterion depends on, update its row before asking for another review.
 
@@ -27,7 +28,7 @@ Rows marked "Needs Dan's device" don't hold up Hopper's approval: she approves t
 Hopper's review starts only when a ticket's status changes to **In Review**.
 
 - Move the ticket to In Review only when the PR leaves draft, never while it is still a draft.
-- After each round of fixes (for Hopper or anyone else), once CI is green on the new commit, move the ticket back to **In Progress** and then to **In Review** again. Without that status change Hopper never sees the fixes.
+- After each round of fixes (for Hopper or anyone else), once CI is green on the new commit, re-upload the review build and update its sha in the PR body, then move the ticket back to **In Progress** and then to **In Review** again. Without that status change Hopper never sees the fixes.
 - When Dan merges the PR, the thread that owns it moves the ticket to **Done**. Hopper never marks Done.
 
 ## Reviews
