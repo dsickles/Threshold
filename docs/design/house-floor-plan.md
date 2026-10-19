@@ -35,12 +35,12 @@ On the porch at dusk (view P), looking at the front door, on the day they move i
 | Point | Open | What the player finds | Next chapter object |
 |---|---|---|---|
 | Start | Porch, entry, living room, kitchen | Cold: bare bulbs, boxes. Moving boxes stacked in the doorway to the back hall. | None until the opening beat |
-| After the opening beat (plays at L1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. | Record player |
+| After the opening beat (plays at L1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. **Moving boxes are stacked against the office door** ("we'll do the office later"). | Record player |
 | After the Partner | + spare room doorway (S1) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo's boxes pushed to one side, a corner cleared by the window, and on the windowsill one small thing for the baby (the onesie). | Car keys, on the entry table |
-| After the Loss | − spare room | Gray, rain on the windows. The test and the onesie are gone from view. **The spare room door is shut again** and can't be tapped. | None in M1 (the end of M1) |
-| After the Novice (M2) | + office | Colour bleeds back; the rain stops. Bills are piled on the office desk. | Bills |
+| After the Loss | − spare room | Gray, rain on the windows. The test and the onesie are gone from view. **The spare room door is shut, and moving boxes are stacked against it**, so the hall now ends in a wall of boxes. | None in M1 (the end of M1) |
+| After the Novice (M2) | + office | Colour bleeds back; the rain stops. **The boxes in front of the office door are gone**; bills are piled on the desk inside. | Bills |
 | After the Provider (M2) | | Bills filed. A monitor on the nightstand. | Baby monitor |
-| After the Tuner (M2) | + spare room again | The door is ajar again; behind it, Leo's boxes still. A flat-pack crib has arrived in the entry. | Crib box |
+| After the Tuner (M2) | + spare room again | **The boxes against the spare room door are gone** and the door is ajar again; behind it, Leo's boxes still. A flat-pack crib has arrived in the entry. | Crib box |
 | After the Anchor (M2) | | The crib stands built in the living room: the spare room isn't ready for it. | Leo's boxes in the spare room |
 | After the Mourner (M2) | | The spare room is the nursery. The crib is in it. Leo's old things are gone. A hospital bag waits by the door with the keys. | Hospital bag |
 | After the Arrival (M2) | | The game ends in the nursery: the last room. | — |
@@ -50,7 +50,8 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 ### Why it works
 
 - **The living room and kitchen never change their openness**, so the player always has a home base, and every change is seen against them.
-- **The spare room carries the story by being open or shut** (principle 3, absence; principle 6, navigation is narrative). Hope opens it, grief shuts it, hearing the baby opens it again, and Leo finishes it last.
+- **The spare room carries the story by being open or blocked** (principle 3, absence; principle 6, navigation is narrative). Hope opens it; grief shuts it and stacks boxes against it; hearing the baby clears them; Leo finishes it last. Boxes are the House's own language: they are everywhere on moving day, so a wall of them in front of a door reads as "not yet" or "not now" without a lock or a word (Dan, 2026-10-19).
+- **The office is blocked by boxes too, until the bills come.** Leo puts off the room for providing until he can't.
 - **One crib, one lifeline.** It doesn't exist until the Anchor. Early hope is shown by something small and true to eight weeks (one small thing for the baby), not a crib. The small thing and the first test go into a box after the Loss and come back in the Mourner, when Leo clears the room. That fixes the duplicate crib.
 - **The keys bookend the story.** The Loss and the Arrival both start by leaving through the front door with the same keys. Same act, opposite outcome, and nothing about the keys warns the player.
 - **The office opens with the bills.** The fixer gets a room for providing at the moment the story turns to money.
@@ -66,8 +67,8 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 | Back hall | After the opening beat | Leads straight to the spare room's door |
 | Bedroom 1 (main) and Bath 1 (en-suite) | After the opening beat | The couple's room: the Partner and the Tuner start here |
 | Bath 2 (hall) | After the opening beat | Ordinary, as in any house; never a chapter room |
-| Bedroom 3: office | After the Novice | The Provider's desk |
-| Bedroom 2: spare room, then nursery | Ajar after the Partner, shut after the Loss, ajar after the Tuner, finished after the Mourner | The room for later |
+| Bedroom 3: office | Boxes stacked against its door from the opening beat; cleared after the Novice | The Provider's desk |
+| Bedroom 2: spare room, then nursery | Ajar after the Partner; shut with boxes stacked against it after the Loss; cleared and ajar after the Tuner; finished after the Mourner | The room for later |
 
 ## Alternatives considered
 
@@ -93,35 +94,75 @@ How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-vie
 | Living room | **L1** doorway | Across the room | The couch, the big window, the kitchen beyond. The opening beat plays on first arrival here. | Always |
 | | **L2** wall | The big window | The street at dusk; rain after the Loss | Always |
 | | **L3** corner | The back-hall opening | Moving boxes blocking it at the start; after the opening beat, the hall and a warm lamp beyond | Always |
-| | **L4** wall | The back wall | The couch, still in plastic | Always |
+| | **L4** wall | The back wall | The couch, still in plastic; the crate of records | Always |
 | Kitchen | **K1** doorway | Into the kitchen | The fridge, the counter, the table | Always |
 | | **K2** wall | The fridge | The fridge | Always |
 | | **K3** corner | The table | The table and its chairs, the window over it | Always |
-| Back hall | **H1** doorway | Down the hall | Straight to the spare room's shut door at the far end; the bedroom door with lamp light spilling out | After the opening beat |
+| Back hall | **H1** doorway | Down the hall | Straight to the spare room's door at the far end (a wall of boxes after the Loss); the office door with boxes against it; the bedroom door with lamp light spilling out | After the opening beat |
 | Bedroom | **B1** doorway | Into the bedroom | The mattress on the floor, the lamp, the record player on its box | After the opening beat |
-| | **B2** wall | The bed wall | The mattress, the nightstand (the test, after the Partner), the wrapped photo against the wall | After the opening beat |
+| | **B2** wall | The bed wall | The mattress, the nightstand (Maya's list; the test after the Partner), the wrapped photo against the wall | After the opening beat |
 | | **B3** corner | The record player | The record player on a moving box | After the opening beat |
 | Spare room | **S1** doorway | Into the spare room | Leo's boxes pushed aside, a cleared corner, the onesie on the windowsill. The player only looks in from the door. | After the Partner, until the Loss |
 
-### House objects (M1)
+### Chapter objects are always ready
 
-Made with the narrative-craft skill. Each one has one action, is never required, scored or saved, and has a lifeline in the [continuity ledger](continuity-ledger.md). **Dan** writes any words on them; until then they are placeholders.
-
-| Object | Where (view) | Action | Why it's there |
-|---|---|---|---|
-| Leo's moving box | Entry (E1) | Open it: his old things inside (a guitar strap, games, a band T-shirt). The label on it is Dan's to write. | Sets up the spare room: after the opening beat this box is gone from the entry, carried to the spare room with the rest of Leo's old life, where the Mourner pays it off. |
-| The big window | Living room (L2) | Draw back the curtain and look out | The world outside carries the weather of the story: dusk at the start, rain after the Loss. |
-| The fridge | Kitchen (K2) | Open it: nearly empty on moving day | The House's hum lives here, and in M2 the IVF medication appears inside it (the Novice). The player learns where the fridge is before it matters. |
-| The wrapped photo | Bedroom (B2) | Peel back the bubble wrap: a photo of Leo and Maya | The only place the player sees the couple in M1. **Dan:** showing their faces is your call (see call 11). |
-
-Chapter objects work the same way (close-up, then the action starts the chapter):
+**Dan, 2026-10-19:** the next chapter object is available at once. It never waits for the player to find House objects. On each return the player arrives in the room where the chapter began (the bedroom after the Partner; the entry after the Loss, coming in from the car), and the next chapter object works the moment they reach it.
 
 | Chapter object | Where (view) | Action | Active |
 |---|---|---|---|
-| Record player | Bedroom (B3) | Lower the needle: the Partner begins | After the opening beat, until the Partner |
-| Car keys | Entry (E2) | Pick them up: the Loss begins | After the Partner. Before then they are just there: no ring, no highlight. |
+| Record player | Bedroom (B3) | Lower the needle: the Partner begins | From the moment the bedroom opens (straight after the opening beat), until the Partner |
+| Car keys | Entry (E2) | Pick them up: the Loss begins | As soon as the player is back from the Partner. Before then they are just there: no ring, no highlight. |
 
-**Choice:** the onesie in the spare room is seen from the doorway (S1) but can't be tapped in M1. The player stands at the door and doesn't go in. That hesitation is the feeling of early hope.
+### House objects through the story
+
+Made with the narrative-craft skill. House objects reward looking. They are never required, scored or saved, each has one action, and each has a lifeline in the [continuity ledger](continuity-ledger.md). **Dan** writes any words on them; until then they are placeholders.
+
+**How many (recommended):** at any point, **2 to 3 House objects in each open room**, and on every return to the House **3 to 5 of them new or changed**, spread over different rooms, with at least one in a room the player already knows (principle 2: change the familiar). Across the whole game that is about 25 to 30 objects, many of them the same object changing. M1 has 13, several of which change.
+
+#### Start (moving day, cold)
+
+| Object | Where (view) | Action | What it says |
+|---|---|---|---|
+| Leo's moving box | Entry (E1) | Open it: his old things (a guitar strap, games, a band T-shirt). The label is Dan's to write. | His old life, arriving. After the opening beat it is gone, carried to the spare room. |
+| Crate of records | Living room (L4) | Flick through them | Their music. One of them is the Partner's song (see the Partner draft). |
+| The big window | Living room (L2) | Draw the curtain and look out | Dusk on a new street. Later it carries the weather of the story. |
+| Pizza box | Kitchen (K3, on the table) | Open it: two slices left | Moving-day dinner. The small human, funny beat. |
+| The fridge | Kitchen (K2) | Open it: nearly empty | The hum lives here. In M2 the IVF medication appears inside. |
+
+#### After the opening beat (the bedroom opens)
+
+| Object | Where (view) | Action | What it says |
+|---|---|---|---|
+| The wrapped photo | Bedroom (B2) | Peel back the bubble wrap: Leo and Maya | The only place the couple are seen in M1 (Dan, 2026-10-19: yes to the photo). |
+| Maya's list | Bedroom nightstand (B2) | Read it. The words are Dan's to write. | Maya over-researches and worries about small things (narrative-design.md). Her character, without her on screen. |
+
+#### After the Partner (warm)
+
+| Object | Where (view) | Action | What it says |
+|---|---|---|---|
+| The positive test | Bedroom nightstand (B2) | Pick it up and look | The chapter's result, in the room (one result, same for everyone). |
+| The photo, now hung | Bedroom wall (B2) | Look | A changed object: they are making the place theirs. |
+| A card on the fridge | Kitchen (K2) | Read it. Its wording and date are Dan's. **Dan:** an appointment card here would tie to the errand behind the keys (call 5). | Planning ahead. It is ordinary, so it isn't a warning. |
+| The record crate, one missing | Living room (L4) | Flick through: one gap | The record is on the player in the bedroom. Continuity the player can notice. |
+| The onesie | Spare room windowsill (S1) | Seen from the doorway, can't be tapped in M1 | Early hope, looked at from the door. |
+
+The pizza box is gone.
+
+#### After the Loss (gray, rain)
+
+| Object | Where (view) | Action | What it says |
+|---|---|---|---|
+| The car keys, dropped | Entry floor by the door (E1) | Pick them up and put them on the table | They came in and let them fall. The same keys that started the Loss. |
+| The fridge | Kitchen (K2) | Open it: dishes of food from family, one with a note (Dan's words). Its door is bare: the card is gone. | What people do after a loss: kind, a little awkward, the dark stretch's human beat. And absence: the plan was taken down. |
+| A blanket and pillow on the couch | Living room (L4) | Fold the blanket | Someone has been sleeping out here. **Dan:** whether that is Leo is story (call 13). |
+| The window in rain | Living room (L2) | Draw the curtain: rain | The Silence in the car, carried into the House. |
+| Boxes against the spare room door | Back hall (H1) | Look; they can't be moved | Grief shuts the room. |
+
+The test is gone from the nightstand and the onesie from the windowsill: both are in the memory box behind the blocked door (the ledger).
+
+#### Later, in M2 (sketch)
+
+Each return keeps to the same rule (3–5 new or changed). Ideas to start from, all `proposed` in the ledger: the medication and sharps box in the fridge (after the Loss, for the Novice); the IVF calendar on the fridge, then a second positive test (after the Novice); the bills on the office desk, then a filed folder (Provider); the scan photo on the fridge and the monitor on the nightstand (Tuner); the crib in the living room with its instructions lost (Anchor); the cleared spare room, the memory box opened (Mourner); the hospital bag by the door (Arrival).
 
 ### Getting to the first chapter object
 
@@ -158,5 +199,8 @@ Each has my recommended answer.
 8. **The record player's later life** (does it play again in the Arrival, or get packed away with Leo's old things?). *Recommended: decide with the Arrival.*
 9. **The end of M1:** leave the player in the gray House with no next object, or end on a card? *Recommended: leave them in the House, no text.*
 10. **The words of the opening beat** and its closed-off/open line. Not drafted; the skill never writes story words.
-11. **The wrapped photo** shows Leo and Maya's faces. Should the player see them? *Recommended: yes, as a photo only; it costs one image and no character models.*
-12. **The four House objects** (moving box, window, fridge, photo) and their one action each. *Recommended: yes; you write the box label.*
+11. ~~The wrapped photo~~ Decided 2026-10-19: yes, the player sees them in the photo.
+12. **The 13 M1 House objects** above, staggered across Start, the opening beat, the Partner and the Loss. *Recommended: yes; you write the box label, Maya's list, the fridge card and the note on the dish.*
+13. **The blanket on the couch after the Loss:** someone sleeping in the living room. Is it Leo? *Recommended: yes; it says a lot without a word, and it's yours to decide.*
+14. **The rule of thumb:** 2–3 House objects per open room, 3–5 new or changed on every return. *Recommended: yes, and check it against pacing in M2.*
+15. **"Immediately available":** I read it as "the next chapter object works as soon as the player is back, and is never gated behind House objects". The record player still waits for the opening beat, which is on the only path. *Recommended: keep the opening beat first.*

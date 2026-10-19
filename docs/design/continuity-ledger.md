@@ -22,16 +22,16 @@ Every object, room, fact and motif the story uses, with its life across the chap
 |---|---|---|
 | Entry, living room, kitchen | Open from the Start to the end. The everyday House. | proposed |
 | Back hall, main bedroom (with en-suite), hall bathroom | Shut until the opening beat (moving boxes block the back hall); open from then on | proposed |
-| Bedroom 3: the office | Shut door until after the Novice; opens when the bills arrive (the Provider); stays open | proposed |
-| Bedroom 2: the spare room, later the nursery | Moving day: Leo's old-life boxes dumped inside, door shut. After the Partner: door ajar, a corner cleared, the onesie on the windowsill. After the Loss: shut, can't be entered. After the Tuner: ajar again, still full of Leo's boxes. After the Mourner: cleared and finished as the nursery, crib moved in. After the Arrival: the last room. | proposed |
+| Bedroom 3: the office | Moving boxes stacked against its door from the opening beat; cleared after the Novice, when the bills arrive (the Provider); stays open | proposed (boxes as blockers: Dan, 2026-10-19) |
+| Bedroom 2: the spare room, later the nursery | Moving day: Leo's old-life boxes dumped inside, door shut. After the Partner: door ajar, a corner cleared, the onesie on the windowsill. After the Loss: shut, with moving boxes stacked against it. After the Tuner: the boxes are cleared and the door is ajar again, the room still full of Leo's boxes. After the Mourner: cleared and finished as the nursery, crib moved in. After the Arrival: the last room. | proposed |
 
 ## Objects
 
 | Object | Lifeline | Status |
 |---|---|---|
 | Record player | Start: set up on a moving box in the main bedroom, the first thing they unpacked. Partner's chapter object. After the Partner: lid closed. Later: open (see Dan's calls in the floor plan). | proposed |
-| Car keys | On the entry table the whole game. Active chapter object after the Partner (the Loss starts by leaving the House). After the Mourner they sit next to the hospital bag: the Arrival starts by leaving the House too. | proposed |
-| Positive test (first) | After the Partner: on the main bedroom nightstand. After the Loss: gone from view, kept in the memory box. | proposed |
+| Car keys | On the entry table. Active chapter object as soon as the player is back from the Partner (the Loss starts by leaving the House). After the Loss: dropped on the entry floor (a House object: put them back on the table). Back on the table from the Novice on. After the Mourner they sit next to the hospital bag: the Arrival starts by leaving the House too. | proposed |
+| Positive test (first) | After the Partner: on the main bedroom nightstand (a House object: pick it up). After the Loss: gone from view, kept in the memory box. | proposed |
 | The onesie (the first small baby thing) | After the Partner: on the spare room windowsill. After the Loss: in the memory box. Found again in the Mourner. Where it ends is Dan's call. | proposed |
 | Memory box (a shoebox) | After the Loss: holds the test and the onesie; sits shut in the spare room among Leo's boxes. Mourner: found and dealt with (Dan's call on how). | proposed |
 | Leo's old-life boxes (guitar, games, old armchair, single-guy stuff) | Start: most are already in the spare room; one, his moving box, sits in the entry and can be opened (a House object). After the opening beat: that box is gone from the entry, carried to the spare room. Stay there through the pregnancy. Mourner: cleared out to make the room the nursery (GDD: "clearing out the clutter of their pre-parent lives"). | proposed |
@@ -42,8 +42,13 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Hospital bag | After the Mourner: by the front door with the car keys, the Arrival's chapter object | proposed |
 | Dad's Journal | M2: in the living room by the window | proposed |
 | The big window (House object) | Living room. Its curtain can be drawn back: dusk at the start, rain after the Loss until after the Novice. | proposed |
-| The fridge (House object) | Kitchen. Can be opened: nearly empty on moving day; IVF medication inside after the Loss (M2, the Novice's chapter object); later rows M2. | proposed |
-| The wrapped photo of Leo and Maya (House object) | Start: leaning against the bedroom wall in bubble wrap; peel it back to see them. Later (M2): hung on the wall. | proposed |
+| The fridge (House object) | Kitchen. Can be opened: nearly empty on moving day; after the Partner a card on its door (Dan's words); after the Loss the card is gone and inside are dishes of food from family, one with a note (Dan's words); IVF medication inside after the Loss in M2 (the Novice's chapter object); later rows M2. | proposed |
+| Crate of records (House object) | Living room. Start: full, flick through. After the Partner: one gap (that record is on the player in the bedroom). | proposed |
+| Pizza box (House object) | Kitchen table at the Start: two slices left. Gone after the Partner. | proposed |
+| Maya's list (House object) | Bedroom nightstand from the opening beat; read it (Dan's words). Later: M2. | proposed |
+| Blanket and pillow on the couch (House object) | Living room, after the Loss: fold the blanket. Gone after the Novice. Who slept there is Dan's call. | proposed |
+| Boxes against a door | The office door from the opening beat to the Novice; the spare room door from the Loss to the Tuner | proposed (Dan, 2026-10-19) |
+| The wrapped photo of Leo and Maya (House object) | From the opening beat: leaning against the bedroom wall in bubble wrap; peel it back to see them. After the Partner: hung on the wall. | photo shown: decided (Dan, 2026-10-19); lifeline proposed |
 
 ## Sound, light and weather
 
