@@ -23,6 +23,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 | Per-chapter acceptance criteria | [docs/design/stories/](docs/design/stories/) (reference, not a plan) |
 | Playtest notes | [docs/playtests/](docs/playtests/) |
 | Work tracking | Linear: Threshold initiative, one project per milestone (see "Agent skills" below) |
+| How PRs are opened and made ready | [docs/agents/pull-requests.md](docs/agents/pull-requests.md), [.github/pull_request_template.md](.github/pull_request_template.md) |
 
 `archive/` holds the old BMAD-era files exactly as they were. Do not read or use it unless Dan asks; reading it is blocked in `.claude/settings.json`.
 
@@ -50,6 +51,19 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 - Don't invent story, dialogue or journal wording. If a placeholder is needed, mark it clearly as a placeholder and tell Dan.
 - Don't delete or rewrite design docs. The one exception is fixing an out-of-date line after a decision (see "When documents disagree").
 - Dan follows along in Cursor. When only one session is writing, work in the main Threshold folder on a new branch, not a worktree. Use a worktree only when several sessions write at once, and tell Dan its full path so he can add it to his Cursor window (File → Add Folder to Workspace).
+
+## Pull requests
+
+Follow [docs/agents/pull-requests.md](docs/agents/pull-requests.md) and fill in [the PR template](.github/pull_request_template.md). In short:
+
+- Open every PR as a draft.
+- Before it leaves draft, list every acceptance criterion from the Linear ticket in the PR body, word for word, each with its proof: a test name, a `file:line`, or a CI run on the latest commit. Anything only a person can check is marked "Needs Dan's device" with what Dan should do; it waits for him and is never skipped.
+- List any existing test the PR weakens or deletes, and why.
+- Do a self-review pass first: reread the whole diff against the ticket, as a cold reviewer would, and fix what you find.
+- For a PR that changes the game, the "Review build" GitHub check uploads its head commit to the review page and writes the sha into the PR body. Wait for it to pass before moving the ticket to In Review.
+- Move the Linear ticket to In Review only when the PR leaves draft; that is what starts Hopper's review. After each round of fixes, move it to In Progress and back to In Review so she sees them. Move it to Done when Dan merges.
+- Hopper, an outside review bot, checks the criteria table, then reads the code on her own. Fix her required changes or reply saying why not.
+- Any change to how PRs, reviews, builds or Linear statuses work (this section, docs/agents/pull-requests.md, the PR template, or the workflows) ends with a copy-and-paste prompt for Dan to send Hopper, in a code block, saying what changed and what she should do differently.
 
 ## Suggesting the next ticket
 
@@ -117,8 +131,8 @@ Pinned engine: **Godot 4.7.2**, standard build (not .NET). Private test link: a 
 - **Error check (no editor):** `powershell -ExecutionPolicy Bypass -File tools/check.ps1`. It runs Godot's built-in script check on every `.gd` file and exits non-zero on any error.
 - **Tests:** headless gameplay and logic tests in `game/tests/` (`test_*.gd`), run by a small runner in the repo (no addon). `bash tools/test.sh` (cloud) or `powershell -ExecutionPolicy Bypass -File tools/test.ps1` (Windows) runs them; `check.ps1` and `publish.sh` run them too, so CI fails on a failing test. Add `rhythm` (or any word) to run only matching tests. How to write one: [game/tests/README.md](game/tests/README.md). New features and fixes add tests for what can be checked without a person playing. Which addon to use for the core table and saves is still decided in M1.
 - **Export and publish:** `powershell -ExecutionPolicy Bypass -File tools/publish.ps1`. It error-checks, exports the "Web" preset (single-threaded) to `build/web/` at the repo root (outside `game/`, so Godot never imports old builds), then runs one butler command: `butler push build/web dsickles/threshold:html5`. butler is logged in once on Dan's PC.
-- **Cloud (Claude threads):** Godot is not installed when a thread starts, so text-only threads don't pay for it. `bash tools/godot-setup.sh` installs Godot 4.7.2 if it is missing and puts `godot` on PATH (`--templates` adds the web export templates, `--butler` adds butler); it does nothing once they are there. A Claude hook runs it automatically before any Bash command that calls `godot` (adding the templates for `--export`), and any new script that runs Godot should `source tools/godot-setup.sh` first. `bash tools/publish.sh` and `bash tools/test.sh` use it; publish.sh then error-checks, tests and exports the same way. Add `--upload` to push to itch.io, only after Dan says "upload"; the build's version on itch is the branch's last part plus its commit. The cloud environment must allow github.com and itch.io downloads and have `BUTLER_API_KEY` set.
-- **Automatic PR checks:** `.github/workflows/check.yml` runs `bash tools/publish.sh` (no `--upload`) on PRs and main pushes that touch `game/`, `tools/` or the workflow (docs-only PRs skip it), so such a PR shows a red X if any script has an error or the web export breaks. CI never uploads to itch.io.
+- **Cloud (Claude threads):** Godot is not installed when a thread starts, so text-only threads don't pay for it. `bash tools/godot-setup.sh` installs Godot 4.7.2 if it is missing and puts `godot` on PATH (`--templates` adds the web export templates, `--butler` adds butler); it does nothing once they are there. A Claude hook runs it automatically before any Bash command that calls `godot` (adding the templates for `--export`), and any new script that runs Godot should `source tools/godot-setup.sh` first. `bash tools/publish.sh` and `bash tools/test.sh` use it; publish.sh then error-checks, tests and exports the same way. Add `--upload` to push to itch.io, only after Dan says "upload"; the build's version on itch is the branch's last part plus its commit. `--review` pushes instead to the private review page Hopper checks (https://dsickles.itch.io/threshold-review) and needs no "upload" from Dan; the "Review build" check runs it on every non-draft PR (see docs/agents/pull-requests.md). The cloud environment must allow github.com and itch.io downloads and have `BUTLER_API_KEY` set.
+- **Automatic PR checks:** `.github/workflows/check.yml` runs `bash tools/publish.sh` (no `--upload`) on PRs and main pushes that touch `game/`, `tools/` or the workflow (docs-only PRs skip it), so such a PR shows a red X if any script has an error or the web export breaks. CI never uploads to the main itch.io page; `.github/workflows/review-build.yml` uploads non-draft PRs to the review page only.
 - **Browser tests:** `tests/web/` (Playwright) plays the exported build in Chromium at laptop, phone and sideways-phone sizes: it loads, has no console errors, sound starts only after the first tap, each screen opens and goes back. `.github/workflows/browser-tests.yml` runs them on PRs and saves screenshots. Threads add a test for each new screen; how is in [tests/web/README.md](tests/web/README.md). They never replace Dan's phone tests.
 - **Private test link:** https://dsickles.itch.io/threshold (restricted, password-protected; Dan holds the password, never write it in the repo).
 
