@@ -173,7 +173,7 @@ Most games about parenting are either comedic simulations or management tycoons.
 
 ### Platform-Specific Details
 
-- **Input:** One pointer scheme on every platform. In the House, tap a viewpoint to move there ([ADR-0003](../adr/0003-house-fixed-viewpoints.md)), tap or short-drag to look, and tap an object to use it. A click is a tap. No WASD, no virtual stick, and no mouse-look.
+- **Input:** One pointer scheme on every platform. In the House, tap a doorway, wall or object to glide to a view of it, and tap an object again to use it ([ADR-0003](../adr/0003-house-fixed-viewpoints.md), [ADR-0007](../adr/0007-house-doorway-and-wall-views-close-ups.md)); short-drag to look. A click is a tap. No WASD, no virtual stick, and no mouse-look.
 - **Keyboard:** Menus only. Enter activates the focused control. It is not a second way to move through the House.
 - **Drag and hold:** Only where the chapter is tactile: Tuner knobs, Mourner placement, a short look-drag, and Anchor left/right hold-zones.
 - **Documents:** Reflowed Reader View. Pinch-zoom is not how paperwork is read.

@@ -2,7 +2,7 @@
 
 **Status:** Draft for Dan to edit, 2026-10-18. Not decided. Answers the open question in [scope.md](../scope.md): "What The Partner shows on screen, its song, and its beat chart" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft".
 
-Built from: [roadmap.md](../roadmap.md) M1 ("a short Partner (3–4 minutes): one song, one beat chart, missed taps as awkward laughter"), [gdd.md](gdd.md) §1 The Partner, [requirements.md](requirements.md) FR18, UX-DR18 and UX-DR29, [epic-1-stories.md](stories/epic-1-stories.md) Story 1.2, [game-architecture.md](game-architecture.md) §4.4, [ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md) (AI music, no voice acting), and the M0 rhythm check (DAS-68, still in review).
+Built from: [roadmap.md](../roadmap.md) M1 ("a short Partner (3–4 minutes): one song, one beat chart, missed taps as awkward laughter"), [gdd.md](gdd.md) §1 The Partner, [requirements.md](requirements.md) FR18, UX-DR18 and UX-DR29, [epic-1-stories.md](stories/epic-1-stories.md) Story 1.2, [game-architecture.md](game-architecture.md) §4.4, [ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md) (AI music, no voice acting), the M0 rhythm check (DAS-68) and [ADR-0006](../adr/0006-partner-browser-audio-clock.md) (the browser's audio clock).
 
 What the docs fix: tap in time with Maya's heartbeat or voice ("Connection Nodes"); starts slow and intimate, builds to a joyous crescendo; a miss is awkward laughter and the song keeps going; Perfect, Good or Miss near the hit, in numeric type; no combo, no grade screen; one ending, a positive pregnancy test; the hits must line up with the sound heard on a phone.
 
@@ -42,9 +42,9 @@ The screen, in the abstract version:
 | Which note a tap counts for | The nearest note that hasn't been hit, within the Good window | |
 | Score | None shown. No combo, no grade screen, no end tally. | Story 1.2, UX-DR18 |
 
-**Clock and sound delay:** the M0 rhythm check (DAS-68) found that one fixed adjustment does not hold on iPhone Safari with Godot's clock, and Dan added a "tap along to calibrate" step to v1. That decision is on the DAS-68 branch, not yet in main. Whether the Partner uses Godot's clock or the browser's own clock is still open there. This draft works with either.
+**Clock and sound delay:** decided since this draft was first written. On the web the Partner times taps with the browser's own audio clock ([ADR-0006](../adr/0006-partner-browser-audio-clock.md)), and the "tap along to calibrate" step is in v1 to set each device's remaining offset (scope.md, decision-history 14).
 
-**Choice: the calibration happens inside the song's intro.** The first notes (bars 3–8) are a plain heartbeat at 60 a minute. The player taps along; those taps are judged and shown as normal but never laugh, and they set the player's sound delay before the real song starts. Tap-along calibration with no separate screen. **Dan:** this depends on DAS-68's clock result, and on whether you want calibration as its own screen instead (it could then also serve the Arrival's rhythm reprise).
+**Choice: the calibration happens inside the song's intro.** The first notes (bars 3–8) are a plain heartbeat at 60 a minute. The player taps along; those taps are judged and shown as normal but never laugh, and they set the player's sound delay before the real song starts. Tap-along calibration with no separate screen. **Dan:** or would you rather calibration be its own screen (it could then also serve the Arrival's rhythm reprise)?
 
 ## Missed taps as awkward laughter
 
@@ -149,7 +149,7 @@ These come from the roadmap and stories. None is optional, and the ones that nee
 1. **Abstract light and heartbeat, or show the couple?** (Recommended: abstract.)
 2. **The song's genre and mood.** (Draft: warm neo-soul, instrumental, 120 BPM.)
 3. **Laughter:** do wordless laughs count as sound effects under ADR-0005, and whose laughs are they?
-4. **Calibration inside the intro, or its own screen?** Depends on which clock DAS-68 settles on.
+4. **Calibration inside the intro, or its own screen?** (Recommended: inside the intro.)
 5. **The bar-48 stumble:** keep or cut, and what it means.
 6. **The test moment:** any words, where the test is, how long it holds.
 7. **Orientation** for the whole game (sideways or upright). This screen works either way.

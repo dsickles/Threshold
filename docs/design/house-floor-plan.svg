@@ -28,8 +28,8 @@
 <text x="282.0" y="364.0" font-size="10" fill="#5A4630">moving boxes block the hall until the opening beat</text>
 <line x1="250.0" y1="520" x2="410.0" y2="520" stroke="#7FB0D6" stroke-width="5"/>
 <text x="330.0" y="535" font-size="10" fill="#4A7393" text-anchor="middle">big window</text>
-<text x="214.0" y="144.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BEDROOM 1</text>
-<text x="214.0" y="158.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(main)</text>
+<text x="238.0" y="120.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BEDROOM 1</text>
+<text x="238.0" y="134.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(main)</text>
 <text x="90.0" y="84.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BATH 1</text>
 <text x="90.0" y="98.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">en-suite</text>
 <text x="350" y="212.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BATH 2</text>
@@ -44,32 +44,69 @@
 <text x="630" y="172.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">→ nursery</text>
 <text x="630" y="186.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(the last room)</text>
 <text x="382.0" y="314.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BACK HALL  →  →  →</text>
-<text x="110" y="400.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">ENTRY</text>
+<text x="118.0" y="368.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">ENTRY</text>
 <text x="334.0" y="400.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">LIVING ROOM</text>
 <text x="590" y="400.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">KITCHEN</text>
-<rect x="49.0" y="467.0" width="10" height="10" fill="#8B3A32"/>
-<text x="62.0" y="476.0" font-size="10.5" fill="#8B3A32" text-anchor="start">car keys (the Loss)</text>
-<rect x="65.0" y="219.0" width="10" height="10" fill="#8B3A32"/>
-<text x="78.0" y="228.0" font-size="10.5" fill="#8B3A32" text-anchor="start">record player (the Partner)</text>
+<rect x="49.0" y="427.0" width="10" height="10" fill="#8B3A32"/>
+<text x="62.0" y="436.0" font-size="10.5" fill="#8B3A32" text-anchor="start">car keys (the Loss)</text>
+<rect x="57.0" y="179.0" width="10" height="10" fill="#8B3A32"/>
+<text x="70.0" y="188.0" font-size="10.5" fill="#8B3A32" text-anchor="start">record player (the Partner)</text>
 <rect x="681.0" y="359.0" width="10" height="10" fill="#8B3A32"/>
 <text x="678.0" y="368.0" font-size="10.5" fill="#8B3A32" text-anchor="end">fridge</text>
-<rect x="553.0" y="467.0" width="10" height="10" fill="#8B3A32"/>
-<text x="566.0" y="476.0" font-size="10.5" fill="#8B3A32" text-anchor="start">kitchen table</text>
-<circle cx="110" cy="560.0" r="11" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
-<text x="110" y="564.0" font-size="10" font-weight="700" fill="#1F5C99" text-anchor="middle">p</text>
-<circle cx="110" cy="440.0" r="11" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
-<text x="110" y="444.0" font-size="10" font-weight="700" fill="#1F5C99" text-anchor="middle">h1</text>
-<circle cx="290.0" cy="464.0" r="11" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
-<text x="290.0" y="468.0" font-size="10" font-weight="700" fill="#1F5C99" text-anchor="middle">l1</text>
-<circle cx="610.0" cy="440.0" r="11" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
-<text x="610.0" y="444.0" font-size="10" font-weight="700" fill="#1F5C99" text-anchor="middle">k1</text>
-<circle cx="302.0" cy="310.0" r="11" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
-<text x="302.0" y="314.0" font-size="10" font-weight="700" fill="#1F5C99" text-anchor="middle">bh</text>
-<circle cx="254.0" cy="244.0" r="11" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
-<text x="254.0" y="248.0" font-size="10" font-weight="700" fill="#1F5C99" text-anchor="middle">b</text>
-<circle cx="598.0" cy="310.0" r="11" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
-<text x="598.0" y="314.0" font-size="10" font-weight="700" fill="#1F5C99" text-anchor="middle">n</text>
-<text x="126" y="564.0" font-size="11" fill="#2A2520">porch: the game starts here, facing the front door</text>
+<rect x="553.0" y="491.0" width="10" height="10" fill="#8B3A32"/>
+<text x="566.0" y="500.0" font-size="10.5" fill="#8B3A32" text-anchor="start">kitchen table</text>
+<rect x="57.0" y="311.0" width="10" height="10" fill="#8B3A32"/>
+<text x="70.0" y="320.0" font-size="10.5" fill="#8B3A32" text-anchor="start">moving box</text>
+<rect x="201.0" y="63.0" width="10" height="10" fill="#8B3A32"/>
+<text x="214.0" y="72.0" font-size="10.5" fill="#8B3A32" text-anchor="start">photo (wrapped)</text>
+<rect x="677.0" y="75.0" width="10" height="10" fill="#8B3A32"/>
+<text x="674.0" y="84.0" font-size="10.5" fill="#8B3A32" text-anchor="end">onesie</text>
+<polygon points="110.0,536.0 114.8,551.2 105.2,551.2" fill="#0E7A4F"/>
+<circle cx="110" cy="560.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="110" y="563.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">P</text>
+<polygon points="94.0,468.0 98.8,483.2 89.2,483.2" fill="#0E7A4F"/>
+<circle cx="94.0" cy="492.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="94.0" y="495.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">E1</text>
+<polygon points="134.8,457.8 150.8,457.1 148.3,466.4" fill="#1F5C99"/>
+<circle cx="158.0" cy="464.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="158.0" y="467.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">E2</text>
+<polygon points="234.0,424.0 218.8,428.8 218.8,419.2" fill="#0E7A4F"/>
+<circle cx="210.0" cy="424.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="210.0" y="427.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">L1</text>
+<polygon points="334.0,500.0 329.2,484.8 338.8,484.8" fill="#1F5C99"/>
+<circle cx="334.0" cy="476.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="334.0" y="479.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">L2</text>
+<polygon points="275.9,414.2 286.6,426.0 277.9,430.1" fill="#1F5C99"/>
+<circle cx="286.0" cy="436.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="286.0" y="439.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">L3</text>
+<polygon points="390.0,412.0 394.8,427.2 385.2,427.2" fill="#1F5C99"/>
+<circle cx="390.0" cy="436.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="390.0" y="439.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">L4</text>
+<polygon points="514.0,424.0 498.8,428.8 498.8,419.2" fill="#0E7A4F"/>
+<circle cx="490.0" cy="424.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="490.0" y="427.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">K1</text>
+<polygon points="643.8,405.9 632.0,416.6 627.9,407.9" fill="#1F5C99"/>
+<circle cx="622.0" cy="416.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="622.0" y="419.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">K2</text>
+<polygon points="591.4,488.2 604.1,478.5 607.4,487.5" fill="#1F5C99"/>
+<circle cx="614.0" cy="480.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="614.0" y="483.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">K3</text>
+<polygon points="266.0,310.0 250.8,314.8 250.8,305.2" fill="#0E7A4F"/>
+<circle cx="242.0" cy="310.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="242.0" y="313.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">H1</text>
+<polygon points="239.6,236.6 254.4,242.7 248.2,250.0" fill="#0E7A4F"/>
+<circle cx="258.0" cy="252.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="258.0" y="255.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">B1</text>
+<polygon points="238.0,156.0 242.8,171.2 233.2,171.2" fill="#1F5C99"/>
+<circle cx="238.0" cy="180.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="238.0" y="183.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">B2</text>
+<polygon points="126.4,223.8 142.2,221.8 140.5,231.2" fill="#1F5C99"/>
+<circle cx="150.0" cy="228.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="150.0" y="231.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">B3</text>
+<polygon points="586.0,289.2 582.5,304.8 574.2,300.0" fill="#0E7A4F"/>
+<circle cx="574.0" cy="310.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="574.0" y="313.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">S1</text>
+<text x="128" y="564.0" font-size="11" fill="#2A2520">porch: the game starts here, facing the front door</text>
 <text x="30" y="24" font-size="12" fill="#6B625A">BACK (garden)</text>
 <text x="710" y="24" font-size="12" fill="#6B625A" text-anchor="end">about 17 m × 12 m, one storey</text>
 <text x="370.0" y="548" font-size="12" fill="#6B625A">FRONT (street)</text>
@@ -81,8 +118,8 @@
 <text x="62" y="645" font-size="12.5" fill="#2A2520">Spare room: ajar after the Partner, shut after the Loss, nursery at the end</text>
 <rect x="30" y="658" width="22" height="16" fill="#E4E2DE" stroke="#3A3530" stroke-width="1.5"/>
 <text x="62" y="671" font-size="12.5" fill="#2A2520">Shut door in M1 (bathrooms; the office opens in M2)</text>
-<circle cx="41" cy="700" r="9" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
-<text x="62" y="705" font-size="12.5" fill="#2A2520">Viewpoint (where the camera can stand)</text>
+<circle cx="41" cy="700" r="9" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="62" y="705" font-size="12.5" fill="#2A2520">Doorway view (green) · wall view (blue) · the point shows which way the camera faces</text>
 <rect x="36" y="722" width="10" height="10" fill="#8B3A32"/>
-<text x="62" y="732" font-size="12.5" fill="#2A2520">Object · gaps in walls are doorways · dashed line = open plan, no wall</text>
+<text x="62" y="732" font-size="12.5" fill="#2A2520">Object (tap for its close-up) · gaps in walls are doorways · dashed line = open plan</text>
 </svg>

@@ -28,15 +28,15 @@ Because the player only sees framed shots ([ADR-0003](../adr/0003-house-fixed-vi
 
 ### Where Leo starts
 
-On the porch at dusk, looking at the front door, on the day they move in. The first tap of the game, right after "tap to begin", crosses the threshold. Inside, the entry is cold and full of boxes; through a wide doorway are the living room and the kitchen, and nothing else is open.
+On the porch at dusk (view P), looking at the front door, on the day they move in. The first tap of the game, right after "tap to begin", crosses the threshold: tapping the door glides to the entry's doorway view (E1). Inside, the entry is cold and full of boxes; through a wide doorway are the living room and the kitchen, and nothing else is open.
 
 ### How the House opens up
 
 | Point | Open | What the player finds | Next chapter object |
 |---|---|---|---|
 | Start | Porch, entry, living room, kitchen | Cold: bare bulbs, boxes. Moving boxes stacked in the doorway to the back hall. | None until the opening beat |
-| After the opening beat (plays at l1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. | Record player |
-| After the Partner | + spare room doorway (n) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo's boxes pushed to one side, a corner cleared by the window, and on the windowsill one small thing for the baby (the onesie). | Car keys, on the entry table |
+| After the opening beat (plays at L1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. | Record player |
+| After the Partner | + spare room doorway (S1) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo's boxes pushed to one side, a corner cleared by the window, and on the windowsill one small thing for the baby (the onesie). | Car keys, on the entry table |
 | After the Loss | − spare room | Gray, rain on the windows. The test and the onesie are gone from view. **The spare room door is shut again** and can't be tapped. | None in M1 (the end of M1) |
 | After the Novice (M2) | + office | Colour bleeds back; the rain stops. Bills are piled on the office desk. | Bills |
 | After the Provider (M2) | | Bills filed. A monitor on the nightstand. | Baby monitor |
@@ -79,23 +79,53 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 
 The porch shot, the shared front (entry, living room and kitchen as one open space), the back hall, the main bedroom, and the spare room seen from its doorway only. The office and both bathrooms are shut doors. That is at the top of the roadmap's "2–3 rooms". **Dan:** see call 6.
 
-### Viewpoints (M1)
+### Views (M1)
 
-| Viewpoint | What the shot shows | Open | Taps to |
+How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-views-close-ups.md): tapping a doorway glides to that room's **doorway view**; tapping a wall or corner glides to its **wall view**; tapping an object glides to its **close-up**, and tapping it again does its one action. Rings show every other view and doorway; anything off screen pins to the screen edge with an arrow. Glide 2.0 s (M0 check, DAS-69). In the drawing, doorway views are green and wall views blue; the point shows which way the camera faces.
+
+15 views. Each room's doorways are rings in every view of that room.
+
+| Room | View | Faces | What the shot shows | Open |
+|---|---|---|---|---|
+| Porch | **P** | The front door | Dusk, the porch light, the front door | Start only (one way in) |
+| Entry | **E1** doorway | Into the entry | Boxes; Leo's moving box on top; the wide opening to the living room | Always |
+| | **E2** wall | The entry table | The car keys on the table, a coat hook | Always |
+| Living room | **L1** doorway | Across the room | The couch, the big window, the kitchen beyond. The opening beat plays on first arrival here. | Always |
+| | **L2** wall | The big window | The street at dusk; rain after the Loss | Always |
+| | **L3** corner | The back-hall opening | Moving boxes blocking it at the start; after the opening beat, the hall and a warm lamp beyond | Always |
+| | **L4** wall | The back wall | The couch, still in plastic | Always |
+| Kitchen | **K1** doorway | Into the kitchen | The fridge, the counter, the table | Always |
+| | **K2** wall | The fridge | The fridge | Always |
+| | **K3** corner | The table | The table and its chairs, the window over it | Always |
+| Back hall | **H1** doorway | Down the hall | Straight to the spare room's shut door at the far end; the bedroom door with lamp light spilling out | After the opening beat |
+| Bedroom | **B1** doorway | Into the bedroom | The mattress on the floor, the lamp, the record player on its box | After the opening beat |
+| | **B2** wall | The bed wall | The mattress, the nightstand (the test, after the Partner), the wrapped photo against the wall | After the opening beat |
+| | **B3** corner | The record player | The record player on a moving box | After the opening beat |
+| Spare room | **S1** doorway | Into the spare room | Leo's boxes pushed aside, a cleared corner, the onesie on the windowsill. The player only looks in from the door. | After the Partner, until the Loss |
+
+### House objects (M1)
+
+Made with the narrative-craft skill. Each one has one action, is never required, scored or saved, and has a lifeline in the [continuity ledger](continuity-ledger.md). **Dan** writes any words on them; until then they are placeholders.
+
+| Object | Where (view) | Action | Why it's there |
 |---|---|---|---|
-| p Porch | The front door at dusk, the porch light | Start only | h1 (one way) |
-| h1 Entry | The entry table and keys; the living room through a wide doorway | Always | l1 |
-| l1 Living room | The window, the kitchen beyond, the doorway to the back hall | Always | h1, k1, bh (once open) |
-| k1 Kitchen | Back across the room to the couch and the window | Always | l1, h1 |
-| bh Back hall | Straight down the hall to the spare room door; the bedroom door with its lamp | After the opening beat | l1, b, n (while open) |
-| b Bedroom | The mattress, the record player on its box, the nightstand, the window | After the opening beat | bh |
-| n Spare room doorway | Into the spare room: the boxes, the cleared corner, the windowsill | After the Partner, until the Loss | bh |
+| Leo's moving box | Entry (E1) | Open it: his old things inside (a guitar strap, games, a band T-shirt). The label on it is Dan's to write. | Sets up the spare room: after the opening beat this box is gone from the entry, carried to the spare room with the rest of Leo's old life, where the Mourner pays it off. |
+| The big window | Living room (L2) | Draw back the curtain and look out | The world outside carries the weather of the story: dusk at the start, rain after the Loss. |
+| The fridge | Kitchen (K2) | Open it: nearly empty on moving day | The House's hum lives here, and in M2 the IVF medication appears inside it (the Novice). The player learns where the fridge is before it matters. |
+| The wrapped photo | Bedroom (B2) | Peel back the bubble wrap: a photo of Leo and Maya | The only place the player sees the couple in M1. **Dan:** showing their faces is your call (see call 11). |
 
-The glide duration is settled by the M0 fixed-viewpoint check (DAS-69), not here.
+Chapter objects work the same way (close-up, then the action starts the chapter):
+
+| Chapter object | Where (view) | Action | Active |
+|---|---|---|---|
+| Record player | Bedroom (B3) | Lower the needle: the Partner begins | After the opening beat, until the Partner |
+| Car keys | Entry (E2) | Pick them up: the Loss begins | After the Partner. Before then they are just there: no ring, no highlight. |
+
+**Choice:** the onesie in the spare room is seen from the doorway (S1) but can't be tapped in M1. The player stands at the door and doesn't go in. That hesitation is the feeling of early hope.
 
 ### Getting to the first chapter object
 
-Roadmap success criterion 2: at least 4 of 5 cold testers find the first object within about 3 minutes, with no markers. The path is one way forward, lit by one warm light: porch → entry → living room (the opening beat plays) → the back hall opens and a lamp shows in the bedroom → the record player crackles and highlights. Nothing else in the cold House is warm.
+Roadmap success criterion 2: at least 4 of 5 cold testers find the first object within about 3 minutes, with no markers. The shortest path is six taps: the front door (P to E1), the living room doorway (L1, the opening beat plays), the back-hall opening (H1), the bedroom door (B1), the record player (its close-up), and tapping it again to start. Nothing else in the cold House is warm: the lamp in the bedroom pulls the eye from L3 and H1, and the record player crackles. The House objects are side paths, not detours the player must take.
 
 ### What the player sees of Leo and Maya
 
@@ -108,6 +138,7 @@ From the roadmap and stories. None is optional.
 - **M1 success criterion 2:** 5 cold testers, no instructions. At least 4 find the record player within about 3 minutes. Nobody gets stuck moving around.
 - **M1 success criterion 5:** most testers notice the House changed, without being asked.
 - **No dead ends:** at each of the M1 points in the story (start, after the opening beat, after the Partner, after the Loss), every open room can be reached and the player can always get back to the living room. Checked by playing on Dan's phone and laptop.
+- **Every view shows a ring for each doorway in that room** (pinned to the screen edge when off screen), and stepping back from any close-up returns to the view it was opened from (ADR-0007).
 - **Shut rooms are never tappable and never highlight**, and the spare room can't be reached by any route after the Loss.
 - **The House reads without volumetric fog** (CLAUDE.md rule): lamp light and ordinary fog only, no CompositorEffects.
 - **Tap targets at least 44 px**; nothing relies on hover.
@@ -127,3 +158,5 @@ Each has my recommended answer.
 8. **The record player's later life** (does it play again in the Arrival, or get packed away with Leo's old things?). *Recommended: decide with the Arrival.*
 9. **The end of M1:** leave the player in the gray House with no next object, or end on a card? *Recommended: leave them in the House, no text.*
 10. **The words of the opening beat** and its closed-off/open line. Not drafted; the skill never writes story words.
+11. **The wrapped photo** shows Leo and Maya's faces. Should the player see them? *Recommended: yes, as a photo only; it costs one image and no character models.*
+12. **The four House objects** (moving box, window, fridge, photo) and their one action each. *Recommended: yes; you write the box label.*

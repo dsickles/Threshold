@@ -49,8 +49,24 @@ The persistent 3D hub the player returns to between chapters; it changes after e
 _Avoid_: hub world, apartment, calendar
 
 **Viewpoint**:
-A fixed camera spot in the House that the player taps to move to.
+Any fixed camera shot in the House: a doorway view, a wall view or a close-up ([ADR-0007](docs/adr/0007-house-doorway-and-wall-views-close-ups.md)).
 _Avoid_: waypoint, node, hotspot
+
+**Doorway view**:
+The view from a room's doorway looking into the whole room; where tapping a doorway takes you.
+_Avoid_: entrance shot, establishing shot
+
+**Wall view**:
+A view framed on one wall or corner of a room, from the middle of it; reached by tapping that wall or corner.
+_Avoid_: angle, camera position
+
+**Close-up**:
+The close view of one object, reached by tapping it; tapping the object again does its one action.
+_Avoid_: inspect mode, zoom
+
+**House object**:
+An object in the House that can be looked at and acted on but doesn't start a chapter; never required, scored or saved.
+_Avoid_: collectible, interactable (code name only), clue
 
 **Story beat**:
 A short first-person narrative scene in the House between chapters.

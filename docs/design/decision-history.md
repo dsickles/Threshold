@@ -241,6 +241,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 20. House views: doorway views, wall views and close-ups (2026-10-19)
+
+| | |
+|---|---|
+| **Was** | ADR-0003: tap a viewpoint (a spot or a doorway) and the camera glides there. Objects were tapped to use them directly. |
+| **Became** | Each room has a doorway view and 2–4 wall views. Tapping an object opens its close-up; tapping it again does its one action. House objects that don't start a chapter are never required, scored or saved. |
+| **Why** | Fits the M0 finding that tapping a thing should look at it (entry 17), hides AI-art flaws, and gives one verb for walls, House objects and chapter objects. Dan's call, 2026-10-19. |
+| **Record** | [ADR-0007](../adr/0007-house-doorway-and-wall-views-close-ups.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
