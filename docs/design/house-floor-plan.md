@@ -18,28 +18,11 @@ Walking into a house that isn't home yet, and finding that the story walks you d
 
 One storey, built front to back, like a real house: the shared rooms at the front, the private rooms behind, the spare room deepest of all.
 
-```
-   BACK  +------------------------------------------------------+
-         |            BEDROOM 2: spare room -> nursery          |  deepest:
-         |                  (the shut door)                     |  the end of
-         |                         ^ n                          |  the hall
-         |                         |                            |
-         |  BEDROOM 1 (main) <-b-- BACK HALL --> BEDROOM 3      |  private:
-         |  + BATH 1 (en-suite)    |  BATH 2      (office)      |  opens with
-         |                         |                            |  the story
-         |                         | bh  (moving boxes block    |
-         |                         |      it on day one)        |
-         |  KITCHEN k1 <-------> LIVING ROOM l1                 |  shared:
-         |  fridge, table          couch, big window            |  always open
-         |                         ^                            |
-   FRONT |                     ENTRY h1  [car keys]             |
-         +---------------------- front door --------------------+
-                                   p  (porch: where the game starts)
+![Floor plan of the House: shared rooms at the front, the back hall running left to right behind them, the main bedroom, bathrooms and office off the hall, and the spare room at the hall's far end](house-floor-plan.svg)
 
-   h1, l1, k1, bh, b, n, p = viewpoints
-```
+Read it from the bottom (the street) up. The front door is bottom left. The entry, living room and kitchen run along the front and are always open. Behind them, the **back hall** (the blue strip) runs left to right, from an opening in the living room's back wall to the spare room's door at its far end. The main bedroom, the hall bathroom and the office open off its top side.
 
-About 16 m by 12 m. The back hall runs straight from the living room to the spare room's door, so from the moment the hall opens, the player can see that door at the end of it.
+About 17 m by 12 m. The back hall runs straight from the living room to the spare room's door, so from the moment the hall opens, the player can see that door at the end of it. The spare room is in the back corner diagonally opposite the front door, as far from it as the House allows.
 
 Because the player only sees framed shots ([ADR-0003](../adr/0003-house-fixed-viewpoints.md)), each room only needs the walls its viewpoints can see. A room that isn't open yet is a shut door.
 
