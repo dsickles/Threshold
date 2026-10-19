@@ -11,3 +11,7 @@ node_modules/
 # Godot
 .godot/
 build/
+
+# Browser test output (tests/web)
+tests/web/test-results/
+tests/web/playwright-report/
