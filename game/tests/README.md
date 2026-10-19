@@ -6,8 +6,8 @@ runs `tools/publish.sh`, which runs `tools/test.sh`). Nothing in this folder is
 exported to the web build (`exclude_filter="tests/*"` in `export_presets.cfg`).
 
 There is no test addon. `run_tests.gd` is a small runner and `test_case.gd` is
-the base every test file extends. Which addon to use for the core table and
-saves is still decided in M1 (see `docs/scope.md`).
+the base every test file extends. It also covers the core table and saves
+(ADR-0007).
 
 ## Running them
 
@@ -65,6 +65,7 @@ whenever its owner next touches it.
 
 | File | Covers |
 |---|---|
+| `test_game_state.gd` | Progress and saves: finishing a chapter saves it, the next visit reads it back, story order kept, out-of-order, repeated and unknown results refused, broken or impossible saves start fresh, a save that can't be written is reported and play carries on, hiding or closing never saves, starting new deletes the save |
 | `test_m0_menu.gd` | Tap to begin, button sizes, each M0 check opens and Back returns |
 | `test_smoothness_check.gd` | Warmup, hitch and worst-frame counting, the 2-minute run, Heavy and Shadow switches, Back |
 | `test_rhythm_check.gd` | Tap pad only while the click plays, last 20 taps, offset to the nearest click, average, spread and Good count, sound delay re-scoring and limits, Clear, 44px buttons on phone screens |

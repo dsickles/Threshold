@@ -33,7 +33,7 @@ About 15 minutes, rough, played in one sitting.
 - A tiny version of the finished-chapter list and core table driving the House mood.
 - Pause when the browser tab is hidden (no save).
 
-**Not in M1:** title and settings screens, quality setting, save/Continue, journal, chapter looks beyond one gray filter, final art.
+**Not in M1:** title and settings screens, quality setting, Continue, journal, chapter looks beyond one gray filter, final art. _(updated 2026-10-19: was "save/Continue". The save system itself is built in M1; see scope.md.)_
 
 **Success criteria:**
 1. Runs from a link on Dan's phone and a laptop browser, meets the iPhone headroom bar in [scope.md](scope.md), and passes one spot check on a real mid-range Android. _(updated 2026-10-17: was "smooth on one chosen mid-range phone")_
