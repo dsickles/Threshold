@@ -81,6 +81,9 @@ func enter_scene(id: StringName, scene: PackedScene, house: Node) -> bool:
 		_chapter.free()
 		_chapter = null
 		return false
+	# Joins now if of() was called this same frame. A House that enters a
+	# chapter from its own _ready while it is the main scene would hit
+	# "Parent node is busy" here: start the chapter deferred in that case.
 	_join()
 	_id = id
 	_house = house
@@ -99,11 +102,25 @@ func _refuse_while_running(id: StringName) -> bool:
 
 
 # A chapter emits `finished` with no arguments, or with its answer, or with
-# its answer and a House dictionary.
-func _on_finished(answer: String = ChapterResult.NO_ANSWER, house: Dictionary = {}) -> void:
-	if not answer in ChapterResult.ANSWERS:
-		push_error("ChapterRunner: %s finished with unknown answer %s" % [_id, answer])
-		answer = ChapterResult.NO_ANSWER
+# its answer and a House dictionary. The arguments are untyped and checked
+# here, so a chapter that emits the wrong thing still brings the House back
+# (with no answer and nothing for the House) instead of leaving the player
+# stuck.
+func _on_finished(...args: Array) -> void:
+	var answer := ChapterResult.NO_ANSWER
+	var house := {}
+	if args.size() > 2:
+		push_error("ChapterRunner: %s finished with %d arguments; expected at most 2" % [_id, args.size()])
+	if args.size() >= 1:
+		if args[0] is String and args[0] in ChapterResult.ANSWERS:
+			answer = args[0]
+		else:
+			push_error("ChapterRunner: %s finished with unknown answer %s" % [_id, args[0]])
+	if args.size() >= 2:
+		if args[1] is Dictionary and ChapterResult.is_plain_json(args[1]):
+			house = args[1]
+		else:
+			push_error("ChapterRunner: %s finished with a House value that isn't plain JSON: %s" % [_id, args[1]])
 	var result := ChapterResult.make(_id, answer, house)
 	_chapter.queue_free()
 	_close()

@@ -40,9 +40,32 @@ static func is_story_result(result: Dictionary) -> bool:
 		return false
 	if not result.get("answer") is String or not result["answer"] in ANSWERS:
 		return false
-	if result.has("house") and not result["house"] is Dictionary:
+	if result.has("house") and not (result["house"] is Dictionary and is_plain_json(result["house"])):
 		return false
 	for key in result:
 		if not key in ["chapter", "answer", "house"]:
 			return false
 	return true
+
+
+## True if `value` saves as JSON and loads back the same (apart from ints
+## coming back as floats): null, bool, int, float, String, and Arrays and
+## String-keyed Dictionaries of those. False for anything Godot-only, like a
+## Vector2 or a Node, which JSON would quietly turn into a string.
+static func is_plain_json(value: Variant) -> bool:
+	match typeof(value):
+		TYPE_NIL, TYPE_BOOL, TYPE_INT, TYPE_STRING:
+			return true
+		TYPE_FLOAT:
+			return is_finite(value)
+		TYPE_ARRAY:
+			for item in value:
+				if not is_plain_json(item):
+					return false
+			return true
+		TYPE_DICTIONARY:
+			for key in value:
+				if typeof(key) != TYPE_STRING or not is_plain_json(value[key]):
+					return false
+			return true
+	return false

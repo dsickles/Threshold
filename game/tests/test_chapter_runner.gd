@@ -46,6 +46,29 @@ func test_a_result_is_the_chapter_and_its_answer() -> void:
 func test_a_result_survives_saving_as_json() -> void:
 	var result := ChapterResult.make(&"tuner", ChapterResult.VULNERABLE)
 	check_eq(JSON.parse_string(JSON.stringify(result)), result, "same after JSON")
+	# Floats, since JSON brings every number back as a float.
+	var with_house := ChapterResult.make(&"mourner", ChapterResult.STOIC,
+			{"shelf": ["photo", {"x": 1.5, "kept": true, "note": null}], "boxes": 3.0})
+	check(ChapterResult.is_story_result(with_house), "nested House counts")
+	check_eq(JSON.parse_string(JSON.stringify(with_house)), with_house, "nested House same after JSON")
+
+
+func test_a_house_value_that_json_would_change_doesnt_count() -> void:
+	var bad := {
+		"a Vector2": {"shelf": Vector2(1, 2)},
+		"a Vector2 in a list": {"shelf": [1, Vector2(1, 2)]},
+		"a number key": {1: "photo"},
+		"a StringName key": {&"shelf": "photo"},
+		"a deep Vector2": {"room": {"shelf": {"at": Vector2i(1, 2)}}},
+		"an infinite number": {"x": INF},
+	}
+	for what in bad:
+		var result := {"chapter": "mourner", "answer": "", "house": bad[what]}
+		check(not ChapterResult.is_story_result(result), "%s doesn't count" % what)
+	var node := Node.new()
+	check(not ChapterResult.is_story_result({"chapter": "mourner", "answer": "", "house": {"n": node}}),
+			"a Node doesn't count")
+	node.free()
 
 
 func test_only_real_chapter_results_count_as_story() -> void:
@@ -173,6 +196,39 @@ func test_a_chapter_with_a_plain_finished_signal_works() -> void:
 	await frames()
 	check_eq(_finished, [{"chapter": "partner", "answer": ""}], "result")
 	check(ChapterResult.is_story_result(_finished[0]), "counts as a story result")
+
+
+# A chapter that emits the wrong thing is a bug in that chapter, so it is
+# reported, but the player still gets the House back and the story goes on.
+func test_a_chapter_that_emits_the_wrong_thing_still_brings_the_house_back() -> void:
+	var cases := {
+		"a non-String answer": [true],
+		"too many arguments": ["stoic", {}, "extra"],
+		"a House that isn't a dictionary": ["stoic", "x"],
+		"a House that isn't plain JSON": ["vulnerable", {"at": Vector2(1, 2)}],
+	}
+	expect_error("unknown answer")
+	expect_error("at most 2")
+	expect_error("isn't plain JSON")
+	var runner := _runner()
+	for what in cases:
+		var house := _house()
+		house.process_mode = Node.PROCESS_MODE_ALWAYS
+		runner.enter(ChapterList.STAND_IN, house)
+		var chapter := _chapter(runner)
+		chapter.finished.emit.callv(cases[what])
+		await frames()
+		check(house.visible, "%s: House shown again" % what)
+		check_eq(house.process_mode, Node.PROCESS_MODE_ALWAYS, "%s: House process mode back" % what)
+		check(not runner.is_running(), "%s: nothing running" % what)
+		check(not is_instance_valid(chapter), "%s: chapter freed" % what)
+	check_eq(_finished, [
+		{"chapter": "stand_in", "answer": ""},
+		{"chapter": "stand_in", "answer": "stoic"},
+		{"chapter": "stand_in", "answer": "stoic"},
+		{"chapter": "stand_in", "answer": "vulnerable"},
+	], "one result each, falling back to no answer and no House")
+	check(_left.is_empty(), "none counted as leaving")
 
 
 func test_only_one_chapter_plays_at_a_time() -> void:

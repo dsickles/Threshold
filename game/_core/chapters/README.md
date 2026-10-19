@@ -44,7 +44,7 @@ A plain Dictionary that saves as JSON as it is:
 |---|---|
 | `chapter` | The id: `partner`, `protector`, `novice`, `provider`, `tuner`, `anchor`, `mourner` or `arrival` |
 | `answer` | `""` if the chapter offers no choice, else `stoic` or `vulnerable` (changes spoken words and journal wording only, [ADR-0004](../../../docs/adr/0004-journal-wording-varies-no-mastery.md)) |
-| `house` | Optional. Only for something the House must keep that the core table can't look up (for example where the Mourner's things were put). Plain JSON values. |
+| `house` | Optional. Only for something the House must keep that the core table can't look up (for example where the Mourner's things were put). Plain JSON values only: String, bool, int, float, null, Arrays and String-keyed Dictionaries of those (no Vector2, Node and so on). |
 
 Nothing else goes in it. Story facts, House mood and journal entries are looked
 up from the finished-chapter list in the core table, never reported by a
@@ -60,6 +60,9 @@ A chapter is a scene. Its root node:
    - `finished.emit()` when the chapter offers no Stoic/Vulnerable choice;
    - `finished.emit("stoic")` or `finished.emit("vulnerable")` when it does;
    - `finished.emit(answer, {...})` only if it has something for `house`.
+   Emitting anything else (a non-String answer, more than two arguments, a
+   `house` that isn't plain JSON) is a bug in the chapter: the runner prints
+   an error, drops the bad part, and still brings the House back.
 2. Frees itself (`queue_free()`) only to leave **without** finishing.
 3. Never touches the House, another chapter, or saved state. The runner and
    the core table do that.

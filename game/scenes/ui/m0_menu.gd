@@ -44,7 +44,8 @@ func _open_check(scene: PackedScene) -> void:
 # plays and shows it again afterwards.
 func _enter_chapter(id: StringName) -> void:
 	_status.text = ""
-	ChapterRunner.of(get_tree()).enter(id, self)
+	if not ChapterRunner.of(get_tree()).enter(id, self):
+		_status.text = "Couldn't start %s" % id
 
 
 func _on_chapter_finished(result: Dictionary) -> void:
