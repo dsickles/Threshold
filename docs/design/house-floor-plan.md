@@ -36,13 +36,13 @@ On the porch at dusk (view P), looking at the front door, on the day they move i
 |---|---|---|---|
 | Start | Porch, entry, living room, kitchen | Cold: bare bulbs, boxes. Moving boxes stacked in the doorway to the back hall. | None until the opening beat |
 | After the opening beat (plays at L1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. **Moving boxes are stacked against the office door** ("we'll do the office later"). | Record player |
-| After the Partner | + spare room doorway (S1) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo's boxes pushed to one side, a corner cleared by the window, and on the windowsill one small thing for the baby (the onesie). | Car keys, on the entry table |
+| After the Partner | + spare room doorway (S1) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo's boxes pushed to one side, a corner cleared by the window, and on the windowsill one small thing for the baby (the onesie). | Bedside lamp, on the bedroom nightstand |
 | After the Loss | − spare room | Gray, rain on the windows. The test and the onesie are gone from view. **The spare room door is shut, and moving boxes are stacked against it**, so the hall now ends in a wall of boxes. | None in M1 (the end of M1) |
 | After the Novice (M2) | + office | Colour bleeds back; the rain stops. **The boxes in front of the office door are gone**; bills are piled on the desk inside. | Bills |
 | After the Provider (M2) | | Bills filed. A monitor on the nightstand. | Baby monitor |
 | After the Tuner (M2) | + spare room again | **The boxes against the spare room door are gone** and the door is ajar again; behind it, Leo's boxes still. A flat-pack crib has arrived in the entry. | Crib box |
 | After the Anchor (M2) | | The crib stands built in the living room: the spare room isn't ready for it. | Leo's boxes in the spare room |
-| After the Mourner (M2) | | The spare room is the nursery. The crib is in it. Leo's old things are gone. A hospital bag waits by the front door; the car keys are in a little basket on the kitchen counter, not on the entry table where they started the Loss. | Hospital bag |
+| After the Mourner (M2) | | The spare room is the nursery. The crib is in it. Leo's old things are gone. A hospital bag waits by the front door; the car keys are in a little basket on the kitchen counter. | Hospital bag |
 | After the Arrival (M2) | | The game ends in the nursery: the last room. | — |
 
 Only the first four rows are built in M1. The rest are a sketch so M2 doesn't paint itself into a corner.
@@ -53,7 +53,7 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 - **The spare room carries the story by being open or blocked** (principle 3, absence; principle 6, navigation is narrative). Hope opens it; grief shuts it and stacks boxes against it; hearing the baby clears them; Leo finishes it last. Boxes are the House's own language: they are everywhere on moving day, so a wall of them in front of a door reads as "not yet" or "not now" without a lock or a word (Dan, 2026-10-19).
 - **The office is blocked by boxes too, until the bills come.** Leo puts off the room for providing until he can't.
 - **One crib, one lifeline.** It doesn't exist until the Anchor. Early hope is shown by something small and true to eight weeks (one small thing for the baby), not a crib. The small thing and the first test go into a box after the Loss and come back in the Mourner, when Leo clears the room. That fixes the duplicate crib.
-- **The keys bookend the story** (open again, 2026-10-19: see call 5). The Loss and the Arrival both start by leaving through the front door with the same keys. Same act, opposite outcome, and nothing about the keys warns the player. **Dan, 2026-10-19:** one item may start more than one chapter, but only from a different place each time. So for the Loss the keys lie loose on the entry table; for the Arrival they sit in a little basket on the kitchen counter (by then the couple have a place for things). Exact spot for the Arrival: proposed.
+- **The lamp starts the Loss; the keys start the Arrival** (Dan, 2026-10-19). The loss happens in play, in the run, so the Loss starts with the most ordinary act there is: turning off the bedside lamp to go to sleep, with the test on the nightstand beside it. The run is that night; the quiet car in the rain is the drive afterwards. Nothing about the lamp warns the player. The car keys are kept for the Arrival, when leaving through the front door means what it should. (Dan's rule, 2026-10-19: one item may start several chapters, but only from a different place each time. With the lamp, the keys start only one.)
 - **The office opens with the bills.** The fixer gets a room for providing at the moment the story turns to money.
 
 ### Rooms
@@ -61,7 +61,7 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 | Room | Opens | What it is for |
 |---|---|---|
 | Porch | Start | Crossing the threshold. Seen only at the very start (M2 may bring it back for the Arrival). |
-| Entry | Start | Where the Loss and the Arrival begin: the keys, later the crib box and the hospital bag |
+| Entry | Start | Where the Arrival begins: the keys, later the crib box and the hospital bag. The player comes back in here from the car after the Loss. |
 | Living room | Start | Home base. The opening beat. The big window (rain). The crib stands here after the Anchor. Dad's Journal (M2). |
 | Kitchen | Start | The fridge (the hum; IVF medication for the Novice), the table |
 | Back hall | After the opening beat | Leads straight to the spare room's door |
@@ -111,7 +111,7 @@ How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-vie
 | Chapter object | Where (view) | Action | Active |
 |---|---|---|---|
 | Record player | Bedroom (B3) | Lower the needle: the Partner begins | From the moment the bedroom opens (straight after the opening beat), until the Partner |
-| Car keys (open again: see call 5) | Entry (E2) | Pick them up: the Loss begins | As soon as the player is back from the Partner. Before then they are just there: no ring, no highlight. |
+| Bedside lamp | Bedroom nightstand (B2), next to the test | Turn it off: the Loss begins | As soon as the player is back from the Partner. Before then it is the warm light that leads the player to the bedroom (no ring, no highlight). |
 
 ### House objects through the story
 
@@ -140,7 +140,7 @@ Made with the narrative-craft skill. House objects reward looking. They are neve
 
 | Object | Where (view) | Action | What it says |
 |---|---|---|---|
-| The positive test | Bedroom nightstand (B2) | Pick it up and look | The chapter's result, in the room (one result, same for everyone). |
+| The positive test | Bedroom nightstand (B2), next to the lamp | Pick it up and look | The chapter's result, in the room (one result, same for everyone). |
 | The photo, now hung | Bedroom wall (B2) | Look | A changed object: they are making the place theirs. |
 | A card on the fridge | Kitchen (K2) | Read it. Its wording and date are Dan's. | Planning ahead. It is ordinary, so it isn't a warning. |
 | The record crate, one missing | Living room (L4) | Flick through: one gap | The record is on the player in the bedroom. Continuity the player can notice. |
@@ -152,7 +152,7 @@ The pizza box is gone.
 
 | Object | Where (view) | Action | What it says |
 |---|---|---|---|
-| The car keys, dropped | Entry floor by the door (E1) | Pick them up and put them on the table | They came in and let them fall. The same keys that started the Loss. |
+| The car keys, dropped | Entry floor by the door (E1) | Pick them up and put them on the table | They came home from the hospital in the night and let them fall. |
 | The fridge | Kitchen (K2) | Open it: dishes of food from family, one with a note (Dan's words). Its door is bare: the card is gone. | What people do after a loss: kind, a little awkward, the dark stretch's human beat. And absence: the plan was taken down. |
 | A blanket and pillow on the couch | Living room (L4) | Fold the blanket | Leo has been sleeping out here (Dan, 2026-10-19). Nothing says so; the player works it out. |
 | The window in rain | Living room (L2) | Draw the curtain: rain | The Silence in the car, carried into the House. |
@@ -195,10 +195,7 @@ Answered by Dan on 2026-10-19 unless marked open. Open ones have my recommended 
 2. **Decided:** no crib until the Anchor; the onesie stands for early hope. Who bought it is still open (draft: Maya).
 3. **Open: the memory box.** After the Loss the test and the onesie go into a shoebox in the spare room, found again in the Mourner. *Recommended: yes; decide its ending with the Mourner (tied to call 1).*
 4. **Decided:** the game starts on the porch at dusk on moving day.
-5. **Open again (Dan, 2026-10-19): what starts the Loss.** The loss has to happen in play, inside the run: the player fails through no fault of their own. So the chapter can't be "driving to an appointment where they find out". The run is the pregnancy's next weeks, as a metaphor; the quiet car in the rain (Story 2.3) comes after. The rule still holds: one item may start several chapters, but from a different place each time. Three options:
-   - **Turning off the bedroom lamp** (recommended). The test is on the nightstand by the lamp. The player turns off the light to go to sleep; the run is the night, euphoric and dreaming ahead, until it crumbles. The car is the drive in the dark and the rain afterwards. Going to bed is the most ordinary act there is, so there is no warning, and it matches a night when something goes wrong without anyone saying so. The keys then start only the Arrival, which keeps them clean. Cost: the lamp is in the room the player comes back to after the Partner, so they can start the Loss without walking through the warm House first. Seeing the hope is optional, like every House object.
-   - **The keys, with no errand named.** They pick up the keys and the run begins at once; the run is the weeks ahead, and the car afterwards is simply where they end up. Keeps the walk to the front door through the warm House, and the keys bookend the story. But the keys promise a trip the chapter never takes.
-   - **Something they are planning with.** A calendar on the fridge counting the weeks, or a baby-name book on the couch: tapping it, they plan ahead, and the run is the future they are imagining. Closest to the GDD's "planning, dreaming", but the jump from a calendar to sitting in a car needs the most explaining.
+5. **Decided (Dan, 2026-10-19): the bedside lamp starts the Loss.** The loss has to happen in play, in the run, where the player fails through no fault of their own; so the Loss can't be "driving to an appointment where they find out". The player turns off the lamp to sleep; the run is the night; the quiet car in the rain (Story 2.3) is the drive afterwards. The keys start only the Arrival. Accepted cost: the lamp is in the room the player comes back to after the Partner, so they can start the Loss without walking through the warm House first. Not chosen: the keys with no errand named; something they plan with (a calendar or a baby-name book).
 6. **Decided:** the M1 build size above.
 7. **Decided:** one storey.
 8. **Open: the record player's later life** (does it play again in the Arrival, or get packed away?). *Recommended: decide with the Arrival.*

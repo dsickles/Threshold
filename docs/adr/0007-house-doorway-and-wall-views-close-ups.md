@@ -12,7 +12,7 @@ ADR-0003 still holds: the House uses fixed camera shots, not free walking, and t
 - **Wall view.** From inside a room, tapping a wall or corner glides to a view framed on it from the middle of the room. A room has 2 to 4. A short look-drag still works in any view.
 - **Close-up.** Tapping an object glides to a close view of it. Each object has **one action** (read it, open it, switch it on), done by tapping it again. Tapping anywhere off the object steps back to the view it was opened from.
 - **Rings.** In every view, the room's other wall views and every doorway in sight show as tap rings; anything off screen pins to the screen edge with an arrow. There is no back button.
-- **Chapter objects** work the same way: close-up first, then the action starts the chapter (for the Loss, picking up the keys).
+- **Chapter objects** work the same way: close-up first, then the action starts the chapter (for the Loss, turning off the bedside lamp).
 - **House objects** (objects that don't start a chapter) are never required, never scored and never saved. What the House shows still comes only from the finished-chapter list. Any words on them are Dan's to write.
 
 Why: standing at the doorway, then looking at what you tapped, is what Dan expected in the M0 check. Close views hide the flaws of AI-made art. One verb (tap to look closer, tap again to act) works for walls, House objects and chapter objects alike.

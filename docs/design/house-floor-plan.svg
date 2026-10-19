@@ -28,8 +28,8 @@
 <text x="282.0" y="364.0" font-size="10" fill="#5A4630">moving boxes block the hall until the opening beat</text>
 <line x1="250.0" y1="520" x2="410.0" y2="520" stroke="#7FB0D6" stroke-width="5"/>
 <text x="330.0" y="535" font-size="10" fill="#4A7393" text-anchor="middle">big window</text>
-<text x="242.0" y="138.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BEDROOM 1</text>
-<text x="242.0" y="152.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(main)</text>
+<text x="250.0" y="138.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BEDROOM 1</text>
+<text x="250.0" y="152.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(main)</text>
 <text x="90.0" y="84.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BATH 1</text>
 <text x="90.0" y="98.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">en-suite</text>
 <text x="350" y="212.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BATH 2</text>
@@ -48,7 +48,7 @@
 <text x="334.0" y="400.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">LIVING ROOM</text>
 <text x="590" y="400.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">KITCHEN</text>
 <rect x="49.0" y="427.0" width="10" height="10" fill="#8B3A32"/>
-<text x="62.0" y="436.0" font-size="10.5" fill="#8B3A32" text-anchor="start">car keys (the Loss)</text>
+<text x="62.0" y="436.0" font-size="10.5" fill="#8B3A32" text-anchor="start">car keys</text>
 <rect x="57.0" y="179.0" width="10" height="10" fill="#8B3A32"/>
 <text x="70.0" y="188.0" font-size="10.5" fill="#8B3A32" text-anchor="start">record player (the Partner)</text>
 <rect x="681.0" y="359.0" width="10" height="10" fill="#8B3A32"/>
@@ -74,7 +74,9 @@
 <rect x="169.0" y="99.0" width="10" height="10" fill="#8B3A32"/>
 <text x="182.0" y="108.0" font-size="10.5" fill="#8B3A32" text-anchor="start">Maya's list</text>
 <rect x="169.0" y="151.0" width="10" height="10" fill="#8B3A32"/>
-<text x="166.0" y="160.0" font-size="10.5" fill="#8B3A32" text-anchor="end">test (after the Partner)</text>
+<text x="166.0" y="160.0" font-size="10.5" fill="#8B3A32" text-anchor="end">bedside lamp (the Loss)</text>
+<rect x="169.0" y="125.0" width="10" height="10" fill="#8B3A32"/>
+<text x="182.0" y="134.0" font-size="10.5" fill="#8B3A32" text-anchor="start">test</text>
 <polygon points="110.0,536.0 114.8,551.2 105.2,551.2" fill="#0E7A4F"/>
 <circle cx="110" cy="560.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
 <text x="110" y="563.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">P</text>

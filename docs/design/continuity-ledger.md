@@ -31,8 +31,8 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Object | Lifeline | Status |
 |---|---|---|
 | Record player | Start: set up on a moving box in the main bedroom, the first thing they unpacked. Partner's chapter object. After the Partner: lid closed. Later: open (see Dan's calls in the floor plan). | proposed |
-| Car keys | On the entry table from the Start. After the Loss: dropped on the entry floor (a House object: put them back on the table). From the Novice on they live in a little basket on the kitchen counter. The Arrival starts from that basket. Whether the keys also start the Loss is open again (floor plan, call 5). | Arrival: proposed. Loss: open (Dan, 2026-10-19). |
-| Positive test (first) | After the Partner: on the main bedroom nightstand (a House object: pick it up; drawn on the floor plan). After the Loss: gone from view, kept in the memory box. | proposed |
+| Car keys | On the entry table from the Start, just there. After the Loss: dropped on the entry floor, after the drive home from the hospital (a House object: put them back on the table). From the Novice on they live in a little basket on the kitchen counter. They start the Arrival from that basket. | Arrival only, not the Loss: decided (Dan, 2026-10-19). Places proposed. |
+| Positive test (first) | After the Partner: on the main bedroom nightstand, next to the bedside lamp (a House object: pick it up; drawn on the floor plan). After the Loss: gone from view, kept in the memory box. | proposed |
 | The onesie (the first small baby thing) | After the Partner: on the spare room windowsill. After the Loss: in the memory box. Found again in the Mourner. Where it ends is Dan's call. | Onesie as the early hope: decided (Dan, 2026-10-19). Its lifeline after the Loss: proposed. |
 | Memory box (a shoebox) | After the Loss: holds the test and the onesie; sits shut in the spare room among Leo's boxes. Mourner: found and dealt with (Dan's call on how). | proposed |
 | Leo's old-life boxes (guitar, games, old armchair, single-guy stuff) | Start: most are already in the spare room; one, his moving box, sits in the entry and can be opened (a House object). After the opening beat: that box is gone from the entry, carried to the spare room. Stay there through the pregnancy. Mourner: cleared out to make the room the nursery (GDD: "clearing out the clutter of their pre-parent lives"). | proposed |
@@ -63,6 +63,7 @@ Every object, room, fact and motif the story uses, with its life across the chap
 
 | Motif | Where it appears | Status |
 |---|---|---|
-| Leaving through the front door with the keys | Starts the Arrival. Whether it also starts the Loss is open again (Dan, 2026-10-19: the loss must happen in play, in the run); see call 5 in the floor plan. If both, from different places. | open |
+| Leaving through the front door with the keys | Starts the Arrival only | decided (Dan, 2026-10-19) |
+| The bedside lamp | Lit at the opening beat, the warm light that leads the player to the bedroom. Turned off to start the Loss: going to sleep. After the Loss it stays off. | Starts the Loss: decided (Dan, 2026-10-19). Rest proposed. |
 | The shut door at the end of the hall | The spare room: closed at the start, opened by hope, shut by grief, opened again by connection, finished last | proposed |
 | Rhythm and tuning | The Partner's tap-in-time and the Tuner's knobs return in the Arrival | decided (GDD, FR30) |
