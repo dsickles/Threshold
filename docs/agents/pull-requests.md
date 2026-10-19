@@ -4,7 +4,7 @@ How every Threshold PR is opened and made ready. CLAUDE.md points here.
 
 ## Draft first
 
-Open each PR as a **draft**. It leaves draft (is marked "Ready for review") only when all of the following are true. Hopper is meant to review when a PR leaves draft, so this is the line between "still working" and "check my claim".
+Open each PR as a **draft**. It leaves draft (is marked "Ready for review") only when all of the following are true. Hopper reviews once the ticket reaches In Review, which happens only when the PR leaves draft (see "Linear status"), so this is the line between "still working" and "check my claim".
 
 1. **Every acceptance criterion is in the PR body with its proof.** Copy each criterion from the Linear ticket word for word, in order, into the "Acceptance criteria" table in [the PR template](../../.github/pull_request_template.md). None is left out, merged or reworded.
 2. **Each criterion has a status and proof.**
@@ -17,9 +17,17 @@ Open each PR as a **draft**. It leaves draft (is marked "Ready for review") only
 
 If a later push changes what a criterion depends on, update its row before asking for another review.
 
+## Linear status
+
+Move the ticket to **In Review** only when the PR leaves draft, never while it is still a draft. Hopper starts her review when a ticket reaches In Review, so moving it early makes her review unfinished work.
+
 ## Reviews
 
-Hopper (an outside review bot) reviews every PR in Dan's repos, posting from Dan's account under a "Hopper review" heading. Her required changes are handled like any reviewer's: fix them or reply on the thread saying why not. Her "not blocking" notes do not hold up a merge. Merging stays with Dan.
+Hopper (an outside review bot) reviews every PR in Dan's repos, posting from Dan's account under a "Hopper review" heading. She checks the acceptance criteria table and test list first, then reads the code on her own for bugs and side effects outside the criteria. On every later push she rechecks the whole table and test list, since a new commit can break a criterion that was met before.
+
+Her required changes are handled like any reviewer's: fix them or reply on the thread saying why not. Her "not blocking" notes do not hold up a merge. Merging stays with Dan.
+
+Split of work: the thread proves everything a machine can (tests, error check, green CI on the latest commit, self-review). Hopper is the skeptic. Dan only checks what needs his hands on a device.
 
 ## Keeping this in place
 
