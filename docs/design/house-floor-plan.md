@@ -195,7 +195,10 @@ Answered by Dan on 2026-10-19 unless marked open. Open ones have my recommended 
 2. **Decided:** no crib until the Anchor; the onesie stands for early hope. Who bought it is still open (draft: Maya).
 3. **Open: the memory box.** After the Loss the test and the onesie go into a shoebox in the spare room, found again in the Mourner. *Recommended: yes; decide its ending with the Mourner (tied to call 1).*
 4. **Decided:** the game starts on the porch at dusk on moving day.
-5. **Decided:** the keys start both the Loss and the Arrival, from different places (one item may start several chapters, but from a different place each time). Still open: the errand behind the Loss.
+5. **Decided:** the keys start both the Loss and the Arrival, from different places (one item may start several chapters, but from a different place each time). Still open: the errand behind the Loss. Three options:
+   - **The first scan** (recommended). The card on the fridge after the Partner is the appointment card; the keys take them to the 8-week scan. It is real (many miscarriages are found at the first scan), it starts with joy and plans, and the Silence is sitting in the car outside the clinic in the rain. It also turns the Partner's heartbeat into the thing that is missing, which the Tuner (hearing the baby) pays off later. The card is ordinary, so it isn't a warning, though players who have lived through this will feel it.
+   - **Telling family.** Driving to Maya's parents with the news. Pure euphoria, but many couples wait until 12 weeks to tell family, and the Loss then has to interrupt a drive.
+   - **An ordinary errand.** A Saturday trip to the hardware store, paint chips for the spare room in Maya's hand. The most sudden and the least foreshadowed, but less tied to anything else in the House.
 6. **Decided:** the M1 build size above.
 7. **Decided:** one storey.
 8. **Open: the record player's later life** (does it play again in the Arrival, or get packed away?). *Recommended: decide with the Arrival.*

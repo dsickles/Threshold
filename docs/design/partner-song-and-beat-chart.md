@@ -130,7 +130,7 @@ About 1.9 taps a second on average, from 0.75 at the start to 3 in the crescendo
 
 After the last note the glow fills the screen and the chord rings out. Then the screen settles on **a positive pregnancy test**, two lines, no words (Story 1.2: "the result is a positive pregnancy test, and that is the only ending"). Then back to the House, now warm ([house-floor-plan.md](house-floor-plan.md)).
 
-**Dan:** whether anyone speaks at that moment, what the test is lying on, and how long it holds are story and feel. Not drafted here; CLAUDE.md says Claude doesn't invent story or dialogue.
+**Dan, 2026-10-19:** the test moment should be exciting: a moment of recognition, reflection and celebration, lasting about 30 seconds to a minute. **Proposed:** the music swells and resolves around the test, and the screen holds on it for at least 30 seconds with nothing to tap; then a quiet ring appears and the player goes back to the House when they are ready, so the moment lasts between 30 seconds and however long they want. Still Dan's: whether anyone speaks, and what the test is lying on. Not drafted here; CLAUDE.md says Claude doesn't invent story or dialogue.
 
 ## Checks this design must pass
 
@@ -150,7 +150,11 @@ These come from the roadmap and stories. None is optional, and the ones that nee
 2. ~~The song's genre and mood.~~ **Decided (Dan, 2026-10-19): warm neo-soul, instrumental, 120 BPM.**
 3. **Laughter:** wordless laughs count as sound effects under ADR-0005, not voice acting (**decided, Dan, 2026-10-19**). Still open: whose laughs are they?
 4. ~~Calibration inside the intro, or its own screen?~~ **Decided (Dan, 2026-10-19): inside the intro.**
-5. **The bar-48 stumble:** keep or cut, and what it means.
-6. **The test moment:** any words, where the test is, how long it holds.
-7. **Orientation** for the whole game (sideways or upright). This screen works either way.
-8. **Which AI music tool**, and its commercial terms.
+5. **The bar-48 stumble:** halfway through the song, the whole band stops for one bar (2 seconds, nothing to tap), then comes back in, like a couple fumbling and laughing. It is the chapter's "one beat of human awkwardness". *Recommended: keep it as a plain fumble, meaning nothing more; cutting it later costs nothing.*
+6. **The test moment:** length and feel decided (Dan, 2026-10-19; see "Ending"). Still open: any words, and what the test is lying on.
+7. **Orientation** for the whole game (sideways or upright). This screen works either way. *Recommended: sideways.* PC and Steam, and the browser on a laptop, are sideways, so one layout serves every platform; upright on phones would mean a second layout for every view and menu (Florence did this when it moved from phones to Switch and PC). The project is already set up for 1280×720 sideways, the type-scale ruling in scope.md (2026-10-18) assumes a sideways phone, and every M0 test was done sideways. Premium story games on phones (*What Remains of Edith Finch*, *Gris*) are mostly sideways; upright is where free casual games live. Cost: people hold phones upright in the browser, so the web build needs a "turn your phone sideways" screen.
+8. **Which AI music tool** (not needed yet; Dan, 2026-10-19: it must be free and allow commercial use). Checked 2026-10-19: Suno, Udio, ElevenLabs and AIVA free plans are personal use only, so they are out. Three that fit:
+   - **Stable Audio 3 Medium** (Stability AI, open weights, May 2026). Free under the Stability Community License for anyone earning under $1M a year, and you own the output. Trained only on licensed music, which matters for Steam's AI disclosure. Good at instrumental tracks up to about 6 minutes. *Recommended.*
+   - **ACE-Step 1.5** (MIT licence). Free, runs on an ordinary Windows PC with a modest graphics card, and has a free web demo. Makes full songs, including vocals. What it was trained on is less clear.
+   - **YuE** (Apache 2.0). Free for commercial use if you credit "YuE by HKUST/M-A-P". Needs a very large graphics card (24 GB), so it would have to run on a rented machine.
+   Re-check the licence text when the song is actually made, and keep a copy of it with the song.
