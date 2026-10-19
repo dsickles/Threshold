@@ -56,10 +56,13 @@ test("hiding the tab pauses the song until a tap", async ({ game, page }) => {
   await setHidden(false);
   expect((await game.screen(PARTNER)).prompt).toBe("Tap to continue");
   await game.screenshot("partner-paused");
-  const missesBefore = (await game.screen(PARTNER)).misses;
+  const tappedAt = Date.now();
   await game.tapMiddle();
   await expect.poll(async () => (await game.screen(PARTNER)).state).toBe("PLAYING");
   await expect.poll(() => songTime(game)).toBeGreaterThan(frozen + 0.5);
-  // Coming back doesn't count the notes that would have passed while hidden.
-  expect((await game.screen(PARTNER)).misses).toBeLessThanOrEqual(missesBefore + 1);
+  // The song picks up where it paused: it has moved on only by the time
+  // since the tap, not by the time it was hidden (over 2.5 s here), so the
+  // chart's notes didn't pass while hidden.
+  const sinceTap = (Date.now() - tappedAt) / 1000;
+  expect(await songTime(game)).toBeLessThanOrEqual(frozen + sinceTap + 0.3);
 });
