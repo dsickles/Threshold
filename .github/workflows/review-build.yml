@@ -3,8 +3,8 @@
 # writes "itch.io build: <sha>, threshold-review" into the PR body.
 # Runs here rather than in Claude threads so a thread's network rules never
 # block it. Never touches the main itch.io page; that still waits for Dan's
-# "upload". Skips drafts, and skips quietly until the BUTLER_API_KEY secret
-# is set in the repo's GitHub settings.
+# "upload". Skips drafts, and fails if the BUTLER_API_KEY secret is missing
+# from the repo's GitHub settings, so a pass always means a build was uploaded.
 name: Review build
 
 on:
@@ -45,19 +45,15 @@ jobs:
           key: godot-${{ runner.os }}-${{ hashFiles('tools/godot-setup.sh') }}
 
       - name: Check the itch.io key is set
-        id: key
         run: |
-          if [ -n "$BUTLER_API_KEY" ]; then echo "ok=true" >> "$GITHUB_OUTPUT"
-          else echo "::notice::BUTLER_API_KEY secret not set; review build not uploaded."; fi
+          [ -n "$BUTLER_API_KEY" ] || { echo "::error::BUTLER_API_KEY secret not set; review build not uploaded."; exit 1; }
 
       - name: Error check, tests, export and upload to the review page
-        if: steps.key.outputs.ok == 'true'
         env:
           BUILD_BRANCH: ${{ github.event.pull_request.head.ref }}
         run: bash tools/publish.sh --review
 
       - name: Write the build line into the PR body
-        if: steps.key.outputs.ok == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
