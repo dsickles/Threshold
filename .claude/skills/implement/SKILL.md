@@ -15,3 +15,5 @@ Run typechecking regularly, single test files regularly, and the full test suite
 Once done, call the Skill tool with "code-review" to review the work.
 
 Commit your work to the current branch.
+
+If you open a pull request, follow `docs/agents/pull-requests.md`: open it as a draft, and before it leaves draft list every acceptance criterion from the ticket in the PR body with its proof, and do a self-review pass.

@@ -23,6 +23,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 | Per-chapter acceptance criteria | [docs/design/stories/](docs/design/stories/) (reference, not a plan) |
 | Playtest notes | [docs/playtests/](docs/playtests/) |
 | Work tracking | Linear: Threshold initiative, one project per milestone (see "Agent skills" below) |
+| How PRs are opened and made ready | [docs/agents/pull-requests.md](docs/agents/pull-requests.md), [.github/pull_request_template.md](.github/pull_request_template.md) |
 
 `archive/` holds the old BMAD-era files exactly as they were. Do not read or use it unless Dan asks; reading it is blocked in `.claude/settings.json`.
 
@@ -50,6 +51,16 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 - Don't invent story, dialogue or journal wording. If a placeholder is needed, mark it clearly as a placeholder and tell Dan.
 - Don't delete or rewrite design docs. The one exception is fixing an out-of-date line after a decision (see "When documents disagree").
 - Dan follows along in Cursor. When only one session is writing, work in the main Threshold folder on a new branch, not a worktree. Use a worktree only when several sessions write at once, and tell Dan its full path so he can add it to his Cursor window (File → Add Folder to Workspace).
+
+## Pull requests
+
+Follow [docs/agents/pull-requests.md](docs/agents/pull-requests.md) and fill in [the PR template](.github/pull_request_template.md). In short:
+
+- Open every PR as a draft.
+- Before it leaves draft, list every acceptance criterion from the Linear ticket in the PR body, word for word, each with its proof: a test name, a `file:line`, or a CI run on the latest commit. Anything only a person can check is marked "Needs Dan's device" with what Dan should do; it waits for him and is never skipped.
+- List any existing test the PR weakens or deletes, and why.
+- Do a self-review pass first: reread the whole diff against the ticket, as a cold reviewer would, and fix what you find.
+- Hopper, an outside review bot, reviews when the PR leaves draft. Fix her required changes or reply saying why not.
 
 ## Suggesting the next ticket
 
