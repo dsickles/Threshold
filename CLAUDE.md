@@ -63,6 +63,7 @@ Follow [docs/agents/pull-requests.md](docs/agents/pull-requests.md) and fill in 
 - For a PR that changes the game, the "Review build" GitHub check uploads its head commit to the review page and writes the sha into the PR body. Wait for it to pass before moving the ticket to In Review.
 - Move the Linear ticket to In Review only when the PR leaves draft; that is what starts Hopper's review. After each round of fixes, move it to In Progress and back to In Review so she sees them. Move it to Done when Dan merges.
 - Hopper, an outside review bot, checks the criteria table, then reads the code on her own. Fix her required changes or reply saying why not.
+- Any change to how PRs, reviews, builds or Linear statuses work (this section, docs/agents/pull-requests.md, the PR template, or the workflows) ends with a copy-and-paste prompt for Dan to send Hopper, in a code block, saying what changed and what she should do differently.
 
 ## Suggesting the next ticket
 

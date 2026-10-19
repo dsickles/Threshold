@@ -39,6 +39,10 @@ Her required changes are handled like any reviewer's: fix them or reply on the t
 
 Split of work: the thread proves everything a machine can (tests, error check, green CI on the latest commit, self-review). Hopper is the skeptic. Dan only checks what needs his hands on a device.
 
+## Telling Hopper when the flow changes
+
+Hopper doesn't read this repo's rules on her own. Whenever a change alters how PRs, reviews, review builds or Linear statuses work (this file, the PR template, the "Pull requests" section of CLAUDE.md, or `.github/workflows/`), the thread's reply to Dan ends with a copy-and-paste prompt for Hopper in a code block: what changed, what she should do differently, and what stays the same. Dan sends it to her.
+
 ## Keeping this in place
 
 The `implement` skill is copied from an outside source and `npx skills@latest update` overwrites it. After an update, check that its last steps still point here, and add the line back if not.
