@@ -1,6 +1,6 @@
-<!-- Fill every section. A PR stays in draft until the "Acceptance criteria" table is complete and the self-review is done. See docs/agents/pull-requests.md. -->
-
 Ticket: DAS-<n> (<Linear link>)
+
+<!-- Fill every section. A PR stays in draft until the "Acceptance criteria" table is complete and the self-review is done. See docs/agents/pull-requests.md. -->
 
 Before: <what a player or Dan sees today, in plain words>
 
@@ -30,7 +30,7 @@ Anything in this PR the ticket did not ask for, and why. Write "None" if none.
 
 ## Tests changed
 
-Every existing test this PR edits or deletes, and why. Write "None" if none. Any removed assert, wider tolerance or skip is listed here.
+Every existing test this PR edits or deletes, and why. Write "None" if none. Any removed assert, wider tolerance, skip or test that no longer runs is listed here.
 
 ## Local checks
 
