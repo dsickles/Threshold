@@ -92,27 +92,22 @@ func test_an_unknown_answer_is_not_recorded() -> void:
 	check_eq(state.finished_chapters(), [] as Array[String], "nothing finished")
 
 
-func test_a_chapter_finished_by_the_chapter_framework_is_saved() -> void:
-	var chapters := Node.new()
-	chapters.name = "Chapters"
-	chapters.add_user_signal("chapter_finished", [{"name": "result", "type": TYPE_DICTIONARY}])
-	get_tree().root.add_child(chapters)
-	var state := _fresh_state()
-	add_child(state)
-	await frames()
-	chapters.emit_signal("chapter_finished", {"chapter": "partner", "answer": "stoic"})
-	check_eq(_fresh_state().finished_chapters(), ["partner"] as Array[String], "saved via Chapters")
-	remove_child(state)
-	chapters.free()
-
-
 func test_a_test_only_chapter_from_the_chapter_framework_is_never_saved() -> void:
 	var state := _fresh_state()
-	state._on_chapter_finished({"chapter": "stand_in", "answer": ""})
+	check(not state.record_chapter_result({"chapter": "stand_in", "answer": ""}), "stand-in refused")
 	check_eq(state.finished_chapters(), [] as Array[String], "stand-in not recorded")
 	check(not state.has_save(), "nothing saved")
-	state._on_chapter_finished({"chapter": "partner", "answer": ""})
-	check_eq(state.finished_chapters(), ["partner"] as Array[String], "a story chapter is recorded")
+	check(state.record_chapter_result({"chapter": "partner", "answer": ""}), "a story chapter is saved")
+
+
+func test_house_state_a_chapter_leaves_is_saved_with_it() -> void:
+	var state := _fresh_state()
+	state.record_chapter_result({"chapter": "partner", "answer": "", "house": {"crib": "boxed"}})
+	state.record_chapter_result({"chapter": "protector", "answer": ""})
+	var next_visit := _fresh_state()
+	check_eq(next_visit.house_state_for("partner"), {"crib": "boxed"}, "partner house state")
+	check_eq(next_visit.house_state_for("protector"), {}, "no house state for protector")
+	check(not "house" in next_visit.to_save_data().finished[1], "empty house left out")
 
 
 func test_finishing_the_arrival_leaves_no_next_chapter() -> void:
@@ -135,6 +130,7 @@ func test_an_impossible_save_starts_fresh() -> void:
 		'{"finished": [{"chapter": "protector", "answer": ""}], "settings": {}}',
 		'{"finished": [{"chapter": "partner", "answer": "angry"}], "settings": {}}',
 		'{"finished": [{"chapter": "nursery"}], "settings": {}}',
+		'{"finished": [{"chapter": "partner", "answer": "", "house": 3}], "settings": {}}',
 		'{"finished": "partner"}',
 		'[1, 2, 3]',
 		'',
