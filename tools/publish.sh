@@ -64,7 +64,7 @@ if ! $upload; then
 fi
 
 [ -n "${BUTLER_API_KEY:-}" ] || { echo "BUTLER_API_KEY is not set."; exit 1; }
-branch="$(git -C "$REPO_DIR" branch --show-current)"
+branch="${BUILD_BRANCH:-$(git -C "$REPO_DIR" branch --show-current)}"
 version="${branch##*/}-$(git -C "$REPO_DIR" rev-parse --short HEAD)"
 "$BUTLER" push "$OUT_DIR" "$ITCH_TARGET" --userversion "$version"
 echo "Uploaded to $ITCH_TARGET as version $version."
