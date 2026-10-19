@@ -31,6 +31,7 @@ const MISS_GRACE := 0.100
 const CALIBRATION_WINDOW := 0.250
 const MAX_SOUND_DELAY := 0.250
 const LAUGH_GAP := 4.0  # At most one laugh every 2 bars.
+const RING_SIZE := 0.13  # The ring's radius, as a share of the screen's shorter side.
 const TRAVEL := 1.5  # A light takes 3 beats to reach the ring.
 const FILL_TIME := 6.0  # After the last note, the glow fills the screen.
 const TEST_HOLD := 5.0  # PLACEHOLDER: how long the test holds is Dan's call.
@@ -64,7 +65,7 @@ var _last_laugh := -INF
 var _last_laugh_index := -1
 var _flash := 0.0
 var _song_time := -1.0
-var _test_shown_at := 0.0
+var _test_held := 0.0  # Seconds the test has been on screen.
 var _late_offsets: Array[float] = []  # After the intro, for the test info.
 
 @onready var _conductor: Node = %Conductor
@@ -149,12 +150,17 @@ func _process(delta: float) -> void:
 				if _song_time >= _song_length or _conductor.has_song_ended():
 					_conductor.stop()
 					_state = State.TEST_SHOWN
-					_test_shown_at = Time.get_ticks_msec() / 1000.0
+					_test_held = 0.0
 		State.TEST_SHOWN:
-			if Time.get_ticks_msec() / 1000.0 - _test_shown_at >= TEST_HOLD:
+			_test_held += delta
+			if _test_held >= TEST_HOLD:
 				_state = State.DONE
 				finished.emit()
 	_refresh_prompt()
+	# Judgement sits just above the ring, which scales with the screen.
+	var ring := minf(size.x, size.y) * RING_SIZE
+	_judgement.position = Vector2((size.x - _judgement.size.x) / 2.0,
+			size.y / 2.0 - ring - _judgement.size.y - 12.0)
 	queue_redraw()
 
 
@@ -243,6 +249,19 @@ func _refresh_prompt() -> void:
 			_prompt.text = ""
 
 
+## For the browser tests' probe (game/_core/test_probe/web_test_probe.gd):
+## what the canvas shows, since the tests can't read it.
+func probe_state() -> Dictionary:
+	return {
+		"state": State.keys()[_state],
+		"prompt": _prompt.text,
+		"song_time": _song_time,
+		"hits": _judged.count(Judged.HIT),
+		"misses": _judged.count(Judged.MISSED),
+		"clock": "browser" if _conductor.uses_browser_clock else "Godot",
+	}
+
+
 func _refresh_test_info() -> void:
 	var lines := PackedStringArray([
 		"Test info · clock: %s" % ("browser" if _conductor.uses_browser_clock else "Godot"),
@@ -260,7 +279,7 @@ func _refresh_test_info() -> void:
 
 func _draw() -> void:
 	var c := size / 2.0
-	var ring := minf(size.x, size.y) * 0.13
+	var ring := minf(size.x, size.y) * RING_SIZE
 	draw_rect(Rect2(Vector2.ZERO, size), SURFACE)
 
 	if _state == State.TEST_SHOWN or _state == State.DONE:

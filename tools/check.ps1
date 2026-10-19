@@ -1,5 +1,5 @@
-# Checks every GDScript file for errors without opening the editor.
-# Exits non-zero if any script fails.
+# Checks every GDScript file for errors without opening the editor, then runs
+# the headless tests (tools/test.ps1). Exits non-zero if anything fails.
 . (Join-Path $PSScriptRoot "paths.ps1")
 
 # Import first so new scripts get their .uid files and class names are known.
@@ -25,7 +25,5 @@ $scripts | ForEach-Object {
 if ($failed -gt 0) { Write-Host "$failed script(s) failed."; exit 1 }
 Write-Host "All scripts passed."
 
-# Headless checks with a fake clock (no test addon yet; that is chosen in M1).
-$checkOutput = & $Godot --headless --path $ProjectDir --script "res://tests/partner_ending_check.gd" 2>&1 | Out-String
-if ($LASTEXITCODE -ne 0) { Write-Host "Partner ending check failed:"; Write-Host $checkOutput; exit 1 }
-Write-Host "Partner ending check passed."
+& (Join-Path $PSScriptRoot "test.ps1")
+if ($LASTEXITCODE -ne 0) { exit 1 }

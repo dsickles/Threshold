@@ -1,0 +1,45 @@
+# Runs on PRs (and on main after a merge) that touch the game, the build
+# tools or this workflow: error-checks every script with Godot 4.7.2, runs
+# the headless tests in game/tests/ and makes sure the "Web" export still
+# builds. Docs-only changes skip it.
+# Reuses tools/publish.sh without --upload, so CI never touches itch.io.
+name: Check
+
+on:
+  pull_request:
+    paths:
+      - 'game/**'
+      - 'tools/**'
+      - '.github/workflows/check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'game/**'
+      - 'tools/**'
+      - '.github/workflows/check.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-and-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # Godot and the web templates are a large download; keep them between runs.
+      # The key changes whenever godot-setup.sh (and so the pinned version) changes.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/threshold-tools
+            ~/.local/share/godot/export_templates
+          key: godot-${{ runner.os }}-${{ hashFiles('tools/godot-setup.sh') }}
+
+      - name: Error check, tests and web export
+        run: bash tools/publish.sh

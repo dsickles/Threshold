@@ -219,6 +219,28 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 18. Automated gameplay tests start in M0, without an addon (2026-10-18)
+
+| | |
+|---|---|
+| **Was** | No automated tests in M0; the test addon and the first tests (core table, saves) came in M1. Everything else was checked only by playing. |
+| **Became** | Headless gameplay and logic tests in `game/tests/`, run by a small runner written in the repo, in every PR check. They cover the M0 checks now; every later feature adds its own. The addon question for the core table stays open for M1. |
+| **Why** | Threads were proving their work with one-off scripted runs that were then thrown away. Kept as tests, those runs catch breakage before a build reaches Dan's phone. Dan's call, 2026-10-18. |
+| **Record** | [scope.md](../scope.md) Settled questions, [game/tests/README.md](../../game/tests/README.md) |
+
+---
+
+## 19. Browser tests from M0 (2026-10-18)
+
+| | |
+|---|---|
+| **Was** | Nothing tested the exported web build itself; only the script check and export, and Dan's phone. |
+| **Became** | Playwright plays the exported web build in Chromium on every PR, at laptop and phone sizes, and checks it loads, has no console errors, starts sound only after a tap, and opens and leaves each screen. A test-only probe (web, `?probe` only) tells the tests what is on the canvas. |
+| **Why** | So threads can prove more of their own work before it reaches Dan. Dan's call, 2026-10-18. His phone tests still decide feel, timing and Safari. |
+| **Record** | [scope.md](../scope.md) Settled questions, [tests/web/README.md](../../tests/web/README.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
