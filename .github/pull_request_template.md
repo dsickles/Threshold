@@ -16,9 +16,9 @@ Every criterion from the Linear ticket, copied word for word, in the ticket's or
 |---|---|---|---|
 | 1 | <copied text> | Met | `game/tests/test_x.gd` `test_name`; CI run <link> on `<head sha>` |
 | 2 | <copied text> | Needs Dan's device | What Dan should do: <where to go, what to tap, what should happen> |
-| 3 | <copied text> | Accepted by Dan | <why it is not met>; Dan's decision: <link> |
+| 3 | <copied text> | Accepted by Dan | <why it is not met>; Dan's decision: <Linear comment by Dan, Dan's message in the project thread, or ADR; never a GitHub comment> |
 
-Status is one of **Met**, **Needs Dan's device**, **Accepted by Dan** (link his decision) or **Not met**. Proof is a test name, a `file:line`, or a CI run on the current head. "Needs Dan's device" waits for Dan and is never skipped.
+Status is one of **Met**, **Needs Dan's device**, **Accepted by Dan** (link his decision: a Linear comment by Dan, his message in the project thread, or an ADR he signed off; never a GitHub comment, since everyone posts there as dsickles) or **Not met**. Proof is a test name, a `file:line`, or a CI run on the current head. "Needs Dan's device" waits for Dan and is never skipped.
 
 ## Depends on and merge order
 
@@ -34,7 +34,7 @@ Every existing test this PR edits or deletes, and why. Write "None" if none. Any
 
 ## Local checks
 
-itch.io build: (filled in by the "Review build" check; write "none" if the PR doesn't change the game)
+itch.io build: (filled in by the "Review build" check with the head sha, threshold-review; write "none" if the PR doesn't change the game. Never the live page.)
 
 Pasted output of any check that ran only on a machine and not in CI (for example `tools/check.ps1`). Write "None" if everything ran in CI.
 
