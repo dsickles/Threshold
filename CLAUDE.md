@@ -121,6 +121,8 @@ Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents
 
 Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.json`; update with `npx skills@latest update`). Typical flow: `/grill-with-docs` to agree a milestone or decision → `/to-spec` → `/to-tickets` → `/implement` one ticket at a time. Also: `prototype`, `tdd` (core table and saves only), `diagnosing-bugs`, `/wait-what` (Dan asks for a plain re-explanation), `/handoff`. Claude Code also has a built-in `/code-review`; `/implement` is meant to use this repo's `code-review` skill.
 
+Every skill here must be one Claude can start on its own (no `disable-model-invocation: true`, and a description that says "Use when the user says /<name>…"). In Claude Project threads, "/grill-with-docs" arrives as plain text, not a slash command, so a skill Claude can't start never runs there. `npx skills update` brings that line back: after updating, remove it again and keep the "Use when" sentence.
+
 ## Building and testing
 
 Pinned engine: **Godot 4.7.2**, standard build (not .NET). Private test link: a password-protected itch.io page, uploaded with butler (see `docs/scope.md`, "Settled questions").

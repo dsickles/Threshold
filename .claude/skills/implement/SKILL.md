@@ -1,7 +1,6 @@
 ---
 name: implement
-description: "Implement a piece of work based on a spec or set of tickets."
-disable-model-invocation: true
+description: "Implement a piece of work based on a spec or set of tickets. Use when the user says /implement <ticket>, or asks to implement or \"do\" a Linear ticket such as DAS-69."
 ---
 
 Implement the work described by the user in the spec or tickets.
