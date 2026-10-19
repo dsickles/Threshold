@@ -11,16 +11,24 @@ Open each PR as a **draft**. It leaves draft (is marked "Ready for review") only
 2. **Each criterion has a status and proof.**
    - **Met:** a test name (file and test function), a `file:line`, or a CI run on the current head commit. "Tests pass" on its own is not proof; name the test that shows this criterion.
    - **Needs Dan's device:** something only a person can check (feel, sound on a real phone, Safari on the iPhone). Write exactly what Dan should do and what should happen. This waits for Dan; it is never skipped, deferred or marked "not tested".
-   - **Not met:** say why. A PR with a Not met row stays in draft unless Dan agreed to it in the thread or on the ticket; link that.
+   - **Accepted by Dan:** the criterion is not met, but Dan signed off on that. Link his decision (thread message, ticket comment or ADR).
+   - **Not met:** say why. A PR with a Not met row stays in draft.
 3. **Tests that changed are listed.** Any existing test edited or deleted, any removed assert, wider tolerance or skip, goes under "Tests changed" with the reason.
 4. **A self-review pass is done.** Before leaving draft, reread the whole diff against the ticket (not against your own plan), as if you were a reviewer seeing it cold. Run the repo's checks on the final commit, confirm each proof exists on that commit, and check CLAUDE.md's "Rules that must not break". Fix what you find, then record it in the "Self-review" section.
-5. **CI is green on the latest commit.** The proof column points at that run, not an older one.
+5. **CI is green on the latest commit.** The proof column points at that run, not an older one, and at tests CI actually runs (Hopper checks the test count in the log).
+6. **The other template sections are filled in.** "Depends on and merge order" (other open PRs this one needs or overlaps, which merges first, and which PR removes any code the two duplicate), "Out-of-scope changes" (anything not asked for by the ticket, or "None"), and "Local checks" (pasted output of any check that only ran on a machine, not in CI).
 
 If a later push changes what a criterion depends on, update its row before asking for another review.
 
+Rows marked "Needs Dan's device" don't hold up Hopper's approval: she approves the code and lists them as waiting on Dan. Dan records each result on the PR; his device test and merge are the sign-off.
+
 ## Linear status
 
-Move the ticket to **In Review** only when the PR leaves draft, never while it is still a draft. Hopper starts her review when a ticket reaches In Review, so moving it early makes her review unfinished work.
+Hopper's review starts only when a ticket's status changes to **In Review**.
+
+- Move the ticket to In Review only when the PR leaves draft, never while it is still a draft.
+- After each round of fixes (for Hopper or anyone else), once CI is green on the new commit, move the ticket back to **In Progress** and then to **In Review** again. Without that status change Hopper never sees the fixes.
+- When Dan merges the PR, the thread that owns it moves the ticket to **Done**. Hopper never marks Done.
 
 ## Reviews
 
