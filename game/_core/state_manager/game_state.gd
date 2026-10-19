@@ -6,10 +6,11 @@ extends Node
 ## any House state a chapter hands back that the core table can't look up,
 ## are saved alongside it. Autoloaded as GameState.
 ##
-## Saves only when a chapter finishes: the chapter runner's chapter_finished
-## (game/_core/chapters/README.md) is connected to record_chapter_result.
-## Leaving a chapter early, hiding the tab or closing it mid-chapter saves
-## nothing. Storage and the save format: ADR-0007.
+## Saves only when a chapter finishes, in record_chapter_result. Pending
+## DAS-75: the chapter runner's chapter_finished signal is not connected to it
+## yet; the chapter framework PR adds that line. Leaving a chapter early,
+## hiding the tab or closing it mid-chapter saves nothing. Storage and the
+## save format: ADR-0007.
 
 ## Emitted after a chapter is added to the finished-chapter list.
 signal progress_changed
@@ -27,6 +28,9 @@ const ANSWERS: Array[String] = ["", "stoic", "vulnerable"]
 
 ## Whether the last save was kept. True until a save fails.
 var last_save_ok := true
+
+# Whether a valid save is on disk: one was loaded or written.
+var _has_save := false
 
 var _finished: Array[Dictionary] = []
 var _settings := {}
@@ -53,6 +57,7 @@ func load_save() -> bool:
 	var data := _file.read()
 	if data.is_empty() or not _is_valid(data):
 		return false
+	_has_save = true
 	for entry: Dictionary in data.finished:
 		_finished.append(_entry(entry.chapter, entry.get("answer", ""), entry.get("house", {})))
 	_settings = data.get("settings", {})
@@ -66,7 +71,10 @@ func load_save() -> bool:
 ## leaves House state. The chapter must be the next one in story order;
 ## finishing one that is already finished changes nothing, and test-only
 ## chapters (not in STORY_ORDER, like the menu's stand-in) are never saved.
-## Returns whether the save was kept (false also means it wasn't recorded).
+## Returns whether the chapter was recorded (false: refused, or already
+## finished). Whether the save was kept is separate: see last_save_ok and
+## save_failed, since a chapter is recorded and play carries on even when the
+## save can't be written.
 func record_chapter_result(result: Dictionary) -> bool:
 	var chapter: String = str(result.get("chapter", ""))
 	var answer: String = str(result.get("answer", ""))
@@ -74,7 +82,7 @@ func record_chapter_result(result: Dictionary) -> bool:
 	if not chapter in STORY_ORDER:
 		return false
 	if is_finished(chapter):
-		return last_save_ok
+		return false
 	if chapter != next_chapter():
 		push_warning("GameState: '%s' is not the next chapter (expected '%s')." % [chapter, next_chapter()])
 		return false
@@ -83,7 +91,8 @@ func record_chapter_result(result: Dictionary) -> bool:
 		return false
 	_finished.append(_entry(chapter, answer, house))
 	progress_changed.emit()
-	return _save()
+	_save()
+	return true
 
 
 ## The finished chapters' ids, in the order they were finished.
@@ -123,9 +132,10 @@ func house_state_for(chapter: String) -> Dictionary:
 	return {}
 
 
-## Whether there is a save to continue from.
+## Whether there is a valid save to continue from. A broken or impossible
+## save file doesn't count.
 func has_save() -> bool:
-	return _file.exists()
+	return _has_save
 
 
 ## Forgets all progress and deletes the save (a new game).
@@ -144,14 +154,16 @@ func to_save_data() -> Dictionary:
 	return {"finished": finished, "settings": _settings.duplicate(true)}
 
 
-func _save() -> bool:
+func _save() -> void:
 	last_save_ok = _file.write(to_save_data())
-	if not last_save_ok:
+	if last_save_ok:
+		_has_save = true
+	else:
 		save_failed.emit()
-	return last_save_ok
 
 
 func _clear() -> void:
+	_has_save = false
 	_finished.clear()
 	_settings = {}
 

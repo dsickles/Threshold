@@ -5,8 +5,9 @@ extends Node
 ## every visible button with its centre, and the finished-chapter list to
 ## window.thresholdProbe, where Playwright reads it. "&finish=<chapter>" or
 ## "&finish=<chapter>:<answer>" in the address records that chapter as
-## finished when the game starts, so a test can make a save without playing. Positions are in the game's own screen units (1280
-## wide on a laptop), and "size" is the whole screen in those units.
+## finished when the game starts, so a test can make a save without playing.
+## Positions are in the game's own screen units (1280 wide on a laptop), and
+## "size" is the whole screen in those units.
 
 var _window: JavaScriptObject
 

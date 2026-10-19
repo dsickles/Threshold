@@ -9,6 +9,12 @@ const SAVE_PATH := "user://test_saves/save.json"
 var _states: Array[Node] = []
 
 
+## A save file in a browser with no lasting storage (private browsing).
+class PrivateBrowsingSaveFile extends SaveFile:
+	func storage_lasts() -> bool:
+		return false
+
+
 func before_each() -> void:
 	DirAccess.make_dir_recursive_absolute("user://test_saves")
 	SaveFile.new(SAVE_PATH).erase()
@@ -49,7 +55,8 @@ func test_a_new_game_has_nothing_finished_and_starts_with_the_partner() -> void:
 
 func test_finishing_a_chapter_saves_it_and_the_next_visit_reads_it_back() -> void:
 	var state := _fresh_state()
-	check(state.record_chapter_result({"chapter": "partner", "answer": "vulnerable"}), "save kept")
+	check(state.record_chapter_result({"chapter": "partner", "answer": "vulnerable"}), "recorded")
+	check(state.last_save_ok, "save kept")
 	check(state.has_save(), "save written")
 	var next_visit := _fresh_state()
 	check_eq(next_visit.finished_chapters(), ["partner"] as Array[String], "finished after reload")
@@ -81,7 +88,8 @@ func test_a_chapter_out_of_story_order_is_not_recorded() -> void:
 func test_finishing_a_chapter_again_changes_nothing() -> void:
 	var state := _fresh_state()
 	state.record_chapter_result({"chapter": "partner", "answer": "stoic"})
-	state.record_chapter_result({"chapter": "partner", "answer": "vulnerable"})
+	check(not state.record_chapter_result({"chapter": "partner", "answer": "vulnerable"}),
+			"second finish not recorded")
 	check_eq(state.finished_chapters(), ["partner"] as Array[String], "partner listed once")
 	check_eq(state.answer_for("partner"), "stoic", "first answer kept")
 
@@ -122,6 +130,7 @@ func test_a_broken_save_starts_fresh_without_errors() -> void:
 	_write_raw("{ this is not json")
 	var state := _fresh_state()
 	check_eq(state.finished_chapters(), [] as Array[String], "fresh start")
+	check(not state.has_save(), "a broken save is not a save to continue from")
 	check_eq(state.next_chapter(), "partner", "next chapter")
 
 
@@ -136,17 +145,34 @@ func test_an_impossible_save_starts_fresh() -> void:
 		'',
 	]:
 		_write_raw(text)
-		check_eq(_fresh_state().finished_chapters(), [] as Array[String], "fresh start for %s" % text)
+		var state := _fresh_state()
+		check_eq(state.finished_chapters(), [] as Array[String], "fresh start for %s" % text)
+		check(not state.has_save(), "no save to continue from for %s" % text)
 
 
 func test_a_save_that_cannot_be_written_is_reported_and_play_carries_on() -> void:
 	var state := _fresh_state("user://test_saves/no/such/folder/save.json")
 	var failed := [false]
 	state.save_failed.connect(func() -> void: failed[0] = true)
-	check(not state.record_chapter_result({"chapter": "partner", "answer": ""}), "reported as not kept")
+	check(state.record_chapter_result({"chapter": "partner", "answer": ""}), "chapter recorded")
 	check(failed[0], "save_failed emitted")
+	check(not state.has_save(), "no save to continue from")
 	check(not state.last_save_ok, "last_save_ok is false")
 	check_eq(state.finished_chapters(), ["partner"] as Array[String], "progress kept in memory")
+	check_eq(state.next_chapter(), "protector", "play carries on")
+
+
+func test_private_browsing_is_reported_as_not_saved_and_play_carries_on() -> void:
+	var state: Node = GAME_STATE.new()
+	_states.append(state)
+	state.use_save_file(PrivateBrowsingSaveFile.new(SAVE_PATH))
+	var failed := [false]
+	state.save_failed.connect(func() -> void: failed[0] = true)
+	check(state.record_chapter_result({"chapter": "partner", "answer": ""}), "chapter recorded")
+	check(failed[0], "save_failed emitted")
+	check(not state.last_save_ok, "last_save_ok is false")
+	check(not state.has_save(), "no save to continue from")
+	check(not FileAccess.file_exists(SAVE_PATH), "nothing written")
 	check_eq(state.next_chapter(), "protector", "play carries on")
 
 

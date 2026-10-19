@@ -19,7 +19,7 @@ func _init(save_path: String = DEFAULT_PATH) -> void:
 ## blocked frame). Writes a temporary file first, so a failed write never
 ## leaves half a save behind.
 func write(data: Dictionary) -> bool:
-	if not OS.is_userfs_persistent():
+	if not storage_lasts():
 		return false
 	var temp := path + ".tmp"
 	var file := FileAccess.open(temp, FileAccess.WRITE)
@@ -31,7 +31,10 @@ func write(data: Dictionary) -> bool:
 	if not ok:
 		DirAccess.remove_absolute(temp)
 		return false
-	return DirAccess.rename_absolute(temp, path) == OK
+	if DirAccess.rename_absolute(temp, path) != OK:
+		DirAccess.remove_absolute(temp)
+		return false
+	return true
 
 
 ## The saved data, or an empty Dictionary if there is no save or it can't be
@@ -46,6 +49,12 @@ func read() -> Dictionary:
 	if json.parse(text) != OK or not json.data is Dictionary:
 		return {}
 	return json.data
+
+
+## Whether files written to user:// outlast the page. False in private
+## browsing or a frame with storage blocked. Tests override it.
+func storage_lasts() -> bool:
+	return OS.is_userfs_persistent()
 
 
 func exists() -> bool:
