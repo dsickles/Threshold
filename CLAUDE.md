@@ -51,6 +51,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 - Don't invent story, dialogue or journal wording. If a placeholder is needed, mark it clearly as a placeholder and tell Dan.
 - Don't delete or rewrite design docs. The one exception is fixing an out-of-date line after a decision (see "When documents disagree").
 - Dan follows along in Cursor. When only one session is writing, work in the main Threshold folder on a new branch, not a worktree. Use a worktree only when several sessions write at once, and tell Dan its full path so he can add it to his Cursor window (File → Add Folder to Workspace).
+- Push your branch to GitHub as soon as you commit, even before the PR is ready. Work that lives only in one session (a cloud thread or Dan's PC) is invisible to every other session. Pushing a branch never changes main; merging stays Dan's call.
 
 ## Pull requests
 
