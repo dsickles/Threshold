@@ -180,3 +180,14 @@ func test_judgement_sits_above_the_ring_on_every_screen() -> void:
 				"judgement clear of the ring at %s (label bottom %s, ring top %s)"
 				% [screen, label.get_rect().end.y, ring_top])
 		check(label.get_rect().position.y >= 0.0, "judgement on screen at %s" % screen)
+
+
+func test_the_chart_matches_the_draft() -> void:
+	var notes: PackedFloat64Array = _partner._notes
+	check_eq(notes.size(), 388, "notes in the chart")
+	var closest := INF
+	for i in range(1, notes.size()):
+		closest = minf(closest, notes[i] - notes[i - 1])
+	check(closest >= 0.250 - 0.0001, "no two notes closer than 250 ms (closest %s s)" % closest)
+	# Bar 100, beat 1 at 120 BPM: 99 bars of 2 s after bar 1, beat 1.
+	check_near(notes[-1] - _partner._song_start, 198.0, 0.0001, "last note at bar 100, beat 1")
