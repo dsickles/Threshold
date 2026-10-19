@@ -4,7 +4,7 @@ How every Threshold PR is opened and made ready. CLAUDE.md points here.
 
 ## Draft first
 
-Open each PR as a **draft**. It leaves draft (is marked "Ready for review") only when all of the following are true. Hopper reviews when a PR leaves draft, so this is the line between "still working" and "check my claim".
+Open each PR as a **draft**. It leaves draft (is marked "Ready for review") only when all of the following are true. Hopper is meant to review when a PR leaves draft, so this is the line between "still working" and "check my claim".
 
 1. **Every acceptance criterion is in the PR body with its proof.** Copy each criterion from the Linear ticket word for word, in order, into the "Acceptance criteria" table in [the PR template](../../.github/pull_request_template.md). None is left out, merged or reworded.
 2. **Each criterion has a status and proof.**

@@ -60,7 +60,7 @@ Follow [docs/agents/pull-requests.md](docs/agents/pull-requests.md) and fill in 
 - Before it leaves draft, list every acceptance criterion from the Linear ticket in the PR body, word for word, each with its proof: a test name, a `file:line`, or a CI run on the latest commit. Anything only a person can check is marked "Needs Dan's device" with what Dan should do; it waits for him and is never skipped.
 - List any existing test the PR weakens or deletes, and why.
 - Do a self-review pass first: reread the whole diff against the ticket, as a cold reviewer would, and fix what you find.
-- Hopper, an outside review bot, reviews when the PR leaves draft. Fix her required changes or reply saying why not.
+- Hopper, an outside review bot, reviews the PR (meant to be once it leaves draft). Fix her required changes or reply saying why not.
 
 ## Suggesting the next ticket
 
