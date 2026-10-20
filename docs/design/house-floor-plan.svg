@@ -60,7 +60,15 @@
 <rect x="201.0" y="63.0" width="10" height="10" fill="#8B3A32"/>
 <text x="214.0" y="72.0" font-size="10.5" fill="#8B3A32" text-anchor="start">photo (wrapped)</text>
 <rect x="677.0" y="75.0" width="10" height="10" fill="#8B3A32"/>
-<text x="674.0" y="84.0" font-size="10.5" fill="#8B3A32" text-anchor="end">onesie</text>
+<text x="674.0" y="84.0" font-size="10.5" fill="#8B3A32" text-anchor="end">guitar</text>
+<rect x="561.0" y="75.0" width="10" height="10" fill="#8B3A32"/>
+<text x="574.0" y="84.0" font-size="10.5" fill="#8B3A32" text-anchor="start">band poster</text>
+<rect x="565.0" y="235.0" width="10" height="10" fill="#8B3A32"/>
+<text x="578.0" y="244.0" font-size="10.5" fill="#8B3A32" text-anchor="start">Leo's chair + onesie</text>
+<rect x="692.0" y="264.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="692.0" y="277.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="692.0" y="290.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="692.0" y="303.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
 <rect x="448.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
 <rect x="461.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
 <rect x="474.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>

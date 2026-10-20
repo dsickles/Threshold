@@ -36,7 +36,7 @@ On the porch at dusk (view P), looking at the front door, on the day they move i
 |---|---|---|---|
 | Start | Porch, entry, living room, kitchen | Cold: bare bulbs, boxes. Moving boxes stacked in the doorway to the back hall. | None until the opening beat |
 | After the opening beat (plays at L1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. **Moving boxes are stacked against the office door** ("we'll do the office later"). | Record player |
-| After the Partner | + spare room doorway (S1) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo's boxes pushed to one side, a corner cleared by the window, and on the windowsill one small thing for the baby (the onesie). | Bedside lamp, on the bedroom nightstand |
+| After the Partner | + spare room doorway (S1) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo has started unpacking his bachelor things in here: his leather lounge chair and ottoman (the classic Eames-style kind), his guitar on a stand, a framed band poster leaning on the wall, and plenty of boxes still stacked against the walls. On the chair, one small thing for the baby (the onesie). It reads as his room for now, clearly waiting to become something else. | Bedside lamp, on the bedroom nightstand |
 | After the Loss | − spare room | Gray, rain on the windows. The test and the onesie are gone from view. **The spare room door is shut, and moving boxes are stacked against it**, so the hall now ends in a wall of boxes. | None in M1 (the end of M1) |
 | After the Novice (M2) | + office | Colour bleeds back; the rain stops. **The boxes in front of the office door are gone**; bills are piled on the desk inside. | Bills |
 | After the Provider (M2) | | Bills filed. A monitor on the nightstand. | Baby monitor |
@@ -102,7 +102,7 @@ How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-vie
 | Bedroom | **B1** doorway | Into the bedroom | The mattress on the floor, the lamp, the record player on its box | After the opening beat |
 | | **B2** wall | The bed wall | The mattress, the nightstand (Maya's list; the test after the Partner), the wrapped photo against the wall | After the opening beat |
 | | **B3** corner | The record player | The record player on a moving box | After the opening beat |
-| Spare room | **S1** doorway | Into the spare room | Leo's boxes pushed aside, a cleared corner, the onesie on the windowsill. The player only looks in from the door. | After the Partner, until the Loss |
+| Spare room | **S1** doorway | Into the spare room | Leo's lounge chair and ottoman with the onesie on it, his guitar on a stand, the band poster, boxes along the walls. The player only looks in from the door. | After the Partner, until the Loss |
 
 ### Chapter objects are always ready
 
@@ -144,7 +144,8 @@ Made with the narrative-craft skill. House objects reward looking. They are neve
 | The photo, now hung | Bedroom wall (B2) | Look | A changed object: they are making the place theirs. |
 | A card on the fridge | Kitchen (K2) | Read it. Its wording and date are Dan's. | Planning ahead. It is ordinary, so it isn't a warning. |
 | The record crate, one missing | Living room (L4) | Flick through: one gap | The record is on the player in the bedroom. Continuity the player can notice. |
-| The onesie | Spare room windowsill (S1) | Seen from the doorway, can't be tapped in M1 | Early hope, looked at from the door. |
+| The onesie | On Leo's lounge chair (S1) | Seen from the doorway, can't be tapped in M1 | Early hope, sitting in the middle of his old life (Dan, 2026-10-20). |
+| Leo's lounge chair, guitar and poster | Spare room (S1) | Seen from the doorway | His bachelor life half unpacked into the room the baby will need. Sets up the room's change later. |
 
 The pizza box is gone.
 
@@ -158,7 +159,7 @@ The pizza box is gone.
 | The window in rain | Living room (L2) | Draw the curtain: rain | The Silence in the car, carried into the House. |
 | Boxes against the spare room door | Back hall (H1) | Look; they can't be moved | Grief shuts the room. |
 
-The test is gone from the nightstand and the onesie from the windowsill: both are in the memory box behind the blocked door (the ledger).
+The test is gone from the nightstand and the onesie from the chair: both are in the memory box behind the blocked door (the ledger).
 
 #### Later, in M2 (sketch)
 
