@@ -551,7 +551,7 @@ func _couple_size() -> float:
 
 # The test is held up between them, below their faces.
 func _test_centre_y() -> float:
-	return maxf(size.y - _couple_size() * 0.3, size.y * 0.5)
+	return maxf(size.y - _couple_size() * 0.22, size.y * 0.5)
 
 
 func _test_length() -> float:
