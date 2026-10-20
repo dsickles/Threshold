@@ -63,7 +63,7 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 | Porch | Start | Crossing the threshold. Seen only at the very start (M2 may bring it back for the Arrival). |
 | Entry | Start | Where the Arrival begins: the keys, later the crib box and the hospital bag. The player comes back in here from the car after the Loss. |
 | Living room | Start | Home base. The opening beat. The big window (rain). The crib stands here after the Anchor. Dad's Journal (M2). |
-| Kitchen | Start | The fridge (the hum; IVF medication for the Novice), the table |
+| Kitchen | Start | The fridge (the hum; IVF medication for the Novice), the counters and oven, the dining table |
 | Back hall | After the opening beat | Leads straight to the spare room's door |
 | Bedroom 1 (main) and Bath 1 (en-suite) | After the opening beat | The couple's room: the Partner and the Tuner start here |
 | Bath 2 (hall) | After the opening beat | Ordinary, as in any house; never a chapter room |
@@ -90,19 +90,28 @@ How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-vie
 |---|---|---|---|---|
 | Porch | **P** | The front door | Dusk, the porch light, the front door | Start only (one way in) |
 | Entry | **E1** doorway | Into the entry | Boxes; Leo's moving box on top; the wide opening to the living room | Always |
-| | **E2** wall | The entry table | The car keys on the table, a coat hook | Always |
-| Living room | **L1** doorway | Across the room | The couch, the big window, the kitchen beyond. The opening beat plays on first arrival here. | Always |
+| | **E2** wall | The entry table | The entry table flush against the left wall, the car keys on it, a coat hook | Always |
+| Living room | **L1** doorway | Across the room | The couch sitting askew in the middle of the room, the TV wall, the big window, the dining table and kitchen beyond. The opening beat plays on first arrival here. | Always |
 | | **L2** wall | The big window | The street at dusk; rain after the Loss | Always |
 | | **L3** corner | The back-hall opening | Moving boxes blocking it at the start; after the opening beat, the hall and a warm lamp beyond | Always |
-| | **L4** wall | The back wall | The couch, still in plastic; the crate of records | Always |
-| Kitchen | **K1** doorway | Into the kitchen | The fridge, the counter, the table | Always |
+| | **L4** wall | The TV wall (north) | The TV on its console, the AV receiver and floor-standing speakers, cables not plugged in yet; the crate of records | Always |
+| Kitchen | **K1** doorway | Into the kitchen | Granite counters round the walls, the fridge, the oven | Always |
 | | **K2** wall | The fridge | The fridge | Always |
-| | **K3** corner | The table | The table and its chairs, the window over it | Always |
+| | **K3** wall | The dining table | The dining table and its chairs, between the kitchen and the living room | Always |
 | Back hall | **H1** doorway | Down the hall | Straight to the spare room's door at the far end (shut after the Loss); the office door with boxes against it; the bedroom door with lamp light spilling out | After the opening beat |
 | Bedroom | **B1** doorway | Into the bedroom | The mattress on the floor, the lamp, the record player on its box | After the opening beat |
 | | **B2** wall | The bed wall | The mattress, the nightstand (Maya's list; the test after the Partner), the wrapped photo against the wall | After the opening beat |
 | | **B3** corner | The record player | The record player on a moving box | After the opening beat |
 | Spare room | **S1** doorway | Into the spare room | Leo's lounge chair and ottoman with the onesie on it, his guitar on a stand, the band poster, boxes along the walls. The player only looks in from the door. | After the Partner, until the Loss |
+
+### Furniture (Dan, 2026-10-20)
+
+Where things would really be, a few days after moving in. Furniture is drawn in gray on the plan and can't be tapped.
+
+- **Entry:** an entry table flush against the left wall, with the car keys on it. Leo's moving box nearby.
+- **Living room:** a 3-seater couch, sitting a little askew in the middle of the room: it isn't in its place yet, and where it finally goes is still open, because the room is open plan into the kitchen. Against the north wall, the TV on a console with an AV receiver and floor-standing speakers either side, not plugged in yet. The crate of records near them.
+- **Kitchen:** granite counters along the top wall, the right wall and a little of the bottom wall. No island or peninsula. The fridge at the top-right corner, the oven on the right wall (placed by me; move it if it belongs elsewhere).
+- **Dining table:** between the kitchen and the living room, on the kitchen side of the open plan.
 
 ### Chapter objects are always ready
 
@@ -126,7 +135,7 @@ Made with the narrative-craft skill. House objects reward looking. They are neve
 | Leo's moving box | Entry (E1) | Open it: his old things (a guitar strap, games, a band T-shirt). The label is Dan's to write. | His old life, arriving. After the opening beat it is gone, carried to the spare room. |
 | Crate of records | Living room (L4) | Flick through them | Their music. One of them is the Partner's song (see the Partner draft). |
 | The big window | Living room (L2) | Draw the curtain and look out | Dusk on a new street. Later it carries the weather of the story. |
-| Pizza box | Kitchen (K3, on the table) | Open it: two slices left | Moving-day dinner. The small human, funny beat. |
+| Pizza box | On the dining table (K3) | Open it: two slices left | Moving-day dinner. The small human, funny beat. |
 | The fridge | Kitchen (K2) | Open it: nearly empty | The hum lives here. In M2 the IVF medication appears inside. |
 
 #### After the opening beat (the bedroom opens)
@@ -155,7 +164,7 @@ The pizza box is gone.
 |---|---|---|---|
 | The car keys, dropped | Entry floor by the door (E1) | Pick them up and put them on the table | They came home from the hospital in the night and let them fall. |
 | The fridge | Kitchen (K2) | Open it: dishes of food from family, one with a note (Dan's words). Its door is bare: the card is gone. | What people do after a loss: kind, a little awkward, the dark stretch's human beat. And absence: the plan was taken down. |
-| A blanket and pillow on the couch | Living room (L4) | Fold the blanket | Leo has been sleeping out here (Dan, 2026-10-19). Nothing says so; the player works it out. |
+| A blanket and pillow on the couch | Living room (L1) | Fold the blanket | Leo has been sleeping out here (Dan, 2026-10-19). Nothing says so; the player works it out. |
 | The window in rain | Living room (L2) | Draw the curtain: rain | The Silence in the car, carried into the House. |
 
 The test is gone from the nightstand and the onesie from the chair: both are in the memory box behind the shut door (the ledger).
