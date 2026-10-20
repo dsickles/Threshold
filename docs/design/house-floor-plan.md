@@ -37,7 +37,7 @@ On the porch at dusk (view P), looking at the front door, on the day they move i
 | Start | Porch, entry, living room, kitchen | Cold: bare bulbs, boxes. Moving boxes stacked in the doorway to the back hall. | None until the opening beat |
 | After the opening beat (plays at L1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. **Moving boxes are stacked against the office door** ("we'll do the office later"). | Record player |
 | After the Partner | + spare room doorway (S1) | Warm. The test on the en-suite bathroom counter. The closet is half unpacked. **The spare room door stands ajar**: Leo has started unpacking his bachelor things in here: his leather lounge chair and ottoman (the classic Eames-style kind), his guitar on a stand, a framed band poster leaning on the wall, and plenty of boxes still stacked against the walls. On the chair, one small thing for the baby (the onesie). It reads as his room for now, clearly waiting to become something else. | Bedside lamp, on the bedroom nightstand |
-| After the Loss | − spare room | Gray, rain on the windows. The test and the onesie are gone from view. **The spare room door is shut.** No boxes, no lock: they just don't want to be reminded of what that room was going to be (Dan, 2026-10-20). It can't be opened. | None in M1 (the end of M1) |
+| After the Loss | − spare room | Gray, rain on the windows. The player comes in through the front door to the entry (E1), from the car, and sees the dropped keys first. The test and the onesie are gone from view. The bedside lamp stays off, so the bedroom is dark. **The spare room door is shut.** No boxes, no lock: they just don't want to be reminded of what that room was going to be (Dan, 2026-10-20). It can't be opened. | None in M1 (the end of M1) |
 | After the Novice (M2) | + office | Colour bleeds back; the rain stops. **The boxes in front of the office door are gone**; bills are piled on the desk inside. | Bills |
 | After the Provider (M2) | | Bills filed. A monitor on the nightstand. | Baby monitor |
 | After the Tuner (M2) | + spare room again | **The spare room door is ajar again**; behind it, Leo's things and boxes still. A flat-pack crib has arrived in the entry. | Crib box |
@@ -159,7 +159,7 @@ Made with the narrative-craft skill. House objects reward looking. They are neve
 | The positive test | En-suite bathroom counter (BA) (Dan, 2026-10-20) | Pick it up and look | The chapter's result, in the room (one result, same for everyone). |
 | The photo, now hung | Bedroom wall (B1) | Look | A changed object: they are making the place theirs. |
 | Their clothes | Walk-in closet (C1) | Look: her side hung up, his still half in a box | Two lives being unpacked into one place. The closet fills up a little as M1 goes on (Dan, 2026-10-20). |
-| A card on the fridge | Kitchen (K2) | Read it. Its wording and date are Dan's. | Planning ahead. It is ordinary, so it isn't a warning. |
+| Maya's note on the fridge | Kitchen (K2) | Read it: a small "we're planning" note in Maya's hand. The words are Dan's. | Planning ahead. It is ordinary, so it isn't a warning. (Dan, 2026-10-20) |
 | The record crate, one missing | Living room (L4) | Flick through: one gap | The record is on the player in the bedroom. Continuity the player can notice. |
 | The onesie | On Leo's lounge chair (S1) | Seen from the doorway, can't be tapped in M1 | Early hope, sitting in the middle of his old life (Dan, 2026-10-20). |
 | Leo's lounge chair, guitar and poster | Spare room (S1) | Seen from the doorway | His bachelor life half unpacked into the room the baby will need. Sets up the room's change later. |
@@ -175,7 +175,7 @@ The pizza box is gone.
 | A blanket and pillow on the couch | Living room (L1) | Fold the blanket | Leo has been sleeping out here (Dan, 2026-10-19). Nothing says so; the player works it out. |
 | The window in rain | Living room (L2) | Draw the curtain: rain | The Silence in the car, carried into the House. |
 
-The test is gone from the bathroom counter and the onesie from the chair: both are in the memory box behind the shut door (the ledger).
+Decided (Dan, 2026-10-20): the test is gone from the bathroom counter and the onesie from the chair; the lamp stays off; the player comes home into the entry. Where the test and onesie went is M2: both are in the memory box behind the shut door (the ledger).
 
 #### Later, in M2 (sketch)
 
@@ -219,7 +219,7 @@ Answered by Dan on 2026-10-19 unless marked open. Open ones have my recommended 
 9. **Decided:** M1 ends in the gray House, with no card.
 10. **Decided: there is an opening beat**, playing on first arrival in the living room and opening the back hall. Its words are Dan's to write.
 11. **Decided:** the wrapped photo; the player sees Leo and Maya in it.
-12. **Decided (Dan, 2026-10-20): the 18 M1 House object entries above** (13 separate things), including the closet clothes and all 7 entries after the Partner (one over the 3–5 rule; two of them are look-only). Dan writes the box label, Maya's list, the fridge card and the note on the dish.
+12. **Decided (Dan, 2026-10-20): the 18 M1 House object entries above** (13 separate things), including the closet clothes and all 7 entries after the Partner (one over the 3–5 rule; two of them are look-only). Dan writes the box label, Maya's list, Maya's fridge note and the note on the dish.
 13. **Decided:** the blanket on the couch: Leo slept there.
 14. **Decided:** the rule of thumb (2–3 House objects per open room, 3–5 new or changed on every return).
 15. **Decided:** the opening beat comes before the record player works; after that, every chapter object works as soon as the player is back.
