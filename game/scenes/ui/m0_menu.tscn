@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/m0_menu.gd" id="1_script"]
 
@@ -46,6 +46,38 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_small_normal"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.165, 0.145, 0.125, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.239, 0.22, 0.196, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_small_pressed"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.239, 0.22, 0.196, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.769, 0.647, 0.455, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [sub_resource type="Theme" id="Theme_m0"]
 default_font_size = 32
 Button/colors/font_color = Color(0.957, 0.937, 0.902, 1)
@@ -59,6 +91,12 @@ Button/styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
 Button/styles/normal = SubResource("StyleBoxFlat_normal")
 Button/styles/pressed = SubResource("StyleBoxFlat_pressed")
 Label/colors/font_color = Color(0.957, 0.937, 0.902, 1)
+SmallButton/base_type = &"Button"
+SmallButton/font_sizes/font_size = 20
+SmallButton/styles/hover = SubResource("StyleBoxFlat_small_normal")
+SmallButton/styles/hover_pressed = SubResource("StyleBoxFlat_small_pressed")
+SmallButton/styles/normal = SubResource("StyleBoxFlat_small_normal")
+SmallButton/styles/pressed = SubResource("StyleBoxFlat_small_pressed")
 
 [node name="M0Menu" type="Control"]
 layout_mode = 3
@@ -94,70 +132,87 @@ flat = true
 
 [node name="Menu" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(560, 0)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -320.0
-offset_right = 280.0
-offset_bottom = 320.0
-grow_horizontal = 2
-grow_vertical = 2
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 0
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="Menu"]
+[node name="ChecksLabel" type="Label" parent="Menu"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.604, 0.565, 0.518, 1)
+theme_override_font_sizes/font_size = 24
 text = "M0 checks"
 horizontal_alignment = 1
 
-[node name="SmoothnessButton" type="Button" parent="Menu"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 110)
+[node name="ChecksRow" type="HBoxContainer" parent="Menu"]
 layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SmoothnessButton" type="Button" parent="Menu/ChecksRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SmallButton"
 text = "Smoothness"
 
-[node name="RhythmButton" type="Button" parent="Menu"]
+[node name="RhythmButton" type="Button" parent="Menu/ChecksRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 110)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SmallButton"
 text = "Rhythm timing"
 
-[node name="ViewpointsButton" type="Button" parent="Menu"]
+[node name="ViewpointsButton" type="Button" parent="Menu/ChecksRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 110)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SmallButton"
 text = "Viewpoints"
 
-[node name="PartnerButton" type="Button" parent="Menu"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 110)
+[node name="ChaptersLabel" type="Label" parent="Menu"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.604, 0.565, 0.518, 1)
+theme_override_font_sizes/font_size = 24
+text = "Chapters"
+horizontal_alignment = 1
+
+[node name="Chapters" type="GridContainer" parent="Menu"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 3
+
+[node name="PartnerButton" type="Button" parent="Menu/Chapters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 88)
+layout_mode = 2
+size_flags_horizontal = 3
 text = "The Partner (rough)"
 
-[node name="StandInButton" type="Button" parent="Menu"]
+[node name="StandInButton" type="Button" parent="Menu/Chapters"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 110)
+custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Stand-in chapter"
 
 [node name="SaveRow" type="HBoxContainer" parent="Menu"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
 [node name="TestSaveButton" type="Button" parent="Menu/SaveRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Test save"
 
 [node name="ClearSaveButton" type="Button" parent="Menu/SaveRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Clear save"

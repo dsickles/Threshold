@@ -183,6 +183,10 @@ func test_the_menu_opens_the_partner_and_takes_it_back_when_finished() -> void:
 	tap(button)
 	# The menu stands in for the House; the chapter runner (DAS-75) plays it.
 	var runner := ChapterRunner.of(get_tree())
+	# GameState listens to the runner it found at start-up; earlier tests free
+	# theirs, so hook this one up the same way.
+	if not runner.chapter_finished.is_connected(state.record_chapter_result):
+		runner.chapter_finished.connect(state.record_chapter_result)
 	var partner: Node = runner.get_child(0) if runner.get_child_count() > 0 else null
 	if not check(partner != null and partner.scene_file_path == PARTNER.resource_path, "Partner opened"):
 		runner.free()
