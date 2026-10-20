@@ -131,7 +131,7 @@ Where things would really be, a few days after moving in. Furniture is drawn in 
 
 ### House objects through the story
 
-Made with the narrative-craft skill. House objects reward looking. They are never required, scored or saved, each has one action, and each has a lifeline in the [continuity ledger](continuity-ledger.md). **Dan** writes any words on them; until then they are placeholders.
+Made with the narrative-craft skill. Draft words for the box label, Maya's list, her fridge note, the food-dish note and the opening beat: [m1-words-draft.md](m1-words-draft.md) (Claude's draft at Dan's request, 2026-10-20). House objects reward looking. They are never required, scored or saved, each has one action, and each has a lifeline in the [continuity ledger](continuity-ledger.md). **Dan** writes any words on them; until then they are placeholders.
 
 **How many (decided, Dan, 2026-10-19):** at any point, **2 to 3 House objects in each open room**, and on every return to the House **3 to 5 of them new or changed**, spread over different rooms, with at least one in a room the player already knows (principle 2: change the familiar). Across the whole game that is about 25 to 30 objects, many of them the same object changing. M1 has 18 entries in the tables below: 13 separate things, 5 of which come back changed (the photo, the records, the fridge twice, the window).
 
