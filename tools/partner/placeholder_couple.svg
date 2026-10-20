@@ -1,6 +1,7 @@
 <!-- PLACEHOLDER art for the Partner's ending: the couple holding each other,
-     foreheads together, in silhouette. White so the game can tint it; the
-     arms are grey so they read a little darker. Real art comes later
+     foreheads together, in silhouette, close enough that their bodies meet
+     (Dan, 2026-10-20: "just have the two in silhouette embracing each
+     other"). White so the game can tint it. Real art comes later
      (ADR-0005). Rendered to PNG by tools/partner/make_images.mjs. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
   <defs>
@@ -14,14 +15,6 @@
     <path id="shoulders" d="M 40 1000 C 50 850, 120 740, 245 705
              C 300 690, 335 668, 350 630 L 462 625 C 478 665, 530 690, 600 712
              C 640 760, 650 880, 660 1000 Z"/>
-    <!-- A hand, palm and four fingers, fingertips pointing up. -->
-    <g id="hand">
-      <ellipse cx="0" cy="40" rx="42" ry="46"/>
-      <rect x="-40" y="-40" width="18" height="78" rx="9"/>
-      <rect x="-19" y="-56" width="18" height="92" rx="9"/>
-      <rect x="2" y="-52" width="18" height="88" rx="9"/>
-      <rect x="23" y="-36" width="17" height="74" rx="8.5"/>
-    </g>
   </defs>
   <g transform="translate(500 1000) scale(0.86) translate(-608 -1000)">
   <g fill="#FFFFFF">
@@ -44,10 +37,13 @@
       </g>
     </g>
   </g>
-  <!-- Their hands on each other's backs: the embrace. -->
-  <g fill="#D2D2D2">
-    <use href="#hand" transform="translate(132 830) rotate(62) scale(0.72)"/>
-    <use href="#hand" transform="translate(1086 830) scale(-1 1) rotate(62) scale(0.72)"/>
   </g>
+  <!-- Close together: chest to chest, so no gap between them. -->
+  <path fill="#FFFFFF" d="M 330 660 C 420 630, 560 630, 650 660 L 660 1000 L 320 1000 Z"/>
+  <!-- Their arms around each other, showing just past the outline: her
+       forearm over his shoulder, his hand on her back. -->
+  <g fill="#FFFFFF">
+    <ellipse cx="0" cy="0" rx="78" ry="27" transform="translate(752 722) rotate(38)"/>
+    <ellipse cx="0" cy="0" rx="66" ry="25" transform="translate(222 790) rotate(-28)"/>
   </g>
 </svg>

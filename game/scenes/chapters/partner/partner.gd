@@ -473,20 +473,14 @@ func _light_position(c: Vector2, light_radius: float, until: float) -> Vector2:
 func _draw_lights(c: Vector2, heart: float, t: float) -> void:
 	var t_judged := t - _sound_delay
 	var light_radius := heart * 0.2
-	# The target (Dan, 2026-10-20: "too hard to see exactly where the point of
-	# tapping should be"): a faint lane down to a ring the size of a light in
-	# the heart's centre. Tap when a light fills the ring. It brightens as the
-	# next light gets close.
-	var lane := LIGHT
-	lane.a = 0.08
-	draw_line(Vector2(c.x, 0.0), c, lane, light_radius * 2.0)
+	# The target: a small, faint dot in the heart's centre. Tap when a light
+	# reaches it. It brightens a little as the next light gets close. (Dan,
+	# 2026-10-20: the ring helped show when to tap but was "too strong"; "maybe
+	# just a small transparent dot in the middle of the heart". No lane.)
 	var soon := 0.0
 	if _next < _notes.size():
 		soon = clampf(1.0 - (_notes[_next] - t_judged) / 0.5, 0.0, 1.0)
-	var target := LIGHT
-	target.a = 0.55 + 0.45 * soon
-	draw_circle(c, light_radius * 1.25, Color(BG_BOTTOM, 0.35))
-	draw_arc(c, light_radius * 1.25, 0.0, TAU, 64, target, 2.5 + 2.0 * soon, true)
+	draw_circle(c, light_radius * 0.4, Color(LIGHT, 0.22 + 0.18 * soon))
 	var first := maxi(_next - 4, 0)
 	for i in range(first, _notes.size()):
 		var until := _notes[i] - t_judged
