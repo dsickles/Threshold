@@ -51,6 +51,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 - Don't invent story, dialogue or journal wording. If a placeholder is needed, mark it clearly as a placeholder and tell Dan.
 - Don't delete or rewrite design docs. The one exception is fixing an out-of-date line after a decision (see "When documents disagree").
 - Dan follows along in Cursor. When only one session is writing, work in the main Threshold folder on a new branch, not a worktree. Use a worktree only when several sessions write at once, and tell Dan its full path so he can add it to his Cursor window (File → Add Folder to Workspace).
+- Push your branch to GitHub as soon as you commit, even before the PR is ready. Work that lives only in one session (a cloud thread or Dan's PC) is invisible to every other session. Pushing a branch never changes main; merging stays Dan's call.
 
 ## Pull requests
 
@@ -120,6 +121,8 @@ Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents
 ### Installed skills
 
 Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.json`; update with `npx skills@latest update`). Typical flow: `/grill-with-docs` to agree a milestone or decision → `/to-spec` → `/to-tickets` → `/implement` one ticket at a time. Also: `prototype`, `tdd` (core table and saves only), `diagnosing-bugs`, `/wait-what` (Dan asks for a plain re-explanation), `/handoff`. Claude Code also has a built-in `/code-review`; `/implement` is meant to use this repo's `code-review` skill.
+
+Every skill here must be one Claude can start on its own (no `disable-model-invocation: true`, and a description that says "Use when the user says /<name>…"). In Claude Project threads, "/grill-with-docs" arrives as plain text, not a slash command, so a skill Claude can't start never runs there. `npx skills update` brings that line back: after updating, remove it again and keep the "Use when" sentence.
 
 ## Building and testing
 
