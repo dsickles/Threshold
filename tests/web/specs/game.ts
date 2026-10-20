@@ -68,9 +68,10 @@ export class Game {
     private readonly hasTouch: boolean,
   ) {}
 
-  /** Opens the game and waits until the engine is running its first scene. */
-  async open() {
-    await this.page.goto("/index.html?probe");
+  /** Opens the game and waits until the engine is running its first scene.
+   * `query` adds to the address, like "&partner_from=190" (see web_test_probe.gd). */
+  async open(query = "") {
+    await this.page.goto(`/index.html?probe${query}`);
     await expect.poll(() => this.state().then((s) => s?.scene), { timeout: 90_000 }).toBe(MENU);
   }
 

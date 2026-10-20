@@ -5,11 +5,16 @@
 // his phone; the whole song (3:28) is played by the Godot tests instead.
 import { test, expect, MENU, PARTNER } from "./game";
 
-test.beforeEach(async ({ game }) => {
-  await game.open();
+const openPartner = async (game: any, query = "") => {
+  await game.open(query);
   await game.tap("Tap to begin");
   await game.tap("The Partner (rough)");
   await game.waitForScene(MENU, [PARTNER]);
+};
+
+// Each test opens the Partner itself; "the ending" starts part-way in.
+test.beforeEach(async ({ game }, info) => {
+  if (!info.titlePath.includes("the ending")) await openPartner(game);
 });
 
 const songTime = async (game: any) => (await game.screen(PARTNER))?.song_time ?? -1;
@@ -27,7 +32,7 @@ test("the first tap starts the song and the lights come in", async ({ game }) =>
   await game.tapMiddle();
   await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("PLAYING");
   await expect.poll(() => game.audioStates()).toContain("running");
-  // The first lights reach the ring at 4 s; by 6 s the screen shows some.
+  // The first lights reach the heart at 4 s; by 6 s the screen shows some.
   await expect.poll(() => songTime(game), { timeout: 30_000 }).toBeGreaterThan(6);
   await game.screenshot("partner-playing");
   // Untapped notes become misses; the song keeps going.
@@ -65,4 +70,35 @@ test("hiding the tab pauses the song until a tap", async ({ game, page }) => {
   // chart's notes didn't pass while hidden.
   const sinceTap = (Date.now() - tappedAt) / 1000;
   expect(await songTime(game)).toBeLessThanOrEqual(frozen + sinceTap + 0.3);
+});
+
+test.describe("the ending", () => {
+  // Starts the song 8 s before its last note (see web_test_probe.gd), so the
+  // light fills the screen and the test appears without playing all 3:28.
+  test.beforeEach(async ({ game }) => openPartner(game, "&partner_from=190"));
+
+  test("the test appears, holds, then a tap goes back to the menu", async ({ game }) => {
+    // Headless Chromium draws phone sizes at a few frames a second, and Godot
+    // counts at most 8/60 s a frame, so the 30 s hold takes longer here.
+    test.setTimeout(300_000);
+    await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("WAITING");
+    await game.tapMiddle();
+    await expect.poll(() => songTime(game)).toBeGreaterThan(190);
+    await game.screenshot("partner-crescendo");
+    await expect
+      .poll(async () => (await game.screen(PARTNER)).state, { timeout: 30_000 })
+      .toBe("TEST_SHOWN");
+    await game.page.waitForTimeout(3000);
+    await game.screenshot("partner-ending");
+    // Nothing to tap while it holds (Dan, 2026-10-19: at least 30 s).
+    await game.tapMiddle();
+    await game.page.waitForTimeout(500);
+    expect((await game.screen(PARTNER)).state).toBe("TEST_SHOWN");
+    await expect
+      .poll(async () => (await game.screen(PARTNER)).can_leave, { timeout: 200_000 })
+      .toBe(true);
+    await game.screenshot("partner-ending-ring");
+    await game.tapMiddle();
+    await game.waitForScene(MENU);
+  });
 });

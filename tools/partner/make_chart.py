@@ -5,6 +5,12 @@ from the bar-by-bar table in the draft song and beat chart, and checks it.
 
 The table below is the source; the JSON is generated. Edit here, re-run, commit both.
 Draft: m1-prep/partner-song-and-beat-chart.md (not yet decided by Dan).
+
+Dan, 2026-10-20, after playing the first build: "a little hard ... most people
+should be able to get most beats on at least good, with less than 5 misses
+during the whole run." So this chart is calmer than the draft's table: every
+note sits on a beat (none closer than 500 ms, where the draft had 250 ms), and
+the build-up comes from more beats per bar, not from half-beats.
 """
 import json
 import pathlib
@@ -18,12 +24,10 @@ START_OFFSET_MS = 0
 INTRO_BARS = 8  # Intro taps set the player's sound delay and never laugh.
 
 PATTERNS = {
-    "H": [1, 3],
-    "L": [1, 1.5, 3, 3.5],
-    "Q": [1, 2, 3, 4],
-    "S": [1, 2, 2.5, 3, 4],
-    "R": [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5],
-    "X": [1],
+    "H": [1, 3],        # Resting heartbeat, 60 a minute
+    "S": [1, 3, 4],     # Heartbeat with a pickup into the next bar
+    "Q": [1, 2, 3, 4],  # Every beat
+    "X": [1],           # The last note
     "-": [],
 }
 
@@ -31,15 +35,15 @@ PATTERNS = {
 SECTIONS = [
     (1, "--"),
     (3, "HHHHHH"),
-    (9, "HHHL" * 6),
-    (33, "QQQS" * 6),
-    (57, "LQLS" * 6),
-    (81, "SSSS"),
-    (85, "LLRR"),
-    (89, "RLRLRLRLRRRX"),
+    (9, "HHHS" * 6),
+    (33, "QHQS" * 6),
+    (57, "QQQS" * 6),
+    (81, "Q" * 8),
+    (89, "Q" * 11 + "X"),
     (101, "----"),
 ]
 SILENT_BARS = {48}  # The stumble: the band stops for one bar.
+NOTE_COUNT = 308
 
 
 def bar_patterns():
@@ -57,10 +61,10 @@ def main():
         for beat in PATTERNS[p]:
             notes.append(round(((bar - 1) * 4 + (beat - 1)) * BEAT_MS))
 
-    # The checks the draft asks for.
-    assert len(notes) == 388, len(notes)
+    # The checks the draft asks for, with Dan's 2026-10-20 easier chart.
     gaps = [b - a for a, b in zip(notes, notes[1:])]
-    assert min(gaps) >= 250, min(gaps)
+    assert len(notes) == NOTE_COUNT, len(notes)
+    assert min(gaps) >= 500, min(gaps)
     assert notes[-1] == (100 - 1) * 4 * BEAT_MS, notes[-1]
 
     chart = {

@@ -15,7 +15,7 @@ class FakeConductor extends Node:
 	var uses_browser_clock := false
 	func is_ready() -> bool: return true
 	func has_failed() -> bool: return false
-	func start() -> void: t = 0.0
+	func start(from := 0.0) -> void: t = from
 	func stop() -> void: pass
 	func pause() -> void: paused = true
 	func resume() -> void: paused = false
@@ -54,9 +54,14 @@ func test_no_taps_still_reaches_the_test_and_reports_finished() -> void:
 	_play_to_end(func(_t: float) -> void: pass)
 	check_eq(_partner.probe_state().state, "TEST_SHOWN", "state after the song")
 	check_eq(_partner.probe_state().misses, _partner._notes.size(), "every note missed")
+	_partner._on_tap()
+	check(not reported[0], "a tap while the test holds does nothing")
 	for i in ceili(_partner.TEST_HOLD / STEP) + 1:
 		_partner._process(STEP)
-	check(reported[0], "finished reported after the test holds")
+	check(not reported[0], "the test waits for a tap after it has held")
+	check(_partner.probe_state().can_leave, "the quiet ring shows after the hold")
+	_partner._on_tap()
+	check(reported[0], "a tap after the hold reports finished")
 
 
 func test_every_tap_early_still_reaches_the_test() -> void:
@@ -64,7 +69,7 @@ func test_every_tap_early_still_reaches_the_test() -> void:
 	var notes: PackedFloat64Array = _partner._notes
 	var next := [0]
 	_play_to_end(func(t: float) -> void:
-		if next[0] < notes.size() and t >= notes[next[0]] - 0.150:
+		if next[0] < notes.size() and t >= notes[next[0]] - 0.250:
 			_tap(t)
 			next[0] += 1)
 	check_eq(_partner.probe_state().state, "TEST_SHOWN", "state after the song")
@@ -95,7 +100,7 @@ func test_a_late_arriving_tap_inside_the_window_still_hits() -> void:
 	_partner._on_tap()
 	var note: float = _partner._notes[0]
 	_step_to(note + _partner.GOOD_WINDOW + 0.05)
-	_tap(note + 0.090)
+	_tap(note + 0.150)
 	check_eq(_partner._judged[0], _partner.Judged.HIT, "first note")
 
 
@@ -168,26 +173,57 @@ func _play_to_end(on_frame: Callable) -> void:
 		_partner._process(STEP)
 
 
-func test_judgement_sits_above_the_ring_on_every_screen() -> void:
+func test_judgement_sits_below_the_heart_on_every_screen() -> void:
 	for screen in [Vector2i(1280, 720), Vector2i(393, 852), Vector2i(852, 393)]:
 		set_screen(screen)
 		await frames()
 		_partner._process(STEP)
-		var size: Vector2 = _partner.size
-		var ring_top: float = size.y / 2.0 - minf(size.x, size.y) * _partner.RING_SIZE
+		var heart_bottom: float = _partner._heart_centre().y + _partner._heart_size()
 		var label: Control = _partner.get_node("%Judgement")
-		check(label.get_rect().end.y <= ring_top,
-				"judgement clear of the ring at %s (label bottom %s, ring top %s)"
-				% [screen, label.get_rect().end.y, ring_top])
-		check(label.get_rect().position.y >= 0.0, "judgement on screen at %s" % screen)
+		check(label.get_rect().position.y >= heart_bottom,
+				"judgement clear of the heart at %s (label top %s, heart bottom %s)"
+				% [screen, label.get_rect().position.y, heart_bottom])
+		check(label.get_rect().end.y <= _partner.size.y, "judgement on screen at %s" % screen)
 
 
 func test_the_chart_matches_the_draft() -> void:
 	var notes: PackedFloat64Array = _partner._notes
-	check_eq(notes.size(), 388, "notes in the chart")
+	# Dan, 2026-10-20: easier than the draft's 388 notes, 250 ms apart.
+	check_eq(notes.size(), 308, "notes in the chart")
 	var closest := INF
 	for i in range(1, notes.size()):
 		closest = minf(closest, notes[i] - notes[i - 1])
-	check(closest >= 0.250 - 0.0001, "no two notes closer than 250 ms (closest %s s)" % closest)
+	check(closest >= 0.500 - 0.0001, "no two notes closer than 500 ms (closest %s s)" % closest)
 	# Bar 100, beat 1 at 120 BPM: 99 bars of 2 s after bar 1, beat 1.
 	check_near(notes[-1] - _partner._song_start, 198.0, 0.0001, "last note at bar 100, beat 1")
+
+
+# Dan, 2026-10-20: on a first run most people should get most beats at least
+# Good, with fewer than 5 misses. A modelled first-timer: each tap lands a
+# little late on average (40 ms, which the intro's calibration takes out),
+# give or take 60 ms. A model, not a measurement; real players are Dan's check.
+func test_a_typical_first_run_gets_most_beats_with_few_misses() -> void:
+	var runs := 10
+	var misses := 0
+	var good_or_better := 0
+	var notes: PackedFloat64Array = _partner._notes
+	for run in runs:
+		_partner.free()
+		before_each()
+		var rng := RandomNumberGenerator.new()
+		rng.seed = run
+		var taps: Array[float] = []
+		for note in notes:
+			taps.append(note + 0.040 + rng.randfn(0.0, 0.060))
+		_partner._on_tap()
+		var next := [0]
+		_play_to_end(func(t: float) -> void:
+			while next[0] < taps.size() and taps[next[0]] <= t:
+				_tap(taps[next[0]])
+				next[0] += 1)
+		misses += _partner.probe_state().misses
+		good_or_better += _partner.probe_state().hits
+	var mean_misses := float(misses) / runs
+	check(mean_misses < 5.0, "fewer than 5 misses a run on average (%.1f)" % mean_misses)
+	check(float(good_or_better) / (runs * notes.size()) >= 0.95,
+			"most beats Good or better (%d of %d)" % [good_or_better, runs * notes.size()])

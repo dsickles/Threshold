@@ -1,7 +1,9 @@
 extends Control
 ## The Partner (rough first playable, DAS-73). Tap anywhere when a light
-## reaches the ring around the glow. Built from the draft song and beat chart
-## (m1-prep/partner-song-and-beat-chart.md), which Dan has not settled yet.
+## falling from the top reaches the heart. Built from the draft song and beat
+## chart (m1-prep/partner-song-and-beat-chart.md), which Dan has not settled
+## yet, with Dan's 2026-10-20 changes: a heart, lights that fall from the top,
+## easier timing, and an ending with a real-looking test and the couple.
 ##
 ## The chapter only reports that it finished (the `finished` signal). It never
 ## touches the House; whatever opened it decides what happens next.
@@ -13,39 +15,55 @@ enum Judged { PENDING, HIT, MISSED }
 
 const CHART_PATH := "res://scenes/chapters/partner/beat_chart.json"
 const SONG := preload("res://assets/audio/partner/placeholder_song.mp3")  # PLACEHOLDER song
+const COUPLE_IMAGE := preload("res://assets/images/partner/placeholder_couple.png")  # PLACEHOLDER
+const CELEBRATE_SOUND := preload("res://assets/audio/partner/placeholder_celebrate.wav")  # PLACEHOLDER
 const MISS_SOUNDS: Array[AudioStream] = [  # PLACEHOLDER for the awkward laughter
 	preload("res://assets/audio/partner/placeholder_miss_1.wav"),
 	preload("res://assets/audio/partner/placeholder_miss_2.wav"),
 	preload("res://assets/audio/partner/placeholder_miss_3.wav"),
 ]
 
-# Judging (draft "Judging taps"; to tune in playtests). Good must stay under
-# half the closest gap between notes (250 ms) so one tap can't count twice.
-const PERFECT_WINDOW := 0.050
-const GOOD_WINDOW := 0.110
+# Judging, widened after Dan's 2026-10-20 play ("most people should be able to
+# get most beats on at least good, with less than 5 misses"); to tune in
+# playtests. Good must stay under half the closest gap between notes (500 ms)
+# so one tap can't count twice.
+const PERFECT_WINDOW := 0.070
+const GOOD_WINDOW := 0.160
 # A tap reaches the game a little after the touch it is timed from, so a note
 # waits this much longer before it counts as missed. Judging still uses
-# GOOD_WINDOW. GOOD_WINDOW + MISS_GRACE must stay under the 250 ms gap.
-const MISS_GRACE := 0.100
+# GOOD_WINDOW. GOOD_WINDOW + MISS_GRACE must stay under the 500 ms gap.
+const MISS_GRACE := 0.080
 # How far an intro tap may be from its note and still set the sound delay.
 const CALIBRATION_WINDOW := 0.250
 const MAX_SOUND_DELAY := 0.250
 const LAUGH_GAP := 4.0  # At most one laugh every 2 bars.
-const RING_SIZE := 0.13  # The ring's radius, as a share of the screen's shorter side.
-const TRAVEL := 1.5  # A light takes 3 beats to reach the ring.
-const FILL_TIME := 6.0  # After the last note, the glow fills the screen.
-const TEST_HOLD := 5.0  # PLACEHOLDER: how long the test holds is Dan's call.
+const RING_SIZE := 0.13  # The heart's half-height, as a share of the screen's shorter side.
+const HEART_HEIGHT := 0.6  # Where the heart sits, as a share of the screen's height.
+const TRAVEL := 2.0  # A light takes 4 beats to fall from the top to the heart.
+const FILL_TIME := 6.0  # After the last note, the light fills the screen.
+# Dan, 2026-10-19: the test holds at least 30 seconds with nothing to tap;
+# then a quiet ring shows the player can go back when ready.
+const TEST_HOLD := 30.0
 const HEARTBEAT := 1.0  # Beats 1 and 3 at 120 BPM: 60 a minute.
 # Test info in the corner for Dan's checks. Turn off before cold playtests:
 # no score or tally is shown to players.
 const SHOW_TEST_INFO := true
 
-# DESIGN.md colours.
-const SURFACE := Color("#1C1916")
+# The Partner's own palette (Dan, 2026-10-20: the first build was "brown on
+# brown"): a dusk plum to wine, a rose heart that warms to coral as the song
+# builds, cream lights, and a peach dawn for the ending. Text keeps DESIGN.md's ink.
 const INK := Color("#F4EFE6")
-const INK_MUTED := Color("#9A9084")
-const ACCENT := Color("#C4A574")
-const HOPE := Color("#E8D4A8")
+const BG_TOP := Color("#221726")
+const BG_BOTTOM := Color("#43202F")
+const HEART_START := Color("#B4475E")
+const HEART_END := Color("#F28C78")
+const LIGHT := Color("#FFE8C2")
+const MISSED := Color("#7E6878")
+const DAWN_TOP := Color("#FBE3C8")
+const DAWN_BOTTOM := Color("#E7A08F")
+const COUPLE := Color("#B65866")  # Tints the placeholder couple.
+const TEST_BODY := Color("#FBF8F4")
+const TEST_LINE := Color("#D2386A")
 
 # Kept for the rest of the session, so a replay starts from the last delay.
 static var _sound_delay := 0.0
@@ -53,7 +71,7 @@ static var _sound_delay := 0.0
 var _state := State.LOADING
 var _notes: PackedFloat64Array = []
 var _judged: PackedByteArray = []
-var _next := 0  # First note not yet passed the ring.
+var _next := 0  # First note not yet passed the heart.
 var _passed := 0  # Notes hit or missed so far, for the glow's growth.
 var _intro_end := 0.0
 var _song_length := 0.0
@@ -67,16 +85,20 @@ var _flash := 0.0
 var _song_time := -1.0
 var _test_held := 0.0  # Seconds the test has been on screen.
 var _late_offsets: Array[float] = []  # After the intro, for the test info.
+var _heart_shape := PackedVector2Array()  # A heart, half-height 1, centred on 0.
 
 @onready var _conductor: Node = %Conductor
 @onready var _judgement: Label = %Judgement
 @onready var _prompt: Label = %Prompt
 @onready var _test_info: Label = %TestInfo
 @onready var _laugh_player: AudioStreamPlayer = %LaughPlayer
+@onready var _celebrate_player: AudioStreamPlayer = %CelebratePlayer
 
 
 func _ready() -> void:
 	_load_chart()
+	_heart_shape = _make_heart()
+	_celebrate_player.stream = CELEBRATE_SOUND
 	_judgement.modulate.a = 0.0
 	_test_info.visible = SHOW_TEST_INFO
 	_conductor.load_song(SONG)
@@ -127,12 +149,16 @@ func _on_tap() -> void:
 			if _conductor.has_failed():
 				queue_free()  # Back to whatever opened the chapter.
 		State.WAITING:
-			_state = State.PLAYING
-			_conductor.start()
+			_start()
 		State.PAUSED:
 			_conductor.resume()  # The web resumes in its own touch handler.
 		State.PLAYING:
 			_judge_tap(_conductor.tap_time())
+		State.TEST_SHOWN:
+			if _test_held >= TEST_HOLD:
+				_state = State.DONE
+				_conductor.stop()
+				finished.emit()
 
 
 func _process(delta: float) -> void:
@@ -147,21 +173,34 @@ func _process(delta: float) -> void:
 			if _state == State.PLAYING:
 				_song_time = _conductor.song_time()
 				_mark_misses()
-				if _song_time >= _song_length or _conductor.has_song_ended():
-					_conductor.stop()
+				# The test shows once the light has filled the screen; the last
+				# chord keeps ringing under it.
+				if _song_time >= _notes[-1] + FILL_TIME or _song_time >= _song_length \
+						or _conductor.has_song_ended():
 					_state = State.TEST_SHOWN
 					_test_held = 0.0
+					_celebrate_player.play()
 		State.TEST_SHOWN:
 			_test_held += delta
-			if _test_held >= TEST_HOLD:
-				_state = State.DONE
-				finished.emit()
 	_refresh_prompt()
-	# Judgement sits just above the ring, which scales with the screen.
-	var ring := minf(size.x, size.y) * RING_SIZE
+	# Judgement sits just below the heart, which scales with the screen.
 	_judgement.position = Vector2((size.x - _judgement.size.x) / 2.0,
-			size.y / 2.0 - ring - _judgement.size.y - 12.0)
+			_heart_centre().y + _heart_size() * 1.05 + 8.0)
 	queue_redraw()
+
+
+func _start() -> void:
+	# Browser tests can start part-way in (see web_test_probe.gd); notes
+	# before that point are passed over without a Miss or a laugh.
+	var from: float = get_tree().root.get_meta("partner_start_from", 0.0)
+	if from > 0.0:
+		while _next < _notes.size() and _notes[_next] < from:
+			_judged[_next] = Judged.MISSED
+			_next += 1
+			_passed += 1
+		_last_laugh = from
+	_state = State.PLAYING
+	_conductor.start(from)
 
 
 func _judge_tap(raw: float) -> void:
@@ -259,6 +298,7 @@ func probe_state() -> Dictionary:
 		"hits": _judged.count(Judged.HIT),
 		"misses": _judged.count(Judged.MISSED),
 		"clock": "browser" if _conductor.uses_browser_clock else "Godot",
+		"can_leave": _state == State.TEST_SHOWN and _test_held >= TEST_HOLD,
 	}
 
 
@@ -277,47 +317,109 @@ func _refresh_test_info() -> void:
 	_test_info.text = "\n".join(lines)
 
 
-func _draw() -> void:
-	var c := size / 2.0
-	var ring := minf(size.x, size.y) * RING_SIZE
-	draw_rect(Rect2(Vector2.ZERO, size), SURFACE)
 
+
+func _heart_centre() -> Vector2:
+	return Vector2(size.x / 2.0, size.y * HEART_HEIGHT)
+
+
+func _heart_size() -> float:
+	return minf(size.x, size.y) * RING_SIZE
+
+
+# The classic heart curve, centred and scaled to a half-height of 1.
+func _make_heart() -> PackedVector2Array:
+	var points := PackedVector2Array()
+	for k in 96:
+		var a := TAU * k / 96.0
+		points.append(Vector2(16.0 * pow(sin(a), 3),
+				-(13.0 * cos(a) - 5.0 * cos(2.0 * a) - 2.0 * cos(3.0 * a) - cos(4.0 * a))))
+	var box := Rect2(points[0], Vector2.ZERO)
+	for point in points:
+		box = box.expand(point)
+	var out := PackedVector2Array()
+	for point in points:
+		out.append((point - box.get_center()) / (box.size.y / 2.0))
+	return out
+
+
+func _draw_heart(centre: Vector2, half_height: float, color: Color, filled := true,
+		width := 2.0) -> void:
+	var points := PackedVector2Array()
+	for point in _heart_shape:
+		points.append(centre + point * half_height)
+	if filled:
+		draw_colored_polygon(points, color)
+	points.append(points[0])
+	draw_polyline(points, color, width if not filled else 1.5, true)  # Smooths the edge.
+
+
+func _draw_gradient(top: Color, bottom: Color, alpha := 1.0) -> void:
+	top.a *= alpha
+	bottom.a *= alpha
+	draw_polygon(PackedVector2Array([Vector2.ZERO, Vector2(size.x, 0), size, Vector2(0, size.y)]),
+			PackedColorArray([top, top, bottom, bottom]))
+
+
+# Lub-dub: a strong beat, then a softer one just after it.
+func _lub_dub(since: float) -> float:
+	var pulse := exp(-since * 9.0)
+	if since > 0.2:
+		pulse += 0.6 * exp(-(since - 0.2) * 9.0)
+	return pulse
+
+
+func _draw() -> void:
 	if _state == State.TEST_SHOWN or _state == State.DONE:
-		_draw_test(c, ring)
+		_draw_ending()
 		return
 
+	var c := _heart_centre()
+	var heart := _heart_size()
 	var t := _song_time if _song_time >= 0.0 else 0.0
 	var progress := float(_passed) / _notes.size()
-	var glow_color := ACCENT.lerp(HOPE, progress)
+	var heart_color := HEART_START.lerp(HEART_END, progress)
+	_draw_gradient(BG_TOP, BG_BOTTOM)
 
-	# The heart: swells on each heartbeat, grows and warms as the song goes on.
+	# The heart beats, and grows and warms as the song goes on.
 	var pulse := 0.0
 	if _state == State.PLAYING or _state == State.PAUSED:
 		if not _is_silent(t) and t < _notes[-1]:
-			pulse = exp(-fposmod(t - _song_start, HEARTBEAT) * 6.0)
+			pulse = _lub_dub(fposmod(t - _song_start, HEARTBEAT))
 	else:
-		pulse = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 2.0)  # Waiting.
-	var radius := ring * (0.45 + 0.4 * progress) * (1.0 + 0.12 * pulse + 0.1 * _flash)
-	for k in range(6, 0, -1):
-		var layer := glow_color
-		layer.a = 0.10 + 0.05 * _flash
-		draw_circle(c, radius * (1.0 + k * 0.18), layer)
-	draw_circle(c, radius, glow_color)
+		pulse = _lub_dub(fposmod(Time.get_ticks_msec() / 1000.0, 2.0 * HEARTBEAT))  # Waiting.
 
-	# The ring marks "now".
-	var ring_color := INK
-	ring_color.a = 0.45
-	draw_arc(c, ring, 0.0, TAU, 96, ring_color, 2.0, true)
+	# A soft warm light behind it, wider as the song builds.
+	for k in range(8, 0, -1):
+		var halo := heart_color
+		halo.a = 0.035 + 0.02 * progress
+		draw_circle(c, heart * (1.2 + k * (0.35 + 0.25 * progress)), halo)
 
-	_draw_lights(c, ring, t)
+	var inner := heart * (0.55 + 0.35 * progress) * (1.0 + 0.1 * pulse + 0.08 * _flash)
+	for k in range(4, 0, -1):
+		var glow := heart_color
+		glow.a = 0.12 + 0.06 * _flash
+		_draw_heart(c, inner * (1.0 + k * 0.12), glow)
+	_draw_heart(c, inner, heart_color)
 
-	# After the last note the glow fills the screen while the chord rings out.
+	# The outline marks "now"; a hit sends a ripple out from it.
+	var outline := INK
+	outline.a = 0.5
+	_draw_heart(c, heart, outline, false, 2.0)
+	if _flash > 0.0:
+		var ripple := LIGHT
+		ripple.a = _flash * 0.7
+		_draw_heart(c, heart * (1.0 + 0.35 * (1.0 - _flash)), ripple, false, 3.0)
+
+	_draw_lights(c, heart, t)
+
+	# After the last note the light fills the screen while the chord rings out.
 	if t > _notes[-1]:
 		var fill := clampf((t - _notes[-1]) / FILL_TIME, 0.0, 1.0)
-		var cover := (size / 2.0).length() * 1.1
-		var fill_color := HOPE
+		var cover := size.length() * 1.1
+		var fill_color := DAWN_TOP
 		fill_color.a = fill
-		draw_circle(c, lerpf(radius, cover, ease(fill, 0.4)), fill_color)
+		draw_circle(c, lerpf(inner, cover, ease(fill, 0.4)), fill_color)
 
 
 func _is_silent(t: float) -> bool:
@@ -327,40 +429,120 @@ func _is_silent(t: float) -> bool:
 	return false
 
 
-# Connection Nodes: lights that drift in from the left and right edges, in
-# turn, and reach the ring exactly on their note.
-func _draw_lights(c: Vector2, ring: float, t: float) -> void:
+# Connection Nodes: lights that fall from the top in one lane and reach the
+# heart's centre exactly on their note.
+func _draw_lights(c: Vector2, heart: float, t: float) -> void:
 	var t_judged := t - _sound_delay
-	var light_radius := ring * 0.16
+	var light_radius := heart * 0.2
+	var top := -light_radius
 	var first := maxi(_next - 4, 0)
 	for i in range(first, _notes.size()):
 		var until := _notes[i] - t_judged
 		if until > TRAVEL:
 			break
 		if _judged[i] == Judged.HIT:
-			continue  # Merged into the glow.
-		var side := -1.0 if i % 2 == 0 else 1.0
-		var start := Vector2(c.x + side * (size.x / 2.0 + light_radius), c.y)
-		var arrive := Vector2(c.x + side * ring, c.y)
-		var pos := start.lerp(arrive, 1.0 - until / TRAVEL)  # Keeps drifting past the ring.
-		var color := HOPE
+			continue  # Merged into the heart.
+		var pos := Vector2(c.x, lerpf(top, c.y, 1.0 - until / TRAVEL))  # Keeps falling past.
+		var color := LIGHT
 		color.a = clampf((TRAVEL - until) / 0.3, 0.0, 1.0)
 		if _judged[i] == Judged.MISSED:
-			color = INK_MUTED
-			color.a = clampf(0.5 + until * 1.5, 0.0, 0.5)  # Dims as it drifts through.
+			color = MISSED
+			color.a = clampf(0.6 + until * 1.5, 0.0, 0.6)  # Dims as it falls through.
+		if color.a <= 0.0:
+			continue
+		var halo := color
+		halo.a *= 0.18
+		draw_circle(pos, light_radius * 1.8, halo)
+		draw_circle(pos, light_radius, color)
+
+
+# The one ending: a positive test in front of the couple holding each other,
+# on a warm dawn, with sparkles rising. Words, what the test lies on, and real
+# art are still Dan's calls; the couple and the sound are PLACEHOLDERS.
+func _draw_ending() -> void:
+	var held := _test_held
+	draw_rect(Rect2(Vector2.ZERO, size), DAWN_TOP)
+	_draw_gradient(DAWN_TOP, DAWN_BOTTOM, clampf(held / 1.5, 0.0, 1.0))
+	_draw_sparkles(held)
+	var couple := _draw_couple(clampf((held - 0.3) / 2.5, 0.0, 1.0))
+	var show := ease(clampf((held - 0.8) / 1.2, 0.0, 1.0), 0.4)
+	# Held up between them, below their faces.
+	var test_y := maxf(size.y - couple * 0.3, size.y * 0.5)
+	_draw_test(Vector2(size.x / 2.0, test_y + (1.0 - show) * 30.0), show)
+	if held >= TEST_HOLD:
+		# A quiet ring: the player can go back when ready.
+		var ring := Color("#8E3F55")
+		ring.a = 0.4 + 0.2 * sin((held - TEST_HOLD) * TAU / 3.0)
+		draw_arc(Vector2(size.x / 2.0, size.y - 56.0), 22.0, 0.0, TAU, 64, ring, 2.5, true)
+
+
+func _draw_sparkles(held: float) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	for k in 46:
+		var x := rng.randf() * size.x
+		var speed := rng.randf_range(14.0, 40.0)
+		var y := fposmod(rng.randf() * size.y - held * speed, size.y + 40.0) - 20.0
+		var r := rng.randf_range(1.5, 4.0)
+		var color := Color.WHITE
+		color.a = clampf(held / 2.0, 0.0, 1.0) \
+				* (0.35 + 0.35 * sin(held * rng.randf_range(1.5, 3.0) + k))
 		if color.a > 0.0:
-			draw_circle(pos, light_radius, color)
+			draw_circle(Vector2(x, y), r * 2.5, Color(color, color.a * 0.25))
+			draw_circle(Vector2(x, y), r, color)
 
 
-# PLACEHOLDER staging for the one ending: a positive test, two lines, no
-# words. What it lies on, any words and how long it holds are Dan's calls.
-func _draw_test(c: Vector2, ring: float) -> void:
-	var stick := Vector2(ring * 0.9, ring * 3.2)
+# PLACEHOLDER silhouette of the couple holding each other, foreheads
+# together (tools/partner/placeholder_couple.svg), until real art (ADR-0005).
+# It stands on the bottom of the screen; returns its size.
+func _draw_couple(alpha: float) -> float:
+	var side := minf(size.y * 0.95, size.x * 1.1)
+	var rect := Rect2(Vector2((size.x - side) / 2.0, size.y - side), Vector2(side, side))
+	# A soft light behind their heads.
+	for k in range(6, 0, -1):
+		draw_circle(rect.position + Vector2(side * 0.5, side * 0.32), side * (0.12 + k * 0.07),
+				Color(1.0, 0.97, 0.9, 0.06 * alpha))
+	if alpha > 0.0:
+		draw_texture_rect(COUPLE_IMAGE, rect, false, Color(COUPLE, alpha))
+	return side
+
+
+# A positive pregnancy test, lying flat: a white stick with a grip, the
+# result window showing two lines, and a small round well by the tip.
+func _draw_test(c: Vector2, show: float) -> void:
+	if show <= 0.0:
+		return
+	var length := minf(size.x * 0.78, 560.0)
+	var stick := Vector2(length, length * 0.15)
 	var body := Rect2(c - stick / 2.0, stick)
-	draw_rect(body, INK)
-	var window := Rect2(c + Vector2(-stick.x * 0.3, -stick.y * 0.2), Vector2(stick.x * 0.6, stick.y * 0.3))
-	draw_rect(window, Color("#D9D2C6"))
-	var line := Vector2(window.size.x * 0.7, 4.0)
-	for y in [0.35, 0.65]:
-		var top_left := window.position + Vector2((window.size.x - line.x) / 2.0, window.size.y * y)
-		draw_rect(Rect2(top_left, line), Color("#8B3A32"))
+	var shadow := Color(0.35, 0.1, 0.15, 0.22 * show)
+	_draw_box(Rect2(body.position + Vector2(6, stick.y * 0.35), stick), shadow, stick.y * 0.5)
+	_draw_box(body, Color(TEST_BODY, show), stick.y * 0.5)
+	# The absorbent tip, on the right, under its rounded cap end.
+	var tip := Rect2(body.position + Vector2(stick.x * 0.80, stick.y * 0.12),
+			Vector2(stick.x * 0.18, stick.y * 0.76))
+	_draw_box(tip, Color(Color("#C9D6EA"), show), stick.y * 0.38)
+	# Grip ridges on the left.
+	for k in 4:
+		var x := body.position.x + stick.x * (0.07 + k * 0.03)
+		draw_line(Vector2(x, body.position.y + stick.y * 0.28),
+				Vector2(x, body.end.y - stick.y * 0.28), Color(Color("#D9D1C8"), show), 2.0, true)
+	# The result window and its two lines (control and test).
+	var window := Rect2(body.position + Vector2(stick.x * 0.36, stick.y * 0.26),
+			Vector2(stick.x * 0.26, stick.y * 0.48))
+	_draw_box(window, Color(Color("#ECE5DE"), show), stick.y * 0.12)
+	for x in [0.35, 0.65]:
+		var line := Rect2(window.position + Vector2(window.size.x * x - 2.5, window.size.y * 0.14),
+				Vector2(5.0, window.size.y * 0.72))
+		_draw_box(line, Color(TEST_LINE, show), 2.0)
+	# The sample well.
+	draw_circle(body.position + Vector2(stick.x * 0.71, stick.y * 0.5), stick.y * 0.17,
+			Color(Color("#ECE5DE"), show))
+
+
+func _draw_box(rect: Rect2, color: Color, radius: float) -> void:
+	var box := StyleBoxFlat.new()
+	box.bg_color = color
+	box.set_corner_radius_all(int(radius))
+	box.anti_aliasing = true
+	draw_style_box(box, rect)

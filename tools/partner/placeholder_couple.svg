@@ -1,0 +1,35 @@
+<!-- PLACEHOLDER art for the Partner's ending: the couple holding each other,
+     foreheads together, in silhouette. White so the game can tint it; the
+     arms are grey so they read a little darker. Real art comes later
+     (ADR-0005). Rendered to PNG by tools/partner/make_couple.mjs. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <defs>
+    <!-- One person facing right; the other is the same, mirrored and taller. -->
+    <g id="person">
+      <path d="M 100 1060 C 110 850, 180 720, 320 662 C 370 640, 385 600, 384 500
+               L 468 500 C 474 570, 500 600, 545 625 C 600 655, 625 760, 640 1060 Z"/>
+      <g transform="rotate(16 430 500)">
+        <path d="M 400 520 C 350 500, 325 450, 328 395
+                 C 332 300, 395 240, 465 240
+                 C 500 241, 515 262, 512 290
+                 L 510 306
+                 C 526 322, 530 336, 517 343
+                 C 520 355, 516 364, 508 369
+                 C 511 383, 503 398, 488 405
+                 C 470 414, 462 438, 466 468
+                 L 470 545 L 400 545 Z"/>
+      </g>
+    </g>
+  </defs>
+  <g fill="#FFFFFF">
+    <g transform="translate(-68 0)">
+      <use href="#person"/>
+      <circle cx="338" cy="318" r="42" transform="rotate(16 430 500)"/>
+    </g>
+    <g transform="translate(1068 -28) scale(-1 1)"><use href="#person"/></g>
+  </g>
+  <!-- Arms around each other's backs. -->
+  <path d="M 780 720 C 640 700, 430 730, 270 800" fill="none" stroke="#D8D8D8"
+        stroke-width="44" stroke-linecap="round"/>
+  <ellipse cx="258" cy="806" rx="38" ry="27" fill="#D8D8D8" transform="rotate(-24 258 806)"/>
+</svg>

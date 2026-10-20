@@ -63,7 +63,7 @@ window.partnerConductor = window.partnerConductor || (function () {
 				function () { failed = true; });
 		},
 		state: function () { return failed ? 'failed' : (buf ? 'ready' : 'loading'); },
-		start: function () {
+		start: function (from) {
 			this.stop();
 			src = ctx.createBufferSource();
 			src.buffer = buf;
@@ -71,8 +71,8 @@ window.partnerConductor = window.partnerConductor || (function () {
 			var mine = src;  // Ignore the end of a song stopped by a restart.
 			src.onended = function () { if (src === mine) { ended = true; } };
 			ended = false;
-			t0 = ctx.currentTime + 0.1;
-			src.start(t0);
+			t0 = ctx.currentTime + 0.1 - from;  // Song time 0, even when starting part-way.
+			src.start(t0 + from, from);
 			playing = true;
 		},
 		stop: function () {
@@ -132,15 +132,16 @@ func has_failed() -> bool:
 			and JavaScriptBridge.eval("window.partnerConductor.state()", true) == "failed"
 
 
-func start() -> void:
+## Starts the song, `from` seconds in (the browser tests skip to the ending).
+func start(from := 0.0) -> void:
 	_playing = true
 	if uses_browser_clock:
-		JavaScriptBridge.eval("window.partnerConductor.start()", true)
+		JavaScriptBridge.eval("window.partnerConductor.start(%f)" % from, true)
 		return
 	# Read once: it can be slow, and it doesn't change while playing.
 	_output_latency = AudioServer.get_output_latency()
 	_native_finished = false
-	_player.play()
+	_player.play(from)
 
 
 func stop() -> void:

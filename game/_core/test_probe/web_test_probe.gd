@@ -18,6 +18,11 @@ func _ready() -> void:
 	if search == null or not String(search).contains("probe"):
 		return
 	_window = JavaScriptBridge.get_interface("window")
+	# "&partner_from=190" starts the Partner's song that many seconds in, so a
+	# test can reach its ending without playing the whole song.
+	for part in String(search).trim_prefix("?").split("&"):
+		if part.begins_with("partner_from="):
+			get_tree().root.set_meta("partner_start_from", part.get_slice("=", 1).to_float())
 	print("Threshold test probe on")
 
 
