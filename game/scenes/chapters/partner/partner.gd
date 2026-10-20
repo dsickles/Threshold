@@ -468,19 +468,19 @@ func _light_position(c: Vector2, light_radius: float, until: float) -> Vector2:
 	return Vector2(c.x, lerpf(-light_radius, c.y, 1.0 - until / TRAVEL))
 
 
-# Connection Nodes: lights that fall from the top in one lane and reach the
-# heart's centre exactly on their note.
+# Connection Nodes: small hearts that fall from the top in one lane and reach
+# the heart's centre exactly on their note.
 func _draw_lights(c: Vector2, heart: float, t: float) -> void:
 	var t_judged := t - _sound_delay
 	var light_radius := heart * 0.2
-	# The target: a small, faint dot in the heart's centre. Tap when a light
-	# reaches it. It brightens a little as the next light gets close. (Dan,
-	# 2026-10-20: the ring helped show when to tap but was "too strong"; "maybe
-	# just a small transparent dot in the middle of the heart". No lane.)
+	# The target: a faint heart in the heart's centre, the size of a falling
+	# one. Tap when a falling heart reaches it. It brightens a little as the
+	# next one gets close. (Dan, 2026-10-20: the ring was "too strong"; then
+	# "in the center of the heart is another transparent heart". No lane.)
 	var soon := 0.0
 	if _next < _notes.size():
 		soon = clampf(1.0 - (_notes[_next] - t_judged) / 0.5, 0.0, 1.0)
-	draw_circle(c, light_radius * 0.4, Color(LIGHT, 0.22 + 0.18 * soon))
+	_draw_heart(c, light_radius, Color(LIGHT, 0.18 + 0.17 * soon))
 	var first := maxi(_next - 4, 0)
 	for i in range(first, _notes.size()):
 		var until := _notes[i] - t_judged
@@ -496,10 +496,12 @@ func _draw_lights(c: Vector2, heart: float, t: float) -> void:
 			color.a = clampf(0.6 + until * 1.5, 0.0, 0.6)  # Dims as it falls through.
 		if color.a <= 0.0:
 			continue
+		# Small hearts (Dan, 2026-10-20: "the things that come down from the
+		# top should be small hearts too").
 		var halo := color
 		halo.a *= 0.18
-		draw_circle(pos, light_radius * 1.8, halo)
-		draw_circle(pos, light_radius, color)
+		_draw_heart(pos, light_radius * 1.6, halo)
+		_draw_heart(pos, light_radius, color)
 
 
 # The one ending: a positive test in front of the couple holding each other,
