@@ -20,6 +20,32 @@ test("sound starts only after the first tap", async ({ game }) => {
   await game.screenshot("menu");
 });
 
+// DAS-76: the menu scales to fit, so every button is on screen at every size.
+test("every menu button is on screen", async ({ game, page }) => {
+  await game.tap("Tap to begin");
+  await game.findButton("Smoothness");
+  const { size, buttons } = (await game.state())!;
+  const names = buttons.map((b) => b.text);
+  for (const name of ["Smoothness", "Rhythm timing", "Viewpoints", "Stand-in chapter", "Test save", "Clear save"]) {
+    expect(names, `menu has ${name}`).toContain(name);
+  }
+  const canvas = await page.evaluate(() => {
+    const r = document.querySelector("canvas")!.getBoundingClientRect();
+    return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, w: innerWidth, h: innerHeight };
+  });
+  expect(canvas.left).toBeGreaterThanOrEqual(0);
+  expect(canvas.top).toBeGreaterThanOrEqual(0);
+  expect(canvas.right).toBeLessThanOrEqual(canvas.w);
+  expect(canvas.bottom).toBeLessThanOrEqual(canvas.h);
+  for (const b of buttons) {
+    expect(b.x, `${b.text} across`).toBeGreaterThan(0);
+    expect(b.x, `${b.text} across`).toBeLessThan(size.x);
+    expect(b.y, `${b.text} down`).toBeGreaterThan(0);
+    expect(b.y, `${b.text} down`).toBeLessThan(size.y);
+  }
+  await game.screenshot("menu-fits");
+});
+
 test("Smoothness opens and goes back to the menu", async ({ game }) => {
   await game.tap("Tap to begin");
   await game.tap("Smoothness");
