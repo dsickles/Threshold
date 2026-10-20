@@ -72,3 +72,19 @@ test("the next chapter is added after the saved ones", async ({ game }) => {
     { chapter: "protector", answer: "" },
   ]);
 });
+
+test("the menu's Test save survives a reload, and Clear save forgets it", async ({ game }) => {
+  await game.open();
+  await game.tap("Tap to begin");
+  await game.tap("Test save");
+  await expect.poll(() => finished(game)).toEqual([{ chapter: "partner", answer: "" }]);
+  await expect.poll(() => storedSave(game)).toContain('"partner"');
+  await game.screenshot("test-saved");
+
+  await game.open();
+  await expect.poll(() => finished(game)).toEqual([{ chapter: "partner", answer: "" }]);
+  await game.tap("Tap to begin");
+  await game.tap("Clear save");
+  await expect.poll(() => finished(game)).toEqual([]);
+  await expect.poll(() => storedSave(game)).toBeNull();
+});

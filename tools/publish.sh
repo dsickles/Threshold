@@ -3,22 +3,28 @@
 # Installs Godot 4.7.2, its web export templates and butler if missing
 # (via tools/godot-setup.sh), error-checks every script, runs the tests
 # (tools/test.sh), exports the "Web" preset to build/web/, and uploads to
-# itch.io only when run with --upload (after Dan says "upload").
+# itch.io only when run with --upload (after Dan says "upload") or --review.
 #
 #   bash tools/publish.sh            # install, check, test, export
 #   bash tools/publish.sh --upload   # ...and push to dsickles/threshold:html5
+#   bash tools/publish.sh --review   # ...and push to the review page Hopper
+#                                    # checks (no need to wait for Dan)
 #
 # Needs: network access to github.com and broth.itch.zone / itch.io,
-# and BUTLER_API_KEY set in the environment for --upload.
+# and BUTLER_API_KEY set in the environment for --upload or --review.
 set -euo pipefail
 
 ITCH_TARGET="dsickles/threshold:html5"
+ITCH_REVIEW_TARGET="${ITCH_REVIEW_TARGET:-dsickles/threshold-review:html5}"
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PROJECT_DIR="$REPO_DIR/game"
 OUT_DIR="$REPO_DIR/build/web"
 
 upload=false
-[ "${1:-}" = "--upload" ] && upload=true
+case "${1:-}" in
+    --upload) upload=true ;;
+    --review) upload=true; ITCH_TARGET="$ITCH_REVIEW_TARGET" ;;
+esac
 
 # Install whatever is missing; this also sets $GODOT and $BUTLER.
 setup_args=(--templates)
@@ -53,12 +59,12 @@ mkdir -p "$OUT_DIR"
 echo "Exported to build/web/."
 
 if ! $upload; then
-    echo "Not uploaded. Run with --upload once Dan says \"upload\"."
+    echo "Not uploaded. Run with --upload once Dan says \"upload\", or --review for Hopper's review page."
     exit 0
 fi
 
 [ -n "${BUTLER_API_KEY:-}" ] || { echo "BUTLER_API_KEY is not set."; exit 1; }
-branch="$(git -C "$REPO_DIR" branch --show-current)"
+branch="${BUILD_BRANCH:-$(git -C "$REPO_DIR" branch --show-current)}"
 version="${branch##*/}-$(git -C "$REPO_DIR" rev-parse --short HEAD)"
 "$BUTLER" push "$OUT_DIR" "$ITCH_TARGET" --userversion "$version"
-echo "Uploaded as version $version."
+echo "Uploaded to $ITCH_TARGET as version $version."

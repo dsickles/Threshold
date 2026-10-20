@@ -5,6 +5,7 @@ extends TestCase
 
 const GAME_STATE := preload("res://_core/state_manager/game_state.gd")
 const SAVE_PATH := "user://test_saves/save.json"
+const STAND_IN := preload("res://scenes/chapters/stand_in/stand_in_chapter.tscn")
 
 var _states: Array[Node] = []
 
@@ -100,6 +101,20 @@ func test_an_unknown_answer_is_not_recorded() -> void:
 	check_eq(state.finished_chapters(), [] as Array[String], "nothing finished")
 
 
+func test_a_malformed_result_is_not_recorded() -> void:
+	var state := _fresh_state()
+	for result in [
+		{"chapter": "partner"},
+		{"chapter": "partner", "answer": "", "house": {"shelf": Vector2(1, 2)}},
+		{"chapter": "partner", "answer": "", "house": "boxed"},
+		{"chapter": "partner", "answer": "", "mood": "warm"},
+		{"chapter": &"partner", "answer": ""},
+	]:
+		check(not state.record_chapter_result(result), "refused %s" % [result])
+	check_eq(state.finished_chapters(), [] as Array[String], "nothing finished")
+	check(not state.has_save(), "nothing saved")
+
+
 func test_a_test_only_chapter_from_the_chapter_framework_is_never_saved() -> void:
 	var state := _fresh_state()
 	check(not state.record_chapter_result({"chapter": "stand_in", "answer": ""}), "stand-in refused")
@@ -120,8 +135,8 @@ func test_house_state_a_chapter_leaves_is_saved_with_it() -> void:
 
 func test_finishing_the_arrival_leaves_no_next_chapter() -> void:
 	var state := _fresh_state()
-	for chapter in GAME_STATE.STORY_ORDER:
-		state.record_chapter_result({"chapter": chapter, "answer": ""})
+	for chapter in ChapterList.STORY_ORDER:
+		state.record_chapter_result(ChapterResult.make(chapter))
 	check_eq(state.next_chapter(), "", "no next chapter")
 	check_eq(_fresh_state().finished_chapters().size(), 8, "all eight saved")
 
@@ -148,6 +163,20 @@ func test_an_impossible_save_starts_fresh() -> void:
 		var state := _fresh_state()
 		check_eq(state.finished_chapters(), [] as Array[String], "fresh start for %s" % text)
 		check(not state.has_save(), "no save to continue from for %s" % text)
+
+
+func test_a_failed_save_keeps_the_last_good_save() -> void:
+	_fresh_state().record_chapter_result({"chapter": "partner", "answer": "stoic"})
+	var state: Node = GAME_STATE.new()
+	_states.append(state)
+	state.use_save_file(PrivateBrowsingSaveFile.new(SAVE_PATH))
+	check(state.load_save(), "earlier save loaded")
+	check(state.record_chapter_result({"chapter": "protector", "answer": ""}), "protector recorded")
+	check(not state.last_save_ok, "the new save wasn't kept")
+	check(state.has_save(), "still a save to continue from")
+	var next_visit := _fresh_state()
+	check_eq(next_visit.finished_chapters(), ["partner"] as Array[String], "old save intact")
+	check_eq(next_visit.answer_for("partner"), "stoic", "old answer intact")
 
 
 func test_a_save_that_cannot_be_written_is_reported_and_play_carries_on() -> void:
@@ -184,6 +213,28 @@ func test_hiding_or_leaving_the_game_does_not_save() -> void:
 		state.notification(what)
 	check(not state.has_save(), "no save from hiding or closing")
 	remove_child(state)
+
+
+func test_a_chapter_finished_through_the_chapter_runner_is_saved() -> void:
+	var state := _fresh_state()
+	add_child(state)  # Its _ready connects it to the runner.
+	state.use_save_file(SaveFile.new(SAVE_PATH))
+	var runner := ChapterRunner.of(get_tree())
+	var house := Control.new()
+	add_child(house)
+	# The stand-in isn't a story chapter, so it is never saved.
+	runner.enter_scene(ChapterList.STAND_IN, STAND_IN, house)
+	runner.get_child(0).finished.emit("")
+	await frames()
+	check(not state.has_save(), "stand-in not saved")
+	# The stand-in's scene, entered as the Partner, finishes like a real chapter.
+	runner.enter_scene(&"partner", STAND_IN, house)
+	runner.get_child(-1).finished.emit("vulnerable")
+	await frames()
+	check_eq(_fresh_state().finished_chapters(), ["partner"] as Array[String], "partner saved")
+	check_eq(_fresh_state().answer_for("partner"), "vulnerable", "answer saved")
+	remove_child(state)
+	runner.free()
 
 
 func test_starting_new_forgets_progress_and_deletes_the_save() -> void:

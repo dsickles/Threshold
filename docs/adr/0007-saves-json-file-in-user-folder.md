@@ -22,9 +22,9 @@ The core table and saves are tested with the small test runner already in the re
 }
 ```
 
-- `finished` is the finished-chapter list in story order. `answer` is `""`, `"stoic"` or `"vulnerable"`. Each entry is the chapter framework's result as handed back (DAS-75), so it also carries `"house": {...}` when a chapter leaves House state the core table can't look up (for example where the Mourner put things); the key is left out otherwise. Story facts, House mood, House objects and journal entries are not saved; the core table looks them up from this list (game-architecture 2.1).
+- `finished` is the finished-chapter list in story order. `answer` is `""`, `"stoic"` or `"vulnerable"`. Each entry is the chapter framework's result as handed back (`ChapterResult`, [game/_core/chapters/README.md](../../game/_core/chapters/README.md)), so it also carries `"house": {...}` when a chapter leaves House state the core table can't look up (for example where the Mourner put things); the key is left out otherwise. Story facts, House mood, House objects and journal entries are not saved; the core table looks them up from this list (game-architecture 2.1).
 - `settings` is empty until the settings screen exists (Final milestone).
-- Only `GameState` (`game/_core/state_manager/game_state.gd`) writes it, and only when a chapter is recorded as finished (`GameState.record_chapter_result`). _Pending DAS-75: the chapter runner's `chapter_finished` signal is connected to it when the chapter framework lands._ Test-only chapters, leaving a chapter early, hiding the tab or closing it mid-chapter save nothing.
+- Only `GameState` (`game/_core/state_manager/game_state.gd`) writes it, and only when the chapter runner reports a finished chapter (`ChapterRunner.chapter_finished`, connected to `GameState.record_chapter_result`). Only results that pass `ChapterResult.is_story_result` are recorded, so the menu's test-only stand-in never saves. Test-only chapters, leaving a chapter early, hiding the tab or closing it mid-chapter save nothing.
 
 ## Considered
 

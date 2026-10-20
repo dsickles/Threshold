@@ -6,25 +6,17 @@ extends Node
 ## any House state a chapter hands back that the core table can't look up,
 ## are saved alongside it. Autoloaded as GameState.
 ##
-## Saves only when a chapter finishes, in record_chapter_result. Pending
-## DAS-75: the chapter runner's chapter_finished signal is not connected to it
-## yet; the chapter framework PR adds that line. Leaving a chapter early,
-## hiding the tab or closing it mid-chapter saves nothing. Storage and the
-## save format: ADR-0007.
+## Saves only when a chapter finishes: the chapter runner's chapter_finished
+## (game/_core/chapters/README.md) is connected to record_chapter_result.
+## Leaving a chapter early, hiding the tab or closing it mid-chapter saves
+## nothing. Chapter ids and the result shape come from ChapterList and
+## ChapterResult. Storage and the save format: ADR-0007.
 
 ## Emitted after a chapter is added to the finished-chapter list.
 signal progress_changed
 ## Emitted when a save could not be kept, so the game can show
 ## "Couldn't save." and carry on.
 signal save_failed
-
-## Every chapter, in story order. Players always meet them in this order, so
-## the finished-chapter list is always the start of it.
-const STORY_ORDER: Array[String] = [
-	"partner", "protector", "novice", "provider",
-	"tuner", "anchor", "mourner", "arrival",
-]
-const ANSWERS: Array[String] = ["", "stoic", "vulnerable"]
 
 ## Whether the last save was kept. True until a save fails.
 var last_save_ok := true
@@ -39,6 +31,7 @@ var _file := SaveFile.new()
 
 func _ready() -> void:
 	load_save()
+	ChapterRunner.of(get_tree()).chapter_finished.connect(record_chapter_result)
 
 
 ## Uses a different save file (tests use their own). Clears what is in
@@ -49,8 +42,8 @@ func use_save_file(file: SaveFile) -> void:
 
 
 ## Reads the save, replacing what is in memory. A save that is missing,
-## unreadable or impossible (chapters out of story order, unknown chapters or
-## answers) counts as no save: the game starts fresh. Returns whether a save
+## unreadable or impossible (chapters out of story order, or an entry that
+## isn't a story result) counts as no save: the game starts fresh. Returns whether a save
 ## was loaded.
 func load_save() -> bool:
 	_clear()
@@ -59,37 +52,33 @@ func load_save() -> bool:
 		return false
 	_has_save = true
 	for entry: Dictionary in data.finished:
-		_finished.append(_entry(entry.chapter, entry.get("answer", ""), entry.get("house", {})))
+		_finished.append(_entry(entry.chapter, entry.answer, entry.get("house", {})))
 	_settings = data.get("settings", {})
 	progress_changed.emit()
 	return true
 
 
-## Records a finished chapter and saves. The result is the chapter
-## framework's: {"chapter": "partner", "answer": ""} where answer is "",
-## "stoic" or "vulnerable", plus "house" (a Dictionary) only when the chapter
-## leaves House state. The chapter must be the next one in story order;
-## finishing one that is already finished changes nothing, and test-only
-## chapters (not in STORY_ORDER, like the menu's stand-in) are never saved.
+## Records a finished chapter and saves. The result is a ChapterResult and
+## must pass ChapterResult.is_story_result, so the menu's test-only stand-in
+## and malformed results (a missing answer, House values that aren't plain
+## JSON) are never saved. The chapter must be the next one in story order;
+## finishing one that is already finished changes nothing.
 ## Returns whether the chapter was recorded (false: refused, or already
 ## finished). Whether the save was kept is separate: see last_save_ok and
 ## save_failed, since a chapter is recorded and play carries on even when the
 ## save can't be written.
 func record_chapter_result(result: Dictionary) -> bool:
-	var chapter: String = str(result.get("chapter", ""))
-	var answer: String = str(result.get("answer", ""))
-	var house: Variant = result.get("house", {})
-	if not chapter in STORY_ORDER:
+	if not ChapterResult.is_story_result(result):
+		if result.get("chapter") != String(ChapterList.STAND_IN):
+			push_warning("GameState: not a story result: %s" % [result])
 		return false
+	var chapter: String = result.chapter
 	if is_finished(chapter):
 		return false
 	if chapter != next_chapter():
 		push_warning("GameState: '%s' is not the next chapter (expected '%s')." % [chapter, next_chapter()])
 		return false
-	if not answer in ANSWERS or not house is Dictionary:
-		push_warning("GameState: bad result for '%s': %s" % [chapter, result])
-		return false
-	_finished.append(_entry(chapter, answer, house))
+	_finished.append(_entry(chapter, result.answer, result.get("house", {})))
 	progress_changed.emit()
 	_save()
 	return true
@@ -109,7 +98,8 @@ func is_finished(chapter: String) -> bool:
 
 ## The next chapter to play, or "" once The Arrival is finished.
 func next_chapter() -> String:
-	return STORY_ORDER[_finished.size()] if _finished.size() < STORY_ORDER.size() else ""
+	var order := ChapterList.STORY_ORDER
+	return String(order[_finished.size()]) if _finished.size() < order.size() else ""
 
 
 ## The Stoic/Vulnerable answer given in a finished chapter ("" if none).
@@ -180,14 +170,12 @@ static func _is_valid(data: Dictionary) -> bool:
 	if not data.get("finished") is Array or not data.get("settings", {}) is Dictionary:
 		return false
 	var finished: Array = data.finished
-	if finished.size() > STORY_ORDER.size():
+	if finished.size() > ChapterList.STORY_ORDER.size():
 		return false
 	for i in finished.size():
 		var entry: Variant = finished[i]
-		if not entry is Dictionary:
+		if not entry is Dictionary or not ChapterResult.is_story_result(entry):
 			return false
-		if entry.get("chapter") != STORY_ORDER[i]:
-			return false
-		if not entry.get("answer", "") in ANSWERS or not entry.get("house", {}) is Dictionary:
+		if entry.chapter != String(ChapterList.STORY_ORDER[i]):
 			return false
 	return true
