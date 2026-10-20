@@ -36,7 +36,7 @@ On the porch at dusk (view P), looking at the front door, on the day they move i
 |---|---|---|---|
 | Start | Porch, entry, living room, kitchen | Cold: bare bulbs, boxes. Moving boxes stacked in the doorway to the back hall. | None until the opening beat |
 | After the opening beat (plays at L1) | + back hall, main bedroom | The boxes are gone from the hall doorway. A lamp is on in the bedroom; the record player sits on a box. At the end of the hall, the spare room door is shut. **Moving boxes are stacked against the office door** ("we'll do the office later"). | Record player |
-| After the Partner | + spare room doorway (S1) | Warm. The test on the nightstand. **The spare room door stands ajar**: Leo has started unpacking his bachelor things in here: his leather lounge chair and ottoman (the classic Eames-style kind), his guitar on a stand, a framed band poster leaning on the wall, and plenty of boxes still stacked against the walls. On the chair, one small thing for the baby (the onesie). It reads as his room for now, clearly waiting to become something else. | Bedside lamp, on the bedroom nightstand |
+| After the Partner | + spare room doorway (S1) | Warm. The test on the en-suite bathroom counter. The closet is half unpacked. **The spare room door stands ajar**: Leo has started unpacking his bachelor things in here: his leather lounge chair and ottoman (the classic Eames-style kind), his guitar on a stand, a framed band poster leaning on the wall, and plenty of boxes still stacked against the walls. On the chair, one small thing for the baby (the onesie). It reads as his room for now, clearly waiting to become something else. | Bedside lamp, on the bedroom nightstand |
 | After the Loss | − spare room | Gray, rain on the windows. The test and the onesie are gone from view. **The spare room door is shut.** No boxes, no lock: they just don't want to be reminded of what that room was going to be (Dan, 2026-10-20). It can't be opened. | None in M1 (the end of M1) |
 | After the Novice (M2) | + office | Colour bleeds back; the rain stops. **The boxes in front of the office door are gone**; bills are piled on the desk inside. | Bills |
 | After the Provider (M2) | | Bills filed. A monitor on the nightstand. | Baby monitor |
@@ -53,7 +53,7 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 - **The spare room carries the story by being open or shut** (principle 3, absence; principle 6, navigation is narrative). Hope opens it; grief shuts it; hearing the baby opens it again; Leo finishes it last. After the Loss the door is simply closed, not boxed up: they don't want to be reminded (Dan, 2026-10-20). Boxes block only the office, where they mean "not yet": they are everywhere on moving day, so a stack of them in front of a door reads that way without a lock or a word (Dan, 2026-10-19).
 - **The office is blocked by boxes too, until the bills come.** Leo puts off the room for providing until he can't.
 - **One crib, one lifeline.** It doesn't exist until the Anchor. Early hope is shown by something small and true to eight weeks (one small thing for the baby), not a crib. The small thing and the first test go into a box after the Loss and come back in the Mourner, when Leo clears the room. That fixes the duplicate crib.
-- **The lamp starts the Loss; the keys start the Arrival** (Dan, 2026-10-19). The loss happens in play, in the run, so the Loss starts with the most ordinary act there is: turning off the bedside lamp to go to sleep, with the test on the nightstand beside it. The run is that night; the quiet car in the rain is the drive afterwards. Nothing about the lamp warns the player. The car keys are kept for the Arrival, when leaving through the front door means what it should. (Dan's rule, 2026-10-19: one item may start several chapters, but only from a different place each time. With the lamp, the keys start only one.)
+- **The lamp starts the Loss; the keys start the Arrival** (Dan, 2026-10-19). The loss happens in play, in the run, so the Loss starts with the most ordinary act there is: turning off the bedside lamp to go to sleep, the night after the test. The run is that night; the quiet car in the rain is the drive afterwards. Nothing about the lamp warns the player. The car keys are kept for the Arrival, when leaving through the front door means what it should. (Dan's rule, 2026-10-19: one item may start several chapters, but only from a different place each time. With the lamp, the keys start only one.)
 - **The office opens with the bills.** The fixer gets a room for providing at the moment the story turns to money.
 
 ### Rooms
@@ -65,8 +65,9 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 | Living room | Start | Home base. The opening beat. The big window (rain). The crib stands here after the Anchor. Dad's Journal (M2). |
 | Kitchen | Start | The fridge (the hum; IVF medication for the Novice), the counters and oven, the dining table |
 | Back hall | After the opening beat | Leads straight to the spare room's door |
-| Bedroom 1 (main) and Bath 1 (en-suite) | After the opening beat | The couple's room: the Partner and the Tuner start here |
-| Bath 2 (hall) | After the opening beat | Ordinary, as in any house; never a chapter room |
+| Bedroom 1 (main) and Bath 1 (en-suite) | After the opening beat | The couple's room: the Partner and the Tuner start here. The positive test is in the en-suite. |
+| Walk-in closet (off the main bedroom) | Boxes in the way of its door after the opening beat; open after the Partner | Their two lives being unpacked into one closet |
+| Bath 2 (hall) | Shut in M1 | Ordinary, as in any house; never a chapter room |
 | Bedroom 3: office | Boxes stacked against its door from the opening beat; cleared after the Novice | The Provider's desk |
 | Bedroom 2: spare room, then nursery | Ajar after the Partner; shut after the Loss; ajar again after the Tuner; finished after the Mourner | The room for later |
 
@@ -78,13 +79,13 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 
 ## M1 build
 
-The porch shot, the shared front (entry, living room and kitchen as one open space), the back hall, the main bedroom, and the spare room seen from its doorway only. The office and both bathrooms are shut doors. That is at the top of the roadmap's "2–3 rooms". Decided (Dan, 2026-10-19).
+The porch shot, the shared front (entry, living room and kitchen as one open space), the back hall, the main bedroom, and the en-suite, the walk-in closet and the spare room each seen from its doorway only. The office and the hall bathroom are shut doors. That is at the top of the roadmap's "2–3 rooms". Decided (Dan, 2026-10-19).
 
 ### Views (M1)
 
 How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-views-close-ups.md): tapping a doorway glides to that room's **doorway view**; tapping a wall or corner glides to its **wall view**; tapping an object glides to its **close-up**, and tapping it again does its one action. Rings show every other view and doorway; anything off screen pins to the screen edge with an arrow. Glide 2.0 s (M0 check, DAS-69). In the drawing, doorway views are green and wall views blue; the point shows which way the camera faces.
 
-15 views. Each room's doorways are rings in every view of that room.
+17 views. Each room's doorways are rings in every view of that room.
 
 | Room | View | Faces | What the shot shows | Open |
 |---|---|---|---|---|
@@ -99,10 +100,12 @@ How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-vie
 | | **K2** wall | The fridge | The fridge | Always |
 | | **K3** wall | The dining table | The dining table and its chairs, between the kitchen and the living room | Always |
 | Back hall | **H1** doorway | Down the hall | Straight to the spare room's door at the far end (shut after the Loss); the office door with boxes against it; the bedroom door with lamp light spilling out | After the opening beat |
-| Bedroom | **B1** doorway | Into the bedroom | The mattress on the floor, the lamp, the record player on its box | After the opening beat |
-| | **B2** wall | The bed wall | The mattress, the nightstand (Maya's list; the test after the Partner), the wrapped photo against the wall | After the opening beat |
-| | **B3** corner | The record player | The record player on a moving box | After the opening beat |
-| Spare room | **S1** doorway | Into the spare room | Leo's lounge chair and ottoman with the onesie on it, his guitar on a stand, the band poster, boxes along the walls. The player only looks in from the door. | After the Partner, until the Loss |
+| Bedroom | **B1** doorway | Into the bedroom | The bed against the far (west) wall under its window, the lamp lit, the wrapped photo leaning against the wall | After the opening beat |
+| | **B2** wall | The bed wall | The bed, a nightstand either side (the lamp on one, Maya's list on the other), the window above | After the opening beat |
+| | **B3** corner | The top-right corner | The record player on a moving box, the dresser under the north window | After the opening beat |
+| | **BA** doorway | Into the en-suite | Sink and mirror; the test on the counter after the Partner | After the opening beat |
+| | **C1** doorway | Into the walk-in closet | Boxes in the way at first; after the Partner, their clothes half hung up, boxes on the floor | Boxes block it until the Partner |
+| Spare room | **S1** doorway | Into the spare room | Leo's lounge chair in the far (north-east) corner between the two windows, the ottoman in front of it, the onesie on the chair, his guitar on a stand, the band poster, boxes along the walls. The player only looks in from the door. | After the Partner, until the Loss |
 
 ### Furniture (Dan, 2026-10-20)
 
@@ -111,7 +114,11 @@ Where things would really be, a few days after moving in. Furniture is drawn in 
 - **Entry:** an entry table flush against the left wall, with the car keys on it. Leo's moving box nearby.
 - **Living room:** a 3-seater couch, sitting a little askew in the middle of the room: it isn't in its place yet, and where it finally goes is still open, because the room is open plan into the kitchen. Against the north wall, the TV on a console with an AV receiver and floor-standing speakers either side, not plugged in yet. The crate of records near them.
 - **Kitchen:** granite counters along the top wall, the right wall and a little of the bottom wall. No island or peninsula. The fridge along the top wall, a few feet in from the corner so it can open (Dan, 2026-10-20); the oven on the right wall (placed by me; move it if it belongs elsewhere).
-- **Dining table:** between the kitchen and the living room, on the kitchen side of the open plan.
+- **Dining table:** between the kitchen and the living room, on the kitchen side of the open plan, with a window on the south wall beside it.
+- **Kitchen, more:** the sink in the top counter, just left of the fridge; a window on the east wall, just left of (above) the oven.
+- **Main bedroom:** the bed in the nook on the left, its head against the west wall, a window above it and a nightstand either side, flush against that wall. The bedside lamp is on one nightstand. A dresser for each of them: one on the right wall near the bottom, next to the hall bathroom; one flush against the north wall, under a window. The record player in the top-right area. The en-suite and the walk-in closet open off the bedroom.
+- **Walk-in closet:** a little disorganized through M1. Boxes in the way of its door at first; after the Partner, things for both of them going in, boxes still on the floor.
+- **Spare room:** windows on the north and east walls. Leo's lounge chair in the north-east corner, its back to the corner and the ottoman towards the south-west, the onesie on it. The band poster and his guitar next to each other on the left side of the north wall; more boxes along the middle of the left wall and against the right wall.
 
 ### Chapter objects are always ready
 
@@ -120,7 +127,7 @@ Where things would really be, a few days after moving in. Furniture is drawn in 
 | Chapter object | Where (view) | Action | Active |
 |---|---|---|---|
 | Record player | Bedroom (B3) | Lower the needle: the Partner begins | From the moment the bedroom opens (straight after the opening beat), until the Partner |
-| Bedside lamp | Bedroom nightstand (B2), next to the test | Turn it off: the Loss begins | As soon as the player is back from the Partner. Before then it is the warm light that leads the player to the bedroom (no ring, no highlight). |
+| Bedside lamp | Bedroom nightstand (B2) | Turn it off: the Loss begins | As soon as the player is back from the Partner. Before then it is the warm light that leads the player to the bedroom (no ring, no highlight). |
 
 ### House objects through the story
 
@@ -142,15 +149,16 @@ Made with the narrative-craft skill. House objects reward looking. They are neve
 
 | Object | Where (view) | Action | What it says |
 |---|---|---|---|
-| The wrapped photo | Bedroom (B2) | Peel back the bubble wrap: Leo and Maya | The only place the couple are seen in M1 (Dan, 2026-10-19: yes to the photo). |
+| The wrapped photo | Bedroom, leaning against the wall (B1) | Peel back the bubble wrap: Leo and Maya | The only place the couple are seen in M1 (Dan, 2026-10-19: yes to the photo). |
 | Maya's list | Bedroom nightstand (B2) | Read it. The words are Dan's to write. | Maya over-researches and worries about small things (narrative-design.md). Her character, without her on screen. |
 
 #### After the Partner (warm)
 
 | Object | Where (view) | Action | What it says |
 |---|---|---|---|
-| The positive test | Bedroom nightstand (B2), next to the lamp | Pick it up and look | The chapter's result, in the room (one result, same for everyone). |
-| The photo, now hung | Bedroom wall (B2) | Look | A changed object: they are making the place theirs. |
+| The positive test | En-suite bathroom counter (BA) (Dan, 2026-10-20) | Pick it up and look | The chapter's result, in the room (one result, same for everyone). |
+| The photo, now hung | Bedroom wall (B1) | Look | A changed object: they are making the place theirs. |
+| Their clothes | Walk-in closet (C1) | Look: her side hung up, his still half in a box (proposed) | Two lives being unpacked into one place. The closet fills up a little as M1 goes on (Dan, 2026-10-20). |
 | A card on the fridge | Kitchen (K2) | Read it. Its wording and date are Dan's. | Planning ahead. It is ordinary, so it isn't a warning. |
 | The record crate, one missing | Living room (L4) | Flick through: one gap | The record is on the player in the bedroom. Continuity the player can notice. |
 | The onesie | On Leo's lounge chair (S1) | Seen from the doorway, can't be tapped in M1 | Early hope, sitting in the middle of his old life (Dan, 2026-10-20). |
@@ -167,7 +175,7 @@ The pizza box is gone.
 | A blanket and pillow on the couch | Living room (L1) | Fold the blanket | Leo has been sleeping out here (Dan, 2026-10-19). Nothing says so; the player works it out. |
 | The window in rain | Living room (L2) | Draw the curtain: rain | The Silence in the car, carried into the House. |
 
-The test is gone from the nightstand and the onesie from the chair: both are in the memory box behind the shut door (the ledger).
+The test is gone from the bathroom counter and the onesie from the chair: both are in the memory box behind the shut door (the ledger).
 
 #### Later, in M2 (sketch)
 
