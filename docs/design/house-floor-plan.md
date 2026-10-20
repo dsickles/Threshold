@@ -133,7 +133,7 @@ Where things would really be, a few days after moving in. Furniture is drawn in 
 
 Made with the narrative-craft skill. House objects reward looking. They are never required, scored or saved, each has one action, and each has a lifeline in the [continuity ledger](continuity-ledger.md). **Dan** writes any words on them; until then they are placeholders.
 
-**How many (decided, Dan, 2026-10-19):** at any point, **2 to 3 House objects in each open room**, and on every return to the House **3 to 5 of them new or changed**, spread over different rooms, with at least one in a room the player already knows (principle 2: change the familiar). Across the whole game that is about 25 to 30 objects, many of them the same object changing. M1 has 13, several of which change.
+**How many (decided, Dan, 2026-10-19):** at any point, **2 to 3 House objects in each open room**, and on every return to the House **3 to 5 of them new or changed**, spread over different rooms, with at least one in a room the player already knows (principle 2: change the familiar). Across the whole game that is about 25 to 30 objects, many of them the same object changing. M1 has 18 entries in the tables below: 13 separate things, 5 of which come back changed (the photo, the records, the fridge twice, the window).
 
 #### Start (moving day, cold)
 
@@ -219,7 +219,7 @@ Answered by Dan on 2026-10-19 unless marked open. Open ones have my recommended 
 9. **Decided:** M1 ends in the gray House, with no card.
 10. **Decided: there is an opening beat**, playing on first arrival in the living room and opening the back hall. Its words are Dan's to write.
 11. **Decided:** the wrapped photo; the player sees Leo and Maya in it.
-12. **Open: the 13 M1 House objects** above. *Recommended: yes; Dan writes the box label, Maya's list, the fridge card and the note on the dish.*
+12. **Open: the 18 M1 House object entries (13 separate things)** above. *Recommended: yes; Dan writes the box label, Maya's list, the fridge card and the note on the dish.*
 13. **Decided:** the blanket on the couch: Leo slept there.
 14. **Decided:** the rule of thumb (2–3 House objects per open room, 3–5 new or changed on every return).
 15. **Decided:** the opening beat comes before the record player works; after that, every chapter object works as soon as the player is back.
