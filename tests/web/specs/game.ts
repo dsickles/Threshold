@@ -9,6 +9,7 @@ export type ProbeState = {
   overlays: string[];
   size: { x: number; y: number };
   buttons: ProbeButton[];
+  progress: { finished: { chapter: string; answer: string }[]; saveOk: boolean };
 };
 
 export const MENU = "res://scenes/ui/m0_menu.tscn";
@@ -65,9 +66,12 @@ export class Game {
     private readonly hasTouch: boolean,
   ) {}
 
-  /** Opens the game and waits until the engine is running its first scene. */
-  async open() {
-    await this.page.goto("/index.html?probe");
+  /**
+   * Opens the game and waits until the engine is running its first scene.
+   * `extra` adds to the address, for example "&finish=partner" (see the probe).
+   */
+  async open(extra = "") {
+    await this.page.goto("/index.html?probe" + extra);
     await expect.poll(() => this.state().then((s) => s?.scene), { timeout: 90_000 }).toBe(MENU);
   }
 

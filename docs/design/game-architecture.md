@@ -175,7 +175,7 @@ To achieve the "Familiar yet Novel" aesthetic without 7 distinct asset pipelines
 
 ### 5.1 Save System (`SaveManager.gd`)
 
-- **Format:** JSON, stored in the browser.
+- **Format:** JSON, stored in the browser. _2026-10-19: one file, `user://save.json`, written by `GameState` with Godot's `FileAccess`; on the web Godot keeps it in IndexedDB ([ADR-0007](../adr/0007-saves-json-file-in-user-folder.md))._
 - **Content:** The finished-chapter list and settings (see §2.1).
 - **Triggers:** Save only **between chapters**, when a chapter finishes. No mid-chapter checkpoints. Closing the tab mid-chapter restarts that chapter next time. Hiding the tab pauses the game but does not save.
 - **Failure:** In private browsing or a blocked frame the save can fail. Show "Couldn't save." and keep playing. Old test saves may fail to open; there is no save versioning.
