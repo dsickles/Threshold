@@ -241,6 +241,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 20. Saves built in M1, as a JSON file, tested without an addon (2026-10-19)
+
+| | |
+|---|---|
+| **Was** | Save/Continue came in M2 (roadmap). Which test addon covers the core table and saves was open for M1. |
+| **Became** | The save system is built in M1 (Continue and the title screen stay in M2). One JSON file in Godot's user folder, kept in IndexedDB on the web. The repo's own test runner covers it; no addon. |
+| **Why** | Every chapter after the Partner needs the same way to record that it is finished. Dan asked for it now (2026-10-19). One code path works on web and PC; the runner already does what an addon would. |
+| **Record** | [ADR-0007](../adr/0007-saves-json-file-in-user-folder.md), [scope.md](../scope.md) Settled questions |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

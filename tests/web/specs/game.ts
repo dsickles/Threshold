@@ -11,6 +11,7 @@ export type ProbeState = {
   buttons: ProbeButton[];
   // probe_state() of screens that report one, by scene path.
   screens: Record<string, any>;
+  progress: { finished: { chapter: string; answer: string }[]; saveOk: boolean };
 };
 
 export const MENU = "res://scenes/ui/m0_menu.tscn";
@@ -68,10 +69,12 @@ export class Game {
     private readonly hasTouch: boolean,
   ) {}
 
-  /** Opens the game and waits until the engine is running its first scene.
-   * `query` adds to the address, like "&partner_from=190" (see web_test_probe.gd). */
-  async open(query = "") {
-    await this.page.goto(`/index.html?probe${query}`);
+  /**
+   * Opens the game and waits until the engine is running its first scene.
+   * `extra` adds to the address, for example "&finish=partner" (see the probe).
+   */
+  async open(extra = "") {
+    await this.page.goto("/index.html?probe" + extra);
     await expect.poll(() => this.state().then((s) => s?.scene), { timeout: 90_000 }).toBe(MENU);
   }
 

@@ -11,6 +11,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
 
+GameState="*res://_core/state_manager/game_state.gd"
 WebTestProbe="*res://_core/test_probe/web_test_probe.gd"
 
 [display]

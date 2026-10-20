@@ -2,11 +2,13 @@ extends Node
 ## Lets the browser tests (tests/web/) see inside the canvas. Only runs in a
 ## web build opened with "?probe" in the address, so players never get it.
 ## Each frame it writes the current scene, any screen opened on top of it,
-## every visible button with its centre, and the `probe_state()` of any
-## screen that has one (for screens with no buttons, like the Partner) to
-## window.thresholdProbe, where Playwright reads it. Positions are in the
-## game's own screen units (1280 wide on a laptop), and "size" is the whole
-## screen in those units.
+## every visible button with its centre, the `probe_state()` of any screen
+## that has one (for screens with no buttons, like the Partner), and the
+## finished-chapter list to window.thresholdProbe, where Playwright reads it.
+## "&finish=<chapter>" or "&finish=<chapter>:<answer>" in the address records
+## that chapter as finished when the game starts, so a test can make a save
+## without playing. Positions are in the game's own screen units (1280 wide on
+## a laptop), and "size" is the whole screen in those units.
 
 var _window: JavaScriptObject
 
@@ -24,6 +26,7 @@ func _ready() -> void:
 		if part.begins_with("partner_from="):
 			get_tree().root.set_meta("partner_start_from", part.get_slice("=", 1).to_float())
 	print("Threshold test probe on")
+	_finish_chapter_from_address(String(search))
 
 
 func _process(_delta: float) -> void:
@@ -55,7 +58,22 @@ func _process(_delta: float) -> void:
 		"overlays": overlays,
 		"buttons": buttons,
 		"screens": screens,
+		"progress": {
+			"finished": _game_state().to_save_data().finished,
+			"saveOk": _game_state().last_save_ok,
+		},
 	})
+
+
+func _finish_chapter_from_address(search: String) -> void:
+	for part in search.trim_prefix("?").split("&"):
+		if not part.begins_with("finish="):
+			continue
+		var value := part.trim_prefix("finish=").uri_decode().split(":")
+		_game_state().record_chapter_result({
+			"chapter": value[0],
+			"answer": value[1] if value.size() > 1 else "",
+		})
 
 
 func _collect_buttons(node: Node, out: Array[Dictionary]) -> void:
@@ -70,3 +88,8 @@ func _collect_buttons(node: Node, out: Array[Dictionary]) -> void:
 		})
 	for child in node.get_children():
 		_collect_buttons(child, out)
+
+
+# Looked up by path: the stand-alone script check doesn't know autoload names.
+func _game_state() -> Node:
+	return get_node("/root/GameState")

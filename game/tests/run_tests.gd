@@ -43,6 +43,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	_use_test_save_file()
 	var filter := " ".join(OS.get_cmdline_user_args()).to_lower()
 	var passed := 0
 	var failed := PackedStringArray()
@@ -115,6 +116,19 @@ func _unexpected(errors: PackedStringArray, expected: PackedStringArray) -> Pack
 		if not seen.has(text):
 			problems.append("expected an error containing \"%s\", but none was printed" % text)
 	return problems
+
+
+# Tests that finish a story chapter make the GameState autoload save. Point it
+# at a file of its own, so a test run never touches the game's real save
+# (on Dan's PC, headless tests share the game's user:// folder).
+func _use_test_save_file() -> void:
+	var state := root.get_node_or_null("GameState")
+	if state == null:
+		return
+	DirAccess.make_dir_recursive_absolute("user://test_saves")
+	var file := SaveFile.new("user://test_saves/autoload_save.json")
+	file.erase()
+	state.use_save_file(file)
 
 
 func _test_files() -> PackedStringArray:

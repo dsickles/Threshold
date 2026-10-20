@@ -16,7 +16,8 @@ func test_buttons_are_big_enough_to_tap() -> void:
 	var menu := add_scene(MENU)
 	tap(menu.get_node("%BeginButton"))
 	await frames()
-	for name in ["BeginButton", "SmoothnessButton", "RhythmButton", "ViewpointsButton"]:
+	for name in ["BeginButton", "SmoothnessButton", "RhythmButton", "ViewpointsButton",
+			"TestSaveButton", "ClearSaveButton"]:
 		var button: Control = menu.get_node("%" + name)
 		check(button.size.x >= 44.0 and button.size.y >= 44.0,
 				"%s is at least 44px (is %s)" % [name, button.size])
@@ -56,3 +57,31 @@ func _check_scene_button(button: String, scene_path: String) -> void:
 	var scene := get_tree().current_scene
 	check(scene != null and scene.scene_file_path == scene_path,
 			"%s opens %s" % [button, scene_path])
+
+
+func test_test_save_records_the_next_chapter_and_clear_save_forgets_it() -> void:
+	var state := get_node("/root/GameState")
+	state.start_new()
+	var menu := add_scene(MENU)
+	tap(menu.get_node("%BeginButton"))
+	await frames()
+	var saved: Label = menu.get_node("%SaveStatus")
+	check_eq(saved.text, "Saved: none", "nothing saved at first")
+	tap(menu.get_node("%TestSaveButton"))
+	check_eq(saved.text, "Saved: partner", "after one test save")
+	check(state.has_save(), "written to the save file")
+	tap(menu.get_node("%TestSaveButton"))
+	check_eq(saved.text, "Saved: partner, protector", "after two")
+	tap(menu.get_node("%ClearSaveButton"))
+	check_eq(saved.text, "Saved: none", "after clearing")
+	check(not state.has_save(), "save file deleted")
+
+
+func test_test_save_is_off_once_every_chapter_is_saved() -> void:
+	var state := get_node("/root/GameState")
+	state.start_new()
+	for chapter in ChapterList.STORY_ORDER:
+		state.record_chapter_result(ChapterResult.make(chapter))
+	var menu := add_scene(MENU)
+	check(menu.get_node("%TestSaveButton").disabled, "nothing left to save")
+	state.start_new()

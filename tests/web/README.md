@@ -35,6 +35,12 @@ it), and each frame it writes to `window.thresholdProbe`:
 - `scene`: the current scene's file path
 - `overlays`: screens opened on top of it (like the Rhythm check over the menu)
 - `buttons`: every visible button, with its text, centre and whether it is disabled
+- `progress`: the finished-chapter list (`finished`) and whether the last save was kept (`saveOk`)
+
+Adding `&finish=partner` (or `&finish=partner:vulnerable`) to the address
+records that chapter as finished when the game starts, so a test can make a
+save without playing the chapter: `game.open("&finish=partner")`. Each test
+starts with empty browser storage, so saves never leak between tests.
 
 The helpers in `specs/game.ts` use it:
 
