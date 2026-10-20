@@ -173,6 +173,8 @@ func test_hidden_tab_pauses_and_a_tap_resumes_without_counting() -> void:
 
 func test_the_menu_opens_the_partner_and_takes_it_back_when_finished() -> void:
 	_partner.free()  # It takes every tap, so it would swallow the menu's.
+	var state := get_node("/root/GameState")
+	state.start_new()
 	var menu := add_scene(MENU)
 	tap(menu.get_node("%BeginButton"))
 	await frames()
@@ -191,6 +193,8 @@ func test_the_menu_opens_the_partner_and_takes_it_back_when_finished() -> void:
 	check(not is_instance_valid(partner), "Partner closed when finished")
 	check(menu.visible and menu.get_node("%Menu").visible, "menu back after the Partner finished")
 	check_eq(menu.get_node("%Status").text, "Finished partner (answer: none)", "menu heard the result")
+	check(state.is_finished("partner"), "the Partner's result was saved")
+	state.start_new()
 	runner.free()  # It lives on the root, so it would outlast this test.
 
 

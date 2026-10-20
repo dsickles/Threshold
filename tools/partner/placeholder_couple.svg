@@ -38,7 +38,9 @@
     </g>
   </g>
   </g>
-  <!-- Close together: chest to chest, so no gap between them. -->
+  <!-- Close together: chest to chest, so no gap between them. This and the
+       arms below are outside the scaled group above, in the picture's own
+       coordinates, so move them too if that group's transform changes. -->
   <path fill="#FFFFFF" d="M 330 660 C 420 630, 560 630, 650 660 L 660 1000 L 320 1000 Z"/>
   <!-- Their arms around each other, showing just past the outline: her
        forearm over his shoulder, his hand on her back. -->
