@@ -16,6 +16,8 @@ enum Judged { PENDING, HIT, MISSED }
 const CHART_PATH := "res://scenes/chapters/partner/beat_chart.json"
 const SONG := preload("res://assets/audio/partner/placeholder_song.mp3")  # PLACEHOLDER song
 const COUPLE_IMAGE := preload("res://assets/images/partner/placeholder_couple.png")  # PLACEHOLDER
+const TEST_IMAGE := preload("res://assets/images/partner/placeholder_test.png")  # PLACEHOLDER
+const TEST_IMAGE_ASPECT := 0.24  # Its height over its width.
 const CELEBRATE_SOUND := preload("res://assets/audio/partner/placeholder_celebrate.wav")  # PLACEHOLDER
 const MISS_SOUNDS: Array[AudioStream] = [  # PLACEHOLDER for the awkward laughter
 	preload("res://assets/audio/partner/placeholder_miss_1.wav"),
@@ -72,8 +74,6 @@ const MISSED := Color("#7E6878")
 const DAWN_TOP := Color("#FBE3C8")
 const DAWN_BOTTOM := Color("#E7A08F")
 const COUPLE := Color("#B65866")  # Tints the placeholder couple.
-const TEST_BODY := Color("#FBF8F4")
-const TEST_LINE := Color("#D2386A")
 
 # Kept for the rest of the session, so a replay starts from the last delay.
 static var _sound_delay := 0.0
@@ -303,7 +303,7 @@ func _refresh_subtitle() -> void:
 	# Bottom centre, just below the test.
 	_subtitle.size = Vector2.ZERO
 	_subtitle.position = Vector2((size.x - _subtitle.get_minimum_size().x) / 2.0,
-			minf(_test_centre_y() + _test_length() * 0.075 + 20.0,
+			minf(_test_centre_y() + _test_length() * TEST_IMAGE_ASPECT / 2.0 + 16.0,
 			size.y - _subtitle.get_minimum_size().y - 12.0))
 
 
@@ -473,6 +473,20 @@ func _light_position(c: Vector2, light_radius: float, until: float) -> Vector2:
 func _draw_lights(c: Vector2, heart: float, t: float) -> void:
 	var t_judged := t - _sound_delay
 	var light_radius := heart * 0.2
+	# The target (Dan, 2026-10-20: "too hard to see exactly where the point of
+	# tapping should be"): a faint lane down to a ring the size of a light in
+	# the heart's centre. Tap when a light fills the ring. It brightens as the
+	# next light gets close.
+	var lane := LIGHT
+	lane.a = 0.08
+	draw_line(Vector2(c.x, 0.0), c, lane, light_radius * 2.0)
+	var soon := 0.0
+	if _next < _notes.size():
+		soon = clampf(1.0 - (_notes[_next] - t_judged) / 0.5, 0.0, 1.0)
+	var target := LIGHT
+	target.a = 0.55 + 0.45 * soon
+	draw_circle(c, light_radius * 1.25, Color(BG_BOTTOM, 0.35))
+	draw_arc(c, light_radius * 1.25, 0.0, TAU, 64, target, 2.5 + 2.0 * soon, true)
 	var first := maxi(_next - 4, 0)
 	for i in range(first, _notes.size()):
 		var until := _notes[i] - t_judged
@@ -555,45 +569,15 @@ func _draw_couple(alpha: float) -> void:
 		draw_texture_rect(COUPLE_IMAGE, rect, false, Color(COUPLE, alpha))
 
 
-# A positive pregnancy test, lying flat: a white stick with a grip, the
-# result window showing two lines, and a small round well by the tip.
+# A positive pregnancy test, lying flat, with a plus in its window (Dan,
+# 2026-10-20: "needs to have a plus/positive sign"). PLACEHOLDER picture
+# (tools/partner/placeholder_test.svg).
 func _draw_test(c: Vector2, show: float) -> void:
 	if show <= 0.0:
 		return
-	var length := _test_length()
-	var stick := Vector2(length, length * 0.15)
-	var body := Rect2(c - stick / 2.0, stick)
-	var shadow := Color(0.35, 0.1, 0.15, 0.22 * show)
-	_draw_box(Rect2(body.position + Vector2(6, stick.y * 0.35), stick), shadow, stick.y * 0.5)
-	_draw_box(body, Color(TEST_BODY, show), stick.y * 0.5)
-	# The absorbent tip, on the right, under its rounded cap end.
-	var tip := Rect2(body.position + Vector2(stick.x * 0.80, stick.y * 0.12),
-			Vector2(stick.x * 0.18, stick.y * 0.76))
-	_draw_box(tip, Color(Color("#C9D6EA"), show), stick.y * 0.38)
-	# Grip ridges on the left.
-	for k in 4:
-		var x := body.position.x + stick.x * (0.07 + k * 0.03)
-		draw_line(Vector2(x, body.position.y + stick.y * 0.28),
-				Vector2(x, body.end.y - stick.y * 0.28), Color(Color("#D9D1C8"), show), 2.0, true)
-	# The result window and its two lines (control and test).
-	var window := Rect2(body.position + Vector2(stick.x * 0.36, stick.y * 0.26),
-			Vector2(stick.x * 0.26, stick.y * 0.48))
-	_draw_box(window, Color(Color("#ECE5DE"), show), stick.y * 0.12)
-	for x in [0.35, 0.65]:
-		var line := Rect2(window.position + Vector2(window.size.x * x - 2.5, window.size.y * 0.14),
-				Vector2(5.0, window.size.y * 0.72))
-		_draw_box(line, Color(TEST_LINE, show), 2.0)
-	# The sample well.
-	draw_circle(body.position + Vector2(stick.x * 0.71, stick.y * 0.5), stick.y * 0.17,
-			Color(Color("#ECE5DE"), show))
-
-
-# One box reused for every draw: draw_style_box() copies what it needs.
-var _box := StyleBoxFlat.new()
-
-
-func _draw_box(rect: Rect2, color: Color, radius: float) -> void:
-	_box.bg_color = color
-	_box.set_corner_radius_all(int(radius))
-	_box.anti_aliasing = true
-	draw_style_box(_box, rect)
+	var stick := Vector2(_test_length(), _test_length() * TEST_IMAGE_ASPECT)
+	var rect := Rect2(c - stick / 2.0, stick)
+	# The picture itself, darkened and a little lower, is its shadow.
+	draw_texture_rect(TEST_IMAGE, Rect2(rect.position + Vector2(6, stick.y * 0.14), stick), false,
+			Color(0.35, 0.1, 0.15, 0.3 * show))
+	draw_texture_rect(TEST_IMAGE, rect, false, Color(1, 1, 1, show))

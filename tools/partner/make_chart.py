@@ -8,9 +8,12 @@ Draft: m1-prep/partner-song-and-beat-chart.md (not yet decided by Dan).
 
 Dan, 2026-10-20, after playing the first build: "a little hard ... most people
 should be able to get most beats on at least good, with less than 5 misses
-during the whole run." So this chart is calmer than the draft's table: every
-note sits on a beat (none closer than 500 ms, where the draft had 250 ms), and
-the build-up comes from more beats per bar, not from half-beats.
+during the whole run." So this chart is calmer than the draft's table: no two
+notes closer than 500 ms (the draft had 250 ms), and the build-up comes from
+more notes per bar, not faster ones. Dan, later the same day: "too singular beat
+focused and boring, there needs to be some more variation in the beat, but as
+long as it isn't too fast". So some notes fall halfway between beats, never
+closer than 500 ms to the next.
 """
 import json
 import pathlib
@@ -24,10 +27,14 @@ START_OFFSET_MS = 0
 INTRO_BARS = 8  # Intro taps set the player's sound delay and never laugh.
 
 PATTERNS = {
-    "H": [1, 3],        # Resting heartbeat, 60 a minute
-    "S": [1, 3, 4],     # Heartbeat with a pickup into the next bar
-    "Q": [1, 2, 3, 4],  # Every beat
-    "X": [1],           # The last note
+    "H": [1, 3],          # Resting heartbeat, 60 a minute
+    "S": [1, 3, 4],       # Heartbeat with a pickup into the next bar
+    "Q": [1, 2, 3, 4],    # Every beat
+    "D": [1, 2.5, 4],     # Dotted: the middle note falls between beats
+    "T": [1, 2, 3.5],     # Two on the beat, then one between
+    "P": [1, 2.5, 3.5],   # Push: two between the beats
+    "O": [1.5, 3, 4],     # Starts just after the beat
+    "X": [1],             # The last note
     "-": [],
 }
 
@@ -35,15 +42,15 @@ PATTERNS = {
 SECTIONS = [
     (1, "--"),
     (3, "HHHHHH"),
-    (9, "HHHS" * 6),
-    (33, "QHQS" * 6),
-    (57, "QQQS" * 6),
-    (81, "Q" * 8),
-    (89, "Q" * 11 + "X"),
+    (9, "HHHS" "HDHS" "HSHD" "HDSD" "HHDS" "HDHT"),
+    (33, "QDQS" "DTDS" "QOQP" "DTQS" "QDOS" "PTQS"),
+    (57, "QDQT" "QPQS" "OQDQ" "TQDS" "QDQP" "OQTS"),
+    (81, "QDQT" "QPQQ"),
+    (89, "QDQT" "QPQQ" "QQQX"),
     (101, "----"),
 ]
 SILENT_BARS = {48}  # The stumble: the band stops for one bar.
-NOTE_COUNT = 308
+NOTE_COUNT = 301
 
 
 def bar_patterns():

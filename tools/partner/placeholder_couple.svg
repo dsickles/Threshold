@@ -1,35 +1,53 @@
 <!-- PLACEHOLDER art for the Partner's ending: the couple holding each other,
      foreheads together, in silhouette. White so the game can tint it; the
      arms are grey so they read a little darker. Real art comes later
-     (ADR-0005). Rendered to PNG by tools/partner/make_couple.mjs. -->
+     (ADR-0005). Rendered to PNG by tools/partner/make_images.mjs. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
   <defs>
-    <!-- One person facing right; the other is the same, mirrored and taller. -->
-    <g id="person">
-      <path d="M 100 1060 C 110 850, 180 720, 320 662 C 370 640, 385 600, 384 500
-               L 468 500 C 474 570, 500 600, 545 625 C 600 655, 625 760, 640 1060 Z"/>
-      <g transform="rotate(16 430 500)">
-        <path d="M 400 520 C 350 500, 325 450, 328 395
-                 C 332 300, 395 240, 465 240
-                 C 500 241, 515 262, 512 290
-                 L 510 306
-                 C 526 322, 530 336, 517 343
-                 C 520 355, 516 364, 508 369
-                 C 511 383, 503 398, 488 405
-                 C 470 414, 462 438, 466 468
-                 L 470 545 L 400 545 Z"/>
-      </g>
+    <!-- A face in profile, looking right, with the neck below it. -->
+    <path id="face" d="M 365 660 L 360 540 C 330 520, 318 470, 320 430
+             C 322 350, 370 300, 430 298 C 478 297, 506 325, 510 362
+             C 511 375, 509 385, 512 392 C 522 408, 530 420, 524 428
+             C 520 433, 514 434, 515 440 C 519 447, 518 452, 513 456
+             C 517 461, 515 468, 509 471 C 509 482, 505 496, 494 503
+             C 480 510, 465 512, 458 525 L 456 660 Z"/>
+    <path id="shoulders" d="M 40 1000 C 50 850, 120 740, 245 705
+             C 300 690, 335 668, 350 630 L 462 625 C 478 665, 530 690, 600 712
+             C 640 760, 650 880, 660 1000 Z"/>
+    <!-- A hand, palm and four fingers, fingertips pointing up. -->
+    <g id="hand">
+      <ellipse cx="0" cy="40" rx="42" ry="46"/>
+      <rect x="-40" y="-40" width="18" height="78" rx="9"/>
+      <rect x="-19" y="-56" width="18" height="92" rx="9"/>
+      <rect x="2" y="-52" width="18" height="88" rx="9"/>
+      <rect x="23" y="-36" width="17" height="74" rx="8.5"/>
     </g>
   </defs>
+  <g transform="translate(500 1000) scale(0.86) translate(-608 -1000)">
   <g fill="#FFFFFF">
-    <g transform="translate(-68 0)">
-      <use href="#person"/>
-      <circle cx="338" cy="318" r="42" transform="rotate(16 430 500)"/>
+    <!-- Her, on the left, long hair down her back. -->
+    <g transform="translate(-12 10)">
+      <use href="#shoulders"/>
+      <g transform="rotate(22 410 640)">
+        <use href="#face"/>
+        <path d="M 335 335 C 300 380, 286 460, 290 540 C 293 610, 282 660, 262 705
+                 C 310 700, 350 680, 372 640 L 380 400 Z"/>
+      </g>
     </g>
-    <g transform="translate(1068 -28) scale(-1 1)"><use href="#person"/></g>
+    <!-- Him, on the right, a little taller, short hair. -->
+    <g transform="translate(1230 -20) scale(-1.04 1.04)">
+      <use href="#shoulders"/>
+      <g transform="rotate(22 410 640)">
+        <use href="#face"/>
+        <path d="M 322 420 C 315 345, 360 288, 432 286 C 470 286, 498 300, 508 330
+                 C 470 318, 420 322, 380 350 Z"/>
+      </g>
+    </g>
   </g>
-  <!-- Arms around each other's backs. -->
-  <path d="M 780 720 C 640 700, 430 730, 270 800" fill="none" stroke="#D8D8D8"
-        stroke-width="44" stroke-linecap="round"/>
-  <ellipse cx="258" cy="806" rx="38" ry="27" fill="#D8D8D8" transform="rotate(-24 258 806)"/>
+  <!-- Their hands on each other's backs: the embrace. -->
+  <g fill="#D2D2D2">
+    <use href="#hand" transform="translate(132 830) rotate(62) scale(0.72)"/>
+    <use href="#hand" transform="translate(1086 830) scale(-1 1) rotate(62) scale(0.72)"/>
+  </g>
+  </g>
 </svg>

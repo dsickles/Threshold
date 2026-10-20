@@ -222,12 +222,18 @@ func test_judgement_sits_below_the_heart_on_every_screen() -> void:
 
 func test_the_chart_matches_the_draft() -> void:
 	var notes: PackedFloat64Array = _partner._notes
-	# Dan, 2026-10-20: easier than the draft's 388 notes, 250 ms apart.
-	check_eq(notes.size(), 308, "notes in the chart")
+	# Dan, 2026-10-20: easier than the draft's 388 notes, 250 ms apart, then more varied.
+	check_eq(notes.size(), 301, "notes in the chart")
 	var closest := INF
 	for i in range(1, notes.size()):
 		closest = minf(closest, notes[i] - notes[i - 1])
 	check(closest >= 0.500 - 0.0001, "no two notes closer than 500 ms (closest %s s)" % closest)
+	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
+	var between := 0
+	for note in notes:
+		if absf(fposmod(note - _partner._song_start, 0.5) - 0.25) < 0.001:
+			between += 1
+	check(between >= 30, "notes between the beats (%d)" % between)
 	# Bar 100, beat 1 at 120 BPM: 99 bars of 2 s after bar 1, beat 1.
 	check_near(notes[-1] - _partner._song_start, 198.0, 0.0001, "last note at bar 100, beat 1")
 
