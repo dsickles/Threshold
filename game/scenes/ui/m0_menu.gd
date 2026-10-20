@@ -14,10 +14,11 @@ const VIEWPOINTS_SCENE := "res://scenes/m0_checks/viewpoints_check.tscn"
 const RHYTHM_CHECK := preload("res://scenes/ui/m0_rhythm_check.tscn")
 ## How much of the screen the menu may cover, and how far it may grow.
 const SCREEN_SHARE := 0.92
-const MAX_SCALE := 2.0
+const MAX_SCALE := 2.4
 
 @onready var _begin_button: Button = %BeginButton
 @onready var _menu: Control = %Menu
+@onready var _chapters: GridContainer = %Chapters
 @onready var _status: Label = %Status
 @onready var _save_status: Label = %SaveStatus
 
@@ -48,10 +49,15 @@ func _on_begin_pressed() -> void:
 	_menu.show()
 
 
-# Scales the menu to the largest size that fits the screen (up to MAX_SCALE),
+# Lays out the chapters, then scales the menu to the largest size that fits the screen (up to MAX_SCALE),
 # centred. Containers reset their children's scale, so the menu is placed by
 # hand rather than inside a container.
 func _fit_menu() -> void:
+	# Chapters stack in one column on an upright phone and three across on a
+	# wide screen, so the menu's shape matches the screen's.
+	var columns := 1 if size.y > size.x else 3
+	if _chapters.columns != columns:
+		_chapters.columns = columns
 	var natural := _menu.get_combined_minimum_size()
 	if natural.x <= 0.0 or natural.y <= 0.0:
 		return
