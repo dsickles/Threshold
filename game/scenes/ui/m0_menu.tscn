@@ -138,6 +138,12 @@ custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 text = "The Partner (rough)"
 
+[node name="StandInButton" type="Button" parent="Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+text = "Stand-in chapter"
+
 [node name="Status" type="Label" parent="Menu"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)

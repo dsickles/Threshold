@@ -179,14 +179,19 @@ func test_the_menu_opens_the_partner_and_takes_it_back_when_finished() -> void:
 	var button: Control = menu.get_node("%PartnerButton")
 	check(button.size.x >= 44.0 and button.size.y >= 44.0, "Partner button is at least 44px")
 	tap(button)
-	var partner := menu.get_node_or_null("Partner")
-	if not check(partner != null, "Partner opened"):
+	# The menu stands in for the House; the chapter runner (DAS-75) plays it.
+	var runner := ChapterRunner.of(get_tree())
+	var partner: Node = runner.get_child(0) if runner.get_child_count() > 0 else null
+	if not check(partner != null and partner.scene_file_path == PARTNER.resource_path, "Partner opened"):
+		runner.free()
 		return
-	check(not menu.get_node("%Menu").visible, "menu hidden while the Partner plays")
+	check(not menu.visible, "menu hidden while the Partner plays")
 	partner.finished.emit()
 	await frames()
 	check(not is_instance_valid(partner), "Partner closed when finished")
-	check(menu.get_node("%Menu").visible, "menu back after the Partner finished")
+	check(menu.visible and menu.get_node("%Menu").visible, "menu back after the Partner finished")
+	check_eq(menu.get_node("%Status").text, "Finished partner (answer: none)", "menu heard the result")
+	runner.free()  # It lives on the root, so it would outlast this test.
 
 
 func _tap(t: float) -> void:

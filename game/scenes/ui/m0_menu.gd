@@ -2,13 +2,12 @@ extends Control
 ## M0 test menu: a "tap to begin" screen, then one button per M0 check.
 ## Throwaway M0 scaffolding, not game code. The checks themselves come in
 ## DAS-67 (Smoothness), DAS-68 (Rhythm timing) and DAS-69 (Viewpoints).
-## The Partner's rough first playable (DAS-73) also starts from here until the
-## House exists; this menu stands in for the House around it.
+## Until the House exists, the menu also stands in for it when starting a
+## chapter through the chapter runner (DAS-75).
 
 const SMOOTHNESS_SCENE := "res://scenes/m0_checks/smoothness/smoothness_check.tscn"
 const VIEWPOINTS_SCENE := "res://scenes/m0_checks/viewpoints_check.tscn"
 const RHYTHM_CHECK := preload("res://scenes/ui/m0_rhythm_check.tscn")
-const PARTNER := preload("res://scenes/chapters/partner/partner.tscn")
 
 @onready var _begin_button: Button = %BeginButton
 @onready var _menu: Control = %Menu
@@ -21,7 +20,11 @@ func _ready() -> void:
 	%SmoothnessButton.pressed.connect(get_tree().change_scene_to_file.bind(SMOOTHNESS_SCENE))
 	%RhythmButton.pressed.connect(_open_check.bind(RHYTHM_CHECK))
 	%ViewpointsButton.pressed.connect(get_tree().change_scene_to_file.bind(VIEWPOINTS_SCENE))
-	%PartnerButton.pressed.connect(_open_partner)
+	%PartnerButton.pressed.connect(_enter_chapter.bind(&"partner"))
+	%StandInButton.pressed.connect(_enter_chapter.bind(ChapterList.STAND_IN))
+	var chapters := ChapterRunner.of(get_tree())
+	chapters.chapter_finished.connect(_on_chapter_finished)
+	chapters.chapter_left.connect(_on_chapter_left)
 
 
 # Browsers play no sound until the first tap, so everything starts from here.
@@ -38,14 +41,18 @@ func _open_check(scene: PackedScene) -> void:
 	add_child(check)
 
 
-# Stub for the House hook: the real House warms here once the floor plan is
-# settled. The chapter only reports that it finished.
-func _open_partner() -> void:
-	var partner := PARTNER.instantiate()
-	partner.finished.connect(func() -> void:
-		partner.queue_free()
-		_status.text = "The Partner finished. (The House warming is stubbed for now.)")
-	partner.tree_exited.connect(_menu.show)
+# The menu stands in for the House: the runner hides it while the chapter
+# plays and shows it again afterwards.
+func _enter_chapter(id: StringName) -> void:
 	_status.text = ""
-	_menu.hide()
-	add_child(partner)
+	if not ChapterRunner.of(get_tree()).enter(id, self):
+		_status.text = "Couldn't start %s" % id
+
+
+func _on_chapter_finished(result: Dictionary) -> void:
+	var answer: String = result["answer"] if result["answer"] != "" else "none"
+	_status.text = "Finished %s (answer: %s)" % [result["chapter"], answer]
+
+
+func _on_chapter_left(id: StringName) -> void:
+	_status.text = "Left %s without finishing" % id

@@ -36,7 +36,13 @@ func _process(_delta: float) -> void:
 	var screens := {}
 	if scene.has_method("probe_state"):
 		screens[scene.scene_file_path] = scene.probe_state()
-	for child in scene.get_children():
+	# Chapters play under the chapter runner (game/_core/chapters/), not under
+	# the scene that started them; they count as screens on top of it too.
+	var on_top := scene.get_children()
+	var runner := get_tree().root.get_node_or_null("ChapterRunner")
+	if runner:
+		on_top.append_array(runner.get_children())
+	for child in on_top:
 		if child.scene_file_path != "":
 			overlays.append(child.scene_file_path)
 			if child.has_method("probe_state"):

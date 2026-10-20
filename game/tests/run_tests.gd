@@ -88,12 +88,32 @@ func _run_one(script: GDScript, method: String) -> PackedStringArray:
 	await test.call(method)
 	test.after_each()
 	var problems := test.failures()
+	var expected := test.expected_errors()
 	# Scenes the test changed to (with change_scene_to_file) don't belong to it.
 	if current_scene != null and current_scene != test:
 		current_scene.free()
 	test.free()
 	await process_frame  # Let anything queued for deletion go.
-	problems.append_array(_catcher.take())
+	problems.append_array(_unexpected(_catcher.take(), expected))
+	return problems
+
+
+# Errors a test said it expects (TestCase.expect_error) don't fail it; an
+# expected error that never appeared does.
+func _unexpected(errors: PackedStringArray, expected: PackedStringArray) -> PackedStringArray:
+	var problems := PackedStringArray()
+	var seen := {}
+	for error in errors:
+		var matched := false
+		for text in expected:
+			if text in error:
+				seen[text] = true
+				matched = true
+		if not matched:
+			problems.append(error)
+	for text in expected:
+		if not seen.has(text):
+			problems.append("expected an error containing \"%s\", but none was printed" % text)
 	return problems
 
 
