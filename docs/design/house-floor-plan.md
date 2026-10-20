@@ -110,7 +110,7 @@ Where things would really be, a few days after moving in. Furniture is drawn in 
 
 - **Entry:** an entry table flush against the left wall, with the car keys on it. Leo's moving box nearby.
 - **Living room:** a 3-seater couch, sitting a little askew in the middle of the room: it isn't in its place yet, and where it finally goes is still open, because the room is open plan into the kitchen. Against the north wall, the TV on a console with an AV receiver and floor-standing speakers either side, not plugged in yet. The crate of records near them.
-- **Kitchen:** granite counters along the top wall, the right wall and a little of the bottom wall. No island or peninsula. The fridge at the top-right corner, the oven on the right wall (placed by me; move it if it belongs elsewhere).
+- **Kitchen:** granite counters along the top wall, the right wall and a little of the bottom wall. No island or peninsula. The fridge along the top wall, a few feet in from the corner so it can open (Dan, 2026-10-20); the oven on the right wall (placed by me; move it if it belongs elsewhere).
 - **Dining table:** between the kitchen and the living room, on the kitchen side of the open plan.
 
 ### Chapter objects are always ready
