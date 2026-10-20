@@ -45,6 +45,15 @@ const FILL_TIME := 6.0  # After the last note, the light fills the screen.
 # Dan, 2026-10-19: the test holds at least 30 seconds with nothing to tap;
 # then a quiet ring shows the player can go back when ready.
 const TEST_HOLD := 30.0
+# What they say when the test appears (Dan, 2026-10-20: "'honey' from her, a
+# jubilant 'yes' from him, and then they both laugh"), as subtitles for now:
+# seconds after the test appears, and the line. No voices recorded yet.
+const TEST_LINES := [
+	[2.5, "Honey."],
+	[4.2, "Yes!"],
+	[5.6, "(They both laugh.)"],  # PLACEHOLDER caption wording for the laugh.
+]
+const TEST_LINES_END := 9.0
 const HEARTBEAT := 1.0  # Beats 1 and 3 at 120 BPM: 60 a minute.
 # Test info in the corner for Dan's checks. Turn off before cold playtests:
 # no score or tally is shown to players.
@@ -94,6 +103,7 @@ var _heart_shape := PackedVector2Array()  # A heart, half-height 1, centred on 0
 @onready var _test_info: Label = %TestInfo
 @onready var _laugh_player: AudioStreamPlayer = %LaughPlayer
 @onready var _celebrate_player: AudioStreamPlayer = %CelebratePlayer
+@onready var _subtitle: Label = %Subtitle
 
 
 func _ready() -> void:
@@ -183,6 +193,7 @@ func _process(delta: float) -> void:
 					_celebrate_player.play()
 		State.TEST_SHOWN:
 			_test_held += delta
+	_refresh_subtitle()
 	_refresh_prompt()
 	# Judgement sits just below the heart, which scales with the screen.
 	_judgement.position = Vector2((size.x - _judgement.size.x) / 2.0,
@@ -281,6 +292,21 @@ func _show_judgement(text: String) -> void:
 	_judgement.modulate.a = 1.0
 
 
+func _refresh_subtitle() -> void:
+	var line := ""
+	if _state == State.TEST_SHOWN and _test_held < TEST_LINES_END:
+		for entry in TEST_LINES:
+			if _test_held >= entry[0]:
+				line = entry[1]
+	_subtitle.text = line
+	_subtitle.visible = line != ""
+	# Bottom centre, just below the test.
+	_subtitle.size = Vector2.ZERO
+	_subtitle.position = Vector2((size.x - _subtitle.get_minimum_size().x) / 2.0,
+			minf(_test_centre_y() + _test_length() * 0.075 + 20.0,
+			size.y - _subtitle.get_minimum_size().y - 12.0))
+
+
 func _refresh_prompt() -> void:
 	# PLACEHOLDER UI words. Browsers need one tap before any sound can play.
 	match _state:
@@ -305,6 +331,7 @@ func probe_state() -> Dictionary:
 		"misses": _judged.count(Judged.MISSED),
 		"clock": "browser" if _conductor.uses_browser_clock else "Godot",
 		"can_leave": _state == State.TEST_SHOWN and _test_held >= TEST_HOLD,
+		"subtitle": _subtitle.text,
 	}
 
 
@@ -475,11 +502,9 @@ func _draw_ending() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), DAWN_TOP)
 	_draw_gradient(DAWN_TOP, DAWN_BOTTOM, clampf(held / 1.5, 0.0, 1.0))
 	_draw_sparkles(held)
-	var couple := _draw_couple(clampf((held - 0.3) / 2.5, 0.0, 1.0))
+	_draw_couple(clampf((held - 0.3) / 2.5, 0.0, 1.0))
 	var show := ease(clampf((held - 0.8) / 1.2, 0.0, 1.0), 0.4)
-	# Held up between them, below their faces.
-	var test_y := maxf(size.y - couple * 0.3, size.y * 0.5)
-	_draw_test(Vector2(size.x / 2.0, test_y + (1.0 - show) * 30.0), show)
+	_draw_test(Vector2(size.x / 2.0, _test_centre_y() + (1.0 - show) * 30.0), show)
 	if held >= TEST_HOLD:
 		# A quiet ring: the player can go back when ready.
 		var ring := Color("#8E3F55")
@@ -506,8 +531,21 @@ func _draw_sparkles(held: float) -> void:
 # PLACEHOLDER silhouette of the couple holding each other, foreheads
 # together (tools/partner/placeholder_couple.svg), until real art (ADR-0005).
 # It stands on the bottom of the screen; returns its size.
-func _draw_couple(alpha: float) -> float:
-	var side := minf(size.y * 0.95, size.x * 1.1)
+func _couple_size() -> float:
+	return minf(size.y * 0.95, size.x * 1.1)
+
+
+# The test is held up between them, below their faces.
+func _test_centre_y() -> float:
+	return maxf(size.y - _couple_size() * 0.3, size.y * 0.5)
+
+
+func _test_length() -> float:
+	return minf(size.x * 0.78, 560.0)
+
+
+func _draw_couple(alpha: float) -> void:
+	var side := _couple_size()
 	var rect := Rect2(Vector2((size.x - side) / 2.0, size.y - side), Vector2(side, side))
 	# A soft light behind their heads.
 	for k in range(6, 0, -1):
@@ -515,7 +553,6 @@ func _draw_couple(alpha: float) -> float:
 				Color(1.0, 0.97, 0.9, 0.06 * alpha))
 	if alpha > 0.0:
 		draw_texture_rect(COUPLE_IMAGE, rect, false, Color(COUPLE, alpha))
-	return side
 
 
 # A positive pregnancy test, lying flat: a white stick with a grip, the
@@ -523,7 +560,7 @@ func _draw_couple(alpha: float) -> float:
 func _draw_test(c: Vector2, show: float) -> void:
 	if show <= 0.0:
 		return
-	var length := minf(size.x * 0.78, 560.0)
+	var length := _test_length()
 	var stick := Vector2(length, length * 0.15)
 	var body := Rect2(c - stick / 2.0, stick)
 	var shadow := Color(0.35, 0.1, 0.15, 0.22 * show)

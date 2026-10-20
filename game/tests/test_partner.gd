@@ -54,9 +54,19 @@ func test_no_taps_still_reaches_the_test_and_reports_finished() -> void:
 	_play_to_end(func(_t: float) -> void: pass)
 	check_eq(_partner.probe_state().state, "TEST_SHOWN", "state after the song")
 	check_eq(_partner.probe_state().misses, _partner._notes.size(), "every note missed")
+	# Dan, 2026-10-20: "'honey' from her, a jubilant 'yes' from him, and then
+	# they both laugh", in that order, then gone.
+	var said: Array[String] = []
+	for i in ceili(_partner.TEST_LINES_END / STEP) + 1:
+		_partner._process(STEP)
+		var line: String = _partner.probe_state().subtitle
+		if line != "" and (said.is_empty() or said[-1] != line):
+			said.append(line)
+	check_eq(said, ["Honey.", "Yes!", "(They both laugh.)"], "what they say at the test")
+	check_eq(_partner.probe_state().subtitle, "", "subtitles gone after the lines")
 	_partner._on_tap()
 	check(not reported[0], "a tap while the test holds does nothing")
-	for i in ceili(_partner.TEST_HOLD / STEP) + 1:
+	for i in ceili((_partner.TEST_HOLD - _partner.TEST_LINES_END) / STEP) + 1:
 		_partner._process(STEP)
 	check(not reported[0], "the test waits for a tap after it has held")
 	check(_partner.probe_state().can_leave, "the quiet ring shows after the hold")

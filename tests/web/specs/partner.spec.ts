@@ -88,7 +88,10 @@ test.describe("the ending", () => {
     await expect
       .poll(async () => (await game.screen(PARTNER)).state, { timeout: 30_000 })
       .toBe("TEST_SHOWN");
-    await game.page.waitForTimeout(3000);
+    // Dan, 2026-10-20: "honey" from her, a jubilant "yes" from him, then they laugh.
+    await expect
+      .poll(async () => (await game.screen(PARTNER)).subtitle, { timeout: 60_000 })
+      .toBe("Yes!");
     await game.screenshot("partner-ending");
     // Nothing to tap while it holds (Dan, 2026-10-19: at least 30 s).
     await game.tapMiddle();
