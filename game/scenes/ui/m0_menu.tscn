@@ -102,9 +102,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -280.0
-offset_top = -260.0
+offset_top = -320.0
 offset_right = 280.0
-offset_bottom = 260.0
+offset_bottom = 320.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
@@ -131,6 +131,12 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 text = "Viewpoints"
+
+[node name="StandInButton" type="Button" parent="Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+text = "Stand-in chapter"
 
 [node name="Status" type="Label" parent="Menu"]
 unique_name_in_owner = true
