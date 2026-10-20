@@ -72,11 +72,8 @@
 <rect x="448.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
 <rect x="461.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
 <rect x="474.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
-<rect x="532.0" y="286.0" width="11" height="11" fill="none" stroke="#5A4630" stroke-width="1.2" stroke-dasharray="3 2"/>
-<rect x="532.0" y="299.0" width="11" height="11" fill="none" stroke="#5A4630" stroke-width="1.2" stroke-dasharray="3 2"/>
-<rect x="532.0" y="312.0" width="11" height="11" fill="none" stroke="#5A4630" stroke-width="1.2" stroke-dasharray="3 2"/>
 <text x="402.0" y="330.0" font-size="9.5" fill="#5A4630">office boxes (until the Novice)</text>
-<text x="526.0" y="310.0" font-size="9.5" fill="#5A4630" text-anchor="end">after the Loss →</text>
+<text x="544.0" y="310.0" font-size="9.5" fill="#5A4630" text-anchor="end">shut after the Loss →</text>
 <rect x="409.0" y="383.0" width="10" height="10" fill="#8B3A32"/>
 <text x="422.0" y="392.0" font-size="10.5" fill="#8B3A32" text-anchor="start">records</text>
 <rect x="169.0" y="99.0" width="10" height="10" fill="#8B3A32"/>
@@ -139,7 +136,7 @@
 <rect x="30" y="606" width="22" height="16" fill="#D7E6F2" stroke="#3A3530" stroke-width="1.5"/>
 <text x="62" y="619" font-size="12.5" fill="#2A2520">Opens after the opening beat: back hall, main bedroom</text>
 <rect x="30" y="632" width="22" height="16" fill="#F2D3D3" stroke="#3A3530" stroke-width="1.5"/>
-<text x="62" y="645" font-size="12.5" fill="#2A2520">Spare room: ajar after the Partner, boxes against its door after the Loss, nursery at the end</text>
+<text x="62" y="645" font-size="12.5" fill="#2A2520">Spare room: ajar after the Partner, shut after the Loss, nursery at the end</text>
 <rect x="30" y="658" width="22" height="16" fill="#E4E2DE" stroke="#3A3530" stroke-width="1.5"/>
 <text x="62" y="671" font-size="12.5" fill="#2A2520">Shut in M1: bathrooms, and the office (boxes against its door until the Novice)</text>
 <circle cx="41" cy="700" r="9" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>

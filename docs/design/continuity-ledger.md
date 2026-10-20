@@ -24,7 +24,7 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Entry, living room, kitchen | Open from the Start to the end. The everyday House. | proposed |
 | Back hall, main bedroom (with en-suite), hall bathroom | Shut until the opening beat (moving boxes block the back hall); open from then on | proposed |
 | Bedroom 3: the office | Moving boxes stacked against its door from the opening beat; cleared after the Novice, when the bills arrive (the Provider); stays open | proposed (boxes as blockers: Dan, 2026-10-19) |
-| Bedroom 2: the spare room, later the nursery | Moving day: Leo's old-life boxes dumped inside, door shut. After the Partner: door ajar; Leo has started unpacking his bachelor things (lounge chair and ottoman, guitar on a stand, band poster), boxes still along the walls, the onesie on his chair. After the Loss: shut, with moving boxes stacked against it. After the Tuner: the boxes are cleared and the door is ajar again, the room still full of Leo's boxes. After the Mourner: cleared and finished as the nursery, crib moved in. After the Arrival: the last room. | proposed. Open (Dan, 2026-10-19): he wants it not to read as a nursery at first and likes the onesie there, but the Mourner may need another angle than clearing Leo's things. |
+| Bedroom 2: the spare room, later the nursery | Moving day: Leo's old-life boxes dumped inside, door shut. After the Partner: door ajar; Leo has started unpacking his bachelor things (lounge chair and ottoman, guitar on a stand, band poster), boxes still along the walls, the onesie on his chair. After the Loss: the door shut, nothing in front of it; they don't want to be reminded (Dan, 2026-10-20). After the Tuner: the door is ajar again, the room still full of Leo's boxes. After the Mourner: cleared and finished as the nursery, crib moved in. After the Arrival: the last room. | proposed. Open (Dan, 2026-10-19): he wants it not to read as a nursery at first and likes the onesie there, but the Mourner may need another angle than clearing Leo's things. |
 
 ## Objects
 
@@ -50,7 +50,7 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Pizza box (House object) | Kitchen table at the Start: two slices left. Gone after the Partner. | proposed |
 | Maya's list (House object) | Bedroom nightstand from the opening beat; read it (Dan's words). Later: M2. | proposed |
 | Blanket and pillow on the couch (House object) | Living room, after the Loss: fold the blanket. Gone after the Novice. Leo slept there. | Leo slept there: decided (Dan, 2026-10-19); lifeline proposed |
-| Boxes against a door | The office door from the opening beat to the Novice; the spare room door from the Loss to the Tuner | proposed (Dan, 2026-10-19) |
+| Boxes against a door | The office door only, from the opening beat to the Novice. Not the spare room (Dan, 2026-10-20: after the Loss it is just shut). | proposed (Dan, 2026-10-19; spare room ruling 2026-10-20) |
 | The wrapped photo of Leo and Maya (House object) | From the opening beat: leaning against the bedroom wall in bubble wrap; peel it back to see them. After the Partner: hung on the wall. | photo shown: decided (Dan, 2026-10-19); lifeline proposed |
 
 ## Sound, light and weather
