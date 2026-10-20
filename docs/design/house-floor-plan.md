@@ -158,7 +158,7 @@ Made with the narrative-craft skill. House objects reward looking. They are neve
 |---|---|---|---|
 | The positive test | En-suite bathroom counter (BA) (Dan, 2026-10-20) | Pick it up and look | The chapter's result, in the room (one result, same for everyone). |
 | The photo, now hung | Bedroom wall (B1) | Look | A changed object: they are making the place theirs. |
-| Their clothes | Walk-in closet (C1) | Look: her side hung up, his still half in a box (proposed) | Two lives being unpacked into one place. The closet fills up a little as M1 goes on (Dan, 2026-10-20). |
+| Their clothes | Walk-in closet (C1) | Look: her side hung up, his still half in a box | Two lives being unpacked into one place. The closet fills up a little as M1 goes on (Dan, 2026-10-20). |
 | A card on the fridge | Kitchen (K2) | Read it. Its wording and date are Dan's. | Planning ahead. It is ordinary, so it isn't a warning. |
 | The record crate, one missing | Living room (L4) | Flick through: one gap | The record is on the player in the bedroom. Continuity the player can notice. |
 | The onesie | On Leo's lounge chair (S1) | Seen from the doorway, can't be tapped in M1 | Early hope, sitting in the middle of his old life (Dan, 2026-10-20). |
@@ -219,7 +219,7 @@ Answered by Dan on 2026-10-19 unless marked open. Open ones have my recommended 
 9. **Decided:** M1 ends in the gray House, with no card.
 10. **Decided: there is an opening beat**, playing on first arrival in the living room and opening the back hall. Its words are Dan's to write.
 11. **Decided:** the wrapped photo; the player sees Leo and Maya in it.
-12. **Open: the 18 M1 House object entries (13 separate things)** above. *Recommended: yes; Dan writes the box label, Maya's list, the fridge card and the note on the dish.*
+12. **Decided (Dan, 2026-10-20): the 18 M1 House object entries above** (13 separate things), including the closet clothes and all 7 entries after the Partner (one over the 3–5 rule; two of them are look-only). Dan writes the box label, Maya's list, the fridge card and the note on the dish.
 13. **Decided:** the blanket on the couch: Leo slept there.
 14. **Decided:** the rule of thumb (2–3 House objects per open room, 3–5 new or changed on every return).
 15. **Decided:** the opening beat comes before the record player works; after that, every chapter object works as soon as the player is back.
