@@ -36,6 +36,7 @@ const MISS_GRACE := 0.080
 # How far an intro tap may be from its note and still set the sound delay.
 const CALIBRATION_WINDOW := 0.250
 const MAX_SOUND_DELAY := 0.250
+const MIN_CALIBRATION_TAPS := 3
 const LAUGH_GAP := 4.0  # At most one laugh every 2 bars.
 const RING_SIZE := 0.13  # The heart's half-height, as a share of the screen's shorter side.
 const HEART_HEIGHT := 0.6  # Where the heart sits, as a share of the screen's height.
@@ -237,6 +238,11 @@ func _calibrate(raw: float) -> void:
 	if absf(nearest) > CALIBRATION_WINDOW:
 		return
 	_calibration.append(nearest)
+	# One stray tap while finding the beat mustn't set the delay for the
+	# whole song: wait for a few before trusting the middle of them.
+	if _calibration.size() < MIN_CALIBRATION_TAPS:
+		_refresh_test_info()
+		return
 	_calibrated = true
 	var sorted := _calibration.duplicate()
 	sorted.sort()
@@ -429,12 +435,17 @@ func _is_silent(t: float) -> bool:
 	return false
 
 
+# Where a light is `until` seconds before its note: just above the top of the
+# screen when it appears, the heart's centre on the note, then on down.
+func _light_position(c: Vector2, light_radius: float, until: float) -> Vector2:
+	return Vector2(c.x, lerpf(-light_radius, c.y, 1.0 - until / TRAVEL))
+
+
 # Connection Nodes: lights that fall from the top in one lane and reach the
 # heart's centre exactly on their note.
 func _draw_lights(c: Vector2, heart: float, t: float) -> void:
 	var t_judged := t - _sound_delay
 	var light_radius := heart * 0.2
-	var top := -light_radius
 	var first := maxi(_next - 4, 0)
 	for i in range(first, _notes.size()):
 		var until := _notes[i] - t_judged
@@ -442,7 +453,7 @@ func _draw_lights(c: Vector2, heart: float, t: float) -> void:
 			break
 		if _judged[i] == Judged.HIT:
 			continue  # Merged into the heart.
-		var pos := Vector2(c.x, lerpf(top, c.y, 1.0 - until / TRAVEL))  # Keeps falling past.
+		var pos := _light_position(c, light_radius, until)
 		var color := LIGHT
 		color.a = clampf((TRAVEL - until) / 0.3, 0.0, 1.0)
 		if _judged[i] == Judged.MISSED:
@@ -540,9 +551,12 @@ func _draw_test(c: Vector2, show: float) -> void:
 			Color(Color("#ECE5DE"), show))
 
 
+# One box reused for every draw: draw_style_box() copies what it needs.
+var _box := StyleBoxFlat.new()
+
+
 func _draw_box(rect: Rect2, color: Color, radius: float) -> void:
-	var box := StyleBoxFlat.new()
-	box.bg_color = color
-	box.set_corner_radius_all(int(radius))
-	box.anti_aliasing = true
-	draw_style_box(box, rect)
+	_box.bg_color = color
+	_box.set_corner_radius_all(int(radius))
+	_box.anti_aliasing = true
+	draw_style_box(_box, rect)

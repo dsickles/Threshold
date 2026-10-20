@@ -69,10 +69,13 @@ func test_every_tap_early_still_reaches_the_test() -> void:
 	var notes: PackedFloat64Array = _partner._notes
 	var next := [0]
 	_play_to_end(func(t: float) -> void:
-		if next[0] < notes.size() and t >= notes[next[0]] - 0.250:
+		# 300 ms early: outside Good, and outside the intro's calibration
+		# window, so the sound delay can't move to meet the taps.
+		if next[0] < notes.size() and t >= notes[next[0]] - 0.300:
 			_tap(t)
 			next[0] += 1)
 	check_eq(_partner.probe_state().state, "TEST_SHOWN", "state after the song")
+	check_eq(_partner.probe_state().misses, notes.size(), "every early tap missed")
 
 
 func test_taps_on_the_note_are_perfect() -> void:
@@ -112,6 +115,27 @@ func test_intro_taps_set_the_sound_delay() -> void:
 		_tap(note + 0.08)
 	check_near(_partner._sound_delay, 0.08, 0.001, "sound delay from four taps 80 ms late")
 	check_eq(_partner.probe_state().hits, 4, "intro taps still count as hits")
+
+
+# Hopper, 2026-10-20: one intro tap 240 ms late, while finding the beat, set
+# the delay for the whole song and turned every on-time tap after it into a Miss.
+func test_one_stray_intro_tap_does_not_set_the_sound_delay() -> void:
+	_partner._on_tap()
+	for i in _partner.MIN_CALIBRATION_TAPS - 1:
+		var note: float = _partner._notes[i]
+		_step_to(note + 0.24)
+		_tap(note + 0.24)
+	check_eq(_partner._sound_delay, 0.0, "no delay until enough intro taps")
+
+
+func test_lights_fall_from_the_top_to_the_heart() -> void:
+	var c: Vector2 = _partner._heart_centre()
+	var r := 10.0
+	var appear: Vector2 = _partner._light_position(c, r, _partner.TRAVEL)
+	check_near(appear.y, -r, 0.001, "a light appears just above the top")
+	check_near(appear.x, c.x, 0.001, "in the heart's lane")
+	check(_partner._light_position(c, r, _partner.TRAVEL / 2.0).y < c.y, "above the heart before its note")
+	check_near(_partner._light_position(c, r, 0.0).y, c.y, 0.001, "at the heart on its note")
 
 
 func test_misses_in_the_intro_never_laugh() -> void:

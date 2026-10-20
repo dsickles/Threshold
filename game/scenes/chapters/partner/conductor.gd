@@ -51,6 +51,7 @@ window.partnerConductor = window.partnerConductor || (function () {
 			this.stop();
 			active = false;
 			lastTouch = -1;
+			buf = null;  // The decoded song is large; free it once the chapter closes.
 			ctx.suspend();
 		},
 		load: function (b64) {
