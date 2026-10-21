@@ -340,9 +340,9 @@ func _mark_misses() -> void:
 
 
 # A hit flashes the heart and sends out sparkles, more the longer the
-# streak, and may bring in the next moment. No sound of its own: each note's
-# bell is already in the song (Dan, 2026-10-21: the hit chime "sounded
-# separate from the song").
+# streak, and may bring in the next moment. No sound of its own: the notes
+# sit on the song's own hits (Dan, 2026-10-21: "No additional sound comes
+# from the tap. Period").
 func _on_hit() -> void:
 	_hits += 1
 	_streak += 1

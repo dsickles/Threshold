@@ -242,9 +242,17 @@ func test_the_chart_matches_the_draft() -> void:
 	# Dan, 2026-10-21: a real crescendo in the last bars, but the triplets
 	# there were "too fast": the most notes in a row, never faster. Later the
 	# same day: a real track at 90 BPM (bars of 8/3 s), so the chart follows it.
+	# After playing it: "The tap should [go] along with the song. Period", so
+	# every note sits on the track's grid of sixteenths, whose hits land 25 ms
+	# after its bar lines.
 	var bar := 8.0 / 3.0
 	var beat := bar / 4.0
-	check_eq(notes.size(), 186, "notes in the chart")
+	check_eq(notes.size(), 173, "notes in the chart")
+	check_near(_partner._song_start, 0.025, 0.0001, "the track's hits land 25 ms after its bar lines")
+	for note in notes:
+		var sixteenths: float = (note - _partner._song_start) / (beat / 4.0)
+		if absf(sixteenths - roundf(sixteenths)) > 0.01:
+			check(false, "note at %s s is off the track's grid" % note)
 	check_near(_partner._crescendo - _partner._song_start, 52 * bar, 0.001, "crescendo from bar 53")
 	var closest := INF
 	for i in range(1, notes.size()):
@@ -254,11 +262,12 @@ func test_the_chart_matches_the_draft() -> void:
 	for note in notes:
 		if note >= _partner._crescendo:
 			in_crescendo += 1
-	check_eq(in_crescendo, 49, "a note on every beat of the crescendo, then the last")
+	check_eq(in_crescendo, 49, "four notes a bar in the crescendo, then the last")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
-		if absf(fposmod(note - _partner._song_start, beat) - beat / 2.0) < 0.002:
+		var off_beat: float = fposmod(note - _partner._song_start, beat)
+		if off_beat > 0.002 and off_beat < beat - 0.002:
 			between += 1
 	check(between >= 20, "notes between the beats (%d)" % between)
 	check_near(notes[-1] - _partner._song_start, 64 * bar, 0.001, "last note at bar 65, beat 1")

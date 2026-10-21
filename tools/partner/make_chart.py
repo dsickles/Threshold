@@ -25,6 +25,15 @@ Lo-Fi Beat", Pixabay, 90 BPM), edited by tools/partner/make_song.py. The bars
 below follow its sections: soft intro (1-8), beat (9-20), drums down (21-27),
 the stumble (28), beat (29-40), quiet breakdown (41-48), the fullest part
 (49-56, then repeated as 57-64), the last note on bar 65 and the outro.
+
+Dan, after playing it: "The tap should [go] along with the song. Period." The
+first chart for the track kept the old patterns, so many notes fell where the
+track has nothing. Now every note is on a hit measured in the track: in the
+beat, the kick on 1 and the "and" of 3, the snare on 2 and 4, and in the
+fullest part the extra kick on the last quarter of beat 2 (odd bars) and just
+after 4 (even bars); in the soft opening, the heartbeat; with the drums down,
+the keys' own rhythm. The track's hits land 25 ms after its bar lines (measured
+from the snare's attack), so START_OFFSET_MS is 25.
 """
 import json
 import pathlib
@@ -32,19 +41,29 @@ import pathlib
 BPM = 90
 BEAT_MS = 60000 / BPM
 BARS = 69
-# Where bar 1, beat 1 falls in the song file. 0 for the placeholder song;
-# measured in an audio editor for the real one.
-START_OFFSET_MS = 0
+# Where bar 1, beat 1 falls in the song file: the track's hits land 25 ms after
+# its bar lines (measured from the snare's attack in tools/partner/make_song.py's
+# output).
+START_OFFSET_MS = 25
 INTRO_BARS = 8  # Intro taps set the player's sound delay and never laugh.
 
 PATTERNS = {
-    "H": [1, 3],          # Resting heartbeat, 60 a minute
-    "S": [1, 3, 4],       # Heartbeat with a pickup into the next bar
-    "Q": [1, 2, 3, 4],    # Every beat
-    "D": [1, 2.5, 4],     # Dotted: the middle note falls between beats
-    "T": [1, 2, 3.5],     # Two on the beat, then one between
-    "P": [1, 2.5, 3.5],   # Push: two between the beats
-    "O": [1.5, 3, 4],     # Starts just after the beat
+    # The soft opening: the heartbeat.
+    "H": [1, 3],
+    # The beat: kick on 1 and 3.5, snare on 2 and 4.
+    "K": [1, 3.5],        # The kicks
+    "A": [1, 2, 3.5],     # Kick, snare, kick
+    "B": [1, 2, 4],       # Kick, snare, snare
+    "C": [2, 4],          # The snares
+    "R": [2, 3.5],        # Snare, kick
+    "S": [1, 3, 4],       # Into the fullest part: the track's pickup on 3 and 4
+    # The fullest part's extra kicks, for the crescendo.
+    "M": [1, 2, 2.75, 4],   # Odd bars
+    "N": [1, 2, 3.5, 4.25],  # Even bars
+    # Drums down: the keys' rhythm.
+    "D": [1, 2.5, 4],
+    "E": [1, 2.5],
+    "F": [1, 4],
     "X": [1],             # The last note
     "-": [],
 }
@@ -53,19 +72,19 @@ PATTERNS = {
 SECTIONS = [
     (1, "--"),
     (3, "HHHHHH"),
-    (9, "HHHS" "HDHS" "DTDS"),
-    (21, "HDSD" "PDS" "-"),
-    (29, "QDQS" "DTDS" "QOQP"),
-    (41, "HDHT" "DHPS"),
-    (49, "QDTP"),
-    (53, "QQQQ" "QQQQ" "QQQQ"),
+    (9, "KKAB" "KACB" "AARB"),
+    (21, "EFDHEFD" "-"),
+    (29, "AAAB" "ABAB" "ACAB"),
+    (41, "KKAK" "KKKS"),
+    (49, "ABAB"),
+    (53, "MNMN" "MNMN" "MNMN"),
     (65, "X"),
     (66, "----"),
 ]
-SILENT_BARS = {28}  # The stumble: the band stops for one bar.
+SILENT_BARS = {28}  # The stumble: the track slows to a halt and rests.
 CRESCENDO_BAR = 53
 LAST_BAR = 65
-NOTE_COUNT = 186
+NOTE_COUNT = 173
 
 
 def bar_patterns():

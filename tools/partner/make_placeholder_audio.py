@@ -8,8 +8,7 @@ Writes game/assets/audio/partner/:
   awkward laughter.
 
 The song is no longer made here: Dan picked a real track on 2026-10-21 (the
-generated one was "too '80s videogamey"), edited by make_song.py, which also
-borrows this file's heartbeat thump and tap bell.
+generated one was "too '80s videogamey"), edited by make_song.py.
 
 Needs numpy; only used to regenerate these files, not by the game.
 """
@@ -47,14 +46,8 @@ def keys(freq, dur, lvl):
     return lvl * e * tone * (1 + 0.15 * np.sin(2 * np.pi * 4.5 * t))
 
 
-def thump(freq, dur=0.3, decay=0.08, lvl=0.8):
-    e, t = env(dur, 0.003, decay)
-    sweep = freq * (1 + 1.2 * np.exp(-t / 0.025))
-    return lvl * e * np.sin(2 * np.pi * np.cumsum(sweep) / SR)
-
-
 def bell(freq, lvl):
-    """The tap cue: a short, clear bell on every chart note."""
+    """A short, clear bell, for the celebration's sparkles."""
     e, t = env(0.5, 0.002, 0.14)
     return lvl * e * (np.sin(2 * np.pi * freq * t) + 0.25 * np.sin(2 * np.pi * 3.01 * freq * t))
 
