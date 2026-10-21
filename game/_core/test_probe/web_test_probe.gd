@@ -22,9 +22,12 @@ func _ready() -> void:
 	_window = JavaScriptBridge.get_interface("window")
 	# "&partner_from=190" starts the Partner's song that many seconds in, so a
 	# test can reach its ending without playing the whole song.
+	# "&partner_moments=12" starts it with that many streak moments shown.
 	for part in String(search).trim_prefix("?").split("&"):
 		if part.begins_with("partner_from="):
 			get_tree().root.set_meta("partner_start_from", part.get_slice("=", 1).to_float())
+		if part.begins_with("partner_moments="):
+			get_tree().root.set_meta("partner_moments", part.get_slice("=", 1).to_int())
 	print("Threshold test probe on")
 	_finish_chapter_from_address(String(search))
 

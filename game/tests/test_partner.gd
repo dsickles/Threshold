@@ -83,15 +83,9 @@ func test_every_tap_early_still_reaches_the_test() -> void:
 	var next := [0]
 	_play_to_end(func(t: float) -> void:
 		# 300 ms early: outside Good, and outside the intro's calibration
-		# window, so the sound delay can't move to meet the taps. In the
-		# crescendo, where notes are 333 ms apart, halfway between two notes.
-		if next[0] >= notes.size():
-			return
-		var early := 0.300
-		if next[0] > 0 and notes[next[0]] - notes[next[0] - 1] < 0.5:
-			early = (notes[next[0]] - notes[next[0] - 1]) / 2.0
-		if t >= notes[next[0]] - early:
-			_tap(notes[next[0]] - early)
+		# window, so the sound delay can't move to meet the taps.
+		if next[0] < notes.size() and t >= notes[next[0]] - 0.300:
+			_tap(notes[next[0]] - 0.300)
 			next[0] += 1)
 	check_eq(_partner.probe_state().state, "TEST_SHOWN", "state after the song")
 	check_eq(_partner.probe_state().misses, notes.size(), "every early tap missed")
@@ -245,20 +239,20 @@ func test_judgement_sits_below_the_heart_on_every_screen() -> void:
 func test_the_chart_matches_the_draft() -> void:
 	var notes: PackedFloat64Array = _partner._notes
 	# Dan, 2026-10-20: easier than the draft's 388 notes, 250 ms apart, then more varied.
-	# Dan, 2026-10-21: a real crescendo, more notes at once in the last bars.
-	check_eq(notes.size(), 317, "notes in the chart")
+	# Dan, 2026-10-21: a real crescendo in the last bars, but the triplets
+	# there were "too fast": the most notes in a row, never faster.
+	check_eq(notes.size(), 304, "notes in the chart")
 	# Bar 89, beat 1: 88 bars of 2 s.
 	check_near(_partner._crescendo - _partner._song_start, 176.0, 0.0001, "crescendo from bar 89")
 	var closest := INF
-	var closest_calm := INF
 	for i in range(1, notes.size()):
 		closest = minf(closest, notes[i] - notes[i - 1])
-		if notes[i] <= _partner._crescendo:
-			closest_calm = minf(closest_calm, notes[i] - notes[i - 1])
-	check(closest_calm >= 0.500 - 0.0001,
-			"no two notes closer than 500 ms before the crescendo (closest %s s)" % closest_calm)
-	check(closest >= 0.333 - 0.0001, "none closer than 333 ms in it (closest %s s)" % closest)
-	check(closest >= 2.0 * _partner.GOOD_WINDOW, "every note can be judged apart")
+	check(closest >= 0.500 - 0.0001, "no two notes closer than 500 ms (closest %s s)" % closest)
+	var in_crescendo := 0
+	for note in notes:
+		if note >= _partner._crescendo:
+			in_crescendo += 1
+	check_eq(in_crescendo, 45, "a note on every beat of the crescendo")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
@@ -323,33 +317,103 @@ func test_a_streak_warms_and_a_miss_lets_it_settle_back() -> void:
 	check(_fake.layer_level < 0.05, "the layer too (%.2f)" % _fake.layer_level)
 
 
-# Dan, 2026-10-21: two hearts, hers and his; each hit pulls them closer and
-# more in time; at the crescendo they touch and beat as one.
-func test_hits_bring_her_heart_close_and_the_crescendo_joins_them() -> void:
-	var before: int = _partner._before_crescendo
-	var crescendo: float = _partner._crescendo
-	var last: float = _partner._notes[-1]
-	check_eq(_partner._closeness(0.0), 0.0, "apart before any hit")
-	# Real taps on the first notes bring her in, a step a hit.
+# Dan, 2026-10-21: "every streak grants *the next* silhouette, even if you
+# just get 8, miss, then 8 again", for all of them without long streaks.
+func test_each_streak_of_8_brings_in_the_next_moment() -> void:
 	_partner._on_tap()
 	var notes: PackedFloat64Array = _partner._notes
-	var last_closeness := 0.0
-	for i in 6:
+	var streak: int = _partner.MOMENT_STREAK
+	for i in streak - 1:
 		_step_to(notes[i])
 		_tap(notes[i])
-		var now: float = _partner._closeness(_fake.t)
-		check(now > last_closeness, "closer after hit %d (%.3f)" % [i + 1, now])
-		last_closeness = now
-	check(last_closeness < _partner.CLOSE_BEFORE, "but not yet touching (%.3f)" % last_closeness)
-	_partner._hits = before
-	check_near(_partner._closeness(crescendo), _partner.CLOSE_BEFORE, 0.0001,
-			"hits alone don't join them before the crescendo")
-	check_near(_partner._closeness(last), 1.0, 0.0001, "joined on the last note")
-	_partner._hits = 0
-	check_near(_partner._closeness(last), 1.0, 0.0001, "joined even with no hits")
-	check(_partner._closeness((crescendo + last) / 2.0) > 0.0, "the crescendo brings her in")
-	check_eq(_partner._bloom(crescendo - 1.0), 0.0, "no bloom before the crescendo")
-	check_near(_partner._bloom(last), 1.0, 0.0001, "full bloom on the last note")
+	check_eq(_partner.probe_state().moments, 0, "none after %d hits" % (streak - 1))
+	_step_to(notes[streak - 1])
+	_tap(notes[streak - 1])
+	check_eq(_partner.probe_state().moments, 1, "the first after %d in a row" % streak)
+	# Miss one, then 8 more in a row: the next one comes, once 12 s have
+	# passed since the first.
+	var i := streak + 1
+	for k in streak:
+		_step_to(notes[i])
+		_tap(notes[i])
+		i += 1
+	var first: float = _partner._moment_times[0]
+	check(_partner._song_time - first < _partner.MOMENT_GAP, "this chart's intro is quicker than the gap")
+	check_eq(_partner.probe_state().moments, 1, "not before the gap")
+	while _partner._song_time - first < _partner.MOMENT_GAP:
+		_step_to(notes[i])
+		_tap(notes[i])
+		i += 1
+	check_eq(_partner.probe_state().moments, 2, "8, a miss, then 8 again: the next one")
+
+
+func test_a_miss_starts_the_count_again() -> void:
+	_partner._on_tap()
+	var notes: PackedFloat64Array = _partner._notes
+	var streak: int = _partner.MOMENT_STREAK
+	for i in streak - 1:
+		_step_to(notes[i])
+		_tap(notes[i])
+	# Note streak - 1 is missed; then streak - 1 more is one short again.
+	var i := streak
+	for k in streak - 1:
+		_step_to(notes[i])
+		_tap(notes[i])
+		i += 1
+	check_eq(_partner.probe_state().moments, 0, "7, a miss, then 7: none yet")
+	_step_to(notes[i])
+	_tap(notes[i])
+	check_eq(_partner.probe_state().moments, 1, "the eighth after the miss brings one")
+
+
+func test_hitting_every_note_shows_every_moment_spread_across_the_song() -> void:
+	_partner._on_tap()
+	var notes: PackedFloat64Array = _partner._notes
+	var next := [0]
+	_play_to_end(func(t: float) -> void:
+		while next[0] < notes.size() and notes[next[0]] <= t:
+			_tap(notes[next[0]])
+			next[0] += 1)
+	var times: Array[float] = _partner._moment_times
+	check_eq(times.size(), _partner.MOMENTS.size(), "all %d moments" % _partner.MOMENTS.size())
+	for k in range(1, times.size()):
+		check(times[k] - times[k - 1] >= _partner.MOMENT_GAP - 0.001, "at least 12 s apart (%d)" % k)
+	check(times[-1] > notes[-1] * 0.6, "the last comes late in the song (%.0f s)" % times[-1])
+
+
+func test_a_typical_first_run_shows_every_moment() -> void:
+	var notes: PackedFloat64Array = _partner._notes
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 4
+	_partner._on_tap()
+	var taps: Array[float] = []
+	for note in notes:
+		taps.append(note + 0.040 + rng.randfn(0.0, 0.060))
+	var next := [0]
+	_play_to_end(func(t: float) -> void:
+		while next[0] < taps.size() and taps[next[0]] <= t:
+			_tap(taps[next[0]])
+			next[0] += 1)
+	check_eq(_partner.probe_state().moments, _partner.MOMENTS.size(), "every moment on a typical run")
+
+
+func test_moments_stay_clear_of_the_heart_and_on_screen() -> void:
+	for screen in [Vector2i(1280, 720), Vector2i(393, 852), Vector2i(852, 393)]:
+		set_screen(screen)
+		await frames()
+		var c: Vector2 = _partner._heart_centre()
+		var lane := Rect2(c.x - _partner._heart_size() * 1.2, 0, _partner._heart_size() * 2.4,
+				_partner.size.y)
+		var screen_rect := Rect2(Vector2.ZERO, _partner.size)
+		for k in _partner.MOMENTS.size():
+			var rect: Rect2 = _partner._moment_rect(k)
+			check(screen_rect.encloses(rect), "moment %d on screen at %s" % [k + 1, screen])
+			check(not rect.intersects(lane), "moment %d clear of the hearts at %s" % [k + 1, screen])
+			check(rect.size.x >= 60.0, "moment %d big enough to see at %s (%.0f px)"
+					% [k + 1, screen, rect.size.x])
+			for j in k:
+				check(not rect.intersects(_partner._moment_rect(j)),
+						"moments %d and %d don't overlap at %s" % [j + 1, k + 1, screen])
 
 
 # Hopper, 2026-10-21: the browser hands a JavaScript true back as 1, and

@@ -77,7 +77,8 @@ test("hiding the tab pauses the song until a tap", async ({ game, page }) => {
 test.describe("the ending", () => {
   // Starts the song 8 s before its last note (see web_test_probe.gd), so the
   // light fills the screen and the test appears without playing all 3:28.
-  test.beforeEach(async ({ game }) => openPartner(game, "&partner_from=190"));
+  // With every streak moment already shown, for the screenshots.
+  test.beforeEach(async ({ game }) => openPartner(game, "&partner_from=190&partner_moments=12"));
 
   test("the test appears, holds, then a tap goes back to the menu", async ({ game }) => {
     // Headless Chromium draws phone sizes at a few frames a second, and Godot
@@ -87,6 +88,7 @@ test.describe("the ending", () => {
     await game.tapMiddle();
     await expect.poll(() => songTime(game)).toBeGreaterThan(190);
     await game.screenshot("partner-crescendo");
+    expect((await game.screen(PARTNER)).moments, "every streak moment shown").toBe(12);
     await expect
       .poll(async () => (await game.screen(PARTNER)).state, { timeout: 30_000 })
       .toBe("TEST_SHOWN");

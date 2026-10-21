@@ -12,7 +12,6 @@ Writes game/assets/audio/partner/:
   electric-piano line, a shaker and a soft pad). The game turns it up while
   the player keeps a streak of hits and lets it settle back after a miss
   (Dan, 2026-10-21: "a streak of hits ... adds a layer to the song").
-- placeholder_hit.wav: a short sparkle for each hit.
 - placeholder_celebrate.wav: a bright rising chime for the test appearing.
 - placeholder_miss_1..3.wav: short wordless "hm" sounds standing in for the
   awkward laughter.
@@ -158,8 +157,8 @@ def song():
             pad = sum(np.sin(2 * np.pi * hz(m + 12) * tt * (1 + 0.002 * np.sin(2 * np.pi * 5 * tt)))
                       for m in chord[1:])
             add(mix, bt, 0.025 * lv * e * pad)
-        # The crescendo (chart bars 89-100): a cymbal swell into it, and the
-        # pad doubled an octave higher.
+        # The crescendo (from the chart's crescendo bar): a cymbal swell into
+        # it, and the pad doubled an octave higher.
         if bar == CRESCENDO_BAR - 1:
             swell = noise(BAR, 10.0, 0.08, 99) * np.linspace(0, 1, int(BAR * SR)) ** 2
             add(mix, bt, swell)
@@ -214,15 +213,6 @@ def layer():
     return mix / max(1e-6, np.max(np.abs(mix))) * 0.7
 
 
-def hit():
-    """A short, bright sparkle: two high bells a hair apart."""
-    mix = np.zeros(int(0.5 * SR))
-    add(mix, 0.0, bell(hz(96), 0.25))
-    add(mix, 0.035, bell(hz(100), 0.18))
-    add(mix, 0.07, bell(hz(103), 0.12))
-    return mix / max(1.0, np.max(np.abs(mix)) / 0.7)
-
-
 def celebrate():
     """A bright rising arpeggio that blooms into a shimmering chord."""
     length = 5.0
@@ -271,7 +261,6 @@ def main():
             write_wav(wav, samples)
             subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav), "-ac", "1",
                             "-b:a", "64k", str(OUT / f"{name}.mp3")], check=True)
-    write_wav(OUT / "placeholder_hit.wav", hit())
     write_wav(OUT / "placeholder_celebrate.wav", celebrate())
     for k in range(1, 4):
         write_wav(OUT / f"placeholder_miss_{k}.wav", miss(k))

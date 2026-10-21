@@ -4,9 +4,10 @@ extends Control
 ## chart (m1-prep/partner-song-and-beat-chart.md), which Dan has not settled
 ## yet, with Dan's 2026-10-20 changes: a heart, lights that fall from the top,
 ## easier timing, and an ending with a real-looking test and the couple.
-## Dan, 2026-10-21, to make it more fun: hits that feel good (a sparkle, a
-## chime, and a streak that warms the screen and adds a layer to the song),
-## her heart falling into step with his, and a real crescendo at the end.
+## Dan, 2026-10-21, to make it more fun: sparkles on each hit, a streak that
+## warms the screen and adds a layer to the song, a crescendo where the
+## colours bloom, and streaks that bring in moments of the couple's life
+## together around the screen.
 ##
 ## The chapter only reports that it finished (the `finished` signal). It never
 ## touches the House; whatever opened it decides what happens next.
@@ -19,7 +20,24 @@ enum Judged { PENDING, HIT, MISSED }
 const CHART_PATH := "res://scenes/chapters/partner/beat_chart.json"
 const SONG := preload("res://assets/audio/partner/placeholder_song.mp3")  # PLACEHOLDER song
 const LAYER := preload("res://assets/audio/partner/placeholder_layer.mp3")  # PLACEHOLDER streak layer
-const HIT_SOUND := preload("res://assets/audio/partner/placeholder_hit.wav")  # PLACEHOLDER
+# PLACEHOLDER silhouettes of the couple's life together, in the order a
+# streak brings them in (tools/partner/make_silhouettes.py).
+const MOMENTS: Array[Texture2D] = [
+	preload("res://assets/images/partner/placeholder_moment_01.png"),  # Dinner by candlelight
+	preload("res://assets/images/partner/placeholder_moment_02.png"),  # Walking hand in hand
+	preload("res://assets/images/partner/placeholder_moment_03.png"),  # Sharing an umbrella
+	preload("res://assets/images/partner/placeholder_moment_04.png"),  # Dancing
+	preload("res://assets/images/partner/placeholder_moment_05.png"),  # Bike rides side by side
+	preload("res://assets/images/partner/placeholder_moment_06.png"),  # Cooking together
+	preload("res://assets/images/partner/placeholder_moment_07.png"),  # A piggyback ride
+	preload("res://assets/images/partner/placeholder_moment_08.png"),  # Cuddling on the couch
+	preload("res://assets/images/partner/placeholder_moment_09.png"),  # A picnic
+	preload("res://assets/images/partner/placeholder_moment_10.png"),  # Under the stars
+	preload("res://assets/images/partner/placeholder_moment_11.png"),  # Their wedding
+	preload("res://assets/images/partner/placeholder_moment_12.png"),  # Moving in
+]
+const MOMENT_ASPECT := 0.9  # Their height over their width.
+const COUPLE_ASPECT := 1.1  # The final picture's height over its width.
 const COUPLE_IMAGE := preload("res://assets/images/partner/placeholder_couple.png")  # PLACEHOLDER
 const TEST_IMAGE := preload("res://assets/images/partner/placeholder_test.png")  # PLACEHOLDER
 const TEST_IMAGE_ASPECT := 0.24  # Its height over its width.
@@ -71,13 +89,14 @@ const STREAK_FULL := 8  # Hits in a row for full warmth.
 const WARM_RISE := 1.5  # Warmth gained a second, at most.
 const WARM_FALL := 0.5  # Warmth lost a second after a miss: it settles, not drops.
 const BURST_TIME := 0.6  # How long a hit's sparkles last.
-# Her heart comes in from the side as he hits; the last step comes only in
-# the crescendo, where they touch and beat as one (Dan, 2026-10-21).
-const CLOSE_SHARE := 0.8  # Share of the notes before the crescendo that brings her close.
-const CLOSE_BEFORE := 0.85  # How close hits alone can bring her.
-const HER_FAR := 1.5  # Where her heart starts, in heart sizes left of his.
-const HER_NEAR := 0.35  # Where it ends, touching his.
-const HER_LAG := 0.35  # How far behind his her heartbeat starts, in seconds.
+# Every 8 hits in a row brings in the next moment of their life together;
+# a miss only restarts the count (Dan, 2026-10-21: "every streak grants *the
+# next* silhouette, even if you just get 8, miss, then 8 again"). At most one
+# every 12 s, so even a perfect run spreads them across the song.
+const MOMENT_STREAK := 8
+const MOMENT_GAP := 12.0
+const MOMENT_FADE := 0.8
+const MOMENT_COLOR := Color("#E58A92")
 
 # The Partner's own palette (Dan, 2026-10-20: the first build was "brown on
 # brown"): a dusk plum to wine, a rose heart that warms to coral as the song
@@ -92,7 +111,6 @@ const MISSED := Color("#7E6878")
 const DAWN_TOP := Color("#FBE3C8")
 const DAWN_BOTTOM := Color("#E7A08F")
 const COUPLE := Color("#B65866")  # Tints the placeholder couple.
-const HER := Color("#E98A9C")
 const WARM_TOP := Color("#3A1C2E")
 const WARM_BOTTOM := Color("#6E2C3A")
 const BLOOM_TOP := Color("#6A2C48")
@@ -120,7 +138,8 @@ var _test_held := 0.0  # Seconds the test has been on screen.
 var _late_offsets: Array[float] = []  # After the intro, for the test info.
 var _heart_shape := PackedVector2Array()  # A heart, half-height 1, centred on 0.
 var _crescendo := INF  # Song time the crescendo starts.
-var _before_crescendo := 0  # Notes before it.
+var _run := 0  # Hits in a row toward the next moment.
+var _moment_times: Array[float] = []  # Song time each moment came in.
 var _hits := 0
 var _streak := 0  # Hits in a row.
 var _warmth := 0.0  # 0..1, follows the streak.
@@ -132,7 +151,6 @@ var _bursts: Array[Vector3] = []  # A hit's sparkles: age, turn, how big.
 @onready var _test_info: Label = %TestInfo
 @onready var _laugh_player: AudioStreamPlayer = %LaughPlayer
 @onready var _celebrate_player: AudioStreamPlayer = %CelebratePlayer
-@onready var _hit_player: AudioStreamPlayer = %HitPlayer
 @onready var _subtitle: Label = %Subtitle
 
 
@@ -142,7 +160,6 @@ func _ready() -> void:
 	_celebrate_player.stream = CELEBRATE_SOUND
 	_judgement.modulate.a = 0.0
 	_test_info.visible = SHOW_TEST_INFO
-	_hit_player.stream = HIT_SOUND
 	_conductor.load_song(SONG, LAYER)
 	_refresh_test_info()
 
@@ -157,9 +174,6 @@ func _load_chart() -> void:
 	_intro_end = offset + chart.intro_end_ms / 1000.0
 	_song_length = offset + chart.song_length_ms / 1000.0
 	_crescendo = offset + chart.get("crescendo_ms", chart.song_length_ms) / 1000.0
-	for note in _notes:
-		if note < _crescendo:
-			_before_crescendo += 1
 	for span: Array in chart.silent_ms:
 		_silent.append(Vector2(offset + span[0] / 1000.0, offset + span[1] / 1000.0))
 	if _calibrated:
@@ -251,6 +265,10 @@ func _start() -> void:
 			_next += 1
 			_passed += 1
 		_last_laugh = from
+	# Browser tests can also start with some moments already shown.
+	var moments: int = mini(get_tree().root.get_meta("partner_moments", 0), MOMENTS.size())
+	for k in moments:
+		_moment_times.append(from - MOMENT_FADE)
 	_state = State.PLAYING
 	_conductor.start(from)
 
@@ -311,21 +329,28 @@ func _mark_misses() -> void:
 			_judged[_next] = Judged.MISSED
 			_passed += 1
 			_streak = 0
+			_run = 0
 			_show_judgement("Miss")
 			_laugh(_notes[_next])
 		_next += 1
 
 
-# A hit flashes the heart, sends out sparkles and chimes, a little brighter
-# the longer the streak.
+# A hit flashes the heart and sends out sparkles, more the longer the
+# streak, and may bring in the next moment. No sound of its own: each note's
+# bell is already in the song (Dan, 2026-10-21: the hit chime "sounded
+# separate from the song").
 func _on_hit() -> void:
 	_hits += 1
 	_streak += 1
+	_run += 1
 	_flash = 1.0
 	var grow := minf(float(_streak) / STREAK_FULL, 1.0)
 	_bursts.append(Vector3(0.0, randf() * TAU, grow))
-	_hit_player.pitch_scale = 1.0 + 0.02 * minf(_streak, STREAK_FULL)
-	_hit_player.play()
+	var last: float = _moment_times[-1] if not _moment_times.is_empty() else -INF
+	if _run >= MOMENT_STREAK and _moment_times.size() < MOMENTS.size() \
+			and _song_time - last >= MOMENT_GAP:
+		_moment_times.append(_song_time)
+		_run = 0
 
 
 func _warmth_target() -> float:
@@ -345,11 +370,35 @@ func _bloom(t: float) -> float:
 	return clampf((t - _crescendo) / (_notes[-1] - _crescendo), 0.0, 1.0)
 
 
-# How close her heart is to his, 0..1: hits bring her most of the way; the
-# crescendo always brings her the rest, so they meet whatever the misses.
-func _closeness(t: float) -> float:
-	var by_hits := clampf(_hits / (CLOSE_SHARE * maxi(_before_crescendo, 1)), 0.0, 1.0)
-	return lerpf(CLOSE_BEFORE * by_hits, 1.0, _bloom(t))
+# Where moment `index` sits, and its size: down both sides, clear of the
+# middle where the hearts fall, alternating left and right. On a narrow
+# screen one column a side, six down; on a wide one, two columns, three down.
+func _moment_rect(index: int) -> Rect2:
+	var clear := _heart_size() * 3.2
+	var side := maxf((size.x - clear) / 2.0, 1.0)
+	var top := size.y * 0.04
+	var usable := size.y * 0.92
+	var per_side := ceili(MOMENTS.size() / 2.0)
+	var cols := 1
+	var cell := minf(side, usable / per_side / MOMENT_ASPECT)
+	for try_cols in [2, 3]:
+		var rows := ceili(float(per_side) / try_cols)
+		var try_cell := minf(side / try_cols, usable / rows / MOMENT_ASPECT)
+		if try_cell > cell:
+			cols = try_cols
+			cell = try_cell
+	var rows := ceili(float(per_side) / cols)
+	var slot := index / 2
+	var col := slot % cols
+	var row := slot / cols
+	var w := cell * 0.92
+	var h := w * MOMENT_ASPECT
+	var row_h := usable / rows
+	var x := col * (side / cols) + (side / cols - w) / 2.0
+	if index % 2 == 1:
+		x = size.x - x - w  # Right side, mirrored.
+	var y := top + row * row_h + (row_h - h) / 2.0
+	return Rect2(Vector2(x, y), Vector2(w, h))
 
 
 func _laugh(note_time: float) -> void:
@@ -410,6 +459,7 @@ func probe_state() -> Dictionary:
 		"can_leave": _state == State.TEST_SHOWN and _test_held >= TEST_HOLD,
 		"subtitle": _subtitle.text,
 		"layer": _conductor.is_layer_playing(),
+		"moments": _moment_times.size(),
 	}
 
 
@@ -495,18 +545,15 @@ func _draw() -> void:
 	_draw_gradient(BG_TOP.lerp(WARM_TOP, _warmth).lerp(BLOOM_TOP, bloom),
 			BG_BOTTOM.lerp(WARM_BOTTOM, _warmth).lerp(BLOOM_BOTTOM, bloom))
 
-	# The heart beats, and grows and warms as the song goes on. Hers beats
-	# a little behind his until she is close.
-	var closeness := _closeness(t)
+	_draw_moments(t)
+
+	# The heart beats, and grows and warms as the song goes on.
 	var pulse := 0.0
-	var her_pulse := 0.0
 	if _state == State.PLAYING or _state == State.PAUSED:
 		if not _is_silent(t) and t < _notes[-1]:
 			pulse = _lub_dub(fposmod(t - _song_start, HEARTBEAT))
-			her_pulse = _lub_dub(fposmod(t - _song_start - (1.0 - closeness) * HER_LAG, HEARTBEAT))
 	else:
 		pulse = _lub_dub(fposmod(Time.get_ticks_msec() / 1000.0, 2.0 * HEARTBEAT))  # Waiting.
-		her_pulse = _lub_dub(fposmod(Time.get_ticks_msec() / 1000.0 - HER_LAG, 2.0 * HEARTBEAT))
 
 	# A soft warm light behind it, wider as the song builds and brighter
 	# with a streak and in the crescendo.
@@ -515,16 +562,7 @@ func _draw() -> void:
 		halo.a = 0.035 + 0.02 * progress + 0.015 * _warmth + 0.03 * bloom
 		draw_circle(c, heart * (1.2 + k * (0.35 + 0.25 * progress + 0.2 * bloom)), halo)
 
-	var size_now := heart * (0.55 + 0.35 * progress)
-	# Her heart, behind his: off to the side at first, touching his at the end.
-	var her_centre := c + Vector2(-lerpf(HER_FAR, HER_NEAR, closeness) * heart, 0.0)
-	var her_size := size_now * 0.85 * (1.0 + 0.1 * her_pulse)
-	var her_color := HER.lerp(HEART_END, 0.3 * progress)
-	for k in range(3, 0, -1):
-		_draw_heart(her_centre, her_size * (1.0 + k * 0.12), Color(her_color, 0.1))
-	_draw_heart(her_centre, her_size, her_color)
-
-	var inner := size_now * (1.0 + 0.1 * pulse + 0.08 * _flash)
+	var inner := heart * (0.55 + 0.35 * progress) * (1.0 + 0.1 * pulse + 0.08 * _flash)
 	for k in range(4, 0, -1):
 		var glow := heart_color
 		glow.a = 0.12 + 0.06 * _flash
@@ -567,6 +605,26 @@ func _draw_bursts(c: Vector2, heart: float) -> void:
 			var r := heart * 0.05 * (1.0 - 0.5 * p)
 			draw_circle(pos, r * 2.2, Color(color, color.a * 0.25))
 			draw_circle(pos, r, color)
+
+
+# The moments a streak has brought in. Each fades in with a few sparkles;
+# older ones dim a little so the newest stands out.
+func _draw_moments(t: float) -> void:
+	var newest := _moment_times.size() - 1
+	for k in _moment_times.size():
+		var rect := _moment_rect(k)
+		var shown := clampf((t - _moment_times[k]) / MOMENT_FADE, 0.0, 1.0)
+		var alpha := ease(shown, 0.5) * (0.9 if k == newest else 0.6)
+		var color := MOMENT_COLOR
+		color.a = alpha
+		draw_texture_rect(MOMENTS[k], Rect2(rect.position + Vector2(0, (1.0 - shown) * 10.0),
+				rect.size), false, color)
+		if shown < 1.0:
+			var centre := rect.get_center()
+			for j in 8:
+				var angle := TAU * j / 8.0 + k
+				var pos := centre + Vector2(cos(angle), sin(angle)) * rect.size.x * (0.3 + 0.35 * shown)
+				draw_circle(pos, 2.5, Color(LIGHT, 1.0 - shown))
 
 
 func _is_silent(t: float) -> bool:
@@ -652,16 +710,16 @@ func _draw_sparkles(held: float) -> void:
 			draw_circle(Vector2(x, y), r, color)
 
 
-# PLACEHOLDER silhouette of the couple holding each other, foreheads
-# together (tools/partner/placeholder_couple.svg), until real art (ADR-0005).
-# It stands on the bottom of the screen; returns its size.
+# PLACEHOLDER silhouette of the couple standing, holding each other, faces
+# close (tools/partner/make_silhouettes.py), until real art (ADR-0005). It
+# stands on the bottom of the screen; returns its height.
 func _couple_size() -> float:
-	return minf(size.y * 0.95, size.x * 1.1)
+	return minf(size.y * 0.92, size.x * 1.6 * COUPLE_ASPECT)
 
 
-# The test is held up between them, below their faces.
+# The test sits in front of them, about waist high.
 func _test_centre_y() -> float:
-	return maxf(size.y - _couple_size() * 0.22, size.y * 0.5)
+	return maxf(size.y - _couple_size() * 0.42, size.y * 0.5)
 
 
 func _test_length() -> float:
@@ -669,11 +727,12 @@ func _test_length() -> float:
 
 
 func _draw_couple(alpha: float) -> void:
-	var side := _couple_size()
-	var rect := Rect2(Vector2((size.x - side) / 2.0, size.y - side), Vector2(side, side))
+	var tall := _couple_size()
+	var wide := tall / COUPLE_ASPECT
+	var rect := Rect2(Vector2((size.x - wide) / 2.0, size.y - tall), Vector2(wide, tall))
 	# A soft light behind their heads.
 	for k in range(6, 0, -1):
-		draw_circle(rect.position + Vector2(side * 0.5, side * 0.32), side * (0.12 + k * 0.07),
+		draw_circle(rect.position + Vector2(wide * 0.5, tall * 0.25), tall * (0.08 + k * 0.05),
 				Color(1.0, 0.97, 0.9, 0.06 * alpha))
 	if alpha > 0.0:
 		draw_texture_rect(COUPLE_IMAGE, rect, false, Color(COUPLE, alpha))
