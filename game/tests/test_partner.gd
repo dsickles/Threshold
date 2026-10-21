@@ -317,6 +317,16 @@ func test_a_streak_warms_and_a_miss_lets_it_settle_back() -> void:
 	check(_fake.layer_level < 0.05, "the layer too (%.2f)" % _fake.layer_level)
 
 
+# The crescendo's colours: none before bar 89, in full on the last note.
+func test_the_crescendo_blooms_to_full_on_the_last_note() -> void:
+	var notes: PackedFloat64Array = _partner._notes
+	var start: float = _partner._crescendo
+	check_eq(_partner._bloom(start - 1.0), 0.0, "no bloom before the crescendo")
+	var mid: float = _partner._bloom((start + notes[-1]) / 2.0)
+	check(mid > 0.4 and mid < 0.6, "halfway through, half bloomed (%.2f)" % mid)
+	check_eq(_partner._bloom(notes[-1]), 1.0, "full on the last note")
+
+
 # Dan, 2026-10-21: "every streak grants *the next* silhouette, even if you
 # just get 8, miss, then 8 again", for all of them without long streaks.
 func test_each_streak_of_8_brings_in_the_next_moment() -> void:
