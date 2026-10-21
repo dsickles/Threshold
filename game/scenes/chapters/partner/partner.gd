@@ -24,7 +24,7 @@ const LAYER := preload("res://assets/audio/partner/placeholder_layer.mp3")  # PL
 # streak brings them in (tools/partner/make_silhouettes.py).
 const MOMENTS: Array[Texture2D] = [
 	preload("res://assets/images/partner/placeholder_moment_01.png"),  # Dinner by candlelight
-	preload("res://assets/images/partner/placeholder_moment_02.png"),  # Walking hand in hand
+	preload("res://assets/images/partner/placeholder_moment_02.png"),  # Hiking together
 	preload("res://assets/images/partner/placeholder_moment_03.png"),  # Sharing an umbrella
 	preload("res://assets/images/partner/placeholder_moment_04.png"),  # Dancing
 	preload("res://assets/images/partner/placeholder_moment_05.png"),  # Bike rides side by side

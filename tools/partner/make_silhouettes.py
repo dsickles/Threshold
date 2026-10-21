@@ -327,15 +327,36 @@ def moments():
              + '<path d="M 100 70 Q 105 79 100 84 Q 95 79 100 70 Z" fill="#ffffff"/>')
     scenes.append(chairs + her.svg() + him.svg() + table)
 
-    # 2. Walking hand in hand, seen from the front.
-    her = Figure((76, 100), facing=0, woman=True, scale=0.85, lean=-2, head=4, skirt=0.3,
-                 legs=((4, 2), (-2, 0)), arms=((8, 4), (0, 0)))
-    him = Figure((126, 96), facing=0, scale=0.85, lean=2, head=-4,
-                 legs=((-2, 0), (5, 2)), arms=((0, 0), (8, 4)))
-    meet = (101, 104)
-    her.reach(1, meet, elbow=1)
-    him.reach(0, meet, elbow=1)
-    scenes.append(her.svg() + him.svg())
+    # 2. Hiking together: up a trail with backpacks, she is a step ahead
+    # and reaches back to give him a hand up.
+    def ground(x):
+        return 166 - 0.3 * x
+
+    hills = (stroke("M -4 120 L 40 62 L 70 100 L 112 40 L 160 104 L 186 76 L 210 110", 3, PROP_BACK)
+             + "".join(f'<path d="M {x} {y} l -7 16 l 14 0 Z M {x} {y + 8} l -9 18 l 18 0 Z" fill="{PROP_BACK}"/>'
+                       + stroke(f"M {x} {y + 26} l 0 6", 3, PROP_BACK)
+                       for x, y in ((20, 104), (176, 88))))
+    trail = f'<path d="M -4 {ground(-4):.1f} L 204 {ground(204):.1f} L 204 184 L -4 184 Z" fill="{PROP}"/>'
+    him = Figure((70, 86), facing=1, scale=0.76, lean=12, head=-8)
+    her = Figure((122, 74), facing=1, woman=True, scale=0.76, lean=6, head=-20, hair=1.1)
+    him.step(0, (54, ground(54) - 1), knee=1)
+    him.step(1, (86, ground(86) - 1), knee=1)
+    her.step(0, (110, ground(110) - 1), knee=1)
+    her.step(1, (136, ground(136) - 1), knee=1)
+    meet = (98, 76)
+    her.reach(1, meet, elbow=-1)
+    him.reach(1, meet, elbow=-1)
+    stick_top = add(him.hip, (-12, 4))
+    him.reach(0, stick_top, elbow=-1)
+    stick = stroke(f"M {stick_top[0]:.1f} {stick_top[1] - 8:.1f} L {stick_top[0] - 10:.1f} {ground(stick_top[0] - 10):.1f}", 3)
+    her.reach(0, add(her.hip, (-6, 12)))
+
+    def pack(fig, w, h):
+        c = add(add(fig.hip, fig.up(0, 32 * fig.s)), (-12 * fig.s, 0))
+        return (f'<rect x="{c[0] - w / 2:.1f}" y="{c[1] - h / 2:.1f}" width="{w}" height="{h}" rx="4" '
+                f'fill="{PROP_BACK}" transform="rotate({fig.lean:.1f} {c[0]:.1f} {c[1]:.1f})"/>')
+
+    scenes.append(hills + trail + pack(him, 16, 26) + pack(her, 13, 20) + him.svg() + her.svg() + stick)
 
     # 3. Sharing an umbrella in the rain, close, from the front.
     her = Figure((84, 104), facing=0, woman=True, scale=0.85, lean=6, head=10, skirt=0.2,
@@ -366,9 +387,15 @@ def moments():
     back = add(her.hip, her.up(0, 26 * her.s))
     him.reach(1, add(back, (-8, 0)))
     her.reach(0, add(him.shoulder_mid, (0, 18)), elbow=-1)
-    notes = (stroke("M 26 40 l 0 -14 l 8 -3 l 0 14", 2) + '<circle cx="24" cy="40" r="3" fill="#fff"/>'
-             + '<circle cx="32" cy="37" r="3" fill="#fff"/>'
-             + stroke("M 172 30 l 0 -12", 2) + '<circle cx="170" cy="30" r="3" fill="#fff"/>')
+    def note(x, y, double=False):
+        if double:
+            return (stroke(f"M {x} {y} l 0 -14 l 9 -3 l 0 14", 2.2) + f'<circle cx="{x - 2}" cy="{y}" r="3.2" fill="{PROP}"/>'
+                    + f'<circle cx="{x + 7}" cy="{y - 3}" r="3.2" fill="{PROP}"/>')
+        return (stroke(f"M {x} {y} l 0 -13 q 6 3 5 9", 2.2)
+                + f'<circle cx="{x - 2}" cy="{y}" r="3.2" fill="{PROP}"/>')
+
+    notes = (note(50, 48, True) + note(66, 22) + note(140, 26, True) + note(156, 56)
+             + note(40, 84) + note(166, 92, True))
     scenes.append(notes + him.svg("far") + her.svg("far") + her.svg("body") + him.svg("body")
                   + her.svg("near") + him.svg("near"))
 
@@ -393,14 +420,15 @@ def moments():
         fig.step(1, (x + 8 * s, y - 4 * s))
         return fig
 
-    # Same ground line under both: wheel bottoms at y 160.
-    # His bike is bigger, as he is.
-    bs, ms = 0.88, 1.04
+    # Same ground line under both (wheel bottoms at y 160). Each bike is
+    # sized to its rider: his is bigger by as much as he is taller.
+    bs = 0.88
+    ms = round(bs * 0.86 / (0.84 * 0.92), 2)
     hx, hy = 56, 160 - 17 * bs
     mx, my = 136, 160 - 17 * ms
     her = rider(Figure((0, 0), facing=1, woman=True, scale=0.84, lean=28, head=-16, sway=6,
                        shins=(42, 42)), hx, hy, bs)
-    him = rider(Figure((0, 0), facing=1, scale=0.94, lean=30, head=-18, shins=(42, 42)), mx, my, ms)
+    him = rider(Figure((0, 0), facing=1, scale=0.86, lean=30, head=-18, shins=(42, 42)), mx, my, ms)
     road = stroke("M 10 161 L 190 161", 2.5, PROP_BACK)
     scenes.append(road + bike(hx, hy, HER, bs) + her.svg() + bike(mx, my, PROP, ms) + him.svg())
 
