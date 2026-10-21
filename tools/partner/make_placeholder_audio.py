@@ -5,11 +5,11 @@
 Writes game/assets/audio/partner/:
 - placeholder_song.mp3: neo-soul (Dan's pick, 2026-10-20), 120 BPM felt as a
   slow half-time groove, 104 bars, bar 1 beat 1 at 0:00. Warm electric piano
-  chords, a round bass, laid-back drums, and a soft bell on every chart note
+  chords, a round bass, laid-back drums (no hi-hats), and a soft bell on every chart note
   so the beat is easy to hear. It starts with the heartbeat alone and builds
   to a light crescendo, then one chord rings out.
-- placeholder_layer.mp3: an extra layer in time with the song (a high
-  electric-piano line, a shaker and a soft pad). The game turns it up while
+- placeholder_layer.mp3: an extra layer in time with the song (warm
+  electric-piano stabs and a soft pad). The game turns it up while
   the player keeps a streak of hits and lets it settle back after a miss
   (Dan, 2026-10-21: "a streak of hits ... adds a layer to the song").
 - placeholder_celebrate.wav: a bright rising chime for the test appearing.
@@ -144,10 +144,6 @@ def song():
                     add(mix, t, thump(52, lvl=0.75 * lv))  # Kick
                 if beat == 2:
                     add(mix, t, noise(0.25, 0.06, 0.22 * lv, bar, tone=190))  # Half-time snare
-            if bar >= 57:  # Swung hats on the sixteenths.
-                for s in range(2):
-                    add(mix, t + s * BEAT / 2 + (SWING if s else 0),
-                        noise(0.05, 0.012, (0.05 if s else 0.07) * lv, bar * 8 + beat * 2 + s))
             if bar >= 81 and beat in (1, 3):
                 add(mix, t, noise(0.18, 0.045, 0.14 * lv, bar * 4 + beat))  # Claps
 
@@ -196,17 +192,15 @@ def layer():
         if bar == SILENT_BAR:
             continue
         chord = sorted(CHORDS[chord_index(bt)])
-        # A rising and falling line of chord tones, two octaves up, on the eighths.
-        line = chord[1:] + chord[-2:0:-1]
-        for k in range(8):
-            t = bt + k * BEAT / 2 + (SWING if k % 2 else 0)
-            add(mix, t, keys(hz(line[k % len(line)] + 24), 0.6, 0.05 if k % 2 else 0.07))
-        for s in range(16):  # Shaker on the sixteenths.
-            add(mix, bt + s * BEAT / 4 + (SWING / 2 if s % 2 else 0),
-                noise(0.06, 0.015, 0.05 if s % 2 else 0.035, 1000 + bar * 16 + s))
-        e, tt = env(BAR, 0.3, 3.0)
-        pad = sum(np.sin(2 * np.pi * hz(m + 12) * tt) for m in chord[1:])
-        add(mix, bt, 0.02 * e * pad)
+        # Warm electric-piano stabs an octave up, laid back on the "and" of 2
+        # and on 4, and a soft pad under them. No ticks or high runs (Dan,
+        # 2026-10-21: "i don't like the ticks", "too '80s videogamey'").
+        for k, m in enumerate(chord[1:]):
+            add(mix, bt + 1.5 * BEAT + SWING + k * 0.01, keys(hz(m + 12), 0.7, 0.05))
+            add(mix, bt + 3 * BEAT + SWING + k * 0.01, keys(hz(m + 12), 0.9, 0.04))
+        e, tt = env(BAR, 0.5, 3.0)
+        pad = sum(np.sin(2 * np.pi * hz(m) * tt) * (1 + 0.1 * np.sin(2 * np.pi * 0.5 * tt)) for m in chord[1:])
+        add(mix, bt, 0.03 * e * pad)
     # Fades out under the last note; the song's own chord rings on alone.
     fade = np.clip((LAST_NOTE + 0.5 - np.arange(n) / SR) / 1.5, 0.0, 1.0)
     mix *= fade
