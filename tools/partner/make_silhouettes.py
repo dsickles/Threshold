@@ -355,18 +355,22 @@ def moments():
                     (164, 148), (30, 20), (176, 18)])
     scenes.append(rain + her.svg() + him.svg() + umbrella)
 
-    # 4. Dancing: he lifts her hand and she twirls, both feet on the floor.
-    him = Figure((134, 102), facing=-1, scale=0.85, lean=-4, head=-6, legs=((-10, -4), (12, 2)))
-    her = Figure((74, 104), facing=1, woman=True, scale=0.85, lean=-6, head=-14, sway=10, skirt=1.0,
-                 legs=((-8, -2), (9, 3)))
-    meet = (104, 24)
-    him.reach(1, meet, elbow=1)
+    # 4. Dancing: a slow dance, close, his arm round her back, their other
+    # hands raised together; she leans back a little and her skirt swings.
+    him = Figure((116, 102), facing=-1, scale=0.9, lean=-2, head=10, legs=((-8, -2), (14, 4)))
+    her = Figure((86, 104), facing=1, woman=True, scale=0.88, lean=-8, head=-16, sway=-8, skirt=1.1,
+                 hair=1.3, legs=((-6, -2), (8, 2)))
+    meet = (98, 30)
     her.reach(1, meet, elbow=-1)
-    her.arms[0] = [-80, -100]
-    him.reach(0, add(her.hip, (6, -30)))
-    notes = stroke("M 26 40 l 0 -14 l 8 -3 l 0 14", 2) + '<circle cx="24" cy="40" r="3" fill="#fff"/>' \
-        + '<circle cx="32" cy="37" r="3" fill="#fff"/>'
-    scenes.append(notes + her.svg() + him.svg())
+    him.reach(0, add(meet, (2, 2)), elbow=-1)
+    back = add(her.hip, her.up(0, 26 * her.s))
+    him.reach(1, add(back, (-8, 0)))
+    her.reach(0, add(him.shoulder_mid, (0, 18)), elbow=-1)
+    notes = (stroke("M 26 40 l 0 -14 l 8 -3 l 0 14", 2) + '<circle cx="24" cy="40" r="3" fill="#fff"/>'
+             + '<circle cx="32" cy="37" r="3" fill="#fff"/>'
+             + stroke("M 172 30 l 0 -12", 2) + '<circle cx="170" cy="30" r="3" fill="#fff"/>')
+    scenes.append(notes + him.svg("far") + her.svg("far") + her.svg("body") + him.svg("body")
+                  + her.svg("near") + him.svg("near"))
 
     # 5. Bike rides side by side: both bikes on the same road, hers on the
     # far side, a little behind.
@@ -390,14 +394,15 @@ def moments():
         return fig
 
     # Same ground line under both: wheel bottoms at y 160.
-    bs = 0.92
-    hx, hy = 62, 160 - 17 * bs
-    mx, my = 136, 160 - 17 * bs
+    # His bike is bigger, as he is.
+    bs, ms = 0.88, 1.04
+    hx, hy = 56, 160 - 17 * bs
+    mx, my = 136, 160 - 17 * ms
     her = rider(Figure((0, 0), facing=1, woman=True, scale=0.84, lean=28, head=-16, sway=6,
                        shins=(42, 42)), hx, hy, bs)
-    him = rider(Figure((0, 0), facing=1, scale=0.9, lean=30, head=-18, shins=(42, 42)), mx, my, bs)
+    him = rider(Figure((0, 0), facing=1, scale=0.94, lean=30, head=-18, shins=(42, 42)), mx, my, ms)
     road = stroke("M 10 161 L 190 161", 2.5, PROP_BACK)
-    scenes.append(road + bike(hx, hy, HER, bs) + her.svg() + bike(mx, my, PROP, bs) + him.svg())
+    scenes.append(road + bike(hx, hy, HER, bs) + her.svg() + bike(mx, my, PROP, ms) + him.svg())
 
     # 6. Cooking together: he holds the pan, she tastes from a spoon.
     him = Figure((140, 118), facing=-1, scale=0.9, lean=6, head=8)
@@ -432,15 +437,16 @@ def moments():
     sofa_front = (rect(26, 116, 148, 18, 6, PROP_BACK) + rect(16, 92, 22, 46, 8, PROP_BACK)
                   + rect(162, 92, 22, 46, 8, PROP_BACK)
                   + stroke("M 36 136 L 36 148 M 164 136 L 164 148", 5, PROP_BACK))
-    her = Figure((78, 118), facing=0, woman=True, scale=0.82, lean=14, head=12, shins=(10, 36),
+    her = Figure((78, 118), facing=0, woman=True, scale=0.82, lean=14, head=12, shins=(6, 30),
                  legs=((4, 2), (-2, 0)))
-    him = Figure((122, 116), facing=0, scale=0.85, lean=-3, shins=(10, 38), legs=((-2, 0), (4, 2)))
+    him = Figure((122, 116), facing=0, scale=0.85, lean=-3, shins=(6, 32), legs=((-2, 0), (4, 2)))
     him.reach(0, add(her.shoulder(0), (-2, 6)), elbow=1)
     him.reach(1, add(him.hip, (10, 4)))
     lap = add(her.hip, (4, -2))
     her.reach(0, add(lap, (-2, 0)))
     her.reach(1, add(lap, (2, 2)))
-    scenes.append(sofa_back + him.svg("body") + him.svg("near") + her.svg() + him.svg("far") + sofa_front)
+    # The seat is behind their legs: they sit on it, shins down in front.
+    scenes.append(sofa_back + sofa_front + him.svg("body") + him.svg("near") + her.svg() + him.svg("far"))
 
     # 9. A picnic: sitting on a blanket, facing each other.
     blanket = '<path d="M 14 164 L 186 164 L 174 152 L 26 152 Z" fill="#ffffff"/>'
