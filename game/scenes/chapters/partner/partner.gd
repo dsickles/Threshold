@@ -18,8 +18,11 @@ enum State { LOADING, WAITING, PLAYING, PAUSED, TEST_SHOWN, DONE }
 enum Judged { PENDING, HIT, MISSED }
 
 const CHART_PATH := "res://scenes/chapters/partner/beat_chart.json"
-const SONG := preload("res://assets/audio/partner/placeholder_song.mp3")  # PLACEHOLDER song
-const LAYER := preload("res://assets/audio/partner/placeholder_layer.mp3")  # PLACEHOLDER streak layer
+# Dan's pick, 2026-10-21: "Dreamy Lo-Fi Beat" by NewEraMusic via Pixabay, edited
+# by tools/partner/make_song.py. song.mp3 is the track slightly muffled;
+# song_bright.mp3 is the rest of it, the streak layer that brightens it.
+const SONG := preload("res://assets/audio/partner/song.mp3")
+const LAYER := preload("res://assets/audio/partner/song_bright.mp3")
 # PLACEHOLDER silhouettes of the couple's life together, in the order a
 # streak brings them in (tools/partner/make_silhouettes.py).
 const MOMENTS: Array[Texture2D] = [
@@ -79,7 +82,6 @@ const TEST_LINES := [
 	[5.6, "(They both laugh.)"],  # PLACEHOLDER caption wording for the laugh.
 ]
 const TEST_LINES_END := 9.0
-const HEARTBEAT := 1.0  # Beats 1 and 3 at 120 BPM: 60 a minute.
 # Test info in the corner for Dan's checks. Turn off before cold playtests:
 # no score or tally is shown to players.
 const SHOW_TEST_INFO := true
@@ -125,6 +127,7 @@ var _judged: PackedByteArray = []
 var _next := 0  # First note not yet passed the heart.
 var _passed := 0  # Notes hit or missed so far, for the glow's growth.
 var _intro_end := 0.0
+var _heartbeat := 1.0  # Seconds between beats 1 and 3, when the heart beats.
 var _song_length := 0.0
 var _song_start := 0.0  # Where bar 1 beat 1 falls in the song file.
 var _silent: Array[Vector2] = []  # Bars where the band stops: no heartbeat.
@@ -172,6 +175,7 @@ func _load_chart() -> void:
 		_notes.append(offset + ms / 1000.0)
 	_judged.resize(_notes.size())
 	_intro_end = offset + chart.intro_end_ms / 1000.0
+	_heartbeat = 2.0 * 60.0 / chart.bpm
 	_song_length = offset + chart.song_length_ms / 1000.0
 	_crescendo = offset + chart.get("crescendo_ms", chart.song_length_ms) / 1000.0
 	for span: Array in chart.silent_ms:
@@ -551,9 +555,9 @@ func _draw() -> void:
 	var pulse := 0.0
 	if _state == State.PLAYING or _state == State.PAUSED:
 		if not _is_silent(t) and t < _notes[-1]:
-			pulse = _lub_dub(fposmod(t - _song_start, HEARTBEAT))
+			pulse = _lub_dub(fposmod(t - _song_start, _heartbeat))
 	else:
-		pulse = _lub_dub(fposmod(Time.get_ticks_msec() / 1000.0, 2.0 * HEARTBEAT))  # Waiting.
+		pulse = _lub_dub(fposmod(Time.get_ticks_msec() / 1000.0, 2.0 * _heartbeat))  # Waiting.
 
 	# A soft warm light behind it, wider as the song builds and brighter
 	# with a streak and in the crescendo.

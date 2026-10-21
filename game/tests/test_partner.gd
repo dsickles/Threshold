@@ -240,10 +240,12 @@ func test_the_chart_matches_the_draft() -> void:
 	var notes: PackedFloat64Array = _partner._notes
 	# Dan, 2026-10-20: easier than the draft's 388 notes, 250 ms apart, then more varied.
 	# Dan, 2026-10-21: a real crescendo in the last bars, but the triplets
-	# there were "too fast": the most notes in a row, never faster.
-	check_eq(notes.size(), 304, "notes in the chart")
-	# Bar 89, beat 1: 88 bars of 2 s.
-	check_near(_partner._crescendo - _partner._song_start, 176.0, 0.0001, "crescendo from bar 89")
+	# there were "too fast": the most notes in a row, never faster. Later the
+	# same day: a real track at 90 BPM (bars of 8/3 s), so the chart follows it.
+	var bar := 8.0 / 3.0
+	var beat := bar / 4.0
+	check_eq(notes.size(), 186, "notes in the chart")
+	check_near(_partner._crescendo - _partner._song_start, 52 * bar, 0.001, "crescendo from bar 53")
 	var closest := INF
 	for i in range(1, notes.size()):
 		closest = minf(closest, notes[i] - notes[i - 1])
@@ -252,15 +254,15 @@ func test_the_chart_matches_the_draft() -> void:
 	for note in notes:
 		if note >= _partner._crescendo:
 			in_crescendo += 1
-	check_eq(in_crescendo, 45, "a note on every beat of the crescendo")
+	check_eq(in_crescendo, 49, "a note on every beat of the crescendo, then the last")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
-		if absf(fposmod(note - _partner._song_start, 0.5) - 0.25) < 0.001:
+		if absf(fposmod(note - _partner._song_start, beat) - beat / 2.0) < 0.002:
 			between += 1
-	check(between >= 30, "notes between the beats (%d)" % between)
-	# Bar 100, beat 1 at 120 BPM: 99 bars of 2 s after bar 1, beat 1.
-	check_near(notes[-1] - _partner._song_start, 198.0, 0.0001, "last note at bar 100, beat 1")
+	check(between >= 20, "notes between the beats (%d)" % between)
+	check_near(notes[-1] - _partner._song_start, 64 * bar, 0.001, "last note at bar 65, beat 1")
+	check_near(_partner._heartbeat, 2.0 * beat, 0.0001, "the heart beats on beats 1 and 3")
 
 
 # Dan, 2026-10-20: on a first run most people should get most beats at least
@@ -317,7 +319,7 @@ func test_a_streak_warms_and_a_miss_lets_it_settle_back() -> void:
 	check(_fake.layer_level < 0.05, "the layer too (%.2f)" % _fake.layer_level)
 
 
-# The crescendo's colours: none before bar 89, in full on the last note.
+# The crescendo's colours: none before it starts, in full on the last note.
 func test_the_crescendo_blooms_to_full_on_the_last_note() -> void:
 	var notes: PackedFloat64Array = _partner._notes
 	var start: float = _partner._crescendo

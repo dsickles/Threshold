@@ -20,7 +20,7 @@ func _ready() -> void:
 	if search == null or not String(search).contains("probe"):
 		return
 	_window = JavaScriptBridge.get_interface("window")
-	# "&partner_from=190" starts the Partner's song that many seconds in, so a
+	# "&partner_from=163" starts the Partner's song that many seconds in, so a
 	# test can reach its ending without playing the whole song.
 	# "&partner_moments=12" starts it with that many streak moments shown.
 	for part in String(search).trim_prefix("?").split("&"):
