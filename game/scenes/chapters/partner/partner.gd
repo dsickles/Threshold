@@ -409,6 +409,7 @@ func probe_state() -> Dictionary:
 		"clock": "browser" if _conductor.uses_browser_clock else "Godot",
 		"can_leave": _state == State.TEST_SHOWN and _test_held >= TEST_HOLD,
 		"subtitle": _subtitle.text,
+		"layer": _conductor.is_layer_playing(),
 	}
 
 

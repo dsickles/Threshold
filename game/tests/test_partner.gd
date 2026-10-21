@@ -25,6 +25,7 @@ class FakeConductor extends Node:
 	func song_time() -> float: return t
 	func tap_time() -> float: return tap
 	func set_layer_level(level: float) -> void: layer_level = level
+	func is_layer_playing() -> bool: return t >= 0.0
 
 
 var _partner: Node
@@ -329,9 +330,17 @@ func test_hits_bring_her_heart_close_and_the_crescendo_joins_them() -> void:
 	var crescendo: float = _partner._crescendo
 	var last: float = _partner._notes[-1]
 	check_eq(_partner._closeness(0.0), 0.0, "apart before any hit")
-	_partner._hits = before / 2
-	var some: float = _partner._closeness(0.0)
-	check(some > 0.0 and some < _partner.CLOSE_BEFORE, "closer after some hits (%.2f)" % some)
+	# Real taps on the first notes bring her in, a step a hit.
+	_partner._on_tap()
+	var notes: PackedFloat64Array = _partner._notes
+	var last_closeness := 0.0
+	for i in 6:
+		_step_to(notes[i])
+		_tap(notes[i])
+		var now: float = _partner._closeness(_fake.t)
+		check(now > last_closeness, "closer after hit %d (%.3f)" % [i + 1, now])
+		last_closeness = now
+	check(last_closeness < _partner.CLOSE_BEFORE, "but not yet touching (%.3f)" % last_closeness)
 	_partner._hits = before
 	check_near(_partner._closeness(crescendo), _partner.CLOSE_BEFORE, 0.0001,
 			"hits alone don't join them before the crescendo")
@@ -341,3 +350,15 @@ func test_hits_bring_her_heart_close_and_the_crescendo_joins_them() -> void:
 	check(_partner._closeness((crescendo + last) / 2.0) > 0.0, "the crescendo brings her in")
 	check_eq(_partner._bloom(crescendo - 1.0), 0.0, "no bloom before the crescendo")
 	check_near(_partner._bloom(last), 1.0, 0.0001, "full bloom on the last note")
+
+
+# Hopper, 2026-10-21: the browser hands a JavaScript true back as 1, and
+# 1 == true is an error in GDScript, so "is the layer playing" (and "has the
+# song ended") came back empty on the web.
+func test_the_conductor_reads_browser_true_and_false() -> void:
+	var conductor := preload("res://scenes/chapters/partner/conductor.gd")
+	check(conductor._is_true(true), "true")
+	check(conductor._is_true(1), "1")
+	check(not conductor._is_true(false), "false")
+	check(not conductor._is_true(0), "0")
+	check(not conductor._is_true(null), "nothing")

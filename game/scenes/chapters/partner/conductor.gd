@@ -13,7 +13,7 @@ window.partnerConductor = window.partnerConductor || (function () {
 	var ctx = new (window.AudioContext || window.webkitAudioContext)();
 	var buf = null, src = null, t0 = 0, lastTouch = -1;
 	// The streak layer: a second track in time with the song, through its own volume.
-	var layerBuf = null, layerSrc = null, layerGain = ctx.createGain();
+	var layerBuf = null, layerSrc = null, layerPending = false, layerGain = ctx.createGain();
 	layerGain.gain.value = 0;
 	layerGain.connect(ctx.destination);
 	var active = false, playing = false, failed = false, hiddenPause = false, ended = false;
@@ -57,6 +57,7 @@ window.partnerConductor = window.partnerConductor || (function () {
 			lastTouch = -1;
 			buf = null;  // The decoded song is large; free it once the chapter closes.
 			layerBuf = null;
+			layerPending = false;
 			ctx.suspend();
 		},
 		load: function (b64) {
@@ -68,15 +69,20 @@ window.partnerConductor = window.partnerConductor || (function () {
 				function (decoded) { buf = decoded; },
 				function () { failed = true; });
 		},
-		// Without its layer the song still plays, just without the extra layer.
+		// The song waits for its layer, so a quick first tap still gets it. If
+		// the layer can't be decoded, the song plays without it.
 		loadLayer: function (b64) {
 			layerBuf = null;
+			layerPending = true;
 			var bytes = atob(b64), data = new Uint8Array(bytes.length);
 			for (var i = 0; i < bytes.length; i++) { data[i] = bytes.charCodeAt(i); }
-			ctx.decodeAudioData(data.buffer, function (decoded) { layerBuf = decoded; });
+			ctx.decodeAudioData(data.buffer,
+				function (decoded) { layerBuf = decoded; layerPending = false; },
+				function () { layerPending = false; });
 		},
+		layerPlaying: function () { return layerSrc !== null; },
 		setLayer: function (level) { layerGain.gain.setTargetAtTime(level, ctx.currentTime, 0.05); },
-		state: function () { return failed ? 'failed' : (buf ? 'ready' : 'loading'); },
+		state: function () { return failed ? 'failed' : (buf && !layerPending ? 'ready' : 'loading'); },
 		start: function (from) {
 			this.stop();
 			src = ctx.createBufferSource();
@@ -194,7 +200,9 @@ func stop() -> void:
 ## How loud the layer plays, 0 (silent) to 1.
 func set_layer_level(level: float) -> void:
 	level = clampf(level, 0.0, 1.0)
-	if not _playing or absf(level - _layer_level) < 0.01:
+	# Small steps are skipped, but silent and full are always reached.
+	if not _playing or level == _layer_level \
+			or (absf(level - _layer_level) < 0.01 and level != 0.0 and level != 1.0):
 		return
 	_layer_level = level
 	if uses_browser_clock:
@@ -220,11 +228,20 @@ func resume() -> void:
 			_layer_player.stream_paused = false
 
 
+## True while the streak layer is playing along with the song.
+func is_layer_playing() -> bool:
+	if not _playing:
+		return false
+	if uses_browser_clock:
+		return _is_true(JavaScriptBridge.eval("window.partnerConductor.layerPlaying()", true))
+	return _layer_player != null and _layer_player.playing
+
+
 func is_paused() -> bool:
 	if not _playing:
 		return false
 	if uses_browser_clock:
-		return JavaScriptBridge.eval("window.partnerConductor.paused()", true)
+		return _is_true(JavaScriptBridge.eval("window.partnerConductor.paused()", true))
 	return _player.stream_paused
 
 
@@ -234,7 +251,7 @@ func has_song_ended() -> bool:
 	if not _playing:
 		return false
 	if uses_browser_clock:
-		return JavaScriptBridge.eval("window.partnerConductor.ended()", true) == true
+		return _is_true(JavaScriptBridge.eval("window.partnerConductor.ended()", true))
 	return _native_finished
 
 
@@ -259,6 +276,17 @@ func tap_time() -> float:
 		var t: Variant = JavaScriptBridge.eval("window.partnerConductor.tapTime()", true)
 		return t if t != null else -1.0
 	return song_time()
+
+
+# A JavaScript true can come back as 1, not true, and 1 == true is an error
+# in GDScript, so read either.
+static func _is_true(value: Variant) -> bool:
+	match typeof(value):
+		TYPE_BOOL:
+			return value
+		TYPE_INT, TYPE_FLOAT:
+			return value != 0
+	return false
 
 
 func _exit_tree() -> void:
