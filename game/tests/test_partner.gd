@@ -13,6 +13,7 @@ class FakeConductor extends Node:
 	var tap := -1.0
 	var paused := false
 	var uses_browser_clock := false
+	var layer_level := 0.0
 	func is_ready() -> bool: return true
 	func has_failed() -> bool: return false
 	func start(from := 0.0) -> void: t = from
@@ -23,6 +24,7 @@ class FakeConductor extends Node:
 	func has_song_ended() -> bool: return false
 	func song_time() -> float: return t
 	func tap_time() -> float: return tap
+	func set_layer_level(level: float) -> void: layer_level = level
 
 
 var _partner: Node
@@ -80,9 +82,15 @@ func test_every_tap_early_still_reaches_the_test() -> void:
 	var next := [0]
 	_play_to_end(func(t: float) -> void:
 		# 300 ms early: outside Good, and outside the intro's calibration
-		# window, so the sound delay can't move to meet the taps.
-		if next[0] < notes.size() and t >= notes[next[0]] - 0.300:
-			_tap(t)
+		# window, so the sound delay can't move to meet the taps. In the
+		# crescendo, where notes are 333 ms apart, halfway between two notes.
+		if next[0] >= notes.size():
+			return
+		var early := 0.300
+		if next[0] > 0 and notes[next[0]] - notes[next[0] - 1] < 0.5:
+			early = (notes[next[0]] - notes[next[0] - 1]) / 2.0
+		if t >= notes[next[0]] - early:
+			_tap(notes[next[0]] - early)
 			next[0] += 1)
 	check_eq(_partner.probe_state().state, "TEST_SHOWN", "state after the song")
 	check_eq(_partner.probe_state().misses, notes.size(), "every early tap missed")
@@ -236,11 +244,20 @@ func test_judgement_sits_below_the_heart_on_every_screen() -> void:
 func test_the_chart_matches_the_draft() -> void:
 	var notes: PackedFloat64Array = _partner._notes
 	# Dan, 2026-10-20: easier than the draft's 388 notes, 250 ms apart, then more varied.
-	check_eq(notes.size(), 301, "notes in the chart")
+	# Dan, 2026-10-21: a real crescendo, more notes at once in the last bars.
+	check_eq(notes.size(), 317, "notes in the chart")
+	# Bar 89, beat 1: 88 bars of 2 s.
+	check_near(_partner._crescendo - _partner._song_start, 176.0, 0.0001, "crescendo from bar 89")
 	var closest := INF
+	var closest_calm := INF
 	for i in range(1, notes.size()):
 		closest = minf(closest, notes[i] - notes[i - 1])
-	check(closest >= 0.500 - 0.0001, "no two notes closer than 500 ms (closest %s s)" % closest)
+		if notes[i] <= _partner._crescendo:
+			closest_calm = minf(closest_calm, notes[i] - notes[i - 1])
+	check(closest_calm >= 0.500 - 0.0001,
+			"no two notes closer than 500 ms before the crescendo (closest %s s)" % closest_calm)
+	check(closest >= 0.333 - 0.0001, "none closer than 333 ms in it (closest %s s)" % closest)
+	check(closest >= 2.0 * _partner.GOOD_WINDOW, "every note can be judged apart")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
@@ -280,3 +297,47 @@ func test_a_typical_first_run_gets_most_beats_with_few_misses() -> void:
 	check(mean_misses < 5.0, "fewer than 5 misses a run on average (%.1f)" % mean_misses)
 	check(float(good_or_better) / (runs * notes.size()) >= 0.95,
 			"most beats Good or better (%d of %d)" % [good_or_better, runs * notes.size()])
+
+
+# Dan, 2026-10-21: "a streak of hits warms the screen and adds a layer to the
+# song, which settles back after a miss".
+func test_a_streak_warms_and_a_miss_lets_it_settle_back() -> void:
+	_partner._on_tap()
+	var notes: PackedFloat64Array = _partner._notes
+	var streak: int = _partner.STREAK_FULL
+	for i in streak:
+		_step_to(notes[i])
+		_tap(notes[i])
+	check_eq(_partner._streak, streak, "streak after %d hits" % streak)
+	check_eq(_partner._bursts.size() > 0, true, "a hit sends out sparkles")
+	_step_to(notes[streak] - 0.05)
+	check(_partner._warmth > 0.9, "warm after a full streak (%.2f)" % _partner._warmth)
+	check(_fake.layer_level > 0.9, "the layer is up (%.2f)" % _fake.layer_level)
+	check(_partner._bursts.is_empty(), "sparkles fade")
+	_step_to(notes[streak] + _partner.GOOD_WINDOW + _partner.MISS_GRACE + 0.05)
+	check_eq(_partner._streak, 0, "a miss ends the streak")
+	check(_partner._warmth > 0.8, "warmth settles, it doesn't drop (%.2f)" % _partner._warmth)
+	_step_to(_fake.t + 2.0 / _partner.WARM_FALL)
+	check(_partner._warmth < 0.05, "and is gone a while after (%.2f)" % _partner._warmth)
+	check(_fake.layer_level < 0.05, "the layer too (%.2f)" % _fake.layer_level)
+
+
+# Dan, 2026-10-21: two hearts, hers and his; each hit pulls them closer and
+# more in time; at the crescendo they touch and beat as one.
+func test_hits_bring_her_heart_close_and_the_crescendo_joins_them() -> void:
+	var before: int = _partner._before_crescendo
+	var crescendo: float = _partner._crescendo
+	var last: float = _partner._notes[-1]
+	check_eq(_partner._closeness(0.0), 0.0, "apart before any hit")
+	_partner._hits = before / 2
+	var some: float = _partner._closeness(0.0)
+	check(some > 0.0 and some < _partner.CLOSE_BEFORE, "closer after some hits (%.2f)" % some)
+	_partner._hits = before
+	check_near(_partner._closeness(crescendo), _partner.CLOSE_BEFORE, 0.0001,
+			"hits alone don't join them before the crescendo")
+	check_near(_partner._closeness(last), 1.0, 0.0001, "joined on the last note")
+	_partner._hits = 0
+	check_near(_partner._closeness(last), 1.0, 0.0001, "joined even with no hits")
+	check(_partner._closeness((crescendo + last) / 2.0) > 0.0, "the crescendo brings her in")
+	check_eq(_partner._bloom(crescendo - 1.0), 0.0, "no bloom before the crescendo")
+	check_near(_partner._bloom(last), 1.0, 0.0001, "full bloom on the last note")

@@ -14,6 +14,11 @@ more notes per bar, not faster ones. Dan, later the same day: "too singular beat
 focused and boring, there needs to be some more variation in the beat, but as
 long as it isn't too fast". So some notes fall halfway between beats, never
 closer than 500 ms to the next.
+
+Dan, 2026-10-21, asked for "a real crescendo": in the last bars (from bar 89)
+more hearts come at once, in quarter-note triplets, three notes across two
+beats, 333 ms apart. Only those bars are faster than 500 ms; everything before
+stays as calm as it was.
 """
 import json
 import pathlib
@@ -34,6 +39,9 @@ PATTERNS = {
     "T": [1, 2, 3.5],     # Two on the beat, then one between
     "P": [1, 2.5, 3.5],   # Push: two between the beats
     "O": [1.5, 3, 4],     # Starts just after the beat
+    "W": [1, 1 + 2 / 3, 1 + 4 / 3, 3, 4],              # Crescendo: a triplet, then two beats
+    "V": [1, 2, 3, 3 + 2 / 3, 3 + 4 / 3],              # Two beats, then a triplet
+    "Z": [1, 1 + 2 / 3, 1 + 4 / 3, 3, 3 + 2 / 3, 3 + 4 / 3],  # Triplets all bar
     "X": [1],             # The last note
     "-": [],
 }
@@ -46,11 +54,12 @@ SECTIONS = [
     (33, "QDQS" "DTDS" "QOQP" "DTQS" "QDOS" "PTQS"),
     (57, "QDQT" "QPQS" "OQDQ" "TQDS" "QDQP" "OQTS"),
     (81, "QDQT" "QPQQ"),
-    (89, "QDQT" "QPQQ" "QQQX"),
+    (89, "WQVW" "VWZV" "WZZX"),
     (101, "----"),
 ]
 SILENT_BARS = {48}  # The stumble: the band stops for one bar.
-NOTE_COUNT = 301
+CRESCENDO_BAR = 89
+NOTE_COUNT = 317
 
 
 def bar_patterns():
@@ -70,8 +79,11 @@ def main():
 
     # The checks the draft asks for, with Dan's 2026-10-20 easier chart.
     gaps = [b - a for a, b in zip(notes, notes[1:])]
+    crescendo_ms = (CRESCENDO_BAR - 1) * 4 * BEAT_MS
+    calm = [b - a for a, b in zip(notes, notes[1:]) if b <= crescendo_ms]
     assert len(notes) == NOTE_COUNT, len(notes)
-    assert min(gaps) >= 500, min(gaps)
+    assert min(calm) >= 500, min(calm)
+    assert min(gaps) >= 333, min(gaps)
     assert notes[-1] == (100 - 1) * 4 * BEAT_MS, notes[-1]
 
     chart = {
@@ -82,6 +94,8 @@ def main():
         "song_length_ms": BARS * 4 * BEAT_MS,
         # [start, end) in ms from bar 1 beat 1, where the band (and heartbeat) stops.
         "silent_ms": [[(b - 1) * 4 * BEAT_MS, b * 4 * BEAT_MS] for b in sorted(SILENT_BARS)],
+        # Where the crescendo starts: denser notes, and the screen blooms.
+        "crescendo_ms": crescendo_ms,
         "notes_ms": notes,
     }
     out = pathlib.Path(__file__).resolve().parents[2] / "game/scenes/chapters/partner/beat_chart.json"

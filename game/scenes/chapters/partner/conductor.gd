@@ -12,6 +12,10 @@ const BROWSER_JS := """
 window.partnerConductor = window.partnerConductor || (function () {
 	var ctx = new (window.AudioContext || window.webkitAudioContext)();
 	var buf = null, src = null, t0 = 0, lastTouch = -1;
+	// The streak layer: a second track in time with the song, through its own volume.
+	var layerBuf = null, layerSrc = null, layerGain = ctx.createGain();
+	layerGain.gain.value = 0;
+	layerGain.connect(ctx.destination);
 	var active = false, playing = false, failed = false, hiddenPause = false, ended = false;
 	// Browsers only start sound inside a real touch handler, and Godot sees
 	// the touch a frame later, so unlock and timestamp here.
@@ -52,6 +56,7 @@ window.partnerConductor = window.partnerConductor || (function () {
 			active = false;
 			lastTouch = -1;
 			buf = null;  // The decoded song is large; free it once the chapter closes.
+			layerBuf = null;
 			ctx.suspend();
 		},
 		load: function (b64) {
@@ -63,6 +68,14 @@ window.partnerConductor = window.partnerConductor || (function () {
 				function (decoded) { buf = decoded; },
 				function () { failed = true; });
 		},
+		// Without its layer the song still plays, just without the extra layer.
+		loadLayer: function (b64) {
+			layerBuf = null;
+			var bytes = atob(b64), data = new Uint8Array(bytes.length);
+			for (var i = 0; i < bytes.length; i++) { data[i] = bytes.charCodeAt(i); }
+			ctx.decodeAudioData(data.buffer, function (decoded) { layerBuf = decoded; });
+		},
+		setLayer: function (level) { layerGain.gain.setTargetAtTime(level, ctx.currentTime, 0.05); },
 		state: function () { return failed ? 'failed' : (buf ? 'ready' : 'loading'); },
 		start: function (from) {
 			this.stop();
@@ -74,10 +87,18 @@ window.partnerConductor = window.partnerConductor || (function () {
 			ended = false;
 			t0 = ctx.currentTime + 0.1 - from;  // Song time 0, even when starting part-way.
 			src.start(t0 + from, from);
+			if (layerBuf) {
+				layerSrc = ctx.createBufferSource();
+				layerSrc.buffer = layerBuf;
+				layerSrc.connect(layerGain);
+				layerSrc.start(t0 + from, from);
+			}
 			playing = true;
 		},
 		stop: function () {
 			if (src) { src.stop(); src.disconnect(); src = null; }
+			if (layerSrc) { layerSrc.stop(); layerSrc.disconnect(); layerSrc = null; }
+			layerGain.gain.value = 0;
 			playing = false;
 			hiddenPause = false;
 		},
@@ -98,20 +119,32 @@ window.partnerConductor = window.partnerConductor || (function () {
 var uses_browser_clock := OS.has_feature("web")
 
 var _player: AudioStreamPlayer
+var _layer_player: AudioStreamPlayer
+var _layer_level := 0.0
 var _output_latency := 0.0
 var _playing := false
 var _native_finished := false
 
 
-## Hands the Conductor its song. On the web, the browser decodes it in the
-## background; wait for is_ready() before start().
-func load_song(stream: AudioStreamMP3) -> void:
+## Hands the Conductor its song, and a layer that plays in time with it at
+## the volume set_layer_level() gives. On the web, the browser decodes them in
+## the background; wait for is_ready() before start().
+func load_song(stream: AudioStreamMP3, layer: AudioStreamMP3 = null) -> void:
 	if uses_browser_clock:
 		JavaScriptBridge.eval(BROWSER_JS, true)
 		JavaScriptBridge.eval("window.partnerConductor.open()", true)
 		JavaScriptBridge.eval("window.partnerConductor.load('%s')"
 				% Marshalls.raw_to_base64(stream.data), true)
+		if layer:
+			JavaScriptBridge.eval("window.partnerConductor.loadLayer('%s')"
+					% Marshalls.raw_to_base64(layer.data), true)
 		return
+	if layer:
+		_layer_player = AudioStreamPlayer.new()
+		_layer_player.stream = layer
+		_layer_player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
+		_layer_player.volume_db = -80.0
+		add_child(_layer_player)
 	_player = AudioStreamPlayer.new()
 	_player.stream = stream
 	# Stream playback runs through Godot's mixer, which the clock reading needs.
@@ -143,6 +176,8 @@ func start(from := 0.0) -> void:
 	_output_latency = AudioServer.get_output_latency()
 	_native_finished = false
 	_player.play(from)
+	if _layer_player:
+		_layer_player.play(from)
 
 
 func stop() -> void:
@@ -151,6 +186,21 @@ func stop() -> void:
 		JavaScriptBridge.eval("window.partnerConductor.close()", true)
 	elif _player:
 		_player.stop()
+		if _layer_player:
+			_layer_player.stop()
+	_layer_level = 0.0
+
+
+## How loud the layer plays, 0 (silent) to 1.
+func set_layer_level(level: float) -> void:
+	level = clampf(level, 0.0, 1.0)
+	if not _playing or absf(level - _layer_level) < 0.01:
+		return
+	_layer_level = level
+	if uses_browser_clock:
+		JavaScriptBridge.eval("window.partnerConductor.setLayer(%f)" % level, true)
+	elif _layer_player:
+		_layer_player.volume_db = linear_to_db(maxf(level, 0.0001))
 
 
 ## Native builds pause here when the window loses focus. The web pauses on
@@ -158,12 +208,16 @@ func stop() -> void:
 func pause() -> void:
 	if _playing and not uses_browser_clock:
 		_player.stream_paused = true
+		if _layer_player:
+			_layer_player.stream_paused = true
 
 
 ## Native only: the web resumes inside the touch handler itself.
 func resume() -> void:
 	if not uses_browser_clock and _player:
 		_player.stream_paused = false
+		if _layer_player:
+			_layer_player.stream_paused = false
 
 
 func is_paused() -> bool:

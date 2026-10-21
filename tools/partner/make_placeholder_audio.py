@@ -8,6 +8,11 @@ Writes game/assets/audio/partner/:
   chords, a round bass, laid-back drums, and a soft bell on every chart note
   so the beat is easy to hear. It starts with the heartbeat alone and builds
   to a light crescendo, then one chord rings out.
+- placeholder_layer.mp3: an extra layer in time with the song (a high
+  electric-piano line, a shaker and a soft pad). The game turns it up while
+  the player keeps a streak of hits and lets it settle back after a miss
+  (Dan, 2026-10-21: "a streak of hits ... adds a layer to the song").
+- placeholder_hit.wav: a short sparkle for each hit.
 - placeholder_celebrate.wav: a bright rising chime for the test appearing.
 - placeholder_miss_1..3.wav: short wordless "hm" sounds standing in for the
   awkward laughter.
@@ -31,6 +36,7 @@ BAR = 4 * BEAT
 LENGTH = CHART["song_length_ms"] / 1000
 SILENT_BAR = 48
 LAST_NOTE = CHART["notes_ms"][-1] / 1000
+CRESCENDO_BAR = int(CHART["crescendo_ms"] / 1000 // BAR) + 1
 SWING = 0.06  # How late the off-beat sixteenths fall, in seconds.
 
 # One chord every 2 bars, the neo-soul ii-V-I-vi in C (MIDI note numbers):
@@ -152,6 +158,17 @@ def song():
             pad = sum(np.sin(2 * np.pi * hz(m + 12) * tt * (1 + 0.002 * np.sin(2 * np.pi * 5 * tt)))
                       for m in chord[1:])
             add(mix, bt, 0.025 * lv * e * pad)
+        # The crescendo (chart bars 89-100): a cymbal swell into it, and the
+        # pad doubled an octave higher.
+        if bar == CRESCENDO_BAR - 1:
+            swell = noise(BAR, 10.0, 0.08, 99) * np.linspace(0, 1, int(BAR * SR)) ** 2
+            add(mix, bt, swell)
+        if bar == CRESCENDO_BAR:
+            add(mix, bt, noise(2.5, 0.8, 0.2, 98))
+        if bar >= CRESCENDO_BAR:
+            e, tt = env(BAR, 0.2, 4.0)
+            high = sum(np.sin(2 * np.pi * hz(m + 24) * tt) for m in chord[1:])
+            add(mix, bt, 0.015 * e * high)
 
     # The tap cue on every chart note, on a chord tone.
     for i, ms in enumerate(CHART["notes_ms"]):
@@ -169,6 +186,41 @@ def song():
     # soft limit so the final hit doesn't clip.
     body = np.max(np.abs(mix[: int(LAST_NOTE * SR)]))
     return np.tanh(mix / body * 1.6) * 0.9
+
+
+def layer():
+    """The streak layer: same bars and chords as the song, nothing on its own."""
+    n = int(LENGTH * SR)
+    mix = np.zeros(n)
+    for bar in range(1, 100):
+        bt = (bar - 1) * BAR
+        if bar == SILENT_BAR:
+            continue
+        chord = sorted(CHORDS[chord_index(bt)])
+        # A rising and falling line of chord tones, two octaves up, on the eighths.
+        line = chord[1:] + chord[-2:0:-1]
+        for k in range(8):
+            t = bt + k * BEAT / 2 + (SWING if k % 2 else 0)
+            add(mix, t, keys(hz(line[k % len(line)] + 24), 0.6, 0.05 if k % 2 else 0.07))
+        for s in range(16):  # Shaker on the sixteenths.
+            add(mix, bt + s * BEAT / 4 + (SWING / 2 if s % 2 else 0),
+                noise(0.06, 0.015, 0.05 if s % 2 else 0.035, 1000 + bar * 16 + s))
+        e, tt = env(BAR, 0.3, 3.0)
+        pad = sum(np.sin(2 * np.pi * hz(m + 12) * tt) for m in chord[1:])
+        add(mix, bt, 0.02 * e * pad)
+    # Fades out under the last note; the song's own chord rings on alone.
+    fade = np.clip((LAST_NOTE + 0.5 - np.arange(n) / SR) / 1.5, 0.0, 1.0)
+    mix *= fade
+    return mix / max(1e-6, np.max(np.abs(mix))) * 0.7
+
+
+def hit():
+    """A short, bright sparkle: two high bells a hair apart."""
+    mix = np.zeros(int(0.5 * SR))
+    add(mix, 0.0, bell(hz(96), 0.25))
+    add(mix, 0.035, bell(hz(100), 0.18))
+    add(mix, 0.07, bell(hz(103), 0.12))
+    return mix / max(1.0, np.max(np.abs(mix)) / 0.7)
 
 
 def celebrate():
@@ -215,9 +267,11 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         wav = pathlib.Path(tmp) / "song.wav"
-        write_wav(wav, song())
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav), "-ac", "1",
-                        "-b:a", "64k", str(OUT / "placeholder_song.mp3")], check=True)
+        for name, samples in [("placeholder_song", song()), ("placeholder_layer", layer())]:
+            write_wav(wav, samples)
+            subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav), "-ac", "1",
+                            "-b:a", "64k", str(OUT / f"{name}.mp3")], check=True)
+    write_wav(OUT / "placeholder_hit.wav", hit())
     write_wav(OUT / "placeholder_celebrate.wav", celebrate())
     for k in range(1, 4):
         write_wav(OUT / f"placeholder_miss_{k}.wav", miss(k))
