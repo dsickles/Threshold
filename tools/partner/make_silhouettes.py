@@ -465,10 +465,10 @@ def moments():
     sofa_front = (rect(26, 116, 148, 18, 6, PROP_BACK) + rect(16, 92, 22, 46, 8, PROP_BACK)
                   + rect(162, 92, 22, 46, 8, PROP_BACK)
                   + stroke("M 36 136 L 36 148 M 164 136 L 164 148", 5, PROP_BACK))
-    her = Figure((78, 118), facing=0, woman=True, scale=0.82, lean=14, head=12, shins=(6, 30),
+    her = Figure((88, 118), facing=0, woman=True, scale=0.82, lean=2, head=16, hair=0.6, shins=(6, 30),
                  legs=((4, 2), (-2, 0)))
-    him = Figure((122, 116), facing=0, scale=0.85, lean=-3, shins=(6, 32), legs=((-2, 0), (4, 2)))
-    him.reach(0, add(her.shoulder(0), (-2, 6)), elbow=1)
+    him = Figure((114, 116), facing=0, scale=0.85, lean=-2, shins=(6, 32), legs=((-2, 0), (4, 2)))
+    him.reach(0, add(her.shoulder(0), (-3, 14)), elbow=1)
     him.reach(1, add(him.hip, (10, 4)))
     lap = add(her.hip, (4, -2))
     her.reach(0, add(lap, (-2, 0)))
