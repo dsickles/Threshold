@@ -1,6 +1,6 @@
 # M1 words (draft)
 
-**Status:** Drafted by Claude at Dan's request, 2026-10-20, using the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md). Dan's edits applied 2026-10-22; what he has approved is marked **decided**, anything else is still a draft for him. CLAUDE.md's rule still stands: Claude doesn't write story words unless Dan asks, and these exist only because he did.
+**Status:** Drafted by Claude at Dan's request, 2026-10-20, using the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md). Dan's edits applied and every line approved, 2026-10-22. CLAUDE.md's rule still stands: Claude doesn't write story words unless Dan asks, and these exist only because he did.
 
 The five pieces of House writing M1 needs, plus the Partner's ending words, which Dan wrote himself. Where each sits is in [house-floor-plan.md](house-floor-plan.md); each object's lifeline is in the [continuity ledger](continuity-ledger.md). All of it is text: subtitles or writing on objects, no voice acting ([ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md)).
 
@@ -30,7 +30,7 @@ Built on Maya's real worry about small things, which turns into the big worry. L
 | 4b | Maya, after 3b | Me too. The good kind. |
 | 5 | Maya | Now please move your boxes out of the hall. I want to put a record on. |
 
-Only lines 3 and 4 differ; the facts, the House and the next step are the same for everyone (Story 1.6). Line 1 is the small worry before the big one. Line 5 is the practical reason the boxes move and the hall opens, and it points to the record player (the bed was delivered straight to the bedroom, so it never needs finding). Lines 1 to 4: decided (Dan, 2026-10-22). Line 5's wording: draft.
+Only lines 3 and 4 differ; the facts, the House and the next step are the same for everyone (Story 1.6). Line 1 is the small worry before the big one. Line 5 is the practical reason the boxes move and the hall opens, and it points to the record player (the bed was delivered straight to the bedroom, so it never needs finding). All lines decided (Dan, 2026-10-22).
 
 ### Alternatives
 
@@ -89,6 +89,6 @@ The vitamins line is the only hint, and it is ordinary: people trying for a baby
 ## Dan's calls
 
 1. ~~The opening beat~~ Decided 2026-10-22: "Did you lock the door?", with Dan's edits.
-2. **The opening beat's last line:** "Now please move your boxes out of the hall. I want to put a record on." *Recommended: yes.*
+2. ~~The opening beat's last line~~ Decided 2026-10-22: "Now please move your boxes out of the hall. I want to put a record on."
 3. ~~The fridge note~~ Decided 2026-10-22: the sesame seed.
 4. ~~Who "Mom" is~~ Decided 2026-10-22: left open.
