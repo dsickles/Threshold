@@ -94,10 +94,13 @@ test("UI style opens, shows body text at its phone size and goes back", async ({
   await game.tap("Tap to begin");
   await game.tap("UI style");
   await game.waitForScene(UI_STYLE);
-  for (const name of ["Primary", "Quiet", "Quiet (off)", "Back to menu"]) {
+  for (const name of ["Primary", "Quiet", "Back to menu"]) {
     await game.findButton(name);
   }
-  const screen = (await game.state())!.screens[UI_STYLE];
+  const { buttons, screens } = (await game.state())!;
+  const off = buttons.find((b) => b.text === "Quiet (off)");
+  expect(off?.disabled, "Quiet (off) is shown and can't be tapped").toBe(true);
+  const screen = screens[UI_STYLE];
   const viewport = page.viewportSize()!;
   if (viewport.width > viewport.height && viewport.height < 500) {
     // Sideways phone: about 393 points tall, so the layout shows at ~55%.
