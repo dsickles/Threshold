@@ -14,8 +14,9 @@ const STORY_ORDER: Array[StringName] = [
 const STAND_IN := &"stand_in"
 
 ## The scene each chapter starts from. A chapter that isn't built yet has no
-## entry. The Partner (DAS-73) adds its line here when it moves onto the runner.
+## entry.
 const SCENES := {
+	&"partner": "res://scenes/chapters/partner/partner.tscn",
 	STAND_IN: "res://scenes/chapters/stand_in/stand_in_chapter.tscn",
 }
 

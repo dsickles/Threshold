@@ -185,6 +185,13 @@ theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
 columns = 3
 
+[node name="PartnerButton" type="Button" parent="Menu/Chapters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 88)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "The Partner (rough)"
+
 [node name="StandInButton" type="Button" parent="Menu/Chapters"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 88)

@@ -29,6 +29,7 @@ func _ready() -> void:
 	%SmoothnessButton.pressed.connect(get_tree().change_scene_to_file.bind(SMOOTHNESS_SCENE))
 	%RhythmButton.pressed.connect(_open_check.bind(RHYTHM_CHECK))
 	%ViewpointsButton.pressed.connect(get_tree().change_scene_to_file.bind(VIEWPOINTS_SCENE))
+	%PartnerButton.pressed.connect(_enter_chapter.bind(&"partner"))
 	%StandInButton.pressed.connect(_enter_chapter.bind(ChapterList.STAND_IN))
 	var chapters := ChapterRunner.of(get_tree())
 	chapters.chapter_finished.connect(_on_chapter_finished)

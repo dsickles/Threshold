@@ -68,9 +68,9 @@ A chapter is a scene. Its root node:
    the core table do that.
 4. Handles its own pause when the tab is hidden.
 
-Then add its scene to `ChapterList.SCENES`. The Partner (DAS-73) already emits
-a plain `finished`, so moving it over is one line in `SCENES` plus calling
-`enter(&"partner", ...)` from the menu.
+Then add its scene to `ChapterList.SCENES`. The Partner (DAS-73) is the first
+real chapter on the runner: the menu's "The Partner (rough)" button calls
+`enter(&"partner", self)`.
 
 The stand-in chapter (`game/scenes/chapters/stand_in/`) is the smallest
 example. Tests: `game/tests/test_chapter_runner.gd` and

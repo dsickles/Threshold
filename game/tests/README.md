@@ -41,7 +41,7 @@ in game code fails the test that caused it.
    `queue_free`. For tweens and timers, step them yourself (for example
    `tween.custom_step(seconds)`) rather than waiting real time.
 7. For audio or anything timed, give the scene a fake clock instead of real
-   sound (as the Partner's ending check does). Sound timing on a real phone is
+   sound (as `test_partner.gd` does). Sound timing on a real phone is
    still Dan's to check.
 8. Run `bash tools/test.sh` and make sure the new test fails if you break the
    thing it checks, then passes again.
@@ -60,7 +60,7 @@ fix the test and say why in the PR.
 ## Older stand-alone checks
 
 A file named `*_check.gd` here that is not `test_*` is a stand-alone SceneTree
-script (for example the Partner's ending check). `tools/test.sh` and
+script. `tools/test.sh` and
 `tools/test.ps1` run each one too and fail if it exits non-zero. New tests
 should be `test_*.gd` files instead; a stand-alone check can be moved over
 whenever its owner next touches it.
@@ -74,4 +74,5 @@ whenever its owner next touches it.
 | `test_m0_menu.gd` | Tap to begin, button sizes, each M0 check opens and Back returns |
 | `test_smoothness_check.gd` | Warmup, hitch and worst-frame counting, the 2-minute run, Heavy and Shadow switches, Back |
 | `test_rhythm_check.gd` | Tap pad only while the click plays, last 20 taps, offset to the nearest click, average, spread and Good count, sound delay re-scoring and limits, Clear, 44px buttons on phone screens |
+| `test_partner.gd` | The Partner on a fake clock: first tap starts the song, no taps and all-early taps reach the test and report finished, Perfect on the note, stray taps do nothing, late-arriving taps inside the window still hit, intro taps set the sound delay, no laughs in the intro, hidden tab pauses and the resume tap isn't judged, the menu opens it and takes it back, the judgement sits below the heart, the chart is Dan's plan from his own taps, 200 notes at 90 BPM on the track's eighths (25 ms after its bar lines), at least an eighth apart with some between the beats and 51 in the 12-bar crescendo, more than any other 12 bars, lights fall from the top to the heart, one stray intro tap does not set the sound delay, the test holds then waits for a tap, a streak warms the screen and turns up the song's layer and a miss lets it settle back, each streak of 8 brings in the next moment of their life (all 12 on a perfect or typical run, 8 s or more apart, on screen and clear of the hearts), the Conductor reads a browser true (1) as true, and a modelled first-time player (taps 40 ms late, give or take 60 ms) misses fewer than 5 notes a run |
 | `test_viewpoints_check.gd` | Start in the doorway, tap a ring to glide to its view, changing mind mid-glide, glide time and its limits, rings on screen, 44px and not overlapping on laptop and phone screens from every viewpoint, Back |

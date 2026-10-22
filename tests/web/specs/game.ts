@@ -9,6 +9,8 @@ export type ProbeState = {
   overlays: string[];
   size: { x: number; y: number };
   buttons: ProbeButton[];
+  // probe_state() of screens that report one, by scene path.
+  screens: Record<string, any>;
   progress: { finished: { chapter: string; answer: string }[]; saveOk: boolean };
 };
 
@@ -16,6 +18,7 @@ export const MENU = "res://scenes/ui/m0_menu.tscn";
 export const SMOOTHNESS = "res://scenes/m0_checks/smoothness/smoothness_check.tscn";
 export const VIEWPOINTS = "res://scenes/m0_checks/viewpoints_check.tscn";
 export const RHYTHM = "res://scenes/ui/m0_rhythm_check.tscn";
+export const PARTNER = "res://scenes/chapters/partner/partner.tscn";
 
 // Every console error or uncaught page error fails the test that caused it.
 export const test = base.extend<{ game: Game }>({
@@ -126,6 +129,17 @@ export class Game {
       },
       { x: button.x, y: button.y, size },
     );
+  }
+
+  /** What a screen with no buttons reports about itself (its probe_state()). */
+  async screen(scene: string): Promise<any> {
+    return (await this.state())?.screens?.[scene] ?? null;
+  }
+
+  /** Taps the middle of the screen, for screens where the whole screen is the tap target. */
+  async tapMiddle() {
+    const { size } = (await this.state())!;
+    await this.tapButton({ text: "", x: size.x / 2, y: size.y / 2, disabled: false });
   }
 
   async audioStates(): Promise<string[]> {
