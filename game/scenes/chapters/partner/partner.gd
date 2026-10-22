@@ -53,17 +53,20 @@ const MISS_SOUNDS: Array[AudioStream] = [  # PLACEHOLDER for the awkward laughte
 
 # Judging, widened after Dan's 2026-10-20 play ("most people should be able to
 # get most beats on at least good, with less than 5 misses"); to tune in
-# playtests. Good must stay under half the closest gap between notes (500 ms)
+# playtests. Good must stay under half the closest gap between notes (333 ms)
 # so one tap can't count twice.
 const PERFECT_WINDOW := 0.070
 const GOOD_WINDOW := 0.160
 # A tap reaches the game a little after the touch it is timed from, so a note
 # waits this much longer before it counts as missed. Judging still uses
-# GOOD_WINDOW. GOOD_WINDOW + MISS_GRACE must stay under the 500 ms gap.
+# GOOD_WINDOW. GOOD_WINDOW + MISS_GRACE must stay under the 333 ms gap.
 const MISS_GRACE := 0.080
 # How far an intro tap may be from its note and still set the sound delay.
-const CALIBRATION_WINDOW := 0.250
-const MAX_SOUND_DELAY := 0.250
+# Bluetooth headphones such as AirPods can add 250 ms or more that the browser
+# doesn't report (Dan, 2026-10-22: "many of the beats still feel like I'm too
+# late"), so both allow 400 ms; intro notes are at least 1.3 s apart.
+const CALIBRATION_WINDOW := 0.400
+const MAX_SOUND_DELAY := 0.400
 # Falling hearts reach the centre this long before a tap on time would land
 # (the note, plus the sound delay the intro's taps found). Dan, 2026-10-22: on
 # that time exactly, "I wanted to do the beats a tiny bit earlier than when

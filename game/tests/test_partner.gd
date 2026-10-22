@@ -82,13 +82,13 @@ func test_every_tap_early_still_reaches_the_test() -> void:
 	var notes: PackedFloat64Array = _partner._notes
 	var next := [0]
 	_play_to_end(func(t: float) -> void:
-		# 300 ms early: outside Good, and outside the intro's calibration
+		# 450 ms early: outside Good, and outside the intro's calibration
 		# window, so the sound delay can't move to meet the taps. A note an
-		# eighth after another isn't tapped: 300 ms early for it is on time
-		# for the one before.
-		if next[0] < notes.size() and t >= notes[next[0]] - 0.300:
+		# eighth after another isn't tapped: early for it is on time for the
+		# one before.
+		if next[0] < notes.size() and t >= notes[next[0]] - 0.450:
 			if next[0] == 0 or notes[next[0]] - notes[next[0] - 1] > 0.500:
-				_tap(notes[next[0]] - 0.300)
+				_tap(notes[next[0]] - 0.450)
 			next[0] += 1)
 	check_eq(_partner.probe_state().state, "TEST_SHOWN", "state after the song")
 	check_eq(_partner.probe_state().misses, notes.size(), "every early tap missed")
@@ -494,3 +494,22 @@ func test_hearts_reach_the_centre_just_before_a_tap_on_time() -> void:
 	_fake.tap = note + 0.08
 	_partner._on_tap()
 	check_eq(_partner.probe_state().hits, 1, "a tap 80 ms later counts as on time")
+
+
+# Bluetooth headphones can add 250 ms or more the browser doesn't report.
+func test_intro_taps_300_ms_late_set_the_sound_delay() -> void:
+	_partner._on_tap()
+	var count := 0
+	for note in _partner._notes:
+		if note >= _partner._intro_end:
+			break
+		_step_to(note + 0.3)
+		_tap(note + 0.3)
+		count += 1
+	check(count >= _partner.MIN_CALIBRATION_TAPS, "enough intro notes to calibrate (%d)" % count)
+	check_near(_partner._sound_delay, 0.3, 0.001, "sound delay from intro taps 300 ms late")
+	var hits: int = _partner.probe_state().hits
+	var first_after: float = _partner._notes[count]
+	_step_to(first_after + 0.3)
+	_tap(first_after + 0.3)
+	check_eq(_partner.probe_state().hits, hits + 1, "after the intro, a tap 300 ms late hits")
