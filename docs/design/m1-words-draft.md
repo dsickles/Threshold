@@ -1,6 +1,6 @@
 # M1 words (draft)
 
-**Status:** Drafted by Claude at Dan's request, 2026-10-20, using the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md). Dan's edits applied and every line approved, 2026-10-22. CLAUDE.md's rule still stands: Claude doesn't write story words unless Dan asks, and these exist only because he did.
+**Status:** Drafted by Claude at Dan's request, 2026-10-20, using the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md). Dan's edits applied and every line approved, 2026-10-22. CLAUDE.md's rule: Claude writes story words only when Dan asks, marked as drafts until he approves them.
 
 The five pieces of House writing M1 needs, plus the Partner's ending words, which Dan wrote himself. Where each sits is in [house-floor-plan.md](house-floor-plan.md); each object's lifeline is in the [continuity ledger](continuity-ledger.md). All of it is text: subtitles or writing on objects, no voice acting ([ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md)).
 

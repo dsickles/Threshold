@@ -263,6 +263,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 22. Claude may draft story words when Dan asks (2026-10-22)
+
+| | |
+|---|---|
+| **Was** | CLAUDE.md: don't invent story, dialogue or journal wording; placeholders only. The narrative-craft skill never wrote story words. |
+| **Became** | Claude drafts story words only when Dan asks, marks every line as a draft until he approves it, and tells him. |
+| **Why** | Dan asked for drafts of the M1 House writing (2026-10-20) and approved them with edits; a first draft to react to was faster for him. Dan's call, 2026-10-22. |
+| **Record** | CLAUDE.md "Changing things"; `.claude/skills/narrative-craft/SKILL.md`; [m1-words-draft.md](m1-words-draft.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
