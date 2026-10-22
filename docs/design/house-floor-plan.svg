@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 770" width="740" height="770" font-family="Helvetica, Arial, sans-serif">
+<rect width="740" height="770" fill="#FFFFFF"/>
+<rect x="30" y="40" width="280" height="240" fill="#D7E6F2" stroke="#3A3530" stroke-width="3"/>
+<rect x="30" y="40" width="120" height="100.0" fill="#D7E6F2" stroke="#3A3530" stroke-width="3"/>
+<rect x="310" y="160" width="80" height="120" fill="#E4E2DE" stroke="#3A3530" stroke-width="3"/>
+<rect x="310" y="40" width="80" height="120" fill="#D7E6F2" stroke="#3A3530" stroke-width="3"/>
+<rect x="390" y="40" width="160" height="240" fill="#E4E2DE" stroke="#3A3530" stroke-width="3"/>
+<rect x="550" y="40" width="160" height="300.0" fill="#F2D3D3" stroke="#3A3530" stroke-width="3"/>
+<rect x="190" y="280" width="360" height="60.0" fill="#D7E6F2" stroke="#3A3530" stroke-width="3"/>
+<rect x="30" y="280" width="160" height="60.0" fill="#F6E3B8" stroke="#3A3530" stroke-width="3"/>
+<rect x="30" y="340.0" width="160" height="180.0" fill="#F6E3B8" stroke="#3A3530" stroke-width="3"/>
+<rect x="190" y="340.0" width="280" height="180.0" fill="#F6E3B8" stroke="#3A3530" stroke-width="3"/>
+<rect x="470" y="340.0" width="240" height="180.0" fill="#F6E3B8" stroke="#3A3530" stroke-width="3"/>
+<line x1="32.0" y1="340.0" x2="188.0" y2="340.0" stroke="#F6E3B8" stroke-width="7"/>
+<line x1="470" y1="342.0" x2="470" y2="518.0" stroke="#F6E3B8" stroke-width="7"/>
+<line x1="470" y1="340.0" x2="470" y2="520" stroke="#3A3530" stroke-width="1.5" stroke-dasharray="6 6"/>
+<line x1="190" y1="372.0" x2="190" y2="488.0" stroke="#F6E3B8" stroke-width="7"/>
+<line x1="238.0" y1="280" x2="278.0" y2="280" stroke="#D7E6F2" stroke-width="7"/>
+<line x1="338.0" y1="280" x2="370.0" y2="280" stroke="#E4E2DE" stroke-width="7"/>
+<line x1="450.0" y1="280" x2="490.0" y2="280" stroke="#E4E2DE" stroke-width="7"/>
+<line x1="550" y1="286.0" x2="550" y2="334.0" stroke="#F2D3D3" stroke-width="7"/>
+<line x1="150" y1="80.0" x2="150" y2="116.0" stroke="#D7E6F2" stroke-width="7"/>
+<line x1="310" y1="108.0" x2="310" y2="144.0" stroke="#D7E6F2" stroke-width="7"/>
+<line x1="214.0" y1="340.0" x2="274.0" y2="340.0" stroke="#D7E6F2" stroke-width="7"/>
+<line x1="86.0" y1="520" x2="134.0" y2="520" stroke="#F6E3B8" stroke-width="7"/>
+<rect x="218.0" y="330.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="231.0" y="330.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="244.0" y="330.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<text x="196.0" y="390.0" font-size="9.5" fill="#5A4630">boxes block the hall until</text>
+<text x="196.0" y="402.0" font-size="9.5" fill="#5A4630">the opening beat</text>
+<line x1="250.0" y1="520" x2="410.0" y2="520" stroke="#7FB0D6" stroke-width="5"/>
+<text x="330.0" y="535" font-size="10" fill="#4A7393" text-anchor="middle">big window</text>
+<line x1="30" y1="180.0" x2="30" y2="236.0" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="166.0" y1="40" x2="222.0" y2="40" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="590.0" y1="40" x2="642.0" y2="40" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="710" y1="128.0" x2="710" y2="184.0" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="502.0" y1="520" x2="558.0" y2="520" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="710" y1="380.0" x2="710" y2="416.0" stroke="#7FB0D6" stroke-width="5"/>
+<g transform="rotate(0 42.0 432.0)"><rect x="32.0" y="396.0" width="20.0" height="71.99999999999996" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<g transform="rotate(0 74.0 208.0)"><rect x="32.0" y="176.0" width="84.0" height="64.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="74.0" y="211.0" font-size="9" fill="#6B625A" text-anchor="middle">bed</text>
+</g>
+<g transform="rotate(0 42.0 161.0)"><rect x="32.0" y="150.0" width="20.0" height="21.999999999999993" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<g transform="rotate(0 42.0 255.0)"><rect x="32.0" y="244.0" width="20.0" height="22.00000000000003" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<g transform="rotate(0 194.0 51.0)"><rect x="166.0" y="42.0" width="56.0" height="18.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="194.0" y="54.0" font-size="8" fill="#6B625A" text-anchor="middle">dresser</text>
+</g>
+<g transform="rotate(0 298.0 206.0)"><rect x="288.0" y="176.0" width="20.0" height="60.000000000000014" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<text x="286.0" y="208.0" font-size="8" fill="#6B625A" text-anchor="end">dresser</text>
+<rect x="320.0" y="138.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="333.0" y="138.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="346.0" y="138.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<g transform="rotate(45 678.0 74.0)"><rect x="662.0" y="58.0" width="32.00000000000003" height="32.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<g transform="rotate(45 648.0 108.0)"><rect x="638.0" y="98.0" width="20.0" height="20.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<g transform="rotate(0 362.0 350.0)"><rect x="322.0" y="342.0" width="80.00000000000003" height="16.000000000000014" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="362.0" y="353.0" font-size="8" fill="#6B625A" text-anchor="middle">TV + receiver</text>
+</g>
+<g transform="rotate(0 311.0 350.0)"><rect x="304.0" y="342.0" width="14.000000000000021" height="16.000000000000014" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<g transform="rotate(0 413.0 350.0)"><rect x="406.0" y="342.0" width="13.999999999999986" height="16.000000000000014" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<text x="362.0" y="370.0" font-size="8.5" fill="#6B625A" text-anchor="middle">not plugged in yet</text>
+<g transform="rotate(-9 356.0 455.0)"><rect x="310.0" y="438.0" width="92.00000000000003" height="34.00000000000006" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="356.0" y="458.0" font-size="9" fill="#6B625A" text-anchor="middle">couch (askew)</text>
+</g>
+<g transform="rotate(0 609.0 354.0)"><rect x="510.0" y="342.0" width="197.99999999999997" height="24.00000000000002" fill="#E8E1D4" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<g transform="rotate(0 588.0 354.0)"><rect x="570.0" y="344.0" width="36.000000000000014" height="20.0" fill="#D5DEE6" stroke="#8A8178" stroke-width="1.2"/>
+<text x="588.0" y="357.0" font-size="8" fill="#6B625A" text-anchor="middle">sink</text>
+</g>
+<g transform="rotate(0 696.0 442.0)"><rect x="684.0" y="366.0" width="23.999999999999915" height="151.99999999999994" fill="#E8E1D4" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<g transform="rotate(0 653.0 506.0)"><rect x="622.0" y="494.0" width="62.00000000000003" height="23.999999999999986" fill="#E8E1D4" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<text x="538.0" y="358.0" font-size="8.5" fill="#6B625A" text-anchor="middle">counters</text>
+<g transform="rotate(0 696.0 440.0)"><rect x="686.0" y="424.0" width="20.0" height="32.00000000000003" fill="#6B625A" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<text x="682.0" y="444.0" font-size="9" fill="#6B625A" text-anchor="end">oven</text>
+<g transform="rotate(0 530.0 456.0)"><rect x="498.0" y="436.0" width="64.00000000000006" height="40.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="530.0" y="459.0" font-size="8.5" fill="#6B625A" text-anchor="middle">dining table</text>
+</g>
+<text x="226.0" y="160.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BEDROOM 1</text>
+<text x="226.0" y="174.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(main)</text>
+<text x="90.0" y="72.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BATH 1</text>
+<text x="90.0" y="86.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">en-suite</text>
+<text x="350" y="212.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BATH 2</text>
+<text x="350" y="226.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(hall)</text>
+<text x="350" y="92.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">closet</text>
+<text x="350" y="106.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(walk-in)</text>
+<text x="470" y="132.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BEDROOM 3</text>
+<text x="470" y="146.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">office</text>
+<text x="470" y="160.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(opens after</text>
+<text x="470" y="174.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">the Novice)</text>
+<text x="630" y="184.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BEDROOM 2</text>
+<text x="630" y="198.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">spare room</text>
+<text x="630" y="212.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">→ nursery</text>
+<text x="630" y="226.0" font-size="11" font-weight="400" fill="#2A2520" text-anchor="middle">(the last room)</text>
+<text x="326.0" y="316.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">BACK HALL  →  →</text>
+<text x="118.0" y="368.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">ENTRY</text>
+<text x="266.0" y="496.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">LIVING ROOM</text>
+<text x="590" y="400.0" font-size="13" font-weight="700" fill="#2A2520" text-anchor="middle">KITCHEN</text>
+<rect x="37.0" y="427.0" width="10" height="10" fill="#8B3A32"/>
+<text x="50.0" y="436.0" font-size="10.5" fill="#8B3A32" text-anchor="start">car keys</text>
+<g transform="rotate(0 632.0 358.0)"><rect x="614.0" y="342.0" width="36.000000000000014" height="31.999999999999993" fill="#F4F1EA" stroke="#8A8178" stroke-width="1.2"/>
+</g>
+<rect x="627.0" y="353.0" width="10" height="10" fill="#8B3A32"/>
+<text x="640.0" y="362.0" font-size="10.5" fill="#8B3A32" text-anchor="start">fridge</text>
+<rect x="509.0" y="441.0" width="10" height="10" fill="#8B3A32"/>
+<text x="506.0" y="450.0" font-size="10.5" fill="#8B3A32" text-anchor="end">pizza box</text>
+<rect x="57.0" y="311.0" width="10" height="10" fill="#8B3A32"/>
+<text x="70.0" y="320.0" font-size="10.5" fill="#8B3A32" text-anchor="start">moving box</text>
+<rect x="155.0" y="125.0" width="10" height="10" fill="#8B3A32"/>
+<text x="168.0" y="134.0" font-size="10.5" fill="#8B3A32" text-anchor="start">photo (wrapped)</text>
+<rect x="557.0" y="53.0" width="10" height="10" fill="#8B3A32"/>
+<text x="570.0" y="62.0" font-size="10.5" fill="#8B3A32" text-anchor="start">band poster</text>
+<rect x="557.0" y="77.0" width="10" height="10" fill="#8B3A32"/>
+<text x="570.0" y="86.0" font-size="10.5" fill="#8B3A32" text-anchor="start">guitar</text>
+<rect x="673.0" y="69.0" width="10" height="10" fill="#8B3A32"/>
+<text x="686.0" y="78.0" font-size="10.5" fill="#8B3A32" text-anchor="start"></text>
+<text x="706.0" y="134.0" font-size="10.5" fill="#8B3A32" text-anchor="end">Leo&#8217;s chair + onesie</text>
+<rect x="552.0" y="176.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="552.0" y="189.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="552.0" y="202.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="552.0" y="215.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="692.0" y="264.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="692.0" y="277.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="692.0" y="290.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="692.0" y="303.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="448.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="461.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<rect x="474.0" y="282.0" width="11" height="11" fill="#B08D5B" stroke="#5A4630" stroke-width="1"/>
+<text x="402.0" y="330.0" font-size="9.5" fill="#5A4630">office boxes (until the Novice)</text>
+<text x="544.0" y="310.0" font-size="9.5" fill="#5A4630" text-anchor="end">shut after the Loss →</text>
+<rect x="437.0" y="379.0" width="10" height="10" fill="#8B3A32"/>
+<text x="434.0" y="388.0" font-size="10.5" fill="#8B3A32" text-anchor="end">records</text>
+<rect x="37.0" y="155.0" width="10" height="10" fill="#8B3A32"/>
+<text x="50.0" y="164.0" font-size="10.5" fill="#8B3A32" text-anchor="start">bedside lamp (the Loss)</text>
+<rect x="37.0" y="251.0" width="10" height="10" fill="#8B3A32"/>
+<text x="50.0" y="260.0" font-size="10.5" fill="#8B3A32" text-anchor="start">Maya's list</text>
+<rect x="45.0" y="117.0" width="10" height="10" fill="#8B3A32"/>
+<text x="58.0" y="126.0" font-size="10.5" fill="#8B3A32" text-anchor="start">test</text>
+<rect x="281.0" y="55.0" width="10" height="10" fill="#8B3A32"/>
+<text x="278.0" y="76.0" font-size="10.5" fill="#8B3A32" text-anchor="end">record player</text>
+<text x="278.0" y="88.0" font-size="10.5" fill="#8B3A32" text-anchor="end">(the Partner)</text>
+<rect x="321.0" y="53.0" width="10" height="10" fill="#8B3A32"/>
+<text x="334.0" y="62.0" font-size="10.5" fill="#8B3A32" text-anchor="start">clothes</text>
+<polygon points="110.0,536.0 114.8,551.2 105.2,551.2" fill="#0E7A4F"/>
+<circle cx="110" cy="560.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="110" y="563.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">P</text>
+<polygon points="94.0,468.0 98.8,483.2 89.2,483.2" fill="#0E7A4F"/>
+<circle cx="94.0" cy="492.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="94.0" y="495.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">E1</text>
+<polygon points="134.8,457.8 150.8,457.1 148.3,466.4" fill="#1F5C99"/>
+<circle cx="158.0" cy="464.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="158.0" y="467.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">E2</text>
+<polygon points="234.0,436.0 218.8,440.8 218.8,431.2" fill="#0E7A4F"/>
+<circle cx="210.0" cy="436.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="210.0" y="439.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">L1</text>
+<polygon points="358.0,522.0 353.2,506.8 362.8,506.8" fill="#1F5C99"/>
+<circle cx="358.0" cy="498.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="358.0" y="501.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">L2</text>
+<polygon points="278.0,405.2 289.8,416.0 281.5,420.8" fill="#1F5C99"/>
+<circle cx="290.0" cy="426.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="290.0" y="429.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">L3</text>
+<polygon points="362.0,376.0 366.8,391.2 357.2,391.2" fill="#1F5C99"/>
+<circle cx="362.0" cy="400.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="362.0" y="403.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">L4</text>
+<polygon points="510.0,390.0 494.8,394.8 494.8,385.2" fill="#0E7A4F"/>
+<circle cx="486.0" cy="390.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="486.0" y="393.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">K1</text>
+<polygon points="632.0,388.0 636.8,403.2 627.2,403.2" fill="#1F5C99"/>
+<circle cx="632.0" cy="412.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="632.0" y="415.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">K2</text>
+<polygon points="582.0,464.0 597.2,459.2 597.2,468.8" fill="#1F5C99"/>
+<circle cx="606.0" cy="464.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="606.0" y="467.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">K3</text>
+<polygon points="266.0,310.0 250.8,314.8 250.8,305.2" fill="#0E7A4F"/>
+<circle cx="242.0" cy="310.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="242.0" y="313.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">H1</text>
+<polygon points="239.6,236.6 254.4,242.7 248.2,250.0" fill="#0E7A4F"/>
+<circle cx="258.0" cy="252.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="258.0" y="255.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">B1</text>
+<polygon points="142.0,212.0 157.2,207.2 157.2,216.8" fill="#1F5C99"/>
+<circle cx="166.0" cy="212.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="166.0" y="215.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">B2</text>
+<polygon points="271.0,87.0 263.6,101.2 256.8,94.4" fill="#1F5C99"/>
+<circle cx="254.0" cy="104.0" r="10" fill="#FFFFFF" stroke="#1F5C99" stroke-width="2.5"/>
+<text x="254.0" y="107.5" font-size="9" font-weight="700" fill="#1F5C99" text-anchor="middle">B3</text>
+<polygon points="146.0,98.0 161.2,93.2 161.2,102.8" fill="#0E7A4F"/>
+<circle cx="170.0" cy="98.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="170.0" y="101.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">BA</text>
+<polygon points="314.0,126.0 298.8,130.8 298.8,121.2" fill="#0E7A4F"/>
+<circle cx="290.0" cy="126.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="290.0" y="129.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">C1</text>
+<polygon points="586.0,289.2 582.5,304.8 574.2,300.0" fill="#0E7A4F"/>
+<circle cx="574.0" cy="310.0" r="10" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="574.0" y="313.5" font-size="9" font-weight="700" fill="#0E7A4F" text-anchor="middle">S1</text>
+<text x="128" y="564.0" font-size="11" fill="#2A2520">porch: the game starts here, facing the front door</text>
+<text x="30" y="24" font-size="12" fill="#6B625A">BACK (garden)</text>
+<text x="710" y="24" font-size="12" fill="#6B625A" text-anchor="end">about 17 m × 12 m, one storey</text>
+<text x="370.0" y="548" font-size="12" fill="#6B625A">FRONT (street)</text>
+<rect x="30" y="580" width="22" height="16" fill="#F6E3B8" stroke="#3A3530" stroke-width="1.5"/>
+<text x="62" y="593" font-size="12.5" fill="#2A2520">Always open: entry, living room, kitchen</text>
+<rect x="30" y="606" width="22" height="16" fill="#D7E6F2" stroke="#3A3530" stroke-width="1.5"/>
+<text x="62" y="619" font-size="12.5" fill="#2A2520">Opens after the opening beat: back hall, main bedroom, en-suite; closet once its boxes move (after the Partner)</text>
+<rect x="30" y="632" width="22" height="16" fill="#F2D3D3" stroke="#3A3530" stroke-width="1.5"/>
+<text x="62" y="645" font-size="12.5" fill="#2A2520">Spare room: ajar after the Partner, shut after the Loss, nursery at the end</text>
+<rect x="30" y="658" width="22" height="16" fill="#E4E2DE" stroke="#3A3530" stroke-width="1.5"/>
+<text x="62" y="671" font-size="12.5" fill="#2A2520">Shut in M1: hall bathroom, and the office (boxes against its door until the Novice)</text>
+<circle cx="41" cy="700" r="9" fill="#FFFFFF" stroke="#0E7A4F" stroke-width="2.5"/>
+<text x="62" y="705" font-size="12.5" fill="#2A2520">Doorway view (green) · wall view (blue) · the point shows which way the camera faces</text>
+<rect x="36" y="722" width="10" height="10" fill="#8B3A32"/>
+<text x="62" y="732" font-size="12.5" fill="#2A2520">Object (tap for its close-up) · gray outline = furniture · gaps in walls are doorways · dashed line = open plan</text>
+</svg>

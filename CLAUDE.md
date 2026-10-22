@@ -17,6 +17,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 | What is in v1, what is Later, open questions | [docs/scope.md](docs/scope.md) |
 | Decisions and why | [docs/adr/](docs/adr/) (newest wins) and [docs/design/decision-history.md](docs/design/decision-history.md) |
 | Game design | [docs/design/gdd.md](docs/design/gdd.md), [narrative-design.md](docs/design/narrative-design.md), [game-brief.md](docs/design/game-brief.md) |
+| Story continuity (every object, room and fact across the chapters) | [docs/design/continuity-ledger.md](docs/design/continuity-ledger.md) |
 | Technical design | [docs/design/game-architecture.md](docs/design/game-architecture.md) |
 | UX | [docs/design/ux/EXPERIENCE.md](docs/design/ux/EXPERIENCE.md) (behavior), [DESIGN.md](docs/design/ux/DESIGN.md) (look) |
 | Requirements | [docs/design/requirements.md](docs/design/requirements.md) |
@@ -48,7 +49,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 
 - Ask before adding a Godot addon, plugin, library or other outside dependency.
 - Keep the House and each chapter separate: a chapter must not reach into the House or another chapter, except through the shared systems in game-architecture.md.
-- Don't invent story, dialogue or journal wording. If a placeholder is needed, mark it clearly as a placeholder and tell Dan.
+- Don't invent story, dialogue or journal wording unless Dan asks for a draft. A draft or placeholder is always marked as one until Dan approves it, and Dan is told (Dan, 2026-10-22).
 - Don't delete or rewrite design docs. The one exception is fixing an out-of-date line after a decision (see "When documents disagree").
 - Dan follows along in Cursor. When only one session is writing, work in the main Threshold folder on a new branch, not a worktree. Use a worktree only when several sessions write at once, and tell Dan its full path so he can add it to his Cursor window (File → Add Folder to Workspace).
 - Push your branch to GitHub as soon as you commit, even before the PR is ready. Work that lives only in one session (a cloud thread or Dan's PC) is invisible to every other session. Pushing a branch never changes main; merging stays Dan's call.
@@ -120,7 +121,7 @@ Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents
 
 ### Installed skills
 
-Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.json`; update with `npx skills@latest update`). Typical flow: `/grill-with-docs` to agree a milestone or decision → `/to-spec` → `/to-tickets` → `/implement` one ticket at a time. Also: `prototype`, `tdd` (core table and saves only), `diagnosing-bugs`, `/wait-what` (Dan asks for a plain re-explanation), `/handoff`. Claude Code also has a built-in `/code-review`; `/implement` is meant to use this repo's `code-review` skill.
+Matt Pocock's skills, copied into `.claude/skills/` (versions in `skills-lock.json`; update with `npx skills@latest update`). Typical flow: `/grill-with-docs` to agree a milestone or decision → `/to-spec` → `/to-tickets` → `/implement` one ticket at a time. Threshold's own skill, not from Matt Pocock: `narrative-craft`, for any story-shaped design question (House changes, chapter objects, story beats, continuity); it drafts dialogue or journal wording only when Dan asks, marked as a draft. Also: `prototype`, `tdd` (core table and saves only), `diagnosing-bugs`, `/wait-what` (Dan asks for a plain re-explanation), `/handoff`. Claude Code also has a built-in `/code-review`; `/implement` is meant to use this repo's `code-review` skill.
 
 Every skill here must be one Claude can start on its own (no `disable-model-invocation: true`, and a description that says "Use when the user says /<name>…"). In Claude Project threads, "/grill-with-docs" arrives as plain text, not a slash command, so a skill Claude can't start never runs there. `npx skills update` brings that line back: after updating, remove it again and keep the "Use when" sentence.
 

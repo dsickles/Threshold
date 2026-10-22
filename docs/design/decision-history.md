@@ -252,6 +252,28 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 21. House views: doorway views, wall views and close-ups (2026-10-19)
+
+| | |
+|---|---|
+| **Was** | ADR-0003: tap a viewpoint (a spot or a doorway) and the camera glides there. Objects were tapped to use them directly. |
+| **Became** | Each room has a doorway view and 2–4 wall views. Tapping an object opens its close-up; tapping it again does its one action. House objects that don't start a chapter are never required, scored or saved. |
+| **Why** | Fits the M0 finding that tapping a thing should look at it (entry 17), hides AI-art flaws, and gives one verb for walls, House objects and chapter objects. Dan's call, 2026-10-19. |
+| **Record** | [ADR-0008](../adr/0008-house-doorway-and-wall-views-close-ups.md) |
+
+---
+
+## 22. Claude may draft story words when Dan asks (2026-10-22)
+
+| | |
+|---|---|
+| **Was** | CLAUDE.md: don't invent story, dialogue or journal wording; placeholders only. The narrative-craft skill never wrote story words. |
+| **Became** | Claude drafts story words only when Dan asks, marks every line as a draft until he approves it, and tells him. |
+| **Why** | Dan asked for drafts of the M1 House writing (2026-10-20) and approved them with edits; a first draft to react to was faster for him. Dan's call, 2026-10-22. |
+| **Record** | CLAUDE.md "Changing things"; `.claude/skills/narrative-craft/SKILL.md`; [m1-words-draft.md](m1-words-draft.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

@@ -41,8 +41,8 @@ The single answer to "is this in v1?". If a design doc describes something marke
 
 | Question | Needed by |
 |---|---|
-| The House's small floor plan: which rooms, where the chapter objects sit | M1 |
-| What The Partner shows on screen, its song, and its beat chart | M1 |
+| The House's small floor plan: which rooms, where the chapter objects sit (draft: [design/house-floor-plan.md](design/house-floor-plan.md)) | M1 |
+| What The Partner shows on screen, its song, and its beat chart (draft: [design/partner-song-and-beat-chart.md](design/partner-song-and-beat-chart.md)) | M1 |
 | What "Stress" is, whether it lasts beyond a chapter, and what it changes | M2 |
 | Anchor: scripted wobble or real physics | M2 (cheap test) |
 
@@ -60,4 +60,5 @@ The single answer to "is this in v1?". If a design doc describes something marke
 | Which automated-test addon to use for the core table and saves | None: the test runner in the repo (`game/tests/`) covers the core table and saves. Saves are one JSON file in Godot's user folder, kept in the browser's own storage on the web ([ADR-0007](adr/0007-saves-json-file-in-user-folder.md)). | 2026-10-19 |
 | Saving in M1 | The save system (finished-chapter list saved when a chapter ends, read back on the next visit) is built in M1 so every chapter after the Partner uses it. The Continue button, title screen and "Couldn't save." message stay in M2. Dan's call. | 2026-10-19 |
 | How Dan plays the test build on his iPhone (DAS-91) | In **plain Safari, held sideways, with Hide Toolbar** (the "aA" or ··· button by the address). A web page can't hide Safari's bars on iPhone, so itch.io's fullscreen button only fills the Safari window. Adding the page to the Home Screen does hide the bars, but there the Partner's taps landed off target and the chapter didn't respond, so it is not used. A private page of our own that installs as a full-screen app is the fallback if this stops being enough. Dan, 2026-10-22: "Hide toolbar was sufficient!" | 2026-10-22 |
+| Phone orientation for the whole game | **Sideways.** One layout for phone, laptop browser and PC/Steam; every M0 test was sideways and the project is 1280×720. The web build needs a "turn your phone sideways" screen for people holding the phone upright. | 2026-10-19 |
 | UI type scale and button style (DAS-66 review) | The DESIGN.md type scale means the size seen on a sideways phone; the 1280×720 layout sizes are scaled up to match. One shared button and text theme for every screen. Lists of equal choices use button-quiet; button-primary is for the one main action. Built in M1 when the first real menu is made (DAS-72); the M0 screens stay as they are. | 2026-10-18 |
