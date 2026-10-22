@@ -36,7 +36,7 @@ func _stand_at(house: Node, view: String) -> void:
 		house._tween.kill()
 	house._current = view
 	house._set_base(HouseLayout.view_transform(view))
-	house._show_rings()
+	house._arrive()
 
 
 func _same_place(a: Transform3D, b: Transform3D) -> bool:
@@ -231,30 +231,67 @@ func test_a_glide_takes_two_seconds() -> void:
 	check_near(house.GLIDE_SECONDS, 2.0, 1e-6, "glide time")
 
 
-# Going through a doorway, the camera passes through its middle, not the wall.
-func test_a_glide_through_a_doorway_passes_through_it() -> void:
-	var house := _open_house(ALL_OPEN)
-	await frames()
-	_stand_at(house, "H1")
-	tap(house.ring_to("B1"))
-	house._tween.custom_step(house.GLIDE_SECONDS / 2.0)
-	var middle: Vector3 = house._camera.global_transform.origin
-	var door: Vector2 = HouseLayout.DOORS.bedroom_door.at
-	check(Vector2(middle.x, middle.z).distance_to(door) < 0.05, "halfway, in the bedroom doorway (%s)" % middle)
+# Going through a doorway, the camera stays in the two rooms or the doorway
+# itself: it never passes through a wall.
+func test_glides_through_doorways_never_pass_through_a_wall() -> void:
+	for view in M1_VIEWS:
+		for ring in HouseLayout.rings_for(view, ALL_OPEN):
+			if ring.door == "":
+				continue
+			var door: Dictionary = HouseLayout.DOORS[ring.door]
+			var rooms := [HouseLayout.room_at(HouseLayout.VIEWS[view].stand),
+					HouseLayout.room_at(HouseLayout.VIEWS[ring.target].stand)]
+			var house := _open_house(ALL_OPEN)
+			_stand_at(house, view)
+			house._go_to(ring.target, ring.door)
+			var near_door := false
+			for step in 200:
+				house._tween.custom_step(house.GLIDE_SECONDS / 200.0)
+				var at: Vector3 = house._camera.global_transform.origin
+				var floor_point := Vector2(at.x, at.z)
+				var in_doorway: bool = floor_point.distance_to(door.at) <= door.width / 2.0
+				near_door = near_door or floor_point.distance_to(door.at) < 0.1
+				check(in_doorway or HouseLayout.room_at(floor_point) in rooms,
+						"%s to %s: step %d at %s is in %s or the doorway" % [view, ring.target, step,
+						floor_point, rooms])
+			if rooms[0] != rooms[1]:
+				check(near_door, "%s to %s passes through the middle of the doorway" % [view, ring.target])
+			house.free()
 
 
-func test_changing_mind_mid_glide_ends_at_the_new_view() -> void:
+# Rings hide while gliding, so a glide can't be turned mid-way through a wall,
+# and come back on arrival.
+func test_rings_hide_during_a_glide_and_come_back_on_arrival() -> void:
 	var house := _open_house()
 	await frames()
 	tap(house.ring_to("E1"))
-	await _finish_glide(house)
-	tap(house.ring_to("E2"))
 	house._tween.custom_step(0.6)
 	await frames()
-	tap(house.ring_to("L1"))
+	check(house._rings.all(func(ring: Button) -> bool: return not ring.visible), "no rings mid-glide")
+	check(house.ring_to("E2") == null, "nothing to tap mid-glide")
 	await _finish_glide(house)
-	check_eq(house._current, "L1", "view after changing mind")
-	check(_same_place(house._camera.global_transform, HouseLayout.view_transform("L1")), "camera at L1")
+	check(house.ring_to("E2") != null and house.ring_to("E2").visible, "the entry's rings on arrival")
+	check(house.ring_to("L1") != null, "and its doorway to the living room")
+
+
+# The camera never backs up: through every doorway, it keeps getting closer.
+func test_glides_through_doorways_never_back_up() -> void:
+	for view in M1_VIEWS:
+		for ring in HouseLayout.rings_for(view, ALL_OPEN):
+			if ring.door == "":
+				continue
+			var house := _open_house(ALL_OPEN)
+			_stand_at(house, view)
+			house._go_to(ring.target, ring.door)
+			var goal := HouseLayout.view_transform(ring.target).origin
+			var last := INF
+			for step in 20:
+				house._tween.custom_step(house.GLIDE_SECONDS / 20.0)
+				var left: float = house._camera.global_transform.origin.distance_to(goal)
+				check(left <= last + 0.05, "%s to %s: no backing up at step %d (%.2f m, was %.2f m)"
+						% [view, ring.target, step, left, last])
+				last = left
+			house.free()
 
 
 func test_a_short_drag_looks_around_a_little_and_the_next_glide_resets_it() -> void:
@@ -306,6 +343,8 @@ func test_keys_and_hover_do_nothing() -> void:
 		check_eq(ring.focus_mode, Control.FOCUS_NONE, "rings take no keyboard focus")
 		check(ring.get_theme_stylebox("hover") == ring.get_theme_stylebox("normal"),
 				"a ring looks the same hovered or not")
+		check(ring.get_theme_color("font_hover_color") == ring.get_theme_color("font_color"),
+				"a ring's arrow looks the same hovered or not")
 
 
 # --- Doors, from the story point.
@@ -350,6 +389,12 @@ func test_shut_and_blocked_doors_cannot_be_gone_through() -> void:
 	# The office never opens in M1, even if its door were open: no view inside.
 	check(not HouseLayout.can_pass("office_door", "hall", ALL_OPEN), "the office has no view to go to")
 	check(not HouseLayout.can_pass("bath2_door", "hall", ALL_OPEN), "the hall bathroom has no view to go to")
+
+
+func test_an_unknown_story_point_is_reported_and_shows_the_start() -> void:
+	expect_error("no story point 'nowhere'")
+	var house := _open_house({}, &"nowhere")
+	check_eq(house.door_states, HouseLayout.STAND_IN_POINTS[&"start"], "the start's doors")
 
 
 func test_which_doors_are_open_comes_from_the_story_point() -> void:

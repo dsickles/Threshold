@@ -2,9 +2,10 @@ extends Node3D
 ## The House in gray-box (DAS-93): the M1 rooms as simple shapes, lit by lamps
 ## and ordinary fog only, and moved through by tap (ADR-0008). Every view
 ## shows a ring for each doorway in its room that can be gone through and for
-## the room's other wall views; tapping one glides there in 2.0 s. A ring that
-## is off screen pins to the screen edge with an arrow. A short drag looks
-## around a little. There is no back button.
+## the room's other wall views; tapping one glides there in 2.0 s, and the
+## next view's rings appear on arrival. A ring that is off screen pins to the
+## screen edge with an arrow. A short drag looks around a little. There is no
+## back button.
 ##
 ## Which doors are open, shut or blocked by boxes comes from the story point.
 ## Until the core table (DAS-92) is on main, the stand-in points in
@@ -66,29 +67,41 @@ var _ring_style: StyleBoxFlat
 var _ring_pressed: StyleBoxFlat
 var _materials := {}
 var _door_pivots := {}
-var _box_stacks := {}
 var _world_env: WorldEnvironment
 
 
 func _ready() -> void:
 	if door_states.is_empty():
-		door_states = HouseLayout.STAND_IN_POINTS.get(story_point, HouseLayout.STAND_IN_POINTS[&"start"])
+		if not HouseLayout.STAND_IN_POINTS.has(story_point):
+			push_error("House: no story point '%s'; showing the start." % story_point)
+		door_states = HouseLayout.STAND_IN_POINTS.get(story_point, HouseLayout.STAND_IN_POINTS[&"start"]).duplicate()
 	_build_world()
 	_camera = Camera3D.new()
 	_camera.fov = 70.0
 	_camera.near = 0.05
 	add_child(_camera)
 	_build_ui()
+	get_viewport().size_changed.connect(_place_rings)
 	_current = HouseLayout.START_VIEW
 	_set_base(HouseLayout.view_transform(_current))
-	_show_rings()
+	_arrive()
 
 
 func _process(_delta: float) -> void:
 	# Keep the view about as wide on a tall phone as on a laptop.
 	var size := get_viewport().get_visible_rect().size
 	_camera.keep_aspect = Camera3D.KEEP_WIDTH if size.y > size.x else Camera3D.KEEP_HEIGHT
-	_place_rings()
+
+
+# Hiding the window pauses a glide (the web build stops altogether while
+# its tab is hidden). Nothing in the House is saved.
+func _notification(what: int) -> void:
+	if _tween == null or not _tween.is_valid():
+		return
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_tween.pause()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		_tween.play()
 
 
 ## Whether a glide is under way.
@@ -109,39 +122,68 @@ func probe_state() -> Dictionary:
 # --- Moving.
 
 func _go_to(target: String, door_id: String) -> void:
-	if target == _current:
+	if target == _current or is_gliding():
 		return
 	var from := _camera.global_transform
 	var to := HouseLayout.view_transform(target)
-	# Through a doorway, the glide passes through its middle rather than
-	# cutting through the wall beside it.
+	# Through a doorway, the glide passes through its middle, square to the
+	# wall, rather than cutting through the wall beside it.
 	var via := Vector3.INF
+	var across := Vector3.ZERO
 	if door_id != "":
 		var here := HouseLayout.room_at(Vector2(from.origin.x, from.origin.z))
 		var there := HouseLayout.room_at(Vector2(to.origin.x, to.origin.z))
 		if here != there:
 			var at: Vector2 = HouseLayout.DOORS[door_id].at
 			via = Vector3(at.x, HouseLayout.EYE_HEIGHT, at.y)
+			across = Vector3(0.0, 0.0, signf(to.origin.z - via.z)) if _door_along_x(door_id) \
+					else Vector3(signf(to.origin.x - via.x), 0.0, 0.0)
 	if door_id == "front_door":
 		_open_door(door_id)
 	_current = target
 	_yaw = 0.0
 	_pitch = 0.0
-	if _tween:
-		_tween.kill()
+	# Rings hide during the glide and come back on arrival, so a glide is
+	# never turned mid-way through a wall.
+	_ring_data = []
+	_show_rings()
 	_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_tween.tween_method(_apply_glide.bind(from, to, via), 0.0, 1.0, GLIDE_SECONDS)
+	_tween.tween_method(_apply_glide.bind(from, to, via, across), 0.0, 1.0, GLIDE_SECONDS)
+	_tween.finished.connect(_arrive)
+
+
+func _arrive() -> void:
+	_ring_data = HouseLayout.rings_for(_current, door_states)
 	_show_rings()
 
 
-func _apply_glide(t: float, from: Transform3D, to: Transform3D, via: Vector3) -> void:
+func _apply_glide(t: float, from: Transform3D, to: Transform3D, via: Vector3, across: Vector3) -> void:
 	var origin := from.origin.lerp(to.origin, t)
 	if via != Vector3.INF:
-		# A curve from `from` to `to` that passes through `via` halfway.
-		var control := 2.0 * via - (from.origin + to.origin) / 2.0
-		origin = from.origin.lerp(control, t).lerp(control.lerp(to.origin, t), t)
+		origin = _through(t, from.origin, via, across, to.origin)
 	var turn := from.basis.get_rotation_quaternion().slerp(to.basis.get_rotation_quaternion(), t)
 	_set_base(Transform3D(Basis(turn), origin))
+
+
+# A smooth path from `a` to `b` through the doorway at `via`, crossing it in
+# direction `across`. Time is shared by distance, so the camera keeps an even
+# pace on both sides of the door and never backs up.
+static func _through(t: float, a: Vector3, via: Vector3, across: Vector3, b: Vector3) -> Vector3:
+	var first := a.distance_to(via)
+	var second := via.distance_to(b)
+	var travelled := t * (first + second)
+	if travelled <= first and first > 0.0:
+		return _hermite(travelled / first, a, via - a, via, across * first)
+	if second <= 0.0:
+		return b
+	return _hermite((travelled - first) / second, via, across * second, b, b - via)
+
+
+static func _hermite(u: float, p0: Vector3, m0: Vector3, p1: Vector3, m1: Vector3) -> Vector3:
+	var u2 := u * u
+	var u3 := u2 * u
+	return (2.0 * u3 - 3.0 * u2 + 1.0) * p0 + (u3 - 2.0 * u2 + u) * m0 \
+			+ (-2.0 * u3 + 3.0 * u2) * p1 + (u3 - u2) * m1
 
 
 func _set_base(base: Transform3D) -> void:
@@ -158,6 +200,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	_yaw = clampf(_yaw - motion.relative.x * LOOK_PER_PIXEL, -LOOK_YAW_MAX, LOOK_YAW_MAX)
 	_pitch = clampf(_pitch - motion.relative.y * LOOK_PER_PIXEL, -LOOK_PITCH_MAX, LOOK_PITCH_MAX)
 	_set_base(_base)
+	_place_rings()
 
 
 func _open_door(door_id: String) -> void:
@@ -170,14 +213,11 @@ func _open_door(door_id: String) -> void:
 # --- Rings.
 
 func _show_rings() -> void:
-	_ring_data = HouseLayout.rings_for(_current, door_states)
 	while _rings.size() < _ring_data.size():
 		_rings.append(_make_ring())
 	for i in _rings.size():
 		var ring := _rings[i]
 		ring.visible = i < _ring_data.size()
-		if ring.visible:
-			ring.set_meta("target", _ring_data[i].target)
 	_place_rings()
 
 
@@ -191,7 +231,9 @@ func _make_ring() -> Button:
 		ring.add_theme_stylebox_override(state, _ring_pressed)
 	ring.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	ring.add_theme_font_size_override("font_size", 56)
-	ring.add_theme_color_override("font_color", Color(0.957, 0.937, 0.902))
+	for colour in ["font_color", "font_hover_color", "font_pressed_color",
+			"font_hover_pressed_color", "font_focus_color"]:
+		ring.add_theme_color_override(colour, Color(0.957, 0.937, 0.902))
 	ring.pressed.connect(_on_ring_pressed.bind(ring))
 	_ring_root.add_child(ring)
 	return ring
@@ -235,11 +277,13 @@ func _place_rings() -> void:
 			var local := _camera.global_transform.affine_inverse() * at
 			point = Vector2(screen.size.x if local.x > 0.0 else 0.0, screen.size.y / 2.0)
 		ring.text = ""
-		if not area.has_point(point):
-			point = point.clamp(area.position, area.end)
+		# Off to a side: pinned to that edge with an arrow. Just above or
+		# below the screen (after a look-drag): held at the edge.
+		if point.x < area.position.x or point.x > area.end.x:
 			var right := point.x > screen.size.x / 2.0
 			ring.text = "›" if right else "‹"
 			(pinned_right if right else pinned_left).append(ring)
+		point = point.clamp(area.position, area.end)
 		ring.position = point - ring.size / 2.0
 		shown.append(ring)
 	for side in [pinned_left, pinned_right]:
@@ -250,11 +294,13 @@ func _place_rings() -> void:
 # The ring's size in the game's units: RING_SIZE, or more where the game is
 # drawn small (an upright phone shows the whole 1280-wide view in 390 points).
 func _ring_size() -> float:
-	var window := Vector2(get_window().size)
+	# The window is in device pixels; a phone's screen scale turns them into
+	# points (3 on most iPhones).
+	var points := Vector2(get_window().size) / maxf(DisplayServer.screen_get_scale(), 1.0)
 	var view := get_viewport().get_visible_rect().size
-	if window.x <= 0.0 or view.x <= 0.0:
+	if points.x <= 0.0 or view.x <= 0.0:
 		return RING_SIZE
-	return maxf(RING_SIZE, RING_MIN_REAL * view.x / window.x)
+	return maxf(RING_SIZE, RING_MIN_REAL * view.x / points.x)
 
 
 # Pinned rings on the same edge would sit on top of each other, so stack them.
@@ -416,7 +462,7 @@ func _add_door(parent: Node3D, door_id: String) -> void:
 			pivot.rotation.y = _open_angle(door_id)
 		_door_pivots[door_id] = pivot
 	if state == HouseLayout.BLOCKED:
-		_box_stacks[door_id] = _add_box_stack(parent, door_id)
+		_add_box_stack(parent, door_id)
 
 
 # Whether the doorway lies along x (in a wall running east-west).
@@ -440,7 +486,7 @@ func _open_angle(door_id: String) -> float:
 	return DOOR_OPEN_ANGLE if into.x > 0.0 else -DOOR_OPEN_ANGLE
 
 
-func _add_box_stack(parent: Node3D, door_id: String) -> Node3D:
+func _add_box_stack(parent: Node3D, door_id: String) -> void:
 	var door: Dictionary = HouseLayout.DOORS[door_id]
 	var stack := Node3D.new()
 	stack.name = "Boxes_%s" % door_id
@@ -461,7 +507,6 @@ func _add_box_stack(parent: Node3D, door_id: String) -> Node3D:
 			var box := _add_box(stack, Vector3(spot.x, BOX_SIZE * (level + 0.5), spot.y),
 					Vector3.ONE * BOX_SIZE * (0.92 if level % 2 else 1.0), "box")
 			box.rotation.y = deg_to_rad(((c * 7 + level * 13) % 11) - 5.0)
-	return stack
 
 
 # Lamp light only: a bare bulb in each room that can be seen, and the porch

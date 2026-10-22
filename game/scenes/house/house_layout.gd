@@ -103,7 +103,7 @@ const DOORS := {
 ## looks at, unless "ring" says otherwise (L3's would sit in the hall opening,
 ## on top of the doorway's own ring).
 const VIEWS := {
-	"P": {"room": "porch", "kind": "doorway", "stand": Vector2(2.0, 13.6),
+	"P": {"room": "porch", "kind": "doorway", "stand": Vector2(2.0, 14.2),
 			"look": Vector3(2.0, 1.3, 12.0)},
 	"E1": {"room": "entry", "kind": "doorway", "stand": Vector2(1.9, 11.6),
 			"look": Vector3(2.8, 1.0, 7.0)},

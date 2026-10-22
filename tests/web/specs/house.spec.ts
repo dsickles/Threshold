@@ -48,6 +48,8 @@ test("the House opens on the porch and the front door leads in", async ({ game }
 });
 
 test("with the hall open, the bedroom and back", async ({ game }) => {
+  // Seven 2-second glides in software WebGL take longer than one screen.
+  test.setTimeout(300_000);
   await game.tap("House: hall open");
   await game.waitForScene(HOUSE);
   for (const view of ["E1", "L1", "H1", "B1", "B2"]) {
