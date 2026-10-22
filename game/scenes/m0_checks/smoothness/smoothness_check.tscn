@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scenes/m0_checks/smoothness/smoothness_check.gd" id="1_script"]
 [ext_resource type="Shader" path="res://scenes/m0_checks/smoothness/heavy_check.gdshader" id="2_proof"]
@@ -77,77 +77,6 @@ size = Vector2(0.05, 0.05)
 render_priority = 1
 shader = ExtResource("2_proof")
 shader_parameter/screen_width = 1.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
-content_margin_left = 24.0
-content_margin_top = 16.0
-content_margin_right = 24.0
-content_margin_bottom = 16.0
-bg_color = Color(0.165, 0.145, 0.125, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.239, 0.22, 0.196, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
-content_margin_left = 24.0
-content_margin_top = 16.0
-content_margin_right = 24.0
-content_margin_bottom = 16.0
-bg_color = Color(0.239, 0.22, 0.196, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.769, 0.647, 0.455, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.769, 0.647, 0.455, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-content_margin_left = 16.0
-content_margin_top = 12.0
-content_margin_right = 16.0
-content_margin_bottom = 12.0
-bg_color = Color(0.11, 0.098, 0.086, 0.8)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="Theme" id="Theme_check"]
-default_font_size = 24
-Button/colors/font_color = Color(0.957, 0.937, 0.902, 1)
-Button/colors/font_hover_color = Color(0.957, 0.937, 0.902, 1)
-Button/colors/font_pressed_color = Color(0.957, 0.937, 0.902, 1)
-Button/colors/font_focus_color = Color(0.957, 0.937, 0.902, 1)
-Button/colors/font_hover_pressed_color = Color(0.957, 0.937, 0.902, 1)
-Button/font_sizes/font_size = 32
-Button/styles/focus = SubResource("StyleBoxFlat_focus")
-Button/styles/hover = SubResource("StyleBoxFlat_normal")
-Button/styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
-Button/styles/normal = SubResource("StyleBoxFlat_normal")
-Button/styles/pressed = SubResource("StyleBoxFlat_pressed")
-Label/colors/font_color = Color(0.957, 0.937, 0.902, 1)
-PanelContainer/styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="SmoothnessCheck" type="Node3D"]
 script = ExtResource("1_script")
@@ -279,7 +208,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme = SubResource("Theme_check")
 
 [node name="StatsPanel" type="PanelContainer" parent="Hud/Root"]
 layout_mode = 1
