@@ -53,19 +53,10 @@ test("the House opens on the porch and the front door leads in", async ({ game }
 // phone sizes don't fit in the job's time. On the phone this walk is Dan's
 // device test (porch to bedroom and back); the headless tests cover every
 // ring and reachability at every size.
-test("moving day blocks the hall; with it open, the bedroom and back", async ({ game }, testInfo) => {
+test("with the hall open, the bedroom and back", async ({ game }, testInfo) => {
   test.skip(testInfo.project.name !== "laptop", "laptop only: see the note above");
-  test.setTimeout(300_000);
-  await game.tap("House: moving day");
-  await game.waitForScene(HOUSE);
-  for (const view of ["E1", "L1"]) {
-    await goTo(game, view);
-  }
-  // On moving day the back hall is blocked by boxes: no ring to it.
-  expect((await house(game)).rings.map((r) => r.target)).not.toContain("H1");
-  await game.screenshot("house-living-room-moving-day");
-  await game.open();
-  await game.tap("Tap to begin");
+  // Seven glides in software WebGL; CI's machines are slower than a thread's.
+  test.setTimeout(600_000);
   await game.tap("House: hall open");
   await game.waitForScene(HOUSE);
   for (const view of ["E1", "L1", "H1", "B1", "B2"]) {
