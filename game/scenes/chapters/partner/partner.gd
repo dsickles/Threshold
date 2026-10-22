@@ -246,6 +246,9 @@ func _on_tap() -> void:
 				_record_tap(_conductor.tap_time())
 			else:
 				_judge_tap(_conductor.tap_time())
+		State.DONE:
+			if _recorder:
+				queue_free()  # A recording is never a finished chapter.
 		State.TEST_SHOWN:
 			if _test_held >= TEST_HOLD:
 				_state = State.DONE

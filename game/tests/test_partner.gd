@@ -479,18 +479,23 @@ func test_recording_plays_with_no_notes_and_keeps_every_tap() -> void:
 	var text: String = _partner._recorder.text()
 	check(text.begins_with("partner-taps from=%d: " % roundi(from * 1000.0)), "pasteable text: " + text)
 	check_eq(text.get_slice(": ", 1).split(",").size(), 3, "three taps in the text")
+	var reported := [false]
+	_partner.finished.connect(func() -> void: reported[0] = true)
+	_partner._on_tap()
+	check(_partner.is_queued_for_deletion(), "a tap afterwards goes back")
+	check(not reported[0], "a recording never reports the chapter finished")
 
 
-# Dan, 2026-10-22: hearts landed a touch after where he wanted to tap. They
-# reach the centre HEART_LEAD before a tap on time, which the sound delay moves.
-func test_hearts_reach_the_centre_just_before_a_tap_on_time() -> void:
+# Dan, 2026-10-22, over several plays: hearts reach the centre HEART_LEAD
+# before a tap on time, which the intro's sound delay moves; judging is apart.
+func test_hearts_land_by_the_sound_delay_and_heart_lead() -> void:
 	PARTNER_SCRIPT._sound_delay = 0.08
 	_partner._on_tap()
 	var note: float = _partner._notes[0]
 	_fake.t = note
 	_partner._process(STEP)
 	check_near(_partner._light_until(0, note + 0.08), -_partner.HEART_LEAD, 0.0001,
-			"at the centre just before a tap 80 ms after the note")
+			"at the centre HEART_LEAD before a tap 80 ms after the note")
 	_fake.tap = note + 0.08
 	_partner._on_tap()
 	check_eq(_partner.probe_state().hits, 1, "a tap 80 ms later counts as on time")

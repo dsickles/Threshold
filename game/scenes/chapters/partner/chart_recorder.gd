@@ -5,7 +5,8 @@ extends RefCounted
 ## beat ... but it's not a fun rhythm aligned with what I hear"). Shown only
 ## with the Partner's test info on. When the song ends, or he taps "Stop", the
 ## taps show in a box with a Copy button, to paste into the thread;
-## tools/partner/make_chart.py --taps turns them into the chart.
+## tools/partner/make_chart.py --taps turns them into the chart. A tap on the
+## game after closing the box goes back to the menu, without finishing.
 ##
 ## The box and its buttons are the page's own, not the game's: a browser only
 ## lets a page copy inside a real tap on one of its own buttons.
