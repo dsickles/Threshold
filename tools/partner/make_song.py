@@ -98,6 +98,7 @@ def stumble(source, src_bar):
     out[:n] = tape_stop(source[start: start + n], n)
     pickup = source[PICKUP_BAR * BAR - BEAT: PICKUP_BAR * BAR].copy()
     pickup[:441] *= np.linspace(0, 1, 441)
+    pickup[-132:] *= np.linspace(1, 0, 132)  # 3 ms, so the join into bar 29 doesn't click.
     out[-BEAT:] = pickup
     return out
 
@@ -112,7 +113,9 @@ def arrange(source):
             continue
         piece = source[(src - 1) * BAR: src * BAR].copy()
         prev = BARS[k - 1] if k else None
-        if k and prev != STOP and prev != src - 1:  # A join that isn't in the original: fade in.
+        if k and prev == STOP:  # Out of the stumble's pickup: 3 ms, keeping the downbeat.
+            piece[:132] *= np.linspace(0, 1, 132)
+        elif k and prev != src - 1:  # A join that isn't in the original: fade in.
             piece[:fade] *= np.linspace(0, 1, fade)
         nxt = BARS[k + 1] if k + 1 < len(BARS) else None
         if nxt is not None and nxt != STOP and nxt != src + 1:

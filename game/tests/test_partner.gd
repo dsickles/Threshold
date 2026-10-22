@@ -247,7 +247,7 @@ func test_the_chart_matches_the_draft() -> void:
 	# after its bar lines.
 	var bar := 8.0 / 3.0
 	var beat := bar / 4.0
-	check_eq(notes.size(), 174, "notes in the chart")
+	check_eq(notes.size(), 144, "notes in the chart")
 	check_near(_partner._song_start, 0.025, 0.0001, "the track's hits land 25 ms after its bar lines")
 	for note in notes:
 		var sixteenths: float = (note - _partner._song_start) / (beat / 4.0)
@@ -262,7 +262,8 @@ func test_the_chart_matches_the_draft() -> void:
 	for note in notes:
 		if note >= _partner._crescendo:
 			in_crescendo += 1
-	check_eq(in_crescendo, 49, "a note on every beat of the crescendo, then the last")
+	# On its clear hits (2, 3 and 4; beat 1 is the ducked kick), then the last.
+	check_eq(in_crescendo, 34, "notes in the crescendo, then the last")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
@@ -404,18 +405,22 @@ func test_hitting_every_note_shows_every_moment_spread_across_the_song() -> void
 
 func test_a_typical_first_run_shows_every_moment() -> void:
 	var notes: PackedFloat64Array = _partner._notes
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 4
-	_partner._on_tap()
-	var taps: Array[float] = []
-	for note in notes:
-		taps.append(note + 0.040 + rng.randfn(0.0, 0.060))
-	var next := [0]
-	_play_to_end(func(t: float) -> void:
-		while next[0] < taps.size() and taps[next[0]] <= t:
-			_tap(taps[next[0]])
-			next[0] += 1)
-	check_eq(_partner.probe_state().moments, _partner.MOMENTS.size(), "every moment on a typical run")
+	for run in 10:
+		_partner.free()
+		before_each()
+		var rng := RandomNumberGenerator.new()
+		rng.seed = run
+		_partner._on_tap()
+		var taps: Array[float] = []
+		for note in notes:
+			taps.append(note + 0.040 + rng.randfn(0.0, 0.060))
+		var next := [0]
+		_play_to_end(func(t: float) -> void:
+			while next[0] < taps.size() and taps[next[0]] <= t:
+				_tap(taps[next[0]])
+				next[0] += 1)
+		check_eq(_partner.probe_state().moments, _partner.MOMENTS.size(),
+				"every moment on a typical run (seed %d)" % run)
 
 
 func test_moments_stay_clear_of_the_heart_and_on_screen() -> void:

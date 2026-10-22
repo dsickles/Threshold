@@ -42,8 +42,12 @@ opening the keys don't hit on 1 and 3 at all. So the bar table now says only
 how many notes each bar gets, and pick_notes() puts them on the loudest eighths
 of that bar as a phone plays the track (nothing below 300 Hz), measured from
 the edited track itself: mostly the snare on 2 and 4 and the hit on 3, the
-keys in the opening and with the drums down, and every beat in the crescendo,
-as Dan approved it. Needs numpy, ffmpeg and the Pixabay download, like
+keys in the opening and with the drums down. The crescendo can't have a note
+on every beat any more: its beat 1 is the kick, which the track ducks
+everything else under, so on a phone it is the quietest moment of the bar.
+It has three a bar on its clear hits (2, 3 and 4) for 12 bars, the longest
+run in the song. main() fails if any note but the last is quieter than the
+middle eighth of its bar (the last is the outro's first chord, on beat 1). Needs numpy, ffmpeg and the Pixabay download, like
 make_song.py; run this first, then make_song.py.
 """
 import json
@@ -69,19 +73,19 @@ INTRO_BARS = 8  # Intro taps set the player's sound delay and never laugh.
 SECTIONS = [
     (1, "--"),
     (3, "222222"),           # The soft opening
-    (9, "2233" "3333" "3333"),  # The beat
+    (9, "2222" "2222" "2233"),  # The beat: the snare on 2 and 4, then more
     (21, "2222222" "-"),     # Drums down, then the stumble
-    (29, "3333" "3333" "3333"),  # The beat
-    (41, "2222" "2223"),     # The quiet breakdown, into the fullest part
+    (29, "3222" "3333" "3333"),  # The beat
+    (41, "2222" "2222"),     # The quiet breakdown, into the fullest part
     (49, "3333"),            # The fullest part
-    (53, "4444" "4444" "4444"),  # The crescendo: the fullest part again
+    (53, "3333" "3333" "3333"),  # The crescendo: the fullest part again
     (65, "X"),
     (66, "----"),
 ]
 SILENT_BARS = {28}  # The stumble: the track slows to a halt and rests.
 CRESCENDO_BAR = 53
 LAST_BAR = 65
-NOTE_COUNT = 174
+NOTE_COUNT = 144
 
 
 def bar_counts():
@@ -118,7 +122,8 @@ def strengths():
 
 
 def pick_notes(counts, strength):
-    """In each bar, the loudest eighths, at least two eighths (667 ms) apart.
+    """In each bar, the loudest eighths, at least two eighths (667 ms) apart,
+    up to the bar's count.
     Each bar's strengths are averaged with the other bars of its section that
     fall on the same side (odd or even), so a groove repeats as the track does."""
     import numpy as np
@@ -138,7 +143,9 @@ def pick_notes(counts, strength):
                 and counts[b] not in "-X"]
         score = 0.5 * strength[bar] + 0.5 * np.mean([strength[b] for b in same], axis=0)
         chosen = []
-        for e in sorted(range(8), key=lambda e: -score[e]):
+        # Only eighths that are a hit in this bar itself, so a bar with fewer
+        # clear hits gets fewer notes.
+        for e in sorted((e for e in range(8) if strength[bar][e] >= 1.0), key=lambda e: -score[e]):
             at = (bar - 1) * 8 + e
             if all(abs(at - c) >= 2 for c in chosen) and (not notes or at - notes[-1] >= 2):
                 chosen.append(at)
@@ -149,12 +156,17 @@ def pick_notes(counts, strength):
 
 
 def main():
-    eighths = pick_notes(bar_counts(), strengths())
-    notes = [round(e * BEAT_MS / 2) for e in eighths]
+    strength = strengths()
+    eighths = pick_notes(bar_counts(), strength)
+    # Every note on a hit (Dan: "The tap should [go] along with the song.
+    # Period."): at least as loud as the bar's middle eighth, as a phone plays it.
+    for e in eighths[:-1]:
+        level = strength[e // 8 + 1][e % 8]
+        assert level >= 1.0, f"bar {e // 8 + 1} beat {e % 8 / 2 + 1} is on no hit ({level:.2f})"
     if "--show" in sys.argv:
-        for bar in range(1, BARS + 1):
-            beats = [e % 8 / 2 + 1 for e in eighths if (e // 8) + 1 == bar]
-            print(bar, beats)
+        for e in eighths:
+            print(f"bar {e // 8 + 1:2d} beat {e % 8 / 2 + 1}: {strength[e // 8 + 1][e % 8]:.2f}")
+    notes = [round(e * BEAT_MS / 2) for e in eighths]
 
     # The checks the draft asks for, with Dan's 2026-10-20 easier chart.
     gaps = [b - a for a, b in zip(notes, notes[1:])]
@@ -169,8 +181,10 @@ def main():
         "start_offset_ms": START_OFFSET_MS,
         "intro_end_ms": round(INTRO_BARS * 4 * BEAT_MS),
         "song_length_ms": round(BARS * 4 * BEAT_MS),
-        # [start, end) in ms from bar 1 beat 1, where the band (and heartbeat) stops.
-        "silent_ms": [[round((b - 1) * 4 * BEAT_MS), round(b * 4 * BEAT_MS)] for b in sorted(SILENT_BARS)],
+        # [start, end) in ms from bar 1 beat 1, where the track rests and the
+        # heart stops: after the tape stop (1.5 beats) until the pickup (beat 4).
+        "silent_ms": [[round(((b - 1) * 4 + 1.5) * BEAT_MS), round(((b - 1) * 4 + 3) * BEAT_MS)]
+                      for b in sorted(SILENT_BARS)],
         # Where the crescendo starts: denser notes, and the screen blooms.
         "crescendo_ms": crescendo_ms,
         "notes_ms": notes,

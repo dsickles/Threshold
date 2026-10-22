@@ -2,7 +2,7 @@
 // song starts on the first tap with the browser's audio clock, and hiding the
 // tab pauses the song and the chart together until a tap. Headless Chromium
 // has no speaker, so whether taps line up with the sound is Dan's to check on
-// his phone; the whole song (3:28) is played by the Godot tests instead.
+// his phone; the whole song (3:04) is played by the Godot tests instead.
 import { test, expect, MENU, PARTNER } from "./game";
 
 const openPartner = async (game: any, query = "") => {
