@@ -43,6 +43,7 @@ The single answer to "is this in v1?". If a design doc describes something marke
 |---|---|
 | The House's small floor plan: which rooms, where the chapter objects sit (draft: [design/house-floor-plan.md](design/house-floor-plan.md)) | M1 |
 | What The Partner shows on screen, its song, and its beat chart (draft: [design/partner-song-and-beat-chart.md](design/partner-song-and-beat-chart.md)) | M1 |
+| The Loss (the Protector) and the Silence: what the run shows, its tap action, its obstacles, how the fade lands, its music, and the car (draft: [design/the-loss-run-and-car.md](design/the-loss-run-and-car.md)) | M1 |
 | What "Stress" is, whether it lasts beyond a chapter, and what it changes | M2 |
 | Anchor: scripted wobble or real physics | M2 (cheap test) |
 
