@@ -15,3 +15,4 @@ build/
 # Browser test output (tests/web)
 tests/web/test-results/
 tests/web/playwright-report/
+__pycache__/
