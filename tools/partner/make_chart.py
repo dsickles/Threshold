@@ -1,7 +1,8 @@
 """Writes the Partner's beat chart (game/scenes/chapters/partner/beat_chart.json)
 from the bar-by-bar table in the draft song and beat chart, and checks it.
 
-    python3 tools/partner/make_chart.py              # From Dan's taps in tools/partner/taps/
+    python3 tools/partner/make_chart.py              # From the plan below (PLAN)
+    python3 tools/partner/make_chart.py --taps       # From Dan's taps in tools/partner/taps/
     python3 tools/partner/make_chart.py --measured   # The older chart measured from the track
 
 The table below is the source; the JSON is generated. Edit here, re-run, commit both.
@@ -57,6 +58,13 @@ Partner's "Record my taps" button, with the test info on), and the chart is
 built from those taps (tools/partner/taps/, oldest file first; chart_from_taps.py
 says how they are tidied). Re-run make_song.py after: its heartbeat starts on
 the first note's bar.
+
+Dan, after two takes: "let's discuss the general approach. I want to start a
+little earlier than the first one. Then start slow on single beats. And then
+use how I modulated the next sections to design" it; he liked how the first
+take ended, and the second felt "a little too fast". So the chart is PLAN
+below, each section's rhythm taken from his takes (tools/partner/taps/, the
+second in not-used/), with at most one quick "and" a bar except the final run.
 """
 import json
 import pathlib
@@ -89,6 +97,29 @@ SECTIONS = [
     (53, "3333" "3333" "3333"),  # The crescendo: the fullest part again
     (65, "X"),
     (66, "----"),
+]
+# Dan's agreed plan, 2026-10-22: (first bar, last bar, beats in the bar
+# counted from 0, in halves). 2.5 is the "and" of beat 3.
+EVERY = [0, 1, 2, 3]
+PLAN = [
+    (4, 5, [0]),                     # The intro: slow, single beats
+    (6, 8, [0, 2]),
+    (9, 12, [0, 2]),                 # The first beat
+    (13, 17, EVERY),
+    (18, 18, [0, 1, 2, 2.5, 3]),     # A lift at the end of a phrase
+    (19, 19, EVERY),
+    (20, 20, [0, 1, 2, 2.5, 3]),
+    (21, 27, [0, 2]),                # Drums down, calmer
+    (28, 28, [0]),                   # The stumble starts
+    (29, 36, [0, 1, 2, 2.5, 3]),     # After the stumble, in both his takes
+    (37, 44, [1, 3]),                # The quiet part: the backbeat
+    (45, 46, [1, 2, 3]),             # building
+    (47, 47, EVERY),
+    (48, 48, [0, 1, 2, 3, 3.5]),     # into the fullest part
+    (49, 56, [1, 2.5, 3]),           # "2 ... 3-and 4", his first take
+    (57, 63, [0, 1, 2, 2.5, 3]),     # His first take's ending
+    (64, 64, [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]),  # the quick run
+    (65, 65, [0]),                   # The last note
 ]
 SILENT_BARS = {28}  # The stumble: the track slows to a halt and rests.
 CRESCENDO_BAR = 53
@@ -163,8 +194,20 @@ def pick_notes(counts, strength):
     return notes
 
 
+def plan_notes():
+    """PLAN as eighths from bar 1 beat 1."""
+    eighths = []
+    for first, last, beats in PLAN:
+        for bar in range(first, last + 1):
+            eighths += [(bar - 1) * 8 + round(b * 2) for b in beats]
+    assert eighths == sorted(set(eighths)), "PLAN overlaps or is out of order"
+    return eighths
+
+
 def main():
-    if "--measured" not in sys.argv:
+    if "--taps" not in sys.argv and "--measured" not in sys.argv:
+        return write_chart(plan_notes(), None, min_gap=BEAT_MS / 2)
+    if "--taps" in sys.argv:
         # Dan's own taps (chart_from_taps.py) decide where the notes go.
         import chart_from_taps
         paths = sorted((pathlib.Path(__file__).resolve().parent / "taps").glob("*.txt"))

@@ -64,10 +64,13 @@ const MISS_GRACE := 0.080
 # How far an intro tap may be from its note and still set the sound delay.
 const CALIBRATION_WINDOW := 0.250
 const MAX_SOUND_DELAY := 0.250
-# Falling hearts reach the centre this long before the browser says the note
-# is heard. Dan, 2026-10-22, on his iPhone: drawn on the heard time they were
-# "still just a little late on the beat". Judging is unchanged.
-const HEART_LEAD := 0.060
+# Falling hearts reach the centre this long before a tap on time would land
+# (the note, plus the sound delay the intro's taps found). Dan, 2026-10-22: on
+# that time exactly, "I wanted to do the beats a tiny bit earlier than when
+# they landed"; on the heard time with no sound delay, still "a little late";
+# 60 ms ahead of the heard time, "even more off" from the first tap. Keeping
+# the sound delay in also follows headphones, which the browser can't time.
+const HEART_LEAD := 0.030
 const MIN_CALIBRATION_TAPS := 3
 const LAUGH_GAP := 4.0  # At most one laugh every 2 bars.
 const RING_SIZE := 0.13  # The heart's half-height, as a share of the screen's shorter side.
@@ -724,13 +727,9 @@ func _light_position(c: Vector2, light_radius: float, until: float) -> Vector2:
 
 
 # Connection Nodes: small hearts that fall from the top in one lane and reach
-# the heart's centre on their note (HEART_LEAD before the browser's heard
-# time). The sound delay only
-# moves when a tap counts, not where the hearts are: drawn with it, they
-# reached the centre that much after the sound (Dan, 2026-10-22: "I wanted to
-# do the beats a tiny bit earlier than when they landed in the middle").
+# the heart's centre on their note, as the player hears it (see HEART_LEAD).
 func _light_until(i: int, t: float) -> float:
-	return _notes[i] - HEART_LEAD - t
+	return _notes[i] + _sound_delay - HEART_LEAD - t
 
 
 func _draw_lights(c: Vector2, heart: float, t: float) -> void:

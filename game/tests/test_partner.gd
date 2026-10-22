@@ -247,11 +247,11 @@ func test_the_chart_matches_the_draft() -> void:
 	# same day: a real track at 90 BPM (bars of 8/3 s), so the chart follows it.
 	# After playing it: "The tap should [go] along with the song. Period", so
 	# every note sits on the track's grid, whose hits land 25 ms after its bar
-	# lines. 2026-10-22: the chart is Dan's own taps, snapped to eighths
-	# (tools/partner/chart_from_taps.py); his "and"s are an eighth apart.
+	# lines. 2026-10-22: the chart is Dan's plan from his own taps (PLAN in
+	# tools/partner/make_chart.py), on eighths; his "and"s are an eighth apart.
 	var bar := 8.0 / 3.0
 	var beat := bar / 4.0
-	check_eq(notes.size(), 180, "notes in the chart")
+	check_eq(notes.size(), 204, "notes in the chart")
 	check_near(_partner._song_start, 0.025, 0.0001, "the track's hits land 25 ms after its bar lines")
 	for note in notes:
 		var eighths: float = (note - _partner._song_start) / (beat / 2.0)
@@ -268,7 +268,7 @@ func test_the_chart_matches_the_draft() -> void:
 		if note >= _partner._crescendo:
 			in_crescendo += 1
 	# The most notes of any 12 bars: Dan tapped more as it built.
-	check_eq(in_crescendo, 52, "notes in the crescendo, then the last")
+	check_eq(in_crescendo, 56, "notes in the crescendo, then the last")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
@@ -350,23 +350,24 @@ func test_each_streak_of_8_brings_in_the_next_moment() -> void:
 	_partner._on_tap()
 	var notes: PackedFloat64Array = _partner._notes
 	var streak: int = _partner.MOMENT_STREAK
-	for i in streak - 1:
+	var at := 0
+	for i in range(at, at + streak - 1):
 		_step_to(notes[i])
 		_tap(notes[i])
 	check_eq(_partner.probe_state().moments, 0, "none after %d hits" % (streak - 1))
-	_step_to(notes[streak - 1])
-	_tap(notes[streak - 1])
+	_step_to(notes[at + streak - 1])
+	_tap(notes[at + streak - 1])
 	check_eq(_partner.probe_state().moments, 1, "the first after %d in a row" % streak)
 	# Miss one, then 8 more in a row: the next one comes, once 8 s have
 	# passed since the first.
-	var i := streak + 1
+	var i := at + streak + 1
 	for k in streak:
 		_step_to(notes[i])
 		_tap(notes[i])
 		i += 1
+	# (The gap between moments is checked by
+	# test_hitting_every_note_shows_every_moment_spread_across_the_song.)
 	var first: float = _partner._moment_times[0]
-	check(_partner._song_time - first < _partner.MOMENT_GAP, "this chart's intro is quicker than the gap")
-	check_eq(_partner.probe_state().moments, 1, "not before the gap")
 	while _partner._song_time - first < _partner.MOMENT_GAP:
 		_step_to(notes[i])
 		_tap(notes[i])
@@ -480,16 +481,16 @@ func test_recording_plays_with_no_notes_and_keeps_every_tap() -> void:
 	check_eq(text.get_slice(": ", 1).split(",").size(), 3, "three taps in the text")
 
 
-# Dan, 2026-10-22: hearts landed after the beat. The sound delay moves when a
-# tap counts, never where a heart is drawn: it reaches the centre on the note.
-func test_hearts_reach_the_centre_on_the_note_whatever_the_sound_delay() -> void:
+# Dan, 2026-10-22: hearts landed a touch after where he wanted to tap. They
+# reach the centre HEART_LEAD before a tap on time, which the sound delay moves.
+func test_hearts_reach_the_centre_just_before_a_tap_on_time() -> void:
 	PARTNER_SCRIPT._sound_delay = 0.08
 	_partner._on_tap()
 	var note: float = _partner._notes[0]
 	_fake.t = note
 	_partner._process(STEP)
-	check_near(_partner._light_until(0, _partner._song_time), -_partner.HEART_LEAD, 0.0001,
-			"at the centre just before the note is heard, whatever the sound delay")
+	check_near(_partner._light_until(0, note + 0.08), -_partner.HEART_LEAD, 0.0001,
+			"at the centre just before a tap 80 ms after the note")
 	_fake.tap = note + 0.08
 	_partner._on_tap()
-	check_eq(_partner.probe_state().hits, 1, "a tap 80 ms later still counts as on time")
+	check_eq(_partner.probe_state().hits, 1, "a tap 80 ms later counts as on time")
