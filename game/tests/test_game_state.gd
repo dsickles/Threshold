@@ -244,3 +244,83 @@ func test_starting_new_forgets_progress_and_deletes_the_save() -> void:
 	check_eq(state.finished_chapters(), [] as Array[String], "nothing finished")
 	check(not state.has_save(), "save deleted")
 	check_eq(_fresh_state().next_chapter(), "partner", "next visit starts fresh")
+
+
+# --- The opening beat's answer (DAS-92): held in memory, saved with the Partner.
+
+func test_the_opening_beats_answer_is_held_but_not_saved_before_the_partner() -> void:
+	var state := _fresh_state()
+	check(not state.opening_beat_done(), "not played yet")
+	check_eq(state.house_point(), HouseTable.START, "House at the start")
+	check(state.finish_opening_beat("stoic"), "opening beat recorded")
+	check(state.opening_beat_done(), "played")
+	check_eq(state.opening_answer(), "stoic", "answer held")
+	check_eq(state.house_point(), HouseTable.AFTER_OPENING, "House after the opening beat")
+	check(not state.has_save(), "nothing saved")
+	check(not FileAccess.file_exists(SAVE_PATH), "no save file written")
+	check(not "opening" in state.to_save_data(), "not in the save data")
+
+
+func test_leaving_before_the_partner_finishes_plays_the_opening_beat_again() -> void:
+	var state := _fresh_state()
+	state.finish_opening_beat("vulnerable")
+	var next_visit := _fresh_state()
+	check(not next_visit.opening_beat_done(), "opening beat plays again")
+	check_eq(next_visit.opening_answer(), "", "answer forgotten")
+	check_eq(next_visit.house_point(), HouseTable.START, "House back at the start")
+
+
+func test_the_opening_beats_answer_is_saved_with_the_partners_result() -> void:
+	var state := _fresh_state()
+	state.finish_opening_beat("vulnerable")
+	# Leaving a chapter, hiding the tab or failing a save doesn't write it.
+	state.notification(NOTIFICATION_APPLICATION_PAUSED)
+	check(not state.has_save(), "still nothing saved")
+	check(state.record_chapter_result({"chapter": "partner", "answer": ""}), "partner recorded")
+	check_eq(state.to_save_data().get("opening"), "vulnerable", "in the save data")
+	var next_visit := _fresh_state()
+	check_eq(next_visit.opening_answer(), "vulnerable", "answer read back")
+	check(next_visit.opening_beat_done(), "opening beat doesn't play again")
+	check_eq(next_visit.house_point(), HouseTable.AFTER_PARTNER, "House after the Partner")
+	next_visit.record_chapter_result({"chapter": "protector", "answer": ""})
+	check_eq(_fresh_state().opening_answer(), "vulnerable", "kept by later saves")
+	check_eq(_fresh_state().house_point(), HouseTable.AFTER_LOSS, "House after the Loss")
+
+
+func test_the_opening_beat_plays_once_and_takes_only_a_stoic_or_vulnerable_answer() -> void:
+	var state := _fresh_state()
+	for answer in ["", "angry"]:
+		check(not state.finish_opening_beat(answer), "refused '%s'" % answer)
+	check(not state.opening_beat_done(), "not played")
+	check(state.finish_opening_beat("stoic"), "stoic recorded")
+	check(not state.finish_opening_beat("vulnerable"), "second time refused")
+	check_eq(state.opening_answer(), "stoic", "first answer kept")
+
+
+func test_a_partner_saved_without_the_opening_beat_does_not_play_it_again() -> void:
+	# The M0 menu starts the Partner without the House.
+	_fresh_state().record_chapter_result({"chapter": "partner", "answer": ""})
+	var state := _fresh_state()
+	check(state.opening_beat_done(), "counts as played")
+	check_eq(state.opening_answer(), "", "no answer")
+	check(not state.finish_opening_beat("stoic"), "can't be played after the Partner")
+	check(not "opening" in state.to_save_data(), "nothing to save")
+
+
+func test_starting_new_forgets_the_opening_beat() -> void:
+	var state := _fresh_state()
+	state.finish_opening_beat("stoic")
+	state.start_new()
+	check(not state.opening_beat_done(), "forgotten")
+
+
+func test_a_save_with_an_opening_answer_but_no_partner_is_impossible() -> void:
+	for text in [
+		'{"finished": [], "opening": "stoic", "settings": {}}',
+		'{"finished": [{"chapter": "partner", "answer": ""}], "opening": "angry", "settings": {}}',
+		'{"finished": [{"chapter": "partner", "answer": ""}], "opening": 3, "settings": {}}',
+	]:
+		_write_raw(text)
+		var state := _fresh_state()
+		check(not state.has_save(), "no save to continue from for %s" % text)
+		check(not state.opening_beat_done(), "opening beat plays for %s" % text)

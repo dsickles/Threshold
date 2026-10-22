@@ -274,6 +274,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 23. The House floor plan settled for M1 (2026-10-22)
+
+| | |
+|---|---|
+| **Was** | The House's small floor plan was an open question in scope.md, with [house-floor-plan.md](house-floor-plan.md) marked "draft". |
+| **Became** | Settled for M1 as the floor plan has it, until it can be seen in the game. Its remaining open calls are M2's. The core table (`game/_core/house/house_table.gd`) builds the four M1 story points from it. The opening beat's answer is held in memory and saved with the Partner's result. |
+| **Why** | The House can't be built on a draft, and the open calls only matter after the Loss. Dan's call, 2026-10-22. |
+| **Record** | [scope.md](../scope.md) Settled questions; [ADR-0007](../adr/0007-saves-json-file-in-user-folder.md) (the `opening` key); DAS-92 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
