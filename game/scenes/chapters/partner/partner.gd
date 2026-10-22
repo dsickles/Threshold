@@ -67,8 +67,8 @@ const MISS_GRACE := 0.080
 # late"), so both allow 400 ms; intro notes are at least 1.3 s apart.
 const CALIBRATION_WINDOW := 0.400
 const MAX_SOUND_DELAY := 0.400
-# Falling hearts reach the centre this long before a tap on time would land
-# (the note, plus the sound delay the intro's taps found). Dan, 2026-10-22,
+# How long before a tap on time (the note, plus the sound delay the intro's
+# taps found) the falling hearts reach the centre; below zero, after it. Dan, 2026-10-22,
 # on AirPods: with 30 ms, his test info read "Sound delay: -43 ms ... Hits
 # after the intro: average -26 ms" and many beats felt "like I'm too late":
 # the hearts landed about 70 ms before his taps. With none (delay -14 ms,
@@ -211,6 +211,11 @@ func _notification(what: int) -> void:
 	# Native builds only; the web pauses when the tab is hidden (see Conductor).
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and _state == State.PLAYING:
 		_conductor.pause()
+
+
+func _exit_tree() -> void:
+	if _recorder:
+		_recorder.close()  # Leaving with the taps box still open.
 
 
 func _input(event: InputEvent) -> void:

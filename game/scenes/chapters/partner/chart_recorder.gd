@@ -6,7 +6,7 @@ extends RefCounted
 ## with the Partner's test info on. When the song ends, or he taps "Stop", the
 ## taps show in a box with a Copy button, to paste into the thread;
 ## tools/partner/make_chart.py --taps turns them into the chart. A tap on the
-## game after closing the box goes back to the menu, without finishing.
+## game goes back to the menu, without finishing, and closes the box.
 ##
 ## The box and its buttons are the page's own, not the game's: a browser only
 ## lets a page copy inside a real tap on one of its own buttons.
@@ -63,6 +63,10 @@ window.partnerRecorder = window.partnerRecorder || (function () {
 			panel.appendChild(button('Close', function () { panel.remove(); }));
 			document.body.appendChild(panel);
 		},
+		close: function () {
+			if (bar) { bar.remove(); bar = null; }
+			if (panel) { panel.remove(); panel = null; }
+		},
 	};
 })();
 """
@@ -99,6 +103,12 @@ func finish() -> void:
 	print(text())
 	if _web:
 		JavaScriptBridge.eval("window.partnerRecorder.show(%s)" % JSON.stringify(text()), true)
+
+
+## Takes the page's buttons and box away.
+func close() -> void:
+	if _web:
+		JavaScriptBridge.eval("window.partnerRecorder.close()", true)
 
 
 static func _is_true(value: Variant) -> bool:

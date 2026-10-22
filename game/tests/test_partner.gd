@@ -251,7 +251,7 @@ func test_the_chart_matches_the_draft() -> void:
 	# tools/partner/make_chart.py), on eighths; his "and"s are an eighth apart.
 	var bar := 8.0 / 3.0
 	var beat := bar / 4.0
-	check_eq(notes.size(), 197, "notes in the chart")
+	check_eq(notes.size(), 200, "notes in the chart")
 	check_near(_partner._song_start, 0.025, 0.0001, "the track's hits land 25 ms after its bar lines")
 	for note in notes:
 		var eighths: float = (note - _partner._song_start) / (beat / 2.0)
@@ -267,8 +267,18 @@ func test_the_chart_matches_the_draft() -> void:
 	for note in notes:
 		if note >= _partner._crescendo:
 			in_crescendo += 1
-	# The most notes of any 12 bars: Dan tapped more as it built.
-	check_eq(in_crescendo, 49, "notes in the crescendo, then the last")
+	check_eq(in_crescendo, 52, "notes in the crescendo, then the last")
+	# Dan, 2026-10-22: the ending "doesn't build anymore. it needs a little
+	# more oomph": the crescendo's 12 bars have more notes than any other 12.
+	var busiest := 0
+	for first in range(0, 52):
+		var count := 0
+		for note in notes:
+			var at: float = (note - _partner._song_start) / bar
+			if at >= first - 0.001 and at < first + 12 - 0.001:
+				count += 1
+		busiest = maxi(busiest, count)
+	check(in_crescendo - 1 > busiest, "the crescendo is the busiest 12 bars (%d, others up to %d)" % [in_crescendo - 1, busiest])
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
@@ -486,8 +496,9 @@ func test_recording_plays_with_no_notes_and_keeps_every_tap() -> void:
 	check(not reported[0], "a recording never reports the chapter finished")
 
 
-# Dan, 2026-10-22, over several plays: hearts reach the centre HEART_LEAD
-# before a tap on time, which the intro's sound delay moves; judging is apart.
+# Dan, 2026-10-22, over several plays: hearts reach the centre offset from a
+# tap on time by HEART_LEAD (now 15 ms after it), and the intro's sound delay
+# moves them; judging doesn't use HEART_LEAD.
 func test_hearts_land_by_the_sound_delay_and_heart_lead() -> void:
 	PARTNER_SCRIPT._sound_delay = 0.08
 	_partner._on_tap()
@@ -495,7 +506,7 @@ func test_hearts_land_by_the_sound_delay_and_heart_lead() -> void:
 	_fake.t = note
 	_partner._process(STEP)
 	check_near(_partner._light_until(0, note + 0.08), -_partner.HEART_LEAD, 0.0001,
-			"at the centre HEART_LEAD before a tap 80 ms after the note")
+			"at the centre offset by HEART_LEAD from a tap 80 ms after the note")
 	_fake.tap = note + 0.08
 	_partner._on_tap()
 	check_eq(_partner.probe_state().hits, 1, "a tap 80 ms later counts as on time")
