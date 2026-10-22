@@ -488,8 +488,8 @@ func test_hearts_reach_the_centre_on_the_note_whatever_the_sound_delay() -> void
 	var note: float = _partner._notes[0]
 	_fake.t = note
 	_partner._process(STEP)
-	check_near(_partner._light_until(0, _partner._song_time), 0.0, 0.0001,
-			"at the centre when the note is heard")
+	check_near(_partner._light_until(0, _partner._song_time), -_partner.HEART_LEAD, 0.0001,
+			"at the centre just before the note is heard, whatever the sound delay")
 	_fake.tap = note + 0.08
 	_partner._on_tap()
 	check_eq(_partner.probe_state().hits, 1, "a tap 80 ms later still counts as on time")

@@ -64,6 +64,10 @@ const MISS_GRACE := 0.080
 # How far an intro tap may be from its note and still set the sound delay.
 const CALIBRATION_WINDOW := 0.250
 const MAX_SOUND_DELAY := 0.250
+# Falling hearts reach the centre this long before the browser says the note
+# is heard. Dan, 2026-10-22, on his iPhone: drawn on the heard time they were
+# "still just a little late on the beat". Judging is unchanged.
+const HEART_LEAD := 0.060
 const MIN_CALIBRATION_TAPS := 3
 const LAUGH_GAP := 4.0  # At most one laugh every 2 bars.
 const RING_SIZE := 0.13  # The heart's half-height, as a share of the screen's shorter side.
@@ -540,8 +544,8 @@ func probe_state() -> Dictionary:
 func _refresh_test_info() -> void:
 	var lines := PackedStringArray([
 		"Test info · clock: %s" % ("browser" if _conductor.uses_browser_clock else "Godot"),
-		"Sound delay: %+d ms from %d intro taps"
-				% [roundi(_sound_delay * 1000.0), _calibration.size()],
+		"Sound delay: %+d ms from %d intro taps · hearts lead %d ms"
+				% [roundi(_sound_delay * 1000.0), _calibration.size(), roundi(HEART_LEAD * 1000.0)],
 	])
 	if _recorder:
 		lines.append("Recording your taps: %d" % _recorder.taps.size())
@@ -720,12 +724,13 @@ func _light_position(c: Vector2, light_radius: float, until: float) -> Vector2:
 
 
 # Connection Nodes: small hearts that fall from the top in one lane and reach
-# the heart's centre exactly when their note is heard. The sound delay only
+# the heart's centre on their note (HEART_LEAD before the browser's heard
+# time). The sound delay only
 # moves when a tap counts, not where the hearts are: drawn with it, they
 # reached the centre that much after the sound (Dan, 2026-10-22: "I wanted to
 # do the beats a tiny bit earlier than when they landed in the middle").
 func _light_until(i: int, t: float) -> float:
-	return _notes[i] - t
+	return _notes[i] - HEART_LEAD - t
 
 
 func _draw_lights(c: Vector2, heart: float, t: float) -> void:
