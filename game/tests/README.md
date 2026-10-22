@@ -46,6 +46,10 @@ in game code fails the test that caused it.
 8. Run `bash tools/test.sh` and make sure the new test fails if you break the
    thing it checks, then passes again.
 
+A test that checks bad input is reported can call `expect_error("text")`
+first: an error containing that text then doesn't fail the test, and the test
+fails if it is never printed.
+
 Tests may read a scene's private variables (`_current`, `_raw_offsets`) when
 that is the clearest way to check a rule, but prefer what a player would see:
 labels, buttons, the camera.
@@ -65,6 +69,8 @@ whenever its owner next touches it.
 
 | File | Covers |
 |---|---|
+| `test_chapter_runner.gd` | The chapter result shape and JSON round trip, story order, entering hides and pauses the House, finishing brings it back with the result (and answer), leaving gives no result, one result per chapter, a chapter that emits the wrong thing still returns the House, House values must be plain JSON, one chapter at a time, the menu's stand-in chapter, 44px buttons on phone screens |
+| `test_game_state.gd` | Progress and saves: finishing a chapter saves it, the next visit reads it back, story order kept, House state saved with its chapter, out-of-order, repeated, test-only and malformed results refused (including House values that aren't plain JSON), broken or impossible saves start fresh, a save that can't be written (including private browsing) is reported, keeps the old save and lets play carry on, hiding or closing never saves, starting new deletes the save, the chapter runner's finished chapters are saved |
 | `test_m0_menu.gd` | Tap to begin, button sizes, each M0 check opens and Back returns |
 | `test_smoothness_check.gd` | Warmup, hitch and worst-frame counting, the 2-minute run, Heavy and Shadow switches, Back |
 | `test_rhythm_check.gd` | Tap pad only while the click plays, last 20 taps, offset to the nearest click, average, spread and Good count, sound delay re-scoring and limits, Clear, 44px buttons on phone screens |

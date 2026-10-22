@@ -134,7 +134,7 @@ Behavioral. Visuals in DESIGN.md.Components.
 ## Interaction Primitives
 
 - **Tap** is the verb: move between viewpoints, look, interact, stamp, hit a beat, start a micro-game.
-- **Tap-to-move** (House, The Story Sequence): tap a doorway to glide to the next room's doorway view, or a wall or corner to glide to its wall view; tap an object for its close-up, and again for its one action ([ADR-0003](../../adr/0003-house-fixed-viewpoints.md), [ADR-0007](../../adr/0007-house-doorway-and-wall-views-close-ups.md), updated 2026-10-19). One system on phone and desktop. No virtual stick. Not a DESIGN component.
+- **Tap-to-move** (House, The Story Sequence): tap a doorway to glide to the next room's doorway view, or a wall or corner to glide to its wall view; tap an object for its close-up, and again for its one action ([ADR-0003](../../adr/0003-house-fixed-viewpoints.md), [ADR-0008](../../adr/0008-house-doorway-and-wall-views-close-ups.md), updated 2026-10-19). One system on phone and desktop. No virtual stick. Not a DESIGN component.
 - **Tap-to-look** (House): in any view, drag a short look. Same Control path on web and mobile. Not a second scheme. Not a DESIGN component.
 - **Drag** only where the genre is tactile (`knobs`, `drag-drop`, look-drag).
 - **Hold** only for `balance` side-zones, not for “hold to confirm skip Loss” — Loss has no skip.
@@ -160,7 +160,7 @@ During Loss, do not add care-UI. The care is the run going quiet. During Story S
 
 **One scheme.** Pointer (finger or mouse). Click = tap.
 
-- Move: tap a doorway, wall or object to glide to a view of it (ADR-0007, updated 2026-10-19).
+- Move: tap a doorway, wall or object to glide to a view of it (ADR-0008, updated 2026-10-19).
 - Look: tap/drag look. No mouse-look pointer-lock. No WASD as the House design (architecture’s `FirstPersonController` is a superseded default for this UX).
 - Interact: tap highlighted object.
 - A keyboard on a computer may activate the same focused Control (Enter) for menus only. It is not a second movement mode.

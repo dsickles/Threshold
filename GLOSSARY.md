@@ -49,7 +49,7 @@ The persistent 3D hub the player returns to between chapters; it changes after e
 _Avoid_: hub world, apartment, calendar
 
 **Viewpoint**:
-Any fixed camera shot in the House: a doorway view, a wall view or a close-up ([ADR-0007](docs/adr/0007-house-doorway-and-wall-views-close-ups.md)).
+Any fixed camera shot in the House: a doorway view, a wall view or a close-up ([ADR-0008](docs/adr/0008-house-doorway-and-wall-views-close-ups.md)).
 _Avoid_: waypoint, node, hotspot
 
 **Doorway view**:

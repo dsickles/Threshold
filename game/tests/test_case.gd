@@ -7,6 +7,7 @@ extends Node
 ## Test methods may await. See game/tests/README.md.
 
 var _failures := PackedStringArray()
+var _expected_errors := PackedStringArray()
 
 
 ## Called before each test method. Override if a file needs setup.
@@ -21,6 +22,17 @@ func after_each() -> void:
 
 func failures() -> PackedStringArray:
 	return _failures
+
+
+func expected_errors() -> PackedStringArray:
+	return _expected_errors
+
+
+## Says this test prints an error containing `text` on purpose, to check that
+## bad input is reported. The run doesn't fail on that error, but does fail if
+## it is never printed.
+func expect_error(text: String) -> void:
+	_expected_errors.append(text)
 
 
 # --- Checks. Each records a failure and carries on, so one run shows them all.

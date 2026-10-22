@@ -83,7 +83,7 @@ The porch shot, the shared front (entry, living room and kitchen as one open spa
 
 ### Views (M1)
 
-How the player moves is set by [ADR-0007](../adr/0007-house-doorway-and-wall-views-close-ups.md): tapping a doorway glides to that room's **doorway view**; tapping a wall or corner glides to its **wall view**; tapping an object glides to its **close-up**, and tapping it again does its one action. Rings show every other view and doorway; anything off screen pins to the screen edge with an arrow. Glide 2.0 s (M0 check, DAS-69). In the drawing, doorway views are green and wall views blue; the point shows which way the camera faces.
+How the player moves is set by [ADR-0008](../adr/0008-house-doorway-and-wall-views-close-ups.md): tapping a doorway glides to that room's **doorway view**; tapping a wall or corner glides to its **wall view**; tapping an object glides to its **close-up**, and tapping it again does its one action. Rings show every other view and doorway; anything off screen pins to the screen edge with an arrow. Glide 2.0 s (M0 check, DAS-69). In the drawing, doorway views are green and wall views blue; the point shows which way the camera faces.
 
 17 views. Each room's doorways are rings in every view of that room.
 
@@ -198,11 +198,11 @@ From the roadmap and stories. None is optional.
 - **M1 success criterion 2:** 5 cold testers, no instructions. At least 4 find the record player within about 3 minutes. Nobody gets stuck moving around.
 - **M1 success criterion 5:** most testers notice the House changed, without being asked.
 - **No dead ends:** at each of the M1 points in the story (start, after the opening beat, after the Partner, after the Loss), every open room can be reached and the player can always get back to the living room. Checked by playing on Dan's phone and laptop.
-- **Every view shows a ring for each doorway in that room** (pinned to the screen edge when off screen), and stepping back from any close-up returns to the view it was opened from (ADR-0007).
+- **Every view shows a ring for each doorway in that room** (pinned to the screen edge when off screen), and stepping back from any close-up returns to the view it was opened from (ADR-0008).
 - **Shut rooms are never tappable and never highlight**, and the spare room can't be reached by any route after the Loss.
 - **The House reads without volumetric fog** (CLAUDE.md rule): lamp light and ordinary fog only, no CompositorEffects.
 - **Tap targets at least 44 px**; nothing relies on hover.
-- **Core table automated tests:** each M1 point gives the right House mood, open rooms and next chapter object. (The test addon is still an open M1 question in [scope.md](../scope.md).)
+- **Core table automated tests:** each M1 point gives the right House mood, open rooms and next chapter object. Run by the repo's own test runner in `game/tests/` (no addon; scope.md, 2026-10-19).
 
 ## Dan's calls
 

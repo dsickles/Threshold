@@ -139,7 +139,7 @@ These come from the roadmap and stories. None is optional, and the ones that nee
 - **On Dan's iPhone 17 Pro (Safari) and laptop Chrome:** the hits line up with the sound actually heard (Story 1.2). Before M1 playtests, the same on a real mid-range Android spot check (roadmap success criterion 1).
 - **M1 success criterion 3:** across the 5 cold testers, nobody says the rhythm "counted my tap wrong".
 - **Every miss path finishes the song** and reaches the same ending: play with no taps at all, and with every tap early, and the test still appears and the House still warms.
-- **The chart file matches this table:** 388 notes, none closer than 250 ms, the last at bar 100 beat 1. (A small automated check is cheap once the test addon is chosen.)
+- **The chart file matches this table:** 388 notes, none closer than 250 ms, the last at bar 100 beat 1. Checked by a test in `game/tests/` (the repo's own runner, no addon).
 - **Song tempo check** (above) before the song is used.
 - **Hiding the tab pauses the song and the chart together**, and they are still in step when the tab comes back (M1 "pause when the browser tab is hidden").
 - **Tap target:** the whole screen, so well over 44 px. Nothing depends on hover.

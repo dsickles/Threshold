@@ -241,14 +241,25 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
-## 20. House views: doorway views, wall views and close-ups (2026-10-19)
+## 20. Saves built in M1, as a JSON file, tested without an addon (2026-10-19)
+
+| | |
+|---|---|
+| **Was** | Save/Continue came in M2 (roadmap). Which test addon covers the core table and saves was open for M1. |
+| **Became** | The save system is built in M1 (Continue and the title screen stay in M2). One JSON file in Godot's user folder, kept in IndexedDB on the web. The repo's own test runner covers it; no addon. |
+| **Why** | Every chapter after the Partner needs the same way to record that it is finished. Dan asked for it now (2026-10-19). One code path works on web and PC; the runner already does what an addon would. |
+| **Record** | [ADR-0007](../adr/0007-saves-json-file-in-user-folder.md), [scope.md](../scope.md) Settled questions |
+
+---
+
+## 21. House views: doorway views, wall views and close-ups (2026-10-19)
 
 | | |
 |---|---|
 | **Was** | ADR-0003: tap a viewpoint (a spot or a doorway) and the camera glides there. Objects were tapped to use them directly. |
 | **Became** | Each room has a doorway view and 2–4 wall views. Tapping an object opens its close-up; tapping it again does its one action. House objects that don't start a chapter are never required, scored or saved. |
 | **Why** | Fits the M0 finding that tapping a thing should look at it (entry 17), hides AI-art flaws, and gives one verb for walls, House objects and chapter objects. Dan's call, 2026-10-19. |
-| **Record** | [ADR-0007](../adr/0007-house-doorway-and-wall-views-close-ups.md) |
+| **Record** | [ADR-0008](../adr/0008-house-doorway-and-wall-views-close-ups.md) |
 
 ---
 
