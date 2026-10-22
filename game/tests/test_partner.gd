@@ -478,3 +478,18 @@ func test_recording_plays_with_no_notes_and_keeps_every_tap() -> void:
 	var text: String = _partner._recorder.text()
 	check(text.begins_with("partner-taps from=%d: " % roundi(from * 1000.0)), "pasteable text: " + text)
 	check_eq(text.get_slice(": ", 1).split(",").size(), 3, "three taps in the text")
+
+
+# Dan, 2026-10-22: hearts landed after the beat. The sound delay moves when a
+# tap counts, never where a heart is drawn: it reaches the centre on the note.
+func test_hearts_reach_the_centre_on_the_note_whatever_the_sound_delay() -> void:
+	PARTNER_SCRIPT._sound_delay = 0.08
+	_partner._on_tap()
+	var note: float = _partner._notes[0]
+	_fake.t = note
+	_partner._process(STEP)
+	check_near(_partner._light_until(0, _partner._song_time), 0.0, 0.0001,
+			"at the centre when the note is heard")
+	_fake.tap = note + 0.08
+	_partner._on_tap()
+	check_eq(_partner.probe_state().hits, 1, "a tap 80 ms later still counts as on time")

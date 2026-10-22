@@ -720,9 +720,15 @@ func _light_position(c: Vector2, light_radius: float, until: float) -> Vector2:
 
 
 # Connection Nodes: small hearts that fall from the top in one lane and reach
-# the heart's centre exactly on their note.
+# the heart's centre exactly when their note is heard. The sound delay only
+# moves when a tap counts, not where the hearts are: drawn with it, they
+# reached the centre that much after the sound (Dan, 2026-10-22: "I wanted to
+# do the beats a tiny bit earlier than when they landed in the middle").
+func _light_until(i: int, t: float) -> float:
+	return _notes[i] - t
+
+
 func _draw_lights(c: Vector2, heart: float, t: float) -> void:
-	var t_judged := t - _sound_delay
 	var light_radius := heart * 0.2
 	# The target: a faint heart in the heart's centre, the size of a falling
 	# one. Tap when a falling heart reaches it. It brightens a little as the
@@ -730,11 +736,11 @@ func _draw_lights(c: Vector2, heart: float, t: float) -> void:
 	# "in the center of the heart is another transparent heart". No lane.)
 	var soon := 0.0
 	if _next < _notes.size():
-		soon = clampf(1.0 - (_notes[_next] - t_judged) / 0.5, 0.0, 1.0)
+		soon = clampf(1.0 - _light_until(_next, t) / 0.5, 0.0, 1.0)
 	_draw_heart(c, light_radius, Color(LIGHT, 0.18 + 0.17 * soon))
 	var first := maxi(_next - 4, 0)
 	for i in range(first, _notes.size()):
-		var until := _notes[i] - t_judged
+		var until := _light_until(i, t)
 		if until > TRAVEL:
 			break
 		if _judged[i] == Judged.HIT:
