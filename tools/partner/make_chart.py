@@ -34,9 +34,23 @@ fullest part the extra kick on the last quarter of beat 2 (odd bars) and just
 after 4 (even bars); in the soft opening, the heartbeat; with the drums down,
 the keys' own rhythm. The track's hits land 25 ms after its bar lines (measured
 from the snare's attack), so START_OFFSET_MS is 25.
+
+Dan, playing that: "The beats are off ... Not on rhythm ... It was off like 15
+seconds in". The kick on 1 and the "and" of 3 is too low for a phone's speaker
+to play, so those notes fell where a phone plays nothing, and in the soft
+opening the keys don't hit on 1 and 3 at all. So the bar table now says only
+how many notes each bar gets, and pick_notes() puts them on the loudest eighths
+of that bar as a phone plays the track (nothing below 300 Hz), measured from
+the edited track itself: mostly the snare on 2 and 4 and the hit on 3, the
+keys in the opening and with the drums down, and every beat in the crescendo,
+as Dan approved it. Needs numpy, ffmpeg and the Pixabay download, like
+make_song.py; run this first, then make_song.py.
 """
 import json
 import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 BPM = 90
 BEAT_MS = 60000 / BPM
@@ -45,62 +59,102 @@ BARS = 69
 # its bar lines (measured from the snare's attack in tools/partner/make_song.py's
 # output).
 START_OFFSET_MS = 25
+# The Pixabay download (not in the repo; see make_song.py).
+SOURCE = pathlib.Path("/mnt/project-files/partner/source-dreamy-lo-fi-beat-549997.mp3")
 INTRO_BARS = 8  # Intro taps set the player's sound delay and never laugh.
 
-PATTERNS = {
-    # The soft opening: the heartbeat.
-    "H": [1, 3],
-    # The beat: kick on 1 and 3.5, snare on 2 and 4.
-    "K": [1, 3.5],        # The kicks
-    "A": [1, 2, 3.5],     # Kick, snare, kick
-    "B": [1, 2, 4],       # Kick, snare, snare
-    "C": [2, 4],          # The snares
-    "R": [2, 3.5],        # Snare, kick
-    "S": [1, 3, 4],       # Into the fullest part: the track's pickup on 3 and 4
-    # The fullest part's extra kicks, for the crescendo.
-    "M": [1, 2, 2.75, 4],   # Odd bars
-    "N": [1, 2, 3.5, 4.25],  # Even bars
-    # Drums down: the keys' rhythm.
-    "D": [1, 2.5, 4],
-    "E": [1, 2.5],
-    "F": [1, 4],
-    "X": [1],             # The last note
-    "-": [],
-}
-
-# (first bar, patterns in order); a group repeats until the next first bar.
+# How many notes each bar gets; which beats they fall on is measured from the
+# track (see pick_notes). X is the last note, on beat 1; - is none.
+# (first bar, counts in order).
 SECTIONS = [
     (1, "--"),
-    (3, "HHHHHH"),
-    (9, "KKAB" "KACB" "AARB"),
-    (21, "EFDHEFD" "-"),
-    (29, "AAAB" "ABAB" "ACAB"),
-    (41, "KKAK" "KKKS"),
-    (49, "ABAB"),
-    (53, "MNMN" "MNMN" "MNMN"),
+    (3, "222222"),           # The soft opening
+    (9, "2233" "3333" "3333"),  # The beat
+    (21, "2222222" "-"),     # Drums down, then the stumble
+    (29, "3333" "3333" "3333"),  # The beat
+    (41, "2222" "2223"),     # The quiet breakdown, into the fullest part
+    (49, "3333"),            # The fullest part
+    (53, "4444" "4444" "4444"),  # The crescendo: the fullest part again
     (65, "X"),
     (66, "----"),
 ]
 SILENT_BARS = {28}  # The stumble: the track slows to a halt and rests.
 CRESCENDO_BAR = 53
 LAST_BAR = 65
-NOTE_COUNT = 173
+NOTE_COUNT = 174
 
 
-def bar_patterns():
+def bar_counts():
     bars = {}
-    for first, patterns in SECTIONS:
-        for i, p in enumerate(patterns):
-            bars[first + i] = "-" if first + i in SILENT_BARS else p
-    assert sorted(bars) == list(range(1, BARS + 1)), "every bar needs a pattern"
+    for first, counts in SECTIONS:
+        for i, n in enumerate(counts):
+            bars[first + i] = "-" if first + i in SILENT_BARS else n
+    assert sorted(bars) == list(range(1, BARS + 1)), "every bar needs a count"
     return bars
 
 
+def strengths():
+    """How strongly the track hits on each eighth of each bar, as a phone's
+    speaker plays it (nothing below 300 Hz): the rise in loudness at that
+    moment, against the bar's middle one."""
+    import numpy as np
+    import make_song
+    sr = make_song.SR
+    track = make_song.ffilter(make_song.arrange(make_song.decode(SOURCE)), make_song.TREBLE_CUT)
+    track = make_song.ffilter(track, "highpass=f=300:poles=2")
+    hop, win = 220, 1024
+    frames = np.lib.stride_tricks.sliding_window_view(track, win)[::hop] * np.hanning(win)
+    spec = np.log1p(20 * np.abs(np.fft.rfft(frames, axis=1)))
+    rise = np.concatenate([[0], np.maximum(0, np.diff(spec, axis=0)).sum(1)])
+    times = np.arange(len(rise)) * hop / sr + win / 2 / sr
+    out = {}
+    for bar in range(1, BARS + 1):
+        row = []
+        for e in range(8):
+            t = START_OFFSET_MS / 1000 + ((bar - 1) * 4 + e / 2) * BEAT_MS / 1000
+            row.append(rise[(times > t - 0.03) & (times < t + 0.06)].max())
+        out[bar] = np.array(row) / max(1e-9, np.median(row))
+    return out
+
+
+def pick_notes(counts, strength):
+    """In each bar, the loudest eighths, at least two eighths (667 ms) apart.
+    Each bar's strengths are averaged with the other bars of its section that
+    fall on the same side (odd or even), so a groove repeats as the track does."""
+    import numpy as np
+    section_of = {}
+    for first, cs in SECTIONS:
+        for i in range(len(cs)):
+            section_of[first + i] = first
+    notes = []  # In eighths from bar 1 beat 1.
+    for bar in range(1, BARS + 1):
+        n = counts[bar]
+        if n == "-":
+            continue
+        if n == "X":
+            notes.append((bar - 1) * 8)
+            continue
+        same = [b for b in strength if section_of[b] == section_of[bar] and b % 2 == bar % 2
+                and counts[b] not in "-X"]
+        score = 0.5 * strength[bar] + 0.5 * np.mean([strength[b] for b in same], axis=0)
+        chosen = []
+        for e in sorted(range(8), key=lambda e: -score[e]):
+            at = (bar - 1) * 8 + e
+            if all(abs(at - c) >= 2 for c in chosen) and (not notes or at - notes[-1] >= 2):
+                chosen.append(at)
+            if len(chosen) == int(n):
+                break
+        notes += sorted(chosen)
+    return notes
+
+
 def main():
-    notes = []
-    for bar, p in sorted(bar_patterns().items()):
-        for beat in PATTERNS[p]:
-            notes.append(round(((bar - 1) * 4 + (beat - 1)) * BEAT_MS))
+    eighths = pick_notes(bar_counts(), strengths())
+    notes = [round(e * BEAT_MS / 2) for e in eighths]
+    if "--show" in sys.argv:
+        for bar in range(1, BARS + 1):
+            beats = [e % 8 / 2 + 1 for e in eighths if (e // 8) + 1 == bar]
+            print(bar, beats)
 
     # The checks the draft asks for, with Dan's 2026-10-20 easier chart.
     gaps = [b - a for a, b in zip(notes, notes[1:])]

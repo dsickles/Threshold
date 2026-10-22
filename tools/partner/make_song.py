@@ -141,17 +141,18 @@ def main():
     muffled = ffilter(track, f"lowpass=f={MUFFLE_HZ}:poles=2")
     bright = track - muffled
 
-    # The heartbeat under the soft opening, on the intro notes: background, not
-    # a tap sound (it plays whether or not the player taps).
+    # The heartbeat under the soft opening, on every beat from the bar of the
+    # first note: background, not a tap sound (it plays whether or not the
+    # player taps).
     beats = np.zeros(len(track))
     offset = CHART["start_offset_ms"] / 1000
     intro_end = CHART["intro_end_ms"] / 1000
     last = CHART["notes_ms"][-1] / 1000
-    for ms in CHART["notes_ms"]:
-        t = ms / 1000
-        if t < intro_end:
-            beats[int(round((offset + t) * SR)):][:len(heartbeat())] += heartbeat()
-    beats = ffilter(beats, "lowpass=f=160:poles=2") * HEARTBEAT_LEVEL * np.max(np.abs(track))
+    t = CHART["notes_ms"][0] // (4 * 60000 / BPM) * 4 * 60 / BPM
+    while t < intro_end - 0.01:
+        beats[int(round((offset + t) * SR)):][:len(heartbeat())] += heartbeat()
+        t += BEAT / SR
+    beats = ffilter(beats, "lowpass=f=250:poles=2") * HEARTBEAT_LEVEL * np.max(np.abs(track))
     extra = beats
 
     # The outro fades out after the last note, under the test.

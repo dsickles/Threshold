@@ -247,7 +247,7 @@ func test_the_chart_matches_the_draft() -> void:
 	# after its bar lines.
 	var bar := 8.0 / 3.0
 	var beat := bar / 4.0
-	check_eq(notes.size(), 173, "notes in the chart")
+	check_eq(notes.size(), 174, "notes in the chart")
 	check_near(_partner._song_start, 0.025, 0.0001, "the track's hits land 25 ms after its bar lines")
 	for note in notes:
 		var sixteenths: float = (note - _partner._song_start) / (beat / 4.0)
@@ -262,7 +262,7 @@ func test_the_chart_matches_the_draft() -> void:
 	for note in notes:
 		if note >= _partner._crescendo:
 			in_crescendo += 1
-	check_eq(in_crescendo, 49, "four notes a bar in the crescendo, then the last")
+	check_eq(in_crescendo, 49, "a note on every beat of the crescendo, then the last")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
