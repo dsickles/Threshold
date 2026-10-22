@@ -32,13 +32,16 @@ test("the first tap starts the song and the lights come in", async ({ game }) =>
   await game.tapMiddle();
   await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("PLAYING");
   await expect.poll(() => game.audioStates()).toContain("running");
-  // The first lights reach the heart at 4 s; by 6 s the screen shows some.
-  await expect.poll(() => songTime(game), { timeout: 30_000 }).toBeGreaterThan(6);
+  // The first light reaches the heart at 10.7 s (Dan's taps start in bar 5);
+  // by 9 s the screen shows it falling.
+  await expect.poll(() => songTime(game), { timeout: 30_000 }).toBeGreaterThan(9);
   await game.screenshot("partner-playing");
   // The streak layer plays along from the start, even on a quick first tap.
   expect((await game.screen(PARTNER)).layer, "the song's streak layer is playing").toBe(true);
   // Untapped notes become misses; the song keeps going.
-  await expect.poll(async () => (await game.screen(PARTNER)).misses).toBeGreaterThan(0);
+  await expect
+    .poll(async () => (await game.screen(PARTNER)).misses, { timeout: 15_000 })
+    .toBeGreaterThan(0);
   expect((await game.screen(PARTNER)).state).toBe("PLAYING");
 });
 

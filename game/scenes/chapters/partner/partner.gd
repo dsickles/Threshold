@@ -98,9 +98,10 @@ const BURST_TIME := 0.6  # How long a hit's sparkles last.
 # Every 8 hits in a row brings in the next moment of their life together;
 # a miss only restarts the count (Dan, 2026-10-21: "every streak grants *the
 # next* silhouette, even if you just get 8, miss, then 8 again"). At most one
-# every 12 s, so even a perfect run spreads them across the song.
+# every 8 s, so even a perfect run spreads them across the song. (Was 12 s;
+# Dan's own chart has rests where no streak can grow, so 8 keeps them easy.)
 const MOMENT_STREAK := 8
-const MOMENT_GAP := 12.0
+const MOMENT_GAP := 8.0
 const MOMENT_FADE := 0.8
 const MOMENT_COLOR := Color("#E58A92")
 

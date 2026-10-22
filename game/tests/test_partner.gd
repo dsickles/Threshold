@@ -83,9 +83,12 @@ func test_every_tap_early_still_reaches_the_test() -> void:
 	var next := [0]
 	_play_to_end(func(t: float) -> void:
 		# 300 ms early: outside Good, and outside the intro's calibration
-		# window, so the sound delay can't move to meet the taps.
+		# window, so the sound delay can't move to meet the taps. A note an
+		# eighth after another isn't tapped: 300 ms early for it is on time
+		# for the one before.
 		if next[0] < notes.size() and t >= notes[next[0]] - 0.300:
-			_tap(notes[next[0]] - 0.300)
+			if next[0] == 0 or notes[next[0]] - notes[next[0] - 1] > 0.500:
+				_tap(notes[next[0]] - 0.300)
 			next[0] += 1)
 	check_eq(_partner.probe_state().state, "TEST_SHOWN", "state after the song")
 	check_eq(_partner.probe_state().misses, notes.size(), "every early tap missed")
@@ -243,27 +246,29 @@ func test_the_chart_matches_the_draft() -> void:
 	# there were "too fast": the most notes in a row, never faster. Later the
 	# same day: a real track at 90 BPM (bars of 8/3 s), so the chart follows it.
 	# After playing it: "The tap should [go] along with the song. Period", so
-	# every note sits on the track's grid of sixteenths, whose hits land 25 ms
-	# after its bar lines.
+	# every note sits on the track's grid, whose hits land 25 ms after its bar
+	# lines. 2026-10-22: the chart is Dan's own taps, snapped to eighths
+	# (tools/partner/chart_from_taps.py); his "and"s are an eighth apart.
 	var bar := 8.0 / 3.0
 	var beat := bar / 4.0
-	check_eq(notes.size(), 144, "notes in the chart")
+	check_eq(notes.size(), 180, "notes in the chart")
 	check_near(_partner._song_start, 0.025, 0.0001, "the track's hits land 25 ms after its bar lines")
 	for note in notes:
-		var sixteenths: float = (note - _partner._song_start) / (beat / 4.0)
-		if absf(sixteenths - roundf(sixteenths)) > 0.01:
+		var eighths: float = (note - _partner._song_start) / (beat / 2.0)
+		if absf(eighths - roundf(eighths)) > 0.01:
 			check(false, "note at %s s is off the track's grid" % note)
 	check_near(_partner._crescendo - _partner._song_start, 52 * bar, 0.001, "crescendo from bar 53")
 	var closest := INF
 	for i in range(1, notes.size()):
 		closest = minf(closest, notes[i] - notes[i - 1])
-	check(closest >= 0.500 - 0.0001, "no two notes closer than 500 ms (closest %s s)" % closest)
+	check(closest >= beat / 2.0 - 0.001, "no two notes closer than an eighth (closest %s s)" % closest)
+	check(closest > 2.0 * _partner.GOOD_WINDOW, "every note can be judged apart")
 	var in_crescendo := 0
 	for note in notes:
 		if note >= _partner._crescendo:
 			in_crescendo += 1
-	# On its clear hits (2, 3 and 4; beat 1 is the ducked kick), then the last.
-	check_eq(in_crescendo, 34, "notes in the crescendo, then the last")
+	# The most notes of any 12 bars: Dan tapped more as it built.
+	check_eq(in_crescendo, 52, "notes in the crescendo, then the last")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:
@@ -352,7 +357,7 @@ func test_each_streak_of_8_brings_in_the_next_moment() -> void:
 	_step_to(notes[streak - 1])
 	_tap(notes[streak - 1])
 	check_eq(_partner.probe_state().moments, 1, "the first after %d in a row" % streak)
-	# Miss one, then 8 more in a row: the next one comes, once 12 s have
+	# Miss one, then 8 more in a row: the next one comes, once 8 s have
 	# passed since the first.
 	var i := streak + 1
 	for k in streak:
@@ -399,7 +404,7 @@ func test_hitting_every_note_shows_every_moment_spread_across_the_song() -> void
 	var times: Array[float] = _partner._moment_times
 	check_eq(times.size(), _partner.MOMENTS.size(), "all %d moments" % _partner.MOMENTS.size())
 	for k in range(1, times.size()):
-		check(times[k] - times[k - 1] >= _partner.MOMENT_GAP - 0.001, "at least 12 s apart (%d)" % k)
+		check(times[k] - times[k - 1] >= _partner.MOMENT_GAP - 0.001, "at least 8 s apart (%d)" % k)
 	check(times[-1] > notes[-1] * 0.6, "the last comes late in the song (%.0f s)" % times[-1])
 
 
