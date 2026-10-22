@@ -85,6 +85,10 @@ const TEST_LINES_END := 9.0
 # Test info in the corner for Dan's checks. Turn off before cold playtests:
 # no score or tally is shown to players.
 const SHOW_TEST_INFO := true
+const ChartRecorder := preload("res://scenes/chapters/partner/chart_recorder.gd")
+# With the test info on, the waiting screen also offers to record Dan's own
+# taps for the chart (chart_recorder.gd), from the start or from a later bar.
+const RECORD_FROM_BARS: Array[int] = [1, 29, 49]
 # A streak of hits warms the screen and brings in the song's extra layer;
 # a miss lets it settle back. No numbers on screen (Dan, 2026-10-21).
 const STREAK_FULL := 8  # Hits in a row for full warmth.
@@ -147,6 +151,8 @@ var _hits := 0
 var _streak := 0  # Hits in a row.
 var _warmth := 0.0  # 0..1, follows the streak.
 var _bursts: Array[Vector3] = []  # A hit's sparkles: age, turn, how big.
+var _recorder: ChartRecorder = null  # Set while recording Dan's taps.
+var _record_buttons: Array[Button] = []
 
 @onready var _conductor: Node = %Conductor
 @onready var _judgement: Label = %Judgement
@@ -163,6 +169,8 @@ func _ready() -> void:
 	_celebrate_player.stream = CELEBRATE_SOUND
 	_judgement.modulate.a = 0.0
 	_test_info.visible = SHOW_TEST_INFO
+	if SHOW_TEST_INFO:
+		_add_record_buttons()
 	_conductor.load_song(SONG, LAYER)
 	_refresh_test_info()
 
@@ -204,6 +212,11 @@ func _input(event: InputEvent) -> void:
 				and event.device != InputEvent.DEVICE_ID_EMULATION
 	if pressed:
 		get_viewport().set_input_as_handled()
+		if _state == State.WAITING:
+			for button in _record_buttons:
+				if button.get_global_rect().has_point(event.position):
+					start_recording(button.get_meta("from"))
+					return
 		_on_tap()
 
 
@@ -217,7 +230,10 @@ func _on_tap() -> void:
 		State.PAUSED:
 			_conductor.resume()  # The web resumes in its own touch handler.
 		State.PLAYING:
-			_judge_tap(_conductor.tap_time())
+			if _recorder:
+				_record_tap(_conductor.tap_time())
+			else:
+				_judge_tap(_conductor.tap_time())
 		State.TEST_SHOWN:
 			if _test_held >= TEST_HOLD:
 				_state = State.DONE
@@ -232,13 +248,23 @@ func _process(delta: float) -> void:
 		if _bursts[k].x >= BURST_TIME:
 			_bursts.remove_at(k)
 	_judgement.modulate.a = maxf(_judgement.modulate.a - delta * 1.6, 0.0)
+	for button in _record_buttons:
+		button.visible = _state == State.WAITING
 	match _state:
 		State.LOADING:
 			if _conductor.is_ready():
 				_state = State.WAITING
 		State.PLAYING, State.PAUSED:
 			_state = State.PAUSED if _conductor.is_paused() else State.PLAYING
-			if _state == State.PLAYING:
+			if _state == State.PLAYING and _recorder:
+				_song_time = _conductor.song_time()
+				_warm(delta)
+				if _recorder.is_stopped() or _song_time >= _song_length \
+						or _conductor.has_song_ended():
+					_state = State.DONE
+					_conductor.stop()
+					_recorder.finish()
+			elif _state == State.PLAYING:
 				_song_time = _conductor.song_time()
 				_mark_misses()
 				_warm(delta)
@@ -275,6 +301,46 @@ func _start() -> void:
 		_moment_times.append(from - MOMENT_FADE)
 	_state = State.PLAYING
 	_conductor.start(from)
+
+
+## Plays the song with no notes and records each tap, for the chart
+## (chart_recorder.gd). Starts at the given bar.
+func start_recording(from_bar: int) -> void:
+	var from := (from_bar - 1) * 2.0 * _heartbeat
+	_recorder = ChartRecorder.new(from)
+	for i in _notes.size():
+		_judged[i] = Judged.HIT  # No falling hearts.
+	_next = _notes.size()
+	_state = State.PLAYING
+	_conductor.start(maxf(from + _song_start - 1.0, 0.0) if from > 0.0 else 0.0)
+	_refresh_test_info()
+
+
+func _record_tap(raw: float) -> void:
+	if raw < 0.0:
+		return
+	_recorder.add(raw - _song_start)
+	_flash = 1.0
+	_bursts.append(Vector3(0.0, randf() * TAU, 0.5))
+	_refresh_test_info()
+
+
+func _add_record_buttons() -> void:
+	var row := VBoxContainer.new()
+	row.position = Vector2(16.0, 100.0)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(row)
+	for bar in RECORD_FROM_BARS:
+		var button := Button.new()
+		var at := roundi((bar - 1) * 2.0 * _heartbeat)
+		button.text = "Record my taps" if bar == 1 else "Record from %d:%02d" % [at / 60, at % 60]
+		# 140 units is about 44 px on a phone, the smallest tap target.
+		button.custom_minimum_size = Vector2(420.0, 140.0)
+		button.add_theme_font_size_override("font_size", 36)
+		button.mouse_filter = Control.MOUSE_FILTER_IGNORE  # Taps are read in _input.
+		button.set_meta("from", bar)
+		row.add_child(button)
+		_record_buttons.append(button)
 
 
 func _judge_tap(raw: float) -> void:
@@ -358,6 +424,8 @@ func _on_hit() -> void:
 
 
 func _warmth_target() -> float:
+	if _recorder:
+		return 1.0  # The whole song, unmuffled, to tap along to.
 	return minf(float(_streak) / STREAK_FULL, 1.0)
 
 
@@ -464,6 +532,7 @@ func probe_state() -> Dictionary:
 		"subtitle": _subtitle.text,
 		"layer": _conductor.is_layer_playing(),
 		"moments": _moment_times.size(),
+		"recorded": _recorder.taps.size() if _recorder else -1,
 	}
 
 
@@ -473,6 +542,8 @@ func _refresh_test_info() -> void:
 		"Sound delay: %+d ms from %d intro taps"
 				% [roundi(_sound_delay * 1000.0), _calibration.size()],
 	])
+	if _recorder:
+		lines.append("Recording your taps: %d" % _recorder.taps.size())
 	if not _late_offsets.is_empty():
 		var mean := 0.0
 		for offset in _late_offsets:
@@ -535,6 +606,9 @@ func _lub_dub(since: float) -> float:
 
 
 func _draw() -> void:
+	if _recorder and _state == State.DONE:
+		_draw_gradient(BG_TOP, BG_BOTTOM)
+		return
 	if _state == State.TEST_SHOWN or _state == State.DONE:
 		_draw_ending()
 		return
@@ -586,7 +660,7 @@ func _draw() -> void:
 	_draw_lights(c, heart, t)
 
 	# After the last note the light fills the screen while the chord rings out.
-	if t > _notes[-1]:
+	if t > _notes[-1] and not _recorder:
 		var fill := clampf((t - _notes[-1]) / FILL_TIME, 0.0, 1.0)
 		var cover := size.length() * 1.1
 		var fill_color := DAWN_TOP

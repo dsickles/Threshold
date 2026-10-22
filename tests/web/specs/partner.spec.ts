@@ -74,6 +74,24 @@ test("hiding the tab pauses the song until a tap", async ({ game, page }) => {
   expect(await songTime(game)).toBeLessThanOrEqual(frozen + sinceTap + 0.3);
 });
 
+// Dan's tool for making the chart from his own taps (chart_recorder.gd).
+test("record my taps: no notes, then Stop shows the taps to copy", async ({ game, page }) => {
+  await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("WAITING");
+  await game.tap("Record my taps");
+  await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("PLAYING");
+  await expect.poll(() => songTime(game), { timeout: 30_000 }).toBeGreaterThan(1);
+  await game.tapMiddle();
+  await game.tapMiddle();
+  await expect.poll(async () => (await game.screen(PARTNER)).recorded).toBe(2);
+  expect((await game.screen(PARTNER)).misses, "no notes to miss").toBe(0);
+  await game.screenshot("partner-recording");
+  await page.getByRole("button", { name: "Stop" }).click();
+  await expect.poll(async () => (await game.screen(PARTNER)).state).toBe("DONE");
+  await expect(page.locator("textarea")).toHaveValue(/^partner-taps from=0: \d+,\d+$/);
+  await expect(page.getByRole("button", { name: "Copy" })).toBeVisible();
+  await game.screenshot("partner-recorded");
+});
+
 test.describe("the ending", () => {
   // Starts the song 8 s before its last note (see web_test_probe.gd), so the
   // light fills the screen and the test appears without playing all 3:04.

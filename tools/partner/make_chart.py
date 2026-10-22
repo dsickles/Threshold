@@ -2,6 +2,7 @@
 from the bar-by-bar table in the draft song and beat chart, and checks it.
 
     python3 tools/partner/make_chart.py
+    python3 tools/partner/make_chart.py --taps <files>   # From Dan's own taps
 
 The table below is the source; the JSON is generated. Edit here, re-run, commit both.
 Draft: m1-prep/partner-song-and-beat-chart.md (not yet decided by Dan).
@@ -49,6 +50,11 @@ It has three a bar on its clear hits (2, 3 and 4) for 12 bars, the longest
 run in the song. main() fails if any note but the last is quieter than the
 middle eighth of its bar (the last is the outro's first chord, on beat 1). Needs numpy, ffmpeg and the Pixabay download, like
 make_song.py; run this first, then make_song.py.
+
+Dan, playing that: the notes still felt "boring and then not in rhythm" with
+"what I hear", and "always the same". So he records how he wants to tap (the
+Partner's "Record my taps" button, with the test info on) and --taps builds
+the chart from those taps instead (chart_from_taps.py says how they are tidied).
 """
 import json
 import pathlib
@@ -156,6 +162,14 @@ def pick_notes(counts, strength):
 
 
 def main():
+    if "--taps" in sys.argv:
+        # Dan's own taps (chart_from_taps.py) decide where the notes go.
+        import chart_from_taps
+        paths = sys.argv[sys.argv.index("--taps") + 1:]
+        eighths, report = chart_from_taps.notes_from_taps(
+            paths, BEAT_MS, SECTIONS, SILENT_BARS, LAST_BAR, BARS)
+        print(report)
+        return write_chart(eighths, None)
     strength = strengths()
     eighths = pick_notes(bar_counts(), strength)
     # Every note on a hit (Dan: "The tap should [go] along with the song.
@@ -166,12 +180,16 @@ def main():
     if "--show" in sys.argv:
         for e in eighths:
             print(f"bar {e // 8 + 1:2d} beat {e % 8 / 2 + 1}: {strength[e // 8 + 1][e % 8]:.2f}")
+    write_chart(eighths, NOTE_COUNT)
+
+
+def write_chart(eighths, note_count):
     notes = [round(e * BEAT_MS / 2) for e in eighths]
 
     # The checks the draft asks for, with Dan's 2026-10-20 easier chart.
     gaps = [b - a for a, b in zip(notes, notes[1:])]
     crescendo_ms = round((CRESCENDO_BAR - 1) * 4 * BEAT_MS)
-    assert len(notes) == NOTE_COUNT, len(notes)
+    assert note_count is None or len(notes) == note_count, len(notes)
     assert min(gaps) >= 500, min(gaps)
     assert notes[-1] == round((LAST_BAR - 1) * 4 * BEAT_MS), notes[-1]
 

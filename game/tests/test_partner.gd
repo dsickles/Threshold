@@ -452,3 +452,24 @@ func test_the_conductor_reads_browser_true_and_false() -> void:
 	check(not conductor._is_true(false), "false")
 	check(not conductor._is_true(0), "0")
 	check(not conductor._is_true(null), "nothing")
+
+
+func test_recording_plays_with_no_notes_and_keeps_every_tap() -> void:
+	check_eq(_partner._record_buttons.size(), 3, "record buttons on the waiting screen")
+	_partner.start_recording(29)
+	var from: float = 28 * 2.0 * _partner._heartbeat
+	check(absf(_fake.t - (from + _partner._song_start - 1.0)) < 0.001, "starts a second before bar 29")
+	for at: float in [from + 0.5, from + 1.25, from + 1.3]:
+		_fake.t = at + _partner._song_start
+		_fake.tap = _fake.t
+		_partner._process(STEP)
+		_partner._on_tap()
+	check_eq(_partner.probe_state().recorded, 3, "every tap kept, even close ones")
+	check_eq(_partner.probe_state().misses, 0, "no notes, so no misses")
+	check_eq(_fake.layer_level > 0.0, true, "the full song, unmuffled")
+	_fake.t = _partner._song_length + 0.1
+	_partner._process(STEP)
+	check_eq(_partner.probe_state().state, "DONE", "stops at the end of the song")
+	var text: String = _partner._recorder.text()
+	check(text.begins_with("partner-taps from=%d: " % roundi(from * 1000.0)), "pasteable text: " + text)
+	check_eq(text.get_slice(": ", 1).split(",").size(), 3, "three taps in the text")
