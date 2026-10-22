@@ -71,9 +71,10 @@ const MAX_SOUND_DELAY := 0.400
 # (the note, plus the sound delay the intro's taps found). Dan, 2026-10-22,
 # on AirPods: with 30 ms, his test info read "Sound delay: -43 ms ... Hits
 # after the intro: average -26 ms" and many beats felt "like I'm too late":
-# the hearts landed about 70 ms before his taps. So none; the sound delay
-# alone puts them where he taps.
-const HEART_LEAD := 0.0
+# the hearts landed about 70 ms before his taps. With none (delay -14 ms,
+# hits +8 ms), "felt better for sure but still a tiny bit late", so they land
+# 15 ms after a tap on time.
+const HEART_LEAD := -0.015
 const MIN_CALIBRATION_TAPS := 3
 const LAUGH_GAP := 4.0  # At most one laugh every 2 bars.
 const RING_SIZE := 0.13  # The heart's half-height, as a share of the screen's shorter side.
