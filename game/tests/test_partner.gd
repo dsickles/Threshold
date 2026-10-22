@@ -251,7 +251,7 @@ func test_the_chart_matches_the_draft() -> void:
 	# tools/partner/make_chart.py), on eighths; his "and"s are an eighth apart.
 	var bar := 8.0 / 3.0
 	var beat := bar / 4.0
-	check_eq(notes.size(), 204, "notes in the chart")
+	check_eq(notes.size(), 197, "notes in the chart")
 	check_near(_partner._song_start, 0.025, 0.0001, "the track's hits land 25 ms after its bar lines")
 	for note in notes:
 		var eighths: float = (note - _partner._song_start) / (beat / 2.0)
@@ -268,7 +268,7 @@ func test_the_chart_matches_the_draft() -> void:
 		if note >= _partner._crescendo:
 			in_crescendo += 1
 	# The most notes of any 12 bars: Dan tapped more as it built.
-	check_eq(in_crescendo, 56, "notes in the crescendo, then the last")
+	check_eq(in_crescendo, 49, "notes in the crescendo, then the last")
 	# Dan, 2026-10-20: "more variation in the beat": some notes fall between beats.
 	var between := 0
 	for note in notes:

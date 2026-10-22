@@ -62,7 +62,8 @@ the first note's bar.
 Dan, after two takes: "let's discuss the general approach. I want to start a
 little earlier than the first one. Then start slow on single beats. And then
 use how I modulated the next sections to design" it; he liked how the first
-take ended, and the second felt "a little too fast". So the chart is PLAN
+take ended, and the second felt "a little too fast". Playing the plan, "the
+end was too fast", so its ending is calmer than his take. So the chart is PLAN
 below, each section's rhythm taken from his takes (tools/partner/taps/, the
 second in not-used/), with at most one quick "and" a bar except the final run.
 """
@@ -117,8 +118,17 @@ PLAN = [
     (47, 47, EVERY),
     (48, 48, [0, 1, 2, 3, 3.5]),     # into the fullest part
     (49, 56, [1, 2.5, 3]),           # "2 ... 3-and 4", his first take
-    (57, 63, [0, 1, 2, 2.5, 3]),     # His first take's ending
-    (64, 64, [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]),  # the quick run
+    # His first take's ending, calmed: it was "too fast" to play, so the
+    # "and" of 3 comes every other bar and the last bar is every beat, not
+    # a run of eighths.
+    (57, 57, EVERY),
+    (58, 58, [0, 1, 2, 2.5, 3]),
+    (59, 59, EVERY),
+    (60, 60, [0, 1, 2, 2.5, 3]),
+    (61, 61, EVERY),
+    (62, 62, [0, 1, 2, 2.5, 3]),
+    (63, 63, EVERY),
+    (64, 64, [0, 1, 2, 3, 3.5]),     # a last "and" into the final note
     (65, 65, [0]),                   # The last note
 ]
 SILENT_BARS = {28}  # The stumble: the track slows to a halt and rests.
