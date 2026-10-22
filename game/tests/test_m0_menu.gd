@@ -112,6 +112,26 @@ func test_viewpoints_button_opens_the_viewpoints_check() -> void:
 	await _check_scene_button("ViewpointsButton", "res://scenes/m0_checks/viewpoints_check.tscn")
 
 
+# DAS-93: the gray-box House opens from the menu, at moving day or with the
+# back hall open.
+func test_house_moving_day_opens_the_house_at_the_start() -> void:
+	await _check_house_button("HouseStartButton", &"start")
+
+
+func test_house_hall_open_opens_the_house_with_the_hall_open() -> void:
+	await _check_house_button("HouseHallOpenButton", &"hall_open")
+
+
+func _check_house_button(button: String, point: StringName) -> void:
+	await _check_scene_button(button, "res://scenes/house/house.tscn")
+	var house := get_tree().current_scene
+	if house != null and house.scene_file_path == "res://scenes/house/house.tscn":
+		check_eq(house.story_point, point, "%s's story point" % button)
+		check_eq(house._current, "P", "%s starts on the porch" % button)
+	get_tree().unload_current_scene()
+	await frames()
+
+
 func _check_scene_button(button: String, scene_path: String) -> void:
 	var menu := add_scene(MENU)
 	tap(menu.get_node("%BeginButton"))

@@ -143,11 +143,14 @@ theme_override_font_sizes/font_size = 24
 text = "M0 checks"
 horizontal_alignment = 1
 
-[node name="ChecksRow" type="HBoxContainer" parent="Menu"]
+[node name="Checks" type="GridContainer" parent="Menu"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 5
 
-[node name="SmoothnessButton" type="Button" parent="Menu/ChecksRow"]
+[node name="SmoothnessButton" type="Button" parent="Menu/Checks"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
@@ -155,7 +158,7 @@ size_flags_horizontal = 3
 theme_type_variation = &"SmallButton"
 text = "Smoothness"
 
-[node name="RhythmButton" type="Button" parent="Menu/ChecksRow"]
+[node name="RhythmButton" type="Button" parent="Menu/Checks"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
@@ -163,13 +166,29 @@ size_flags_horizontal = 3
 theme_type_variation = &"SmallButton"
 text = "Rhythm timing"
 
-[node name="ViewpointsButton" type="Button" parent="Menu/ChecksRow"]
+[node name="ViewpointsButton" type="Button" parent="Menu/Checks"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SmallButton"
 text = "Viewpoints"
+
+[node name="HouseStartButton" type="Button" parent="Menu/Checks"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SmallButton"
+text = "House: moving day"
+
+[node name="HouseHallOpenButton" type="Button" parent="Menu/Checks"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SmallButton"
+text = "House: hall open"
 
 [node name="ChaptersLabel" type="Label" parent="Menu"]
 layout_mode = 2

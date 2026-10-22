@@ -1,0 +1,385 @@
+extends TestCase
+## The gray-box House (DAS-93): the M1 rooms, furniture and 17 views from
+## docs/design/house-floor-plan.md, moved through by tapping rings (ADR-0008).
+
+const HOUSE := preload("res://scenes/house/house.tscn")
+const SCREENS: Array[Vector2i] = [Vector2i(1280, 720), Vector2i(390, 844), Vector2i(844, 390)]
+## The 17 views in house-floor-plan.md "Views (M1)".
+const M1_VIEWS: Array[String] = ["P", "E1", "E2", "L1", "L2", "L3", "L4", "K1", "K2", "K3",
+		"H1", "B1", "B2", "B3", "BA", "C1", "S1"]
+## Every door open: each ring any view can ever have in M1.
+const ALL_OPEN := {
+	"front_door": "open", "entry_living": "open", "living_kitchen": "open",
+	"hall_opening": "open", "bedroom_door": "open", "ensuite_door": "open",
+	"closet_door": "open", "spare_door": "open", "office_door": "open", "bath2_door": "open",
+}
+
+
+func _open_house(doors: Dictionary = {}, point: StringName = &"start") -> Node:
+	var house := HOUSE.instantiate()
+	house.story_point = point
+	house.door_states = doors.duplicate()
+	add_child(house)
+	return house
+
+
+# Finishes the glide under way, as if its whole time had passed.
+func _finish_glide(house: Node) -> void:
+	if house._tween and house._tween.is_valid():
+		house._tween.custom_step(house.GLIDE_SECONDS + 0.1)
+	await frames()
+
+
+# Puts the camera at a view straight away, as if the player had glided there.
+func _stand_at(house: Node, view: String) -> void:
+	if house._tween:
+		house._tween.kill()
+	house._current = view
+	house._set_base(HouseLayout.view_transform(view))
+	house._show_rings()
+
+
+func _same_place(a: Transform3D, b: Transform3D) -> bool:
+	return a.origin.distance_to(b.origin) < 0.01 and a.basis.z.distance_to(b.basis.z) < 0.01
+
+
+func _ring_targets(house: Node) -> Array[String]:
+	var targets: Array[String] = []
+	for ring: Dictionary in house._ring_data:
+		targets.append(ring.target)
+	targets.sort()
+	return targets
+
+
+# --- Rooms and furniture.
+
+func test_every_m1_room_is_built() -> void:
+	var house := _open_house()
+	for room in ["porch", "entry", "living", "kitchen", "hall", "bedroom", "ensuite", "closet",
+			"bath2", "office", "spare"]:
+		check(HouseLayout.ROOMS.has(room), "%s is in the layout" % room)
+		check(house.find_child("Floor_%s" % room, true, false) != null, "%s has a floor" % room)
+	check_eq(HouseLayout.ROOMS.office.doorway_view, "", "the office is never entered in M1")
+	check_eq(HouseLayout.ROOMS.bath2.doorway_view, "", "the hall bathroom is never entered in M1")
+	var walls := house.get_node("BaseLayer").get_child_count()
+	check(walls > 60, "walls, floors and ceilings built (%d pieces)" % walls)
+
+
+func test_furniture_stands_in_the_room_the_floor_plan_puts_it() -> void:
+	var house := _open_house()
+	var expected := ["entry_table", "couch", "tv_console", "tv", "av_receiver", "speaker_left",
+			"speaker_right", "dining_table", "counter_north_left", "counter_north_right",
+			"counter_east", "counter_south", "sink", "fridge", "oven", "bed",
+			"nightstand_lamp_side", "nightstand_list_side", "dresser_north", "dresser_east",
+			"lounge_chair", "ottoman", "spare_boxes_west", "spare_boxes_east"]
+	var ids: Array = HouseLayout.FURNITURE.map(func(item: Array) -> String: return item[0])
+	for id in expected:
+		check(id in ids, "%s is in the layout" % id)
+	for item: Array in HouseLayout.FURNITURE:
+		var centre: Vector3 = item[2]
+		check_eq(HouseLayout.room_at(Vector2(centre.x, centre.z)), item[1], "%s's room" % item[0])
+		check(house.find_child("Furniture_%s" % item[0], true, false) != null, "%s is built" % item[0])
+
+
+# Furniture is gray blocks: nothing to tap (no buttons besides the rings).
+func test_only_rings_can_be_tapped() -> void:
+	var house := _open_house(ALL_OPEN)
+	await frames()
+	for button in house.find_children("*", "BaseButton", true, false):
+		check(button in house._rings, "%s is a ring" % button.name)
+
+
+# --- Views and rings.
+
+func test_all_17_m1_views_exist_in_their_rooms() -> void:
+	check_eq(HouseLayout.VIEWS.size(), 17, "number of views")
+	for view in M1_VIEWS:
+		if not check(HouseLayout.VIEWS.has(view), "view %s exists" % view):
+			continue
+		var data: Dictionary = HouseLayout.VIEWS[view]
+		var stand: Vector2 = data.stand
+		check(HouseLayout.room_at(stand) != "", "%s stands inside the House" % view)
+	for room: String in HouseLayout.ROOMS:
+		var doorway: String = HouseLayout.ROOMS[room].doorway_view
+		if doorway != "":
+			check_eq(HouseLayout.VIEWS[doorway].kind, "doorway", "%s's doorway view" % room)
+			check_eq(HouseLayout.VIEWS[doorway].room, room, "%s's doorway view's room" % room)
+
+
+func test_each_view_rings_every_doorway_in_its_room_and_its_other_wall_views() -> void:
+	for view in M1_VIEWS:
+		var room: String = HouseLayout.VIEWS[view].room
+		var expected: Array[String] = []
+		for door: String in HouseLayout.DOORS:
+			var data: Dictionary = HouseLayout.DOORS[door]
+			var next := ""
+			if data.a == room:
+				next = data.b
+			elif data.b == room and not data.get("one_way", false):
+				next = data.a
+			if next != "" and HouseLayout.ROOMS[next].doorway_view != "":
+				expected.append(HouseLayout.ROOMS[next].doorway_view)
+		for other: String in HouseLayout.VIEWS:
+			if other != view and HouseLayout.VIEWS[other].room == room \
+					and HouseLayout.VIEWS[other].kind == "wall":
+				expected.append(other)
+		expected.sort()
+		var got: Array[String] = []
+		for ring in HouseLayout.rings_for(view, ALL_OPEN):
+			got.append(ring.target)
+		got.sort()
+		check_eq(got, expected, "rings in %s with every door open" % view)
+	# A few by name, from the floor plan.
+	var living: Array[String] = []
+	for ring in HouseLayout.rings_for("L1", ALL_OPEN):
+		living.append(ring.target)
+	living.sort()
+	check_eq(living, ["E1", "H1", "K1", "L2", "L3", "L4"], "L1's rings")
+
+
+func test_from_each_view_every_ring_leads_to_the_view_it_names() -> void:
+	var house := _open_house(ALL_OPEN)
+	await frames()
+	for view in M1_VIEWS:
+		for i in HouseLayout.rings_for(view, ALL_OPEN).size():
+			_stand_at(house, view)
+			await frames()
+			var ring: Dictionary = house._ring_data[i]
+			var button: Button = house._rings[i]
+			check(button.visible, "%s: ring to %s shown" % [view, ring.target])
+			tap(button)
+			await _finish_glide(house)
+			check_eq(house._current, ring.target, "%s: tapping the ring to %s" % [view, ring.target])
+			check(_same_place(house._camera.global_transform, HouseLayout.view_transform(ring.target)),
+					"%s: camera at %s after the glide" % [view, ring.target])
+
+
+func test_rings_stay_on_screen_at_least_44px_and_apart_from_every_view() -> void:
+	var house := _open_house(ALL_OPEN)
+	for screen in SCREENS:
+		set_screen(screen)
+		for view in M1_VIEWS:
+			_stand_at(house, view)
+			await frames(2)
+			_check_rings(house, "%s at %s" % [screen, view], screen)
+
+
+func _check_rings(house: Node, where: String, screen: Vector2i) -> void:
+	var view := house.get_viewport().get_visible_rect()
+	var to_screen := float(screen.x) / view.size.x
+	var shown: Array[Rect2] = []
+	for i in house._ring_data.size():
+		var ring: Button = house._rings[i]
+		var rect := ring.get_global_rect()
+		var name: String = house._ring_data[i].target
+		check(ring.visible, "%s: ring to %s visible" % [where, name])
+		check(rect.size.x >= 44.0 and rect.size.y >= 44.0, "%s: ring to %s at least 44px" % [where, name])
+		check(rect.size.x * to_screen >= 44.0, "%s: ring to %s at least 44px on the real screen" % [where, name])
+		check(view.encloses(rect), "%s: ring to %s on screen (%s)" % [where, name, rect])
+		for other in shown:
+			check(not rect.intersects(other), "%s: ring to %s overlaps another ring" % [where, name])
+		shown.append(rect)
+	for i in range(house._ring_data.size(), house._rings.size()):
+		check(not house._rings[i].visible, "%s: spare ring %d hidden" % [where, i])
+
+
+func test_off_screen_rings_pin_to_the_edge_with_an_arrow() -> void:
+	var house := _open_house(ALL_OPEN)
+	await frames()
+	# Looking into the en-suite from its doorway, the bedroom is behind you.
+	_stand_at(house, "BA")
+	await frames(2)
+	var back: Button = house.ring_to("B1")
+	if not check(back != null, "BA has a ring back to the bedroom"):
+		return
+	check(back.text == "‹" or back.text == "›", "the ring behind you shows an arrow (%s)" % back.text)
+	var screen := house.get_viewport().get_visible_rect().size
+	var centre := back.get_global_rect().get_center()
+	check(centre.x < screen.x * 0.25 or centre.x > screen.x * 0.75, "it sits at a side edge (%s)" % centre)
+	# A ring on something in view has no arrow.
+	_stand_at(house, "H1")
+	await frames(2)
+	var spare: Button = house.ring_to("S1")
+	check(spare != null and spare.text == "", "the spare room door ahead has a plain ring")
+
+
+# --- Moving.
+
+func test_the_house_starts_on_the_porch_facing_the_front_door() -> void:
+	var house := _open_house()
+	check_eq(house._current, "P", "starting view")
+	check(_same_place(house._camera.global_transform, HouseLayout.view_transform("P")), "camera on the porch")
+	check_eq(_ring_targets(house), ["E1"], "the only way is in through the front door")
+
+
+func test_a_glide_takes_two_seconds() -> void:
+	var house := _open_house()
+	await frames()
+	var from: Transform3D = house._camera.global_transform
+	tap(house.ring_to("E1"))
+	check_eq(house._current, "E1", "heading for the entry")
+	house._tween.custom_step(1.0)
+	var mid: Transform3D = house._camera.global_transform
+	check(not _same_place(mid, from) and not _same_place(mid, HouseLayout.view_transform("E1")),
+			"halfway, between the two views")
+	house._tween.custom_step(0.5)
+	check(not _same_place(house._camera.global_transform, HouseLayout.view_transform("E1")),
+			"not there after 1.5 s")
+	house._tween.custom_step(0.6)
+	check(_same_place(house._camera.global_transform, HouseLayout.view_transform("E1")),
+			"there after 2.1 s")
+	check_near(house.GLIDE_SECONDS, 2.0, 1e-6, "glide time")
+
+
+# Going through a doorway, the camera passes through its middle, not the wall.
+func test_a_glide_through_a_doorway_passes_through_it() -> void:
+	var house := _open_house(ALL_OPEN)
+	await frames()
+	_stand_at(house, "H1")
+	tap(house.ring_to("B1"))
+	house._tween.custom_step(house.GLIDE_SECONDS / 2.0)
+	var middle: Vector3 = house._camera.global_transform.origin
+	var door: Vector2 = HouseLayout.DOORS.bedroom_door.at
+	check(Vector2(middle.x, middle.z).distance_to(door) < 0.05, "halfway, in the bedroom doorway (%s)" % middle)
+
+
+func test_changing_mind_mid_glide_ends_at_the_new_view() -> void:
+	var house := _open_house()
+	await frames()
+	tap(house.ring_to("E1"))
+	await _finish_glide(house)
+	tap(house.ring_to("E2"))
+	house._tween.custom_step(0.6)
+	await frames()
+	tap(house.ring_to("L1"))
+	await _finish_glide(house)
+	check_eq(house._current, "L1", "view after changing mind")
+	check(_same_place(house._camera.global_transform, HouseLayout.view_transform("L1")), "camera at L1")
+
+
+func test_a_short_drag_looks_around_a_little_and_the_next_glide_resets_it() -> void:
+	var house := _open_house()
+	await frames()
+	tap(house.ring_to("E1"))
+	await _finish_glide(house)
+	var still: Transform3D = house._camera.global_transform
+	var drag := InputEventMouseMotion.new()
+	drag.button_mask = MOUSE_BUTTON_MASK_LEFT
+	drag.relative = Vector2(-4000.0, 4000.0)
+	drag.position = Vector2(640, 360)
+	get_viewport().push_input(drag, true)
+	var turned: Transform3D = house._camera.global_transform
+	check(turned.origin.distance_to(still.origin) < 0.001, "dragging doesn't move the camera")
+	var angle := turned.basis.z.angle_to(still.basis.z)
+	check(angle > deg_to_rad(5.0), "dragging turns the view (%.1f°)" % rad_to_deg(angle))
+	check(angle < deg_to_rad(25.0), "but only a little (%.1f°)" % rad_to_deg(angle))
+	tap(house.ring_to("L1"))
+	await _finish_glide(house)
+	check(_same_place(house._camera.global_transform, HouseLayout.view_transform("L1")),
+			"the next view is framed as it should be")
+
+
+# Tap is the only verb: keys and mouse movement without a press do nothing.
+func test_keys_and_hover_do_nothing() -> void:
+	var house := _open_house()
+	await frames()
+	tap(house.ring_to("E1"))
+	await _finish_glide(house)
+	var still: Transform3D = house._camera.global_transform
+	for key in [KEY_W, KEY_A, KEY_S, KEY_D, KEY_UP, KEY_LEFT, KEY_SPACE, KEY_ENTER]:
+		var press := InputEventKey.new()
+		press.keycode = key
+		press.physical_keycode = key
+		press.pressed = true
+		get_viewport().push_input(press, true)
+		var release := press.duplicate() as InputEventKey
+		release.pressed = false
+		get_viewport().push_input(release, true)
+	var hover := InputEventMouseMotion.new()
+	hover.relative = Vector2(300.0, 200.0)
+	hover.position = Vector2(640, 360)
+	get_viewport().push_input(hover, true)
+	await frames()
+	check_eq(house._current, "E1", "still in the entry")
+	check(_same_place(house._camera.global_transform, still), "camera hasn't moved")
+	for ring: Button in house._rings:
+		check_eq(ring.focus_mode, Control.FOCUS_NONE, "rings take no keyboard focus")
+		check(ring.get_theme_stylebox("hover") == ring.get_theme_stylebox("normal"),
+				"a ring looks the same hovered or not")
+
+
+# --- Doors, from the story point.
+
+func test_at_the_start_every_open_view_can_be_reached_and_the_living_room_always() -> void:
+	var doors: Dictionary = HouseLayout.STAND_IN_POINTS[&"start"]
+	var reached := HouseLayout.reachable("P", doors)
+	reached.sort()
+	check_eq(reached, ["E1", "E2", "K1", "K2", "K3", "L1", "L2", "L3", "L4", "P"],
+			"views reached at the start: porch, entry, living room and kitchen")
+	for view in reached:
+		var onward := HouseLayout.reachable(view, doors)
+		check(onward.any(func(v: String) -> bool: return HouseLayout.VIEWS[v].room == "living"),
+				"the living room can be reached from %s" % view)
+
+
+func test_with_the_hall_open_the_bedroom_can_be_reached_and_the_living_room_always() -> void:
+	var doors: Dictionary = HouseLayout.STAND_IN_POINTS[&"hall_open"]
+	var reached := HouseLayout.reachable("P", doors)
+	for view in ["H1", "B1", "B2", "B3", "BA"]:
+		check(view in reached, "%s can be reached with the hall open" % view)
+	for view in ["C1", "S1"]:
+		check(not view in reached, "%s stays out of reach (boxes, shut door)" % view)
+	for view in reached:
+		var onward := HouseLayout.reachable(view, doors)
+		check("L1" in onward, "the living room can be reached from %s" % view)
+
+
+func test_shut_and_blocked_doors_cannot_be_gone_through() -> void:
+	var house := _open_house({}, &"start")
+	await frames()
+	_stand_at(house, "L1")
+	check(house.ring_to("H1") == null, "boxes in the back-hall opening: no ring to the hall")
+	check(house.find_child("Boxes_hall_opening", true, false) != null, "the boxes are there")
+	var doors: Dictionary = house.door_states
+	check(not HouseLayout.can_pass("spare_door", "hall", doors), "the spare room door is shut")
+	check(not HouseLayout.can_pass("bath2_door", "hall", doors), "the hall bathroom is shut")
+	check(not HouseLayout.can_pass("closet_door", "bedroom", doors), "boxes in front of the closet")
+	check(not HouseLayout.can_pass("front_door", "entry", doors), "no way back out to the porch")
+	var spare: Node3D = house.find_child("Door_spare_door", true, false)
+	check(spare != null and is_zero_approx(spare.rotation.y), "the spare room door panel is closed")
+	# The office never opens in M1, even if its door were open: no view inside.
+	check(not HouseLayout.can_pass("office_door", "hall", ALL_OPEN), "the office has no view to go to")
+	check(not HouseLayout.can_pass("bath2_door", "hall", ALL_OPEN), "the hall bathroom has no view to go to")
+
+
+func test_which_doors_are_open_comes_from_the_story_point() -> void:
+	var start := _open_house({}, &"start")
+	await frames()
+	_stand_at(start, "L1")
+	check(start.ring_to("H1") == null, "start: the hall is blocked")
+	start.free()
+	var opened := _open_house({}, &"hall_open")
+	await frames()
+	_stand_at(opened, "L1")
+	check(opened.ring_to("H1") != null, "hall open: a ring to the hall")
+	check(opened.find_child("Boxes_hall_opening", true, false) == null, "hall open: no boxes in the way")
+	check(opened.find_child("Boxes_office_door", true, false) != null, "hall open: boxes against the office")
+	var custom := _open_house({"front_door": "open", "entry_living": "shut"})
+	await frames()
+	_stand_at(custom, "E1")
+	check(custom.ring_to("L1") == null, "a door shut by the state passed in has no ring")
+
+
+# --- Light.
+
+func test_lamp_light_and_ordinary_fog_only() -> void:
+	var house := _open_house()
+	var env: Environment = house._world_env.environment
+	check(env.fog_enabled, "ordinary fog on")
+	check(not env.volumetric_fog_enabled, "no volumetric fog")
+	check(house._world_env.compositor == null, "no CompositorEffects on the world")
+	check(house._camera.compositor == null, "no CompositorEffects on the camera")
+	var lamps := house.get_node("LightingLayer").find_children("Lamp_*", "OmniLight3D", false, false)
+	check(lamps.size() >= 9, "a lamp in each room that can be seen (%d)" % lamps.size())
+	for lamp: OmniLight3D in lamps:
+		check(not lamp.shadow_enabled, "%s has no shadows" % lamp.name)
