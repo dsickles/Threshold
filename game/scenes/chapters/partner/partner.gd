@@ -68,12 +68,12 @@ const MISS_GRACE := 0.080
 const CALIBRATION_WINDOW := 0.400
 const MAX_SOUND_DELAY := 0.400
 # Falling hearts reach the centre this long before a tap on time would land
-# (the note, plus the sound delay the intro's taps found). Dan, 2026-10-22: on
-# that time exactly, "I wanted to do the beats a tiny bit earlier than when
-# they landed"; on the heard time with no sound delay, still "a little late";
-# 60 ms ahead of the heard time, "even more off" from the first tap. Keeping
-# the sound delay in also follows headphones, which the browser can't time.
-const HEART_LEAD := 0.030
+# (the note, plus the sound delay the intro's taps found). Dan, 2026-10-22,
+# on AirPods: with 30 ms, his test info read "Sound delay: -43 ms ... Hits
+# after the intro: average -26 ms" and many beats felt "like I'm too late":
+# the hearts landed about 70 ms before his taps. So none; the sound delay
+# alone puts them where he taps.
+const HEART_LEAD := 0.0
 const MIN_CALIBRATION_TAPS := 3
 const LAUGH_GAP := 4.0  # At most one laugh every 2 bars.
 const RING_SIZE := 0.13  # The heart's half-height, as a share of the screen's shorter side.
