@@ -4,8 +4,10 @@ extends Node3D
 ## shows a ring for each doorway in its room that can be gone through and for
 ## the room's other wall views; tapping one glides there in 2.0 s, and the
 ## next view's rings appear on arrival. A ring that is off screen pins to the
-## screen edge with an arrow. A short drag looks around a little. There is no
-## back button.
+## screen edge with an arrow. A ring through a doorway (to another room) is
+## solid; a ring to a wall view in the same room is an outline. Each has a
+## short label under it saying where it goes. A short drag looks around a
+## little. There is no back button.
 ##
 ## Which doors are open, shut or blocked by boxes comes from the story point.
 ## Until the core table (DAS-92) is on main, the stand-in points in
@@ -14,6 +16,8 @@ extends Node3D
 ## opening beat come in later tickets. For now it opens from the M0 menu.
 
 const ACCENT := Color(0.769, 0.647, 0.455)
+const INK := Color(0.957, 0.937, 0.902)
+const SURFACE := Color(0.11, 0.098, 0.086)
 const GLIDE_SECONDS := 2.0
 const RING_SIZE := 110.0
 ## Rings are never smaller than this on the real screen (points on a phone),
@@ -21,6 +25,9 @@ const RING_SIZE := 110.0
 const RING_MIN_REAL := 64.0
 const EDGE_MARGIN := 24.0
 const RING_GAP := 16.0
+## The label sits this far under its ring, in type this share of the ring.
+const LABEL_GAP := 6.0
+const LABEL_SHARE := 0.28
 ## How far a drag can turn the view, and how much per pixel dragged.
 const LOOK_YAW_MAX := deg_to_rad(20.0)
 const LOOK_PITCH_MAX := deg_to_rad(10.0)
@@ -63,8 +70,10 @@ var _pitch := 0.0
 var _rings: Array[Button] = []
 var _ring_data: Array[Dictionary] = []
 var _ring_root: Control
-var _ring_style: StyleBoxFlat
-var _ring_pressed: StyleBoxFlat
+# Ring looks: [resting, pressed] for a doorway ring and for a wall ring.
+var _door_styles: Array[StyleBoxFlat] = []
+var _wall_styles: Array[StyleBoxFlat] = []
+var _label_style: StyleBoxFlat
 var _materials := {}
 var _door_pivots := {}
 var _world_env: WorldEnvironment
@@ -110,12 +119,13 @@ func is_gliding() -> bool:
 
 
 ## For the browser tests (web_test_probe.gd): the view, whether a glide is
-## under way, and each ring with the view it leads to and its centre.
+## under way, and each ring with the view it leads to, its label and its centre.
 func probe_state() -> Dictionary:
 	var rings: Array[Dictionary] = []
 	for i in _ring_data.size():
 		var centre := _rings[i].get_global_transform_with_canvas() * (_rings[i].size / 2.0)
-		rings.append({"target": _ring_data[i].target, "x": centre.x, "y": centre.y})
+		rings.append({"target": _ring_data[i].target, "label": ring_label(_rings[i]).text,
+				"doorway": _ring_data[i].door != "", "x": centre.x, "y": centre.y})
 	return {"view": _current, "gliding": is_gliding(), "rings": rings}
 
 
@@ -218,6 +228,8 @@ func _show_rings() -> void:
 	for i in _rings.size():
 		var ring := _rings[i]
 		ring.visible = i < _ring_data.size()
+		if ring.visible:
+			_style_ring(ring, _ring_data[i])
 	_place_rings()
 
 
@@ -225,18 +237,40 @@ func _make_ring() -> Button:
 	var ring := Button.new()
 	# Tap only: no keyboard focus, and hover looks the same as resting.
 	ring.focus_mode = Control.FOCUS_NONE
-	for state in ["normal", "hover"]:
-		ring.add_theme_stylebox_override(state, _ring_style)
-	for state in ["pressed", "hover_pressed"]:
-		ring.add_theme_stylebox_override(state, _ring_pressed)
 	ring.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	ring.add_theme_font_size_override("font_size", 56)
-	for colour in ["font_color", "font_hover_color", "font_pressed_color",
-			"font_hover_pressed_color", "font_focus_color"]:
-		ring.add_theme_color_override(colour, Color(0.957, 0.937, 0.902))
 	ring.pressed.connect(_on_ring_pressed.bind(ring))
+	# The label under the ring. Taps go past it, as they do anywhere that
+	# isn't a ring.
+	var label := Label.new()
+	label.name = "Label"
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_stylebox_override("normal", _label_style)
+	label.add_theme_color_override("font_color", INK)
+	ring.add_child(label)
 	_ring_root.add_child(ring)
 	return ring
+
+
+# A doorway ring is solid with a dark arrow; a wall ring is an outline with a
+# light one. Either way, hovered looks the same as resting.
+func _style_ring(ring: Button, data: Dictionary) -> void:
+	var doorway: bool = data.door != ""
+	var styles := _door_styles if doorway else _wall_styles
+	for state in ["normal", "hover"]:
+		ring.add_theme_stylebox_override(state, styles[0])
+	for state in ["pressed", "hover_pressed"]:
+		ring.add_theme_stylebox_override(state, styles[1])
+	for colour in ["font_color", "font_hover_color", "font_pressed_color",
+			"font_hover_pressed_color", "font_focus_color"]:
+		ring.add_theme_color_override(colour, SURFACE if doorway else INK)
+	ring_label(ring).text = HouseLayout.VIEWS[data.target].label
+
+
+## The label under a ring.
+func ring_label(ring: Button) -> Label:
+	return ring.get_node("Label") as Label
 
 
 func _on_ring_pressed(ring: Button) -> void:
@@ -256,8 +290,11 @@ func ring_to(view_id: String) -> Button:
 
 # Each ring is drawn over what it leads to, so it stays at least 44px however
 # far away that is. One out of view pins to the screen edge on its side, with
-# an arrow, so there is always somewhere visible to go. Rings that would
-# cover each other are pushed apart.
+# an arrow, so there is always somewhere visible to go. A ring's label sits
+# under it, or beside it (towards the middle) when it is pinned, so pinned
+# rings still stack closely. Each ring and its label are kept on screen
+# together, and rings that would cover each other (or each other's labels)
+# are pushed apart.
 func _place_rings() -> void:
 	var screen := get_viewport().get_visible_rect()
 	var ring_size := _ring_size()
@@ -267,6 +304,8 @@ func _place_rings() -> void:
 	var pinned_left: Array[Button] = []
 	var pinned_right: Array[Button] = []
 	var shown: Array[Button] = []
+	# Each ring's footprint (ring and label), relative to the ring's position.
+	var feet := {}
 	for i in _ring_data.size():
 		var ring := _rings[i]
 		ring.custom_minimum_size = Vector2.ONE * ring_size
@@ -277,18 +316,41 @@ func _place_rings() -> void:
 			var local := _camera.global_transform.affine_inverse() * at
 			point = Vector2(screen.size.x if local.x > 0.0 else 0.0, screen.size.y / 2.0)
 		ring.text = ""
-		# Off to a side: pinned to that edge with an arrow. Just above or
-		# below the screen (after a look-drag): held at the edge.
+		var label := ring_label(ring)
+		label.size = _label_size(label, roundi(ring_size * LABEL_SHARE))
+		label.position = Vector2((ring_size - label.size.x) / 2.0, ring_size + LABEL_GAP)
+		# Off to a side: pinned to that edge with an arrow, its label beside
+		# it. Just above or below the screen (after a look-drag): held at the
+		# edge.
 		if point.x < area.position.x or point.x > area.end.x:
 			var right := point.x > screen.size.x / 2.0
 			ring.text = "›" if right else "‹"
 			(pinned_right if right else pinned_left).append(ring)
-		point = point.clamp(area.position, area.end)
+			label.position = Vector2(-LABEL_GAP - label.size.x if right else ring_size + LABEL_GAP,
+					(ring_size - label.size.y) / 2.0)
+		feet[ring] = Rect2(Vector2.ZERO, ring.size).merge(Rect2(label.position, label.size))
 		ring.position = point - ring.size / 2.0
 		shown.append(ring)
+	# Where each ring may go so that it and its label stay on screen.
+	var bounds := {}
+	for ring in shown:
+		var foot: Rect2 = feet[ring]
+		var lowest := Vector2.ONE * EDGE_MARGIN - foot.position
+		var highest := screen.size - Vector2.ONE * EDGE_MARGIN - foot.end
+		bounds[ring] = [lowest, highest]
+		ring.position = ring.position.clamp(lowest, highest)
 	for side in [pinned_left, pinned_right]:
-		_spread(side, area, ring_size)
-	_push_apart(shown, area, ring_size)
+		_spread(side, feet, bounds)
+	_push_apart(shown, feet, bounds)
+
+
+# A label's size at a font size. Measured here rather than asked of the
+# label, which only takes in a new font size on the next frame.
+func _label_size(label: Label, font_size: int) -> Vector2:
+	label.add_theme_font_size_override("font_size", font_size)
+	var font := label.get_theme_font("font")
+	return font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size) \
+			+ _label_style.get_minimum_size()
 
 
 # The ring's size in the game's units: RING_SIZE, or more where the game is
@@ -304,44 +366,51 @@ func _ring_size() -> float:
 
 
 # Pinned rings on the same edge would sit on top of each other, so stack them.
-func _spread(rings: Array[Button], area: Rect2, ring_size: float) -> void:
+func _spread(rings: Array[Button], feet: Dictionary, bounds: Dictionary) -> void:
 	if rings.size() < 2:
 		return
 	rings.sort_custom(func(a: Button, b: Button) -> bool: return a.position.y < b.position.y)
-	var gap := ring_size + RING_GAP
+	var tall: float = (feet[rings[0]] as Rect2).size.y
+	var gap := tall + RING_GAP
 	var mid := 0.0
 	for ring in rings:
 		mid += ring.position.y
 	mid /= rings.size()
-	var top := clampf(mid - gap * (rings.size() - 1) / 2.0, area.position.y - ring_size / 2.0,
-			area.end.y - ring_size / 2.0 - gap * (rings.size() - 1))
+	var lowest: float = bounds[rings[0]][0].y
+	var highest: float = bounds[rings[0]][1].y - gap * (rings.size() - 1)
+	var top := clampf(mid - gap * (rings.size() - 1) / 2.0, lowest, maxf(lowest, highest))
 	for k in rings.size():
 		rings[k].position.y = top + gap * k
 
 
 # Two things can sit close together on screen (a doorway and a wall beside
-# it); their rings are nudged apart so both stay tappable.
-func _push_apart(rings: Array[Button], area: Rect2, ring_size: float) -> void:
-	var lowest := area.position - Vector2.ONE * ring_size / 2.0
-	var highest := area.end - Vector2.ONE * ring_size / 2.0
-	var apart := ring_size + RING_GAP
-	for pass_index in 12:
+# it); their rings are nudged apart, labels and all, so both stay tappable
+# and readable.
+func _push_apart(rings: Array[Button], feet: Dictionary, bounds: Dictionary) -> void:
+	for pass_index in 40:
 		var moved := false
 		for i in rings.size():
 			for j in range(i + 1, rings.size()):
 				var a := rings[i]
 				var b := rings[j]
-				var gap := b.position - a.position
-				if absf(gap.x) >= apart or absf(gap.y) >= apart:
+				var foot_a := Rect2(a.position + feet[a].position, feet[a].size).grow(RING_GAP / 2.0)
+				var foot_b := Rect2(b.position + feet[b].position, feet[b].size).grow(RING_GAP / 2.0)
+				if not foot_a.intersects(foot_b):
 					continue
-				# Move along whichever direction needs less.
-				var push := Vector2.ZERO
-				if apart - absf(gap.x) < apart - absf(gap.y):
-					push.x = (apart - absf(gap.x)) / 2.0 * (1.0 if gap.x >= 0.0 else -1.0)
-				else:
-					push.y = (apart - absf(gap.y)) / 2.0 * (1.0 if gap.y >= 0.0 else -1.0)
-				a.position = (a.position - push).clamp(lowest, highest)
-				b.position = (b.position + push).clamp(lowest, highest)
+				var overlap := foot_a.intersection(foot_b).size
+				var away := foot_b.get_center() - foot_a.get_center()
+				var across := Vector2(overlap.x / 2.0 * (1.0 if away.x >= 0.0 else -1.0), 0.0)
+				var up_down := Vector2(0.0, overlap.y / 2.0 * (1.0 if away.y >= 0.0 else -1.0))
+				# Move along whichever direction needs less, unless the screen
+				# edge stops that; then the other way.
+				var pushes := [across, up_down] if overlap.x < overlap.y else [up_down, across]
+				var start_a := a.position
+				var start_b := b.position
+				for push: Vector2 in pushes:
+					a.position = (start_a - push).clamp(bounds[a][0], bounds[a][1])
+					b.position = (start_b + push).clamp(bounds[b][0], bounds[b][1])
+					if (b.position - a.position - (start_b - start_a)).length() >= push.length() * 1.9:
+						break
 				moved = true
 		if not moved:
 			return
@@ -591,11 +660,25 @@ func _build_ui() -> void:
 	_ring_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_ring_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(_ring_root)
-	_ring_style = StyleBoxFlat.new()
-	_ring_style.bg_color = Color(ACCENT, 0.25)
-	_ring_style.border_color = Color(ACCENT, 0.95)
-	_ring_style.set_border_width_all(6)
+	# A doorway ring is solid; a wall ring is an outline over a light veil.
+	_door_styles = [_ring_look(0.9, Color(INK, 0.9)), _ring_look(1.0, INK)]
+	_wall_styles = [_ring_look(0.12, Color(ACCENT, 0.95)), _ring_look(0.45, Color(ACCENT, 0.95))]
+	# The label: light words on the subtitle scrim, so they read over a
+	# bright wall.
+	_label_style = StyleBoxFlat.new()
+	_label_style.bg_color = Color(SURFACE, 0.8)
+	_label_style.set_corner_radius_all(8)
+	_label_style.content_margin_left = 12.0
+	_label_style.content_margin_right = 12.0
+	_label_style.content_margin_top = 2.0
+	_label_style.content_margin_bottom = 4.0
+
+
+func _ring_look(fill: float, border: Color) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(ACCENT, fill)
+	style.border_color = border
+	style.set_border_width_all(6)
 	# Larger than any ring, so it is always a circle.
-	_ring_style.set_corner_radius_all(1000)
-	_ring_pressed = _ring_style.duplicate() as StyleBoxFlat
-	_ring_pressed.bg_color = Color(ACCENT, 0.6)
+	style.set_corner_radius_all(1000)
+	return style

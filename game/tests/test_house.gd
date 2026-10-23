@@ -154,6 +154,34 @@ func test_from_each_view_every_ring_leads_to_the_view_it_names() -> void:
 					"%s: camera at %s after the glide" % [view, ring.target])
 
 
+func test_doorway_rings_are_solid_wall_rings_outlined_and_each_says_where_it_goes() -> void:
+	var house := _open_house(ALL_OPEN)
+	for view in M1_VIEWS:
+		_stand_at(house, view)
+		await frames()
+		for i in house._ring_data.size():
+			var ring: Button = house._rings[i]
+			var data: Dictionary = house._ring_data[i]
+			var style := ring.get_theme_stylebox("normal") as StyleBoxFlat
+			var where := "%s: ring to %s" % [view, data.target]
+			if data.door != "":
+				check(style.bg_color.a >= 0.8, "%s (a doorway) is solid" % where)
+			else:
+				check(style.bg_color.a <= 0.2, "%s (a wall) is an outline" % where)
+			check(style.border_width_left > 0, "%s has a rim" % where)
+			check_eq(house.ring_label(ring).text, HouseLayout.VIEWS[data.target].label,
+					"%s is labelled" % where)
+	for view in M1_VIEWS:
+		check(String(HouseLayout.VIEWS[view].get("label", "")) != "", "view %s has a label" % view)
+
+
+func test_ring_labels_cannot_be_tapped() -> void:
+	var house := _open_house()
+	await frames()
+	var ring: Button = house.ring_to("E1")
+	check_eq(house.ring_label(ring).mouse_filter, Control.MOUSE_FILTER_IGNORE, "the label lets taps through")
+
+
 func test_rings_stay_on_screen_at_least_44px_and_apart_from_every_view() -> void:
 	var house := _open_house(ALL_OPEN)
 	for screen in SCREENS:
@@ -176,9 +204,22 @@ func _check_rings(house: Node, where: String, screen: Vector2i) -> void:
 		check(rect.size.x >= 44.0 and rect.size.y >= 44.0, "%s: ring to %s at least 44px" % [where, name])
 		check(rect.size.x * to_screen >= 44.0, "%s: ring to %s at least 44px on the real screen" % [where, name])
 		check(view.encloses(rect), "%s: ring to %s on screen (%s)" % [where, name, rect])
+		var label: Label = house.ring_label(ring)
+		var words := label.get_global_rect()
+		check(label.visible and label.text != "", "%s: ring to %s has a label" % [where, name])
+		check(view.encloses(words), "%s: label for %s on screen (%s)" % [where, name, words])
+		if ring.text == "":
+			check(words.position.y >= rect.end.y, "%s: label for %s under its ring" % [where, name])
+		else:
+			# Pinned: beside the ring, on the side towards the middle.
+			var inward := words.position.x >= rect.end.x if ring.text == "‹" else words.end.x <= rect.position.x
+			check(inward and absf(words.get_center().y - rect.get_center().y) < 1.0,
+					"%s: label for pinned %s beside its ring" % [where, name])
 		for other in shown:
-			check(not rect.intersects(other), "%s: ring to %s overlaps another ring" % [where, name])
+			check(not rect.intersects(other) and not words.intersects(other),
+					"%s: ring or label to %s overlaps another ring or label" % [where, name])
 		shown.append(rect)
+		shown.append(words)
 	for i in range(house._ring_data.size(), house._rings.size()):
 		check(not house._rings[i].visible, "%s: spare ring %d hidden" % [where, i])
 
