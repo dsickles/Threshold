@@ -191,7 +191,7 @@ Godot **Control** theme. Two families, not a poster.
 - **Source Sans 3** (`{typography.body}`, `{typography.subtitle}`) — menus, subtitles, buttons.
 - **IBM Plex Mono** (`{typography.numeric}`) — Due Date, Bank Account, timers, rhythm judgments. Digits must not dance.
 
-Scale from 16px body: 16 / 18 subtitle / 20 reader (`{typography.reader.fontSize}`) / 28 micro-shout / 32 display. These sizes are what the player sees on a sideways phone, not sizes on the 1280×720 layout: the layout shrinks to about 56% on an iPhone, so the shared theme scales them up to match (2026-10-18, DAS-72). Every screen uses that one shared theme for buttons and text. Novice shouts (`{typography.micro-shout}`) are the only all-caps, high-weight overlay. They are a chapter costume, not a hub voice.
+Scale from 16px body: 16 / 18 subtitle / 20 reader (`{typography.reader.fontSize}`) / 28 micro-shout / 32 display. These sizes are what the player sees on a sideways phone, not sizes on the 1280×720 layout: the layout shrinks to about 56% on an iPhone, so the shared theme scales them up to match (2026-10-18, DAS-72). Every screen uses that one shared theme for buttons and text: `game/assets/ui/threshold_theme.tres`, the project theme, with each size × 720/402 (body 29 on the layout), worked out for a sideways iPhone 17 Pro in Safari with the toolbar hidden (402 points tall). The M0 menu's "UI style" check shows it at true size. Novice shouts (`{typography.micro-shout}`) are the only all-caps, high-weight overlay. They are a chapter costume, not a hub voice.
 
 **Reflowed Reader View** uses `{typography.reader}` on `{colors.ink}` paper (`{components.reader-view}`), never a zoomed screenshot of 10-point type.
 
