@@ -90,27 +90,24 @@ func _ready() -> void:
 	_camera.near = 0.05
 	add_child(_camera)
 	_build_ui()
-	get_viewport().size_changed.connect(_place_rings)
+	# Deferred: the 3D view takes in its new size during the same frame, after
+	# the signal, so placing straight away would use the old projection.
+	get_viewport().size_changed.connect(_place_rings, CONNECT_DEFERRED)
 	_current = HouseLayout.START_VIEW
 	_set_base(HouseLayout.view_transform(_current))
 	_arrive()
 
 
-func _process(_delta: float) -> void:
-	# Keep the view about as wide on a tall phone as on a laptop.
+# Keep the view about as wide on a tall phone as on a laptop. Set before
+# rings are placed, so a turn of the phone places them with the new shape.
+func _fit_camera() -> void:
 	var size := get_viewport().get_visible_rect().size
 	_camera.keep_aspect = Camera3D.KEEP_WIDTH if size.y > size.x else Camera3D.KEEP_HEIGHT
 
 
-# Hiding the window pauses a glide (the web build stops altogether while
-# its tab is hidden). Nothing in the House is saved.
-func _notification(what: int) -> void:
-	if _tween == null or not _tween.is_valid():
-		return
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-		_tween.pause()
-	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
-		_tween.play()
+# Hiding the tab pauses everything: the web build stops altogether while its
+# tab is hidden, glide included. Losing focus alone (a tap outside the game's
+# frame) doesn't stop a glide. Nothing in the House is saved.
 
 
 ## Whether a glide is under way.
@@ -296,6 +293,7 @@ func ring_to(view_id: String) -> Button:
 # together, and rings that would cover each other (or each other's labels)
 # are pushed apart.
 func _place_rings() -> void:
+	_fit_camera()
 	var screen := get_viewport().get_visible_rect()
 	var ring_size := _ring_size()
 	var half := ring_size / 2.0
@@ -308,8 +306,12 @@ func _place_rings() -> void:
 	var feet := {}
 	for i in _ring_data.size():
 		var ring := _rings[i]
-		ring.custom_minimum_size = Vector2.ONE * ring_size
-		ring.size = ring.custom_minimum_size
+		# Laid out from these sizes rather than the ring's and label's own,
+		# which can lag a frame behind a turn of the phone.
+		var disc := Vector2.ONE * ring_size
+		ring.custom_minimum_size = disc
+		ring.update_minimum_size()
+		ring.size = disc
 		var at: Vector3 = _ring_data[i].at
 		var point := _camera.unproject_position(at)
 		if _camera.is_position_behind(at):
@@ -317,8 +319,9 @@ func _place_rings() -> void:
 			point = Vector2(screen.size.x if local.x > 0.0 else 0.0, screen.size.y / 2.0)
 		ring.text = ""
 		var label := ring_label(ring)
-		label.size = _label_size(label, roundi(ring_size * LABEL_SHARE))
-		label.position = Vector2((ring_size - label.size.x) / 2.0, ring_size + LABEL_GAP)
+		var words := _label_size(label, roundi(ring_size * LABEL_SHARE))
+		label.size = words
+		label.position = Vector2((ring_size - words.x) / 2.0, ring_size + LABEL_GAP)
 		# Off to a side: pinned to that edge with an arrow, its label beside
 		# it. Just above or below the screen (after a look-drag): held at the
 		# edge.
@@ -326,10 +329,10 @@ func _place_rings() -> void:
 			var right := point.x > screen.size.x / 2.0
 			ring.text = "›" if right else "‹"
 			(pinned_right if right else pinned_left).append(ring)
-			label.position = Vector2(-LABEL_GAP - label.size.x if right else ring_size + LABEL_GAP,
-					(ring_size - label.size.y) / 2.0)
-		feet[ring] = Rect2(Vector2.ZERO, ring.size).merge(Rect2(label.position, label.size))
-		ring.position = point - ring.size / 2.0
+			label.position = Vector2(-LABEL_GAP - words.x if right else ring_size + LABEL_GAP,
+					(ring_size - words.y) / 2.0)
+		feet[ring] = Rect2(Vector2.ZERO, disc).merge(Rect2(label.position, words))
+		ring.position = point - disc / 2.0
 		shown.append(ring)
 	# Where each ring may go so that it and its label stay on screen.
 	var bounds := {}
@@ -348,6 +351,7 @@ func _place_rings() -> void:
 # label, which only takes in a new font size on the next frame.
 func _label_size(label: Label, font_size: int) -> Vector2:
 	label.add_theme_font_size_override("font_size", font_size)
+	label.update_minimum_size()
 	var font := label.get_theme_font("font")
 	return font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size) \
 			+ _label_style.get_minimum_size()
@@ -609,13 +613,6 @@ func _add_lights(parent: Node3D) -> void:
 	porch.light_energy = 1.4
 	porch.omni_range = 5.0
 	parent.add_child(porch)
-	# A little dusk light from outside, so the street side isn't black.
-	var dusk := DirectionalLight3D.new()
-	dusk.name = "Dusk"
-	dusk.rotation = Vector3(deg_to_rad(-25.0), deg_to_rad(200.0), 0.0)
-	dusk.light_color = Color(0.55, 0.55, 0.8)
-	dusk.light_energy = 0.25
-	parent.add_child(dusk)
 
 
 func _bulb_material() -> StandardMaterial3D:

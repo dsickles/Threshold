@@ -224,6 +224,31 @@ func _check_rings(house: Node, where: String, screen: Vector2i) -> void:
 		check(not house._rings[i].visible, "%s: spare ring %d hidden" % [where, i])
 
 
+func test_turning_the_phone_places_rings_on_what_they_lead_to_straight_away() -> void:
+	var house := _open_house(ALL_OPEN)
+	set_screen(Vector2i(1280, 720))
+	_stand_at(house, "L1")
+	await frames(2)
+	for screen in [Vector2i(390, 844), Vector2i(844, 390), Vector2i(390, 844)]:
+		set_screen(screen)
+		# By the end of the frame the phone turned in, the rings fit its new
+		# shape, with no glide or drag needed.
+		await frames(1)
+		var size := house.get_viewport().get_visible_rect().size
+		check_eq(house._camera.keep_aspect,
+				Camera3D.KEEP_WIDTH if size.y > size.x else Camera3D.KEEP_HEIGHT, "%s: camera shape" % screen)
+		var ring: Button = house.ring_to("K1")
+		if not check(ring != null and ring.text == "", "%s: the kitchen ring is in view" % screen):
+			continue
+		var at_once := ring.get_global_rect().get_center()
+		# Placed again once things have settled, every ring stays put.
+		await frames(2)
+		house._place_rings()
+		check(ring.get_global_rect().get_center().distance_to(at_once) < 1.0,
+				"%s: the kitchen ring was right straight away (%s, then %s)"
+				% [screen, at_once, ring.get_global_rect().get_center()])
+
+
 func test_off_screen_rings_pin_to_the_edge_with_an_arrow() -> void:
 	var house := _open_house(ALL_OPEN)
 	await frames()
@@ -465,6 +490,11 @@ func test_lamp_light_and_ordinary_fog_only() -> void:
 	check(not env.volumetric_fog_enabled, "no volumetric fog")
 	check(house._world_env.compositor == null, "no CompositorEffects on the world")
 	check(house._camera.compositor == null, "no CompositorEffects on the camera")
+	var lights := house.get_node("LightingLayer").find_children("*", "Light3D", true, false)
+	for light: Light3D in lights:
+		check(light is OmniLight3D and light.name.begins_with("Lamp_"), "%s is a lamp" % light.name)
+	check(house.find_children("*", "Light3D", true, false).size() == lights.size(),
+			"no light outside the lamps")
 	var lamps := house.get_node("LightingLayer").find_children("Lamp_*", "OmniLight3D", false, false)
 	check(lamps.size() >= 9, "a lamp in each room that can be seen (%d)" % lamps.size())
 	for lamp: OmniLight3D in lamps:

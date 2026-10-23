@@ -40,7 +40,8 @@ const ROOMS := {
 }
 
 ## Walls, each a straight line from "from" to "to" (x, z), with openings
-## along it: [start, end, bottom, top], measured along the wall, plus "glass"
+## along it: [start, end, bottom, top], as x (or z) positions on the
+## wall's own line, not distances from its start, plus "glass"
 ## for a window. The living room and kitchen share no wall (open plan), nor
 ## do the two halves of the entry.
 const WALLS: Array[Dictionary] = [
