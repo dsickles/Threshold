@@ -1,6 +1,6 @@
 // The M0 build: it loads, sound waits for the first tap, and each M0 check
 // opens and returns to the menu. Runs at laptop, phone and sideways-phone sizes.
-import { test, expect, MENU, SMOOTHNESS, VIEWPOINTS, RHYTHM } from "./game";
+import { test, expect, MENU, SMOOTHNESS, VIEWPOINTS, RHYTHM, UI_STYLE } from "./game";
 
 test.beforeEach(async ({ game }) => {
   await game.open();
@@ -26,7 +26,7 @@ test("every menu button is on screen", async ({ game, page }) => {
   await game.findButton("Smoothness");
   const { size, buttons } = (await game.state())!;
   const names = buttons.map((b) => b.text);
-  for (const name of ["Smoothness", "Rhythm timing", "Viewpoints", "Stand-in chapter", "Test save", "Clear save"]) {
+  for (const name of ["Smoothness", "Rhythm timing", "Viewpoints", "UI style", "Stand-in chapter", "Test save", "Clear save"]) {
     expect(names, `menu has ${name}`).toContain(name);
   }
   const canvas = await page.evaluate(() => {
@@ -84,6 +84,31 @@ test("Viewpoints opens, glides to a view and goes back", async ({ game }) => {
   // The ring for the view you are at hides.
   await expect.poll(async () => (await rings()).length).toBe(3);
   await game.screenshot("viewpoints-after-glide");
+  await game.tap("Back to menu");
+  await game.waitForScene(MENU);
+});
+
+// DAS-72: the shared theme at true size. On the phone sizes, body text comes
+// out at about DESIGN.md's 16 points (the browser's own CSS pixels).
+test("UI style opens, shows body text at its phone size and goes back", async ({ game, page }) => {
+  await game.tap("Tap to begin");
+  await game.tap("UI style");
+  await game.waitForScene(UI_STYLE);
+  for (const name of ["Primary", "Quiet", "Back to menu"]) {
+    await game.findButton(name);
+  }
+  const { buttons, screens } = (await game.state())!;
+  const off = buttons.find((b) => b.text === "Quiet (off)");
+  expect(off?.disabled, "Quiet (off) is shown and can't be tapped").toBe(true);
+  const screen = screens[UI_STYLE];
+  const viewport = page.viewportSize()!;
+  if (viewport.width > viewport.height && viewport.height < 500) {
+    // Sideways phone: about 393 points tall, so the layout shows at ~55%.
+    expect(screen.bodyPoints, "body text in points").toBeGreaterThan(15);
+    expect(screen.bodyPoints, "body text in points").toBeLessThan(17);
+  }
+  expect(screen.shownScale, "layout to screen").toBeGreaterThan(0);
+  await game.screenshot("ui-style");
   await game.tap("Back to menu");
   await game.waitForScene(MENU);
 });

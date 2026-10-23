@@ -187,7 +187,6 @@ func _build_ui() -> void:
 	var root := Control.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.theme = _make_theme()
 	layer.add_child(root)
 
 	var ring_style := StyleBoxFlat.new()
@@ -239,34 +238,3 @@ func _build_ui() -> void:
 	_set_glide(_glide_seconds)
 	bar.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 24)
 
-
-# Same look as the M0 menu.
-func _make_theme() -> Theme:
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.165, 0.145, 0.125, 0.9)
-	normal.border_color = Color(0.239, 0.22, 0.196)
-	normal.set_border_width_all(2)
-	normal.set_corner_radius_all(8)
-	normal.set_content_margin_all(16)
-	normal.content_margin_left = 24
-	normal.content_margin_right = 24
-	var pressed := normal.duplicate() as StyleBoxFlat
-	pressed.bg_color = Color(0.239, 0.22, 0.196)
-	pressed.border_color = ACCENT
-	var text := Color(0.957, 0.937, 0.902)
-	var theme := Theme.new()
-	theme.default_font_size = 32
-	var focus := StyleBoxFlat.new()
-	focus.draw_center = false
-	focus.border_color = ACCENT
-	focus.set_border_width_all(2)
-	focus.set_corner_radius_all(8)
-	theme.set_stylebox("focus", "Button", focus)
-	for state in ["normal", "hover"]:
-		theme.set_stylebox(state, "Button", normal)
-	for state in ["pressed", "hover_pressed"]:
-		theme.set_stylebox(state, "Button", pressed)
-	for colour in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
-		theme.set_color(colour, "Button", text)
-	theme.set_color("font_color", "Label", text)
-	return theme
