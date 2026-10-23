@@ -8,11 +8,14 @@ extends Control
 ## story chapter is playable (DAS-74); the line under it shows what is saved.
 ## The menu is scaled to fit whatever screen it is on, so every button stays
 ## on screen as chapters are added, and grows on an upright phone (DAS-76).
+## Its look comes from the shared theme (DAS-72); "UI style" shows that theme
+## at true size.
 ## The two House buttons open the gray-box House (DAS-93) at a story point:
 ## moving day, or with the back hall open so the bedroom can be reached.
 
 const SMOOTHNESS_SCENE := "res://scenes/m0_checks/smoothness/smoothness_check.tscn"
 const VIEWPOINTS_SCENE := "res://scenes/m0_checks/viewpoints_check.tscn"
+const UI_STYLE_SCENE := "res://scenes/m0_checks/ui_style_check.tscn"
 const RHYTHM_CHECK := preload("res://scenes/ui/m0_rhythm_check.tscn")
 const HOUSE := preload("res://scenes/house/house.tscn")
 ## How much of the screen the menu may cover, and how far it may grow.
@@ -35,6 +38,7 @@ func _ready() -> void:
 	%ViewpointsButton.pressed.connect(get_tree().change_scene_to_file.bind(VIEWPOINTS_SCENE))
 	%HouseStartButton.pressed.connect(_open_house.bind(&"start"))
 	%HouseHallOpenButton.pressed.connect(_open_house.bind(&"hall_open"))
+	%UiStyleButton.pressed.connect(get_tree().change_scene_to_file.bind(UI_STYLE_SCENE))
 	%PartnerButton.pressed.connect(_enter_chapter.bind(&"partner"))
 	%StandInButton.pressed.connect(_enter_chapter.bind(ChapterList.STAND_IN))
 	var chapters := ChapterRunner.of(get_tree())
@@ -62,12 +66,12 @@ func _on_begin_pressed() -> void:
 func _fit_menu() -> void:
 	# Chapters stack in one column on an upright phone and three across on a
 	# wide screen, so the menu's shape matches the screen's. The checks (and
-	# the House buttons) take one row on a wide screen and two upright.
+	# the House buttons) go three across on a wide screen and two upright.
 	var upright := size.y > size.x
 	var columns := 1 if upright else 3
 	if _chapters.columns != columns:
 		_chapters.columns = columns
-	var check_columns := 3 if upright else 5
+	var check_columns := 2 if upright else 3
 	if _checks.columns != check_columns:
 		_checks.columns = check_columns
 	var natural := _menu.get_combined_minimum_size()

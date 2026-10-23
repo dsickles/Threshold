@@ -56,7 +56,7 @@ func _check_menu_fits(menu: Node, screen: Vector2i) -> void:
 			"menu inside the screen on %s (menu %s, screen %s)" % [screen, menu_box.get_global_rect(), view])
 	var buttons: Array[Button] = []
 	_collect_buttons(menu_box, buttons)
-	check(buttons.size() >= 6, "found the menu's buttons on %s" % screen)
+	check(buttons.size() >= 7, "found the menu's buttons on %s" % screen)
 	for i in buttons.size():
 		var rect := buttons[i].get_global_rect()
 		var label := "%s on %s" % [buttons[i].text, screen]
@@ -110,6 +110,10 @@ func test_smoothness_button_opens_the_smoothness_check() -> void:
 
 func test_viewpoints_button_opens_the_viewpoints_check() -> void:
 	await _check_scene_button("ViewpointsButton", "res://scenes/m0_checks/viewpoints_check.tscn")
+
+
+func test_ui_style_button_opens_the_ui_style_check() -> void:
+	await _check_scene_button("UiStyleButton", "res://scenes/m0_checks/ui_style_check.tscn")
 
 
 # DAS-93: the gray-box House opens from the menu, at moving day or with the
