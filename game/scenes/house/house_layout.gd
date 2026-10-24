@@ -78,6 +78,10 @@ const WALLS: Array[Dictionary] = [
 ## "b", or "" for in the doorway). A ring for going from "b" back to "a" can
 ## sit somewhere else ("ring_b"): the en-suite, closet and spare room are
 ## only looked into from their doorway, so the way back is behind you.
+## Doors open into "b" and are hung on their west (or north) end. "hinge":
+## "end" hangs one on its east (or south) end, and "opens": "a" swings it back
+## into "a", so an open door is out of the way of the view through it (the
+## bedroom door blocked the bedroom, Dan 2026-10-24).
 const DOORS := {
 	"front_door": {"a": "porch", "b": "entry", "at": Vector2(2.0, 12.0), "width": 1.2,
 			"panel": true, "one_way": true},
@@ -86,13 +90,13 @@ const DOORS := {
 	"hall_opening": {"a": "living_room", "b": "back_hall", "at": Vector2(5.35, 7.5), "width": 1.5,
 			"boxes": ""},
 	"bedroom_door": {"a": "back_hall", "b": "bedroom", "at": Vector2(5.7, 6.0), "width": 1.0,
-			"panel": true},
+			"panel": true, "hinge": "end"},
 	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(3.0, 1.45), "width": 0.9,
-			"panel": true, "ring_b": Vector2(5.6, 2.8)},
+			"panel": true, "opens": "a", "ring_b": Vector2(5.6, 2.8)},
 	"closet_door": {"a": "bedroom", "b": "closet", "at": Vector2(7.0, 2.15), "width": 0.9,
 			"boxes": "b", "ring_b": Vector2(4.4, 3.0)},
 	"spare_room_door": {"a": "back_hall", "b": "spare_room", "at": Vector2(13.0, 6.75), "width": 1.2,
-			"panel": true, "ring_b": Vector2(9.5, 6.75)},
+			"panel": true, "hinge": "end", "ring_b": Vector2(9.5, 6.75)},
 	"office_door": {"a": "back_hall", "b": "office", "at": Vector2(11.0, 6.0), "width": 1.0,
 			"panel": true, "boxes": "a"},
 	"hall_bath_door": {"a": "back_hall", "b": "hall_bath", "at": Vector2(8.1, 6.0), "width": 0.8,

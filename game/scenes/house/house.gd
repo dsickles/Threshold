@@ -526,13 +526,16 @@ func _add_door(parent: Node3D, door_id: String) -> void:
 	if door.get("panel", false):
 		var pivot := Node3D.new()
 		pivot.name = "Door_%s" % door_id
-		pivot.position = Vector3(at.x - width / 2.0, 0.0, at.y) if along_x \
-				else Vector3(at.x, 0.0, at.y - width / 2.0)
+		# Hinged at the doorway's west (or north) end, or its east (or south)
+		# end when "hinge" says "end".
+		var side := 1.0 if door.get("hinge", "") == "end" else -1.0
+		pivot.position = Vector3(at.x + side * width / 2.0, 0.0, at.y) if along_x \
+				else Vector3(at.x, 0.0, at.y + side * width / 2.0)
 		parent.add_child(pivot)
 		var panel_size := Vector3(width, HouseLayout.DOOR_HEIGHT, 0.05) if along_x \
 				else Vector3(0.05, HouseLayout.DOOR_HEIGHT, width)
-		var offset := Vector3(width / 2.0, HouseLayout.DOOR_HEIGHT / 2.0, 0.0) if along_x \
-				else Vector3(0.0, HouseLayout.DOOR_HEIGHT / 2.0, width / 2.0)
+		var offset := Vector3(-side * width / 2.0, HouseLayout.DOOR_HEIGHT / 2.0, 0.0) if along_x \
+				else Vector3(0.0, HouseLayout.DOOR_HEIGHT / 2.0, -side * width / 2.0)
 		_add_box(pivot, offset, panel_size, "door")
 		# The front door is shut until the player goes in; it opens then.
 		if state == HouseLayout.OPEN and door_id != "front_door":
@@ -558,9 +561,14 @@ func _door_along_x(door_id: String) -> bool:
 func _open_angle(door_id: String) -> float:
 	var door: Dictionary = HouseLayout.DOORS[door_id]
 	var into: Vector2 = HouseLayout.ROOMS[door.b].rects[0].get_center() - door.at
+	# A panel hinged at the other end swings the other way to open into "b";
+	# one that opens into "a" swings the other way again.
+	var flip := -1.0 if door.get("hinge", "") == "end" else 1.0
+	if door.get("opens", "b") == "a":
+		flip = -flip
 	if _door_along_x(door_id):
-		return DOOR_OPEN_ANGLE if into.y < 0.0 else -DOOR_OPEN_ANGLE
-	return DOOR_OPEN_ANGLE if into.x > 0.0 else -DOOR_OPEN_ANGLE
+		return flip * (DOOR_OPEN_ANGLE if into.y < 0.0 else -DOOR_OPEN_ANGLE)
+	return flip * (DOOR_OPEN_ANGLE if into.x > 0.0 else -DOOR_OPEN_ANGLE)
 
 
 func _add_box_stack(parent: Node3D, door_id: String) -> void:

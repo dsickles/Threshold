@@ -440,6 +440,25 @@ func test_with_the_hall_open_the_bedroom_can_be_reached_and_the_living_room_alwa
 		check("L1" in onward, "the living room can be reached from %s" % view)
 
 
+func test_an_open_door_swings_out_of_the_view_through_it() -> void:
+	var house := _open_house(ALL_OPEN)
+	await frames()
+	var screen := house.get_viewport().get_visible_rect().size
+	for door_id: String in HouseLayout.DOORS:
+		var door: Dictionary = HouseLayout.DOORS[door_id]
+		var view: String = HouseLayout.ROOMS[door.b].doorway_view
+		if not door.get("panel", false) or view == "" or door_id == "front_door":
+			continue
+		_stand_at(house, view)
+		var panel: MeshInstance3D = house.find_child("Door_%s" % door_id, true, false).get_child(0)
+		var centre := panel.global_position
+		if house._camera.is_position_behind(centre):
+			continue
+		var x: float = house._camera.unproject_position(centre).x
+		check(x < screen.x * 0.2 or x > screen.x * 0.8,
+				"%s: the open %s stays at the edge of the view (%d of %d)" % [view, door_id, x, screen.x])
+
+
 func test_shut_and_blocked_doors_cannot_be_gone_through() -> void:
 	var house := _open_house({}, HouseTable.START)
 	await frames()
