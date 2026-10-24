@@ -5,9 +5,11 @@ extends RefCounted
 ## "Furniture") and its drawing. Moving between views follows ADR-0008.
 ## house.gd builds the gray-box House from this; the tests check it.
 ##
-## Units are metres. x runs west to east (0 to 17) and z runs from the back
-## of the House to the front (0 to 12, the street side), the same way the
-## floor-plan drawing reads (40 px to the metre). y is up.
+## Units are metres. x runs west to east (0 to 15.85) and z runs from the
+## back of the House to the front (0 to 12.8, the street side), the same way
+## the floor-plan drawing reads. The plan is drawn in feet (Dan's real room
+## sizes, 2026-10-24: about 1,900 sq ft of living space), so the numbers here
+## are feet times 0.3048. y is up.
 
 const WALL_HEIGHT := 2.7
 const DOOR_HEIGHT := 2.03
@@ -26,17 +28,17 @@ const BOXED := HouseTable.BOXED
 ## its doorway view, if it has one. A room with no doorway view (the office,
 ## the hall bathroom) is never entered in M1.
 const ROOMS := {
-	"porch": {"rects": [Rect2(0, 12, 4, 2.5)], "doorway_view": "P"},
-	"entry": {"rects": [Rect2(0, 6, 4, 6)], "doorway_view": "E1"},
-	"living_room": {"rects": [Rect2(4, 7.5, 7, 4.5)], "doorway_view": "L1"},
-	"kitchen": {"rects": [Rect2(11, 7.5, 6, 4.5)], "doorway_view": "K1"},
-	"back_hall": {"rects": [Rect2(4, 6, 9, 1.5)], "doorway_view": "H1"},
-	"bedroom": {"rects": [Rect2(3, 0, 4, 2.5), Rect2(0, 2.5, 7, 3.5)], "doorway_view": "B1"},
-	"en_suite": {"rects": [Rect2(0, 0, 3, 2.5)], "doorway_view": "BA"},
-	"closet": {"rects": [Rect2(7, 0, 2, 3)], "doorway_view": "C1"},
-	"hall_bath": {"rects": [Rect2(7, 3, 2, 3)], "doorway_view": ""},
-	"office": {"rects": [Rect2(9, 0, 4, 6)], "doorway_view": ""},
-	"spare_room": {"rects": [Rect2(13, 0, 4, 7.5)], "doorway_view": "S1"},
+	"porch": {"rects": [Rect2(0.0, 10.973, 2.438, 1.829)], "doorway_view": "P"},
+	"entry": {"rects": [Rect2(0.0, 7.01, 2.438, 3.962)], "doorway_view": "E1"},
+	"living_room": {"rects": [Rect2(2.438, 7.01, 5.486, 5.486)], "doorway_view": "L1"},
+	"kitchen": {"rects": [Rect2(7.925, 7.01, 7.925, 5.486)], "doorway_view": "K1"},
+	"back_hall": {"rects": [Rect2(2.438, 5.791, 9.449, 1.219)], "doorway_view": "H1"},
+	"bedroom": {"rects": [Rect2(3.048, 0.0, 3.048, 2.134), Rect2(0.0, 2.134, 6.096, 3.658)], "doorway_view": "B1"},
+	"en_suite": {"rects": [Rect2(0.0, 0.0, 3.048, 2.134)], "doorway_view": "BA"},
+	"closet": {"rects": [Rect2(6.096, 0.0, 1.829, 3.048)], "doorway_view": "C1"},
+	"hall_bath": {"rects": [Rect2(6.096, 3.048, 1.829, 2.743)], "doorway_view": ""},
+	"office": {"rects": [Rect2(7.925, 1.524, 3.962, 4.267)], "doorway_view": ""},
+	"spare_room": {"rects": [Rect2(11.887, 2.438, 3.962, 4.572)], "doorway_view": "S1"},
 }
 
 ## Walls, each a straight line from "from" to "to" (x, z), with openings
@@ -45,30 +47,31 @@ const ROOMS := {
 ## for a window. The living room and kitchen share no wall (open plan), nor
 ## do the two halves of the entry.
 const WALLS: Array[Dictionary] = [
-	# Outside walls.
-	{"from": Vector2(0, 0), "to": Vector2(17, 0), "openings": [
-		[3.4, 4.8, 0.9, 2.1, "glass"], [14.0, 15.3, 0.9, 2.1, "glass"]]},
-	{"from": Vector2(0, 12), "to": Vector2(17, 12), "openings": [
-		[1.55, 2.45, 0.0, DOOR_HEIGHT], [5.5, 9.5, 0.5, 2.3, "glass"], [11.8, 13.2, 0.9, 2.1, "glass"]]},
-	{"from": Vector2(0, 0), "to": Vector2(0, 12), "openings": [[3.5, 4.9, 1.0, 2.1, "glass"]]},
-	{"from": Vector2(17, 0), "to": Vector2(17, 12), "openings": [
-		[2.2, 3.6, 0.9, 2.1, "glass"], [8.5, 9.4, 1.0, 2.1, "glass"]]},
-	# En-suite.
-	{"from": Vector2(3, 0), "to": Vector2(3, 2.5), "openings": [[1.075, 1.825, 0.0, DOOR_HEIGHT]]},
-	{"from": Vector2(0, 2.5), "to": Vector2(3, 2.5), "openings": []},
-	# Bedroom's east wall: the walk-in closet's door.
-	{"from": Vector2(7, 0), "to": Vector2(7, 6), "openings": [[1.75, 2.55, 0.0, DOOR_HEIGHT]]},
-	{"from": Vector2(7, 3), "to": Vector2(9, 3), "openings": []},
-	{"from": Vector2(9, 0), "to": Vector2(9, 6), "openings": []},
-	# Office and spare room; the spare room's door is at the hall's far end.
-	{"from": Vector2(13, 0), "to": Vector2(13, 7.5), "openings": [[6.35, 7.15, 0.0, DOOR_HEIGHT]]},
+	# Outside walls: the back (north), stepping out at the office and spare room.
+	{"from": Vector2(0.0, 0.0), "to": Vector2(7.925, 0.0), "openings": [[0.305, 1.067, 1.4, 2.1, "glass"], [3.81, 5.029, 0.9, 2.1, "glass"]]},
+	{"from": Vector2(7.925, 1.524), "to": Vector2(11.887, 1.524), "openings": [[9.144, 10.668, 0.9, 2.1, "glass"]]},
+	{"from": Vector2(11.887, 2.438), "to": Vector2(15.85, 2.438), "openings": [[12.802, 14.326, 0.9, 2.1, "glass"]]},
+	{"from": Vector2(7.925, 0.0), "to": Vector2(7.925, 5.791), "openings": []},
+	{"from": Vector2(11.887, 1.524), "to": Vector2(11.887, 7.01), "openings": [[6.001, 6.801, 0.0, DOOR_HEIGHT]]},
+	# The front (the street side).
+	{"from": Vector2(0.0, 10.973), "to": Vector2(2.438, 10.973), "openings": [[0.769, 1.669, 0.0, DOOR_HEIGHT]]},
+	{"from": Vector2(2.438, 12.497), "to": Vector2(15.85, 12.497), "openings": [[3.658, 6.706, 0.5, 2.3, "glass"], [8.839, 10.668, 0.9, 2.1, "glass"]]},
+	{"from": Vector2(0.0, 0.0), "to": Vector2(0.0, 10.973), "openings": [[3.353, 4.572, 1.0, 2.1, "glass"]]},
+	{"from": Vector2(15.85, 2.438), "to": Vector2(15.85, 12.497), "openings": [[3.353, 4.572, 0.9, 2.1, "glass"], [8.23, 9.144, 1.0, 2.1, "glass"]]},
+	# En-suite, along the bedroom's north wall; its door faces the bed wall.
+	{"from": Vector2(3.048, 0.0), "to": Vector2(3.048, 2.134), "openings": []},
+	{"from": Vector2(0.0, 2.134), "to": Vector2(3.048, 2.134), "openings": [[2.14, 2.89, 0.0, DOOR_HEIGHT]]},
+	# Bedroom's east wall: the walk-in closet's door; the hall bath behind it.
+	{"from": Vector2(6.096, 0.0), "to": Vector2(6.096, 5.791), "openings": [[0.591, 1.391, 0.0, DOOR_HEIGHT]]},
+	{"from": Vector2(6.096, 3.048), "to": Vector2(7.925, 3.048), "openings": []},
 	# The back hall's north side: bedroom, hall bathroom, office.
-	{"from": Vector2(0, 6), "to": Vector2(13, 6), "openings": [
-		[5.3, 6.1, 0.0, DOOR_HEIGHT], [7.725, 8.475, 0.0, DOOR_HEIGHT], [10.6, 11.4, 0.0, DOOR_HEIGHT]]},
-	# Entry to the hall and the living room: the wide opening.
-	{"from": Vector2(4, 6), "to": Vector2(4, 12), "openings": [[8.3, 11.2, 0.0, DOOR_HEIGHT]]},
+	{"from": Vector2(0.0, 5.791), "to": Vector2(11.887, 5.791), "openings": [[3.959, 4.759, 0.0, DOOR_HEIGHT], [6.712, 7.462, 0.0, DOOR_HEIGHT], [9.125, 9.925, 0.0, DOOR_HEIGHT]]},
+	# The entry's back wall, with the coat closet behind it.
+	{"from": Vector2(0.0, 7.01), "to": Vector2(2.438, 7.01), "openings": []},
+	# Entry to the living room: the wide opening. The porch's side.
+	{"from": Vector2(2.438, 5.791), "to": Vector2(2.438, 12.497), "openings": [[7.772, 10.363, 0.0, DOOR_HEIGHT]]},
 	# The back hall's south side, then the spare room and kitchen.
-	{"from": Vector2(4, 7.5), "to": Vector2(17, 7.5), "openings": [[4.6, 6.1, 0.0, DOOR_HEIGHT]]},
+	{"from": Vector2(2.438, 7.01), "to": Vector2(15.85, 7.01), "openings": [[2.905, 4.105, 0.0, DOOR_HEIGHT]]},
 ]
 
 ## Doorways between rooms. "at" is the middle of the doorway (x, z) and
@@ -85,24 +88,16 @@ const WALLS: Array[Dictionary] = [
 ## opens, in degrees (80 if not set); the front door and the en-suite door
 ## fold back flat against the wall.
 const DOORS := {
-	"front_door": {"a": "porch", "b": "entry", "at": Vector2(2.0, 12.0), "width": 0.9,
-			"panel": true, "one_way": true, "swing": 170.0},
-	"entry_opening": {"a": "entry", "b": "living_room", "at": Vector2(4.0, 9.75), "width": 2.9},
-	"kitchen_opening": {"a": "living_room", "b": "kitchen", "at": Vector2(11.0, 9.75), "width": 4.5},
-	"hall_opening": {"a": "living_room", "b": "back_hall", "at": Vector2(5.35, 7.5), "width": 1.5,
-			"boxes": ""},
-	"bedroom_door": {"a": "back_hall", "b": "bedroom", "at": Vector2(5.7, 6.0), "width": 0.8,
-			"panel": true, "hinge": "end"},
-	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(3.0, 1.45), "width": 0.75,
-			"panel": true, "swing": 170.0, "ring_b": Vector2(5.6, 2.8)},
-	"closet_door": {"a": "bedroom", "b": "closet", "at": Vector2(7.0, 2.15), "width": 0.8,
-			"boxes": "b", "ring_b": Vector2(4.4, 3.0)},
-	"spare_room_door": {"a": "back_hall", "b": "spare_room", "at": Vector2(13.0, 6.75), "width": 0.8,
-			"panel": true, "hinge": "end", "ring_b": Vector2(9.5, 6.75)},
-	"office_door": {"a": "back_hall", "b": "office", "at": Vector2(11.0, 6.0), "width": 0.8,
-			"panel": true, "boxes": "a"},
-	"hall_bath_door": {"a": "back_hall", "b": "hall_bath", "at": Vector2(8.1, 6.0), "width": 0.75,
-			"panel": true},
+	"front_door": {"a": "porch", "b": "entry", "at": Vector2(1.219, 10.973), "width": 0.9, "panel": true, "one_way": true, "swing": 170.0},
+	"entry_opening": {"a": "entry", "b": "living_room", "at": Vector2(2.438, 9.068), "width": 2.591},
+	"kitchen_opening": {"a": "living_room", "b": "kitchen", "at": Vector2(7.925, 9.754), "width": 5.486},
+	"hall_opening": {"a": "living_room", "b": "back_hall", "at": Vector2(3.505, 7.01), "width": 1.2, "boxes": ""},
+	"bedroom_door": {"a": "back_hall", "b": "bedroom", "at": Vector2(4.359, 5.791), "width": 0.8, "panel": true, "hinge": "end"},
+	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(2.515, 2.134), "width": 0.75, "panel": true, "swing": 170.0, "ring_b": Vector2(4.267, 3.048)},
+	"closet_door": {"a": "bedroom", "b": "closet", "at": Vector2(6.096, 0.991), "width": 0.8, "boxes": "b", "ring_b": Vector2(3.962, 2.743)},
+	"spare_room_door": {"a": "back_hall", "b": "spare_room", "at": Vector2(11.887, 6.401), "width": 0.8, "panel": true, "hinge": "end", "ring_b": Vector2(9.144, 6.401)},
+	"office_door": {"a": "back_hall", "b": "office", "at": Vector2(9.525, 5.791), "width": 0.8, "panel": true, "boxes": "a"},
+	"hall_bath_door": {"a": "back_hall", "b": "hall_bath", "at": Vector2(7.087, 5.791), "width": 0.75, "panel": true},
 }
 
 ## The 17 M1 views, in the floor plan's order. "stand" is where the camera
@@ -112,80 +107,85 @@ const DOORS := {
 ## leads there, from the floor plan's names for rooms and walls (placeholder
 ## UI words until Dan approves them).
 const VIEWS := {
-	"P": {"label": "Porch", "room": "porch", "kind": "doorway", "stand": Vector2(2.0, 14.2),
-			"look": Vector3(2.0, 1.3, 12.0)},
-	"E1": {"label": "Entry", "room": "entry", "kind": "doorway", "stand": Vector2(1.9, 11.6),
-			"look": Vector3(2.8, 1.0, 7.0)},
-	"E2": {"label": "Entry table", "room": "entry", "kind": "wall", "stand": Vector2(2.9, 9.0),
-			"look": Vector3(0.3, 0.9, 9.6)},
-	"L1": {"label": "Living room", "room": "living_room", "kind": "doorway", "stand": Vector2(4.5, 9.9),
-			"look": Vector3(12.0, 1.0, 9.6)},
-	"L2": {"label": "Big window", "room": "living_room", "kind": "wall", "stand": Vector2(7.0, 9.3),
-			"look": Vector3(7.5, 1.3, 12.0)},
-	"L3": {"label": "Hall corner", "room": "living_room", "kind": "wall", "stand": Vector2(7.6, 10.4),
-			"look": Vector3(5.35, 1.1, 7.5), "ring": Vector3(4.3, 2.0, 7.6)},
-	"L4": {"label": "TV wall", "room": "living_room", "kind": "wall", "stand": Vector2(8.3, 9.6),
-			"look": Vector3(8.3, 1.0, 7.5)},
-	"K1": {"label": "Kitchen", "room": "kitchen", "kind": "doorway", "stand": Vector2(11.4, 8.9),
-			"look": Vector3(16.5, 1.0, 9.8)},
-	"K2": {"label": "Fridge", "room": "kitchen", "kind": "wall", "stand": Vector2(15.05, 10.3),
-			"look": Vector3(15.05, 1.0, 7.6)},
-	"K3": {"label": "Dining table", "room": "kitchen", "kind": "wall", "stand": Vector2(15.2, 10.4),
-			"look": Vector3(12.5, 0.8, 10.4)},
-	"H1": {"label": "Back hall", "room": "back_hall", "kind": "doorway", "stand": Vector2(4.5, 6.75),
-			"look": Vector3(13.0, 1.2, 6.75)},
-	"B1": {"label": "Bedroom", "room": "bedroom", "kind": "doorway", "stand": Vector2(5.7, 5.5),
-			"look": Vector3(1.0, 1.0, 3.8)},
-	"B2": {"label": "Bed wall", "room": "bedroom", "kind": "wall", "stand": Vector2(4.4, 4.2),
-			"look": Vector3(0.0, 1.0, 4.2)},
-	"B3": {"label": "Corner", "room": "bedroom", "kind": "wall", "stand": Vector2(4.6, 2.9),
-			"look": Vector3(6.6, 1.0, 0.4)},
-	"BA": {"label": "En-suite", "room": "en_suite", "kind": "doorway", "stand": Vector2(3.7, 1.45),
-			"look": Vector3(0.4, 1.1, 1.2)},
-	"C1": {"label": "Closet", "room": "closet", "kind": "doorway", "stand": Vector2(6.2, 2.15),
-			"look": Vector3(8.8, 1.2, 1.4)},
-	"S1": {"label": "Spare room", "room": "spare_room", "kind": "doorway", "stand": Vector2(13.5, 6.8),
-			"look": Vector3(16.3, 1.0, 1.0)},
+	"P": {"label": "Porch", "room": "porch", "kind": "doorway", "stand": Vector2(1.219, 12.68),
+			"look": Vector3(1.219, 1.3, 10.973)},
+	"E1": {"label": "Entry", "room": "entry", "kind": "doorway", "stand": Vector2(1.219, 10.546),
+			"look": Vector3(1.981, 1.0, 7.315)},
+	"E2": {"label": "Entry table", "room": "entry", "kind": "wall", "stand": Vector2(1.676, 8.687),
+			"look": Vector3(0.183, 0.9, 8.687)},
+	"L1": {"label": "Living room", "room": "living_room", "kind": "doorway", "stand": Vector2(2.896, 9.144),
+			"look": Vector3(12.192, 1.0, 9.449)},
+	"L2": {"label": "Big window", "room": "living_room", "kind": "wall", "stand": Vector2(5.182, 8.382),
+			"look": Vector3(5.182, 1.3, 12.497)},
+	"L3": {"label": "Hall corner", "room": "living_room", "kind": "wall", "stand": Vector2(7.01, 10.973),
+			"look": Vector3(3.505, 1.1, 7.01), "ring": Vector3(2.743, 2.0, 7.132)},
+	"L4": {"label": "TV wall", "room": "living_room", "kind": "wall", "stand": Vector2(5.639, 11.43),
+			"look": Vector3(5.639, 1.0, 7.01)},
+	"K1": {"label": "Kitchen", "room": "kitchen", "kind": "doorway", "stand": Vector2(8.23, 8.839),
+			"look": Vector3(15.545, 1.0, 10.058)},
+	"K2": {"label": "Fridge", "room": "kitchen", "kind": "wall", "stand": Vector2(14.173, 10.058),
+			"look": Vector3(14.173, 1.0, 7.01)},
+	"K3": {"label": "Dining table", "room": "kitchen", "kind": "wall", "stand": Vector2(12.497, 9.754),
+			"look": Vector3(9.754, 0.8, 9.677)},
+	"H1": {"label": "Back hall", "room": "back_hall", "kind": "doorway", "stand": Vector2(2.743, 6.401),
+			"look": Vector3(11.887, 1.2, 6.401)},
+	"B1": {"label": "Bedroom", "room": "bedroom", "kind": "doorway", "stand": Vector2(4.359, 5.334),
+			"look": Vector3(0.61, 1.0, 3.962)},
+	"B2": {"label": "Bed wall", "room": "bedroom", "kind": "wall", "stand": Vector2(3.658, 3.962),
+			"look": Vector3(0.0, 1.0, 3.962)},
+	"B3": {"label": "Corner", "room": "bedroom", "kind": "wall", "stand": Vector2(3.353, 3.962),
+			"look": Vector3(5.791, 1.0, 0.305)},
+	"BA": {"label": "En-suite", "room": "en_suite", "kind": "doorway", "stand": Vector2(2.515, 2.804),
+			"look": Vector3(1.829, 1.0, 0.305)},
+	"C1": {"label": "Closet", "room": "closet", "kind": "doorway", "stand": Vector2(5.425, 0.991),
+			"look": Vector3(7.772, 1.2, 0.914)},
+	"S1": {"label": "Spare room", "room": "spare_room", "kind": "doorway", "stand": Vector2(12.375, 6.401),
+			"look": Vector3(15.24, 1.0, 2.896)},
 }
 
 ## Furniture as gray blocks, where house-floor-plan.md "Furniture" puts it:
 ## [id, room, centre, size, colour name, turn in degrees]. Not tappable.
 const FURNITURE: Array[Array] = [
-	["entry_table", "entry", Vector3(0.3, 0.4, 9.8), Vector3(0.5, 0.8, 1.8), "wood", 0.0],
-	["coat_hook", "entry", Vector3(0.05, 1.7, 8.6), Vector3(0.08, 0.1, 0.5), "dark", 0.0],
-	["couch", "living_room", Vector3(8.15, 0.42, 10.6), Vector3(2.3, 0.85, 0.9), "fabric", 9.0],
-	["tv_console", "living_room", Vector3(8.3, 0.25, 7.8), Vector3(2.0, 0.5, 0.45), "wood", 0.0],
-	["tv", "living_room", Vector3(8.3, 1.0, 7.75), Vector3(1.6, 0.9, 0.08), "dark", 0.0],
-	["av_receiver", "living_room", Vector3(8.3, 0.58, 7.85), Vector3(0.45, 0.15, 0.35), "dark", 0.0],
-	["speaker_left", "living_room", Vector3(7.0, 0.55, 7.8), Vector3(0.3, 1.1, 0.35), "dark", 0.0],
-	["speaker_right", "living_room", Vector3(9.6, 0.55, 7.8), Vector3(0.3, 1.1, 0.35), "dark", 0.0],
-	["dining_table", "kitchen", Vector3(12.5, 0.38, 10.4), Vector3(1.6, 0.75, 1.0), "wood", 0.0],
-	["dining_chair_1", "kitchen", Vector3(12.05, 0.45, 9.65), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
-	["dining_chair_2", "kitchen", Vector3(12.95, 0.45, 9.65), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
-	["dining_chair_3", "kitchen", Vector3(12.05, 0.45, 11.15), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
-	["dining_chair_4", "kitchen", Vector3(12.95, 0.45, 11.15), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
-	["counter_north_left", "kitchen", Vector3(13.3, 0.45, 7.85), Vector3(2.6, 0.9, 0.6), "granite", 0.0],
-	["sink", "kitchen", Vector3(13.95, 0.91, 7.85), Vector3(0.9, 0.04, 0.45), "steel", 0.0],
-	["fridge", "kitchen", Vector3(15.05, 0.9, 7.95), Vector3(0.9, 1.8, 0.8), "steel", 0.0],
-	["counter_north_right", "kitchen", Vector3(16.22, 0.45, 7.85), Vector3(1.45, 0.9, 0.6), "granite", 0.0],
-	["counter_east", "kitchen", Vector3(16.65, 0.45, 10.05), Vector3(0.6, 0.9, 3.8), "granite", 0.0],
-	["oven", "kitchen", Vector3(16.33, 0.45, 10.0), Vector3(0.04, 0.7, 0.75), "dark", 0.0],
-	["counter_south", "kitchen", Vector3(15.57, 0.45, 11.65), Vector3(1.55, 0.9, 0.6), "granite", 0.0],
-	["bed", "bedroom", Vector3(1.1, 0.3, 4.2), Vector3(2.1, 0.6, 1.6), "fabric", 0.0],
-	["headboard", "bedroom", Vector3(0.08, 0.6, 4.2), Vector3(0.1, 1.2, 1.6), "wood", 0.0],
-	["nightstand_lamp_side", "bedroom", Vector3(0.3, 0.3, 3.03), Vector3(0.5, 0.6, 0.55), "wood", 0.0],
-	["nightstand_list_side", "bedroom", Vector3(0.3, 0.3, 5.38), Vector3(0.5, 0.6, 0.55), "wood", 0.0],
-	["dresser_north", "bedroom", Vector3(4.1, 0.45, 0.28), Vector3(1.4, 0.9, 0.45), "wood", 0.0],
-	["dresser_east", "bedroom", Vector3(6.7, 0.45, 4.15), Vector3(0.5, 0.9, 1.5), "wood", 0.0],
-	["vanity", "en_suite", Vector3(0.3, 0.45, 1.5), Vector3(0.55, 0.9, 1.3), "granite", 0.0],
-	["mirror", "en_suite", Vector3(0.03, 1.5, 1.5), Vector3(0.04, 0.8, 1.0), "glass", 0.0],
-	["bathtub", "en_suite", Vector3(1.6, 0.3, 0.42), Vector3(2.2, 0.6, 0.75), "white", 0.0],
-	["closet_shelf_north", "closet", Vector3(8.0, 1.7, 0.25), Vector3(1.9, 0.04, 0.45), "wood", 0.0],
-	["closet_shelf_east", "closet", Vector3(8.75, 1.7, 1.5), Vector3(0.45, 0.04, 2.9), "wood", 0.0],
-	["lounge_chair", "spare_room", Vector3(16.2, 0.45, 0.85), Vector3(0.8, 0.9, 0.8), "leather", 45.0],
-	["ottoman", "spare_room", Vector3(15.45, 0.22, 1.7), Vector3(0.5, 0.45, 0.5), "leather", 45.0],
-	["spare_boxes_west", "spare_room", Vector3(13.3, 0.4, 4.05), Vector3(0.5, 0.8, 1.3), "box", 0.0],
-	["spare_boxes_east", "spare_room", Vector3(16.7, 0.4, 6.25), Vector3(0.5, 0.8, 1.3), "box", 0.0],
+	["entry_table", "entry", Vector3(0.221, 0.4, 8.687), Vector3(0.381, 0.8, 1.219), "wood", 0.0],
+	["coat_closet_door", "entry", Vector3(0.914, 1.015, 7.093), Vector3(0.8, 2.03, 0.04), "door", 0.0],
+	["couch", "living_room", Vector3(5.258, 0.42, 9.906), Vector3(2.286, 0.85, 0.914), "fabric", 9.0],
+	["tv_console", "living_room", Vector3(5.639, 0.25, 7.269), Vector3(1.829, 0.5, 0.457), "wood", 0.0],
+	["tv", "living_room", Vector3(5.639, 1.0, 7.132), Vector3(1.6, 0.9, 0.08), "dark", 0.0],
+	["av_receiver", "living_room", Vector3(5.639, 0.58, 7.3), Vector3(0.45, 0.15, 0.35), "dark", 0.0],
+	["speaker_left", "living_room", Vector3(4.45, 0.55, 7.224), Vector3(0.3, 1.1, 0.35), "dark", 0.0],
+	["speaker_right", "living_room", Vector3(6.828, 0.55, 7.224), Vector3(0.3, 1.1, 0.35), "dark", 0.0],
+	["dining_table", "kitchen", Vector3(9.754, 0.38, 9.677), Vector3(1.829, 0.75, 1.067), "wood", 0.0],
+	["dining_chair_1", "kitchen", Vector3(9.251, 0.45, 8.854), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
+	["dining_chair_2", "kitchen", Vector3(9.952, 0.45, 8.854), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
+	["dining_chair_3", "kitchen", Vector3(10.653, 0.45, 8.854), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
+	["dining_chair_4", "kitchen", Vector3(9.251, 0.45, 10.5), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
+	["dining_chair_5", "kitchen", Vector3(9.952, 0.45, 10.5), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
+	["dining_chair_6", "kitchen", Vector3(10.653, 0.45, 10.5), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
+	["counter_north_left", "kitchen", Vector3(12.68, 0.45, 7.346), Vector3(2.134, 0.9, 0.61), "granite", 0.0],
+	["sink", "kitchen", Vector3(13.198, 0.91, 7.346), Vector3(0.8, 0.04, 0.45), "steel", 0.0],
+	["fridge", "kitchen", Vector3(14.173, 0.9, 7.437), Vector3(0.914, 1.8, 0.792), "steel", 0.0],
+	["counter_north_right", "kitchen", Vector3(15.225, 0.45, 7.346), Vector3(1.189, 0.9, 0.61), "granite", 0.0],
+	["counter_east", "kitchen", Vector3(15.514, 0.45, 10.058), Vector3(0.61, 0.9, 4.816), "granite", 0.0],
+	["oven", "kitchen", Vector3(15.203, 0.45, 9.677), Vector3(0.04, 0.7, 0.762), "dark", 0.0],
+	["counter_south", "kitchen", Vector3(14.463, 0.45, 12.162), Vector3(1.494, 0.9, 0.61), "granite", 0.0],
+	["bed", "bedroom", Vector3(1.082, 0.3, 3.962), Vector3(2.042, 0.6, 1.524), "fabric", 0.0],
+	["headboard", "bedroom", Vector3(0.079, 0.6, 3.962), Vector3(0.1, 1.2, 1.524), "wood", 0.0],
+	["nightstand_lamp_side", "bedroom", Vector3(0.259, 0.3, 2.972), Vector3(0.457, 0.6, 0.457), "wood", 0.0],
+	["nightstand_list_side", "bedroom", Vector3(0.259, 0.3, 4.953), Vector3(0.457, 0.6, 0.457), "wood", 0.0],
+	["dresser_north", "bedroom", Vector3(4.42, 0.45, 0.274), Vector3(1.524, 0.9, 0.488), "wood", 0.0],
+	["dresser_east", "bedroom", Vector3(5.822, 0.45, 4.359), Vector3(0.488, 0.9, 1.524), "wood", 0.0],
+	["vanity", "en_suite", Vector3(1.829, 0.45, 0.305), Vector3(1.219, 0.9, 0.549), "granite", 0.0],
+	["mirror", "en_suite", Vector3(1.829, 1.5, 0.046), Vector3(0.914, 0.8, 0.04), "glass", 0.0],
+	["toilet", "en_suite", Vector3(0.381, 0.38, 0.366), Vector3(0.701, 0.75, 0.488), "white", 0.0],
+	["shower", "en_suite", Vector3(0.549, 0.08, 1.6), Vector3(1.036, 0.15, 1.006), "white", 0.0],
+	["closet_shelf_north", "closet", Vector3(7.01, 1.7, 0.229), Vector3(1.768, 0.04, 0.396), "wood", 0.0],
+	["closet_shelf_east", "closet", Vector3(7.696, 1.7, 1.737), Vector3(0.396, 0.04, 2.56), "wood", 0.0],
+	["office_closet", "office", Vector3(11.582, 1.015, 4.572), Vector3(0.61, 2.03, 1.829), "door", 0.0],
+	["spare_closet", "spare_room", Vector3(12.192, 1.015, 4.572), Vector3(0.61, 2.03, 1.829), "door", 0.0],
+	["lounge_chair", "spare_room", Vector3(15.24, 0.45, 3.109), Vector3(0.8, 0.9, 0.8), "leather", 45.0],
+	["ottoman", "spare_room", Vector3(14.448, 0.22, 4.054), Vector3(0.5, 0.45, 0.5), "leather", 45.0],
+	["spare_boxes_west", "spare_room", Vector3(12.177, 0.4, 3.018), Vector3(0.5, 0.8, 1.0), "box", 0.0],
+	["spare_boxes_east", "spare_room", Vector3(15.56, 0.4, 5.974), Vector3(0.5, 0.8, 1.0), "box", 0.0],
 ]
 
 ## Whether you can go through a doorway, from the given room, with these door

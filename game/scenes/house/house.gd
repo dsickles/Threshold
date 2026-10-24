@@ -450,7 +450,7 @@ func _build_world() -> void:
 	var props := _layer("PropLayer")
 	var lighting := _layer("LightingLayer")
 
-	_add_box(base, Vector3(8.5, -0.06, 7.0), Vector3(60.0, 0.1, 60.0), "ground")
+	_add_box(base, Vector3(8.0, -0.06, 6.5), Vector3(60.0, 0.1, 60.0), "ground")
 	for room: String in HouseLayout.ROOMS:
 		for rect: Rect2 in HouseLayout.ROOMS[room].rects:
 			var centre := rect.get_center()
@@ -461,9 +461,10 @@ func _build_world() -> void:
 					Vector3(rect.size.x, 0.1, rect.size.y), "ceiling", "Ceiling_%s" % room)
 	for wall: Dictionary in HouseLayout.WALLS:
 		_add_wall(base, wall)
-	# The porch: two posts at the front, under the roof.
-	for x in [0.15, 3.85]:
-		_add_box(base, Vector3(x, HouseLayout.WALL_HEIGHT / 2.0, 14.35),
+	# The porch: two posts at its front corners, under the roof.
+	var porch: Rect2 = HouseLayout.ROOMS.porch.rects[0]
+	for x in [porch.position.x + 0.15, porch.end.x - 0.15]:
+		_add_box(base, Vector3(x, HouseLayout.WALL_HEIGHT / 2.0, porch.end.y - 0.15),
 				Vector3(0.15, HouseLayout.WALL_HEIGHT, 0.15), "wood")
 
 	for item: Array in HouseLayout.FURNITURE:
@@ -621,7 +622,8 @@ func _add_lights(parent: Node3D) -> void:
 		parent.add_child(bulb_mesh)
 	var porch := OmniLight3D.new()
 	porch.name = "Lamp_porch"
-	porch.position = Vector3(2.0, 2.35, 12.4)
+	var door: Vector2 = HouseLayout.DOORS.front_door.at
+	porch.position = Vector3(door.x, 2.35, door.y + 0.4)
 	porch.light_color = Color(1.0, 0.8, 0.55)
 	porch.light_energy = 1.4
 	porch.omni_range = 5.0
