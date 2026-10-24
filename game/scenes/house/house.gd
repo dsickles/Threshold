@@ -564,11 +564,8 @@ func _door_along_x(door_id: String) -> bool:
 func _open_angle(door_id: String) -> float:
 	var door: Dictionary = HouseLayout.DOORS[door_id]
 	var into: Vector2 = HouseLayout.ROOMS[door.b].rects[0].get_center() - door.at
-	# A panel hinged at the other end swings the other way to open into "b";
-	# one that opens into "a" swings the other way again.
+	# A panel hinged at the other end swings the other way to open into "b".
 	var flip := -1.0 if door.get("hinge", "") == "end" else 1.0
-	if door.get("opens", "b") == "a":
-		flip = -flip
 	var angle: float = deg_to_rad(door.get("swing", rad_to_deg(DOOR_OPEN_ANGLE)))
 	if _door_along_x(door_id):
 		return flip * (angle if into.y < 0.0 else -angle)

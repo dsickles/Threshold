@@ -79,9 +79,9 @@ const WALLS: Array[Dictionary] = [
 ## sit somewhere else ("ring_b"): the en-suite, closet and spare room are
 ## only looked into from their doorway, so the way back is behind you.
 ## Doors open into "b" and are hung on their west (or north) end. "hinge":
-## "end" hangs one on its east (or south) end, and "opens": "a" swings it back
-## into "a", so an open door is out of the way of the view through it (the
-## bedroom door blocked the bedroom, Dan 2026-10-24). "swing": how far it
+## "end" hangs one on its east (or south) end, so an open door is out of the
+## way of the view through it (the bedroom door blocked the bedroom, Dan
+## 2026-10-24). "swing": how far it
 ## opens, in degrees (80 if not set); the front door and the en-suite door
 ## fold back flat against the wall.
 const DOORS := {
