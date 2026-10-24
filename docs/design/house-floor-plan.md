@@ -22,7 +22,30 @@ One storey, built front to back, like a real house: the shared rooms at the fron
 
 Read it from the bottom (the street) up. The front door is bottom left. The entry, living room and kitchen run along the front and are always open. Behind them, the **back hall** (the blue strip) runs left to right, from an opening in the living room's back wall to the spare room's door at its far end. The main bedroom, the hall bathroom and the office open off its top side.
 
-About 17 m by 12 m. The back hall runs straight from the living room to the spare room's door, so from the moment the hall opens, the player can see that door at the end of it. The spare room is in the back corner diagonally opposite the front door, as far from it as the House allows.
+About 16 m by 13 m (52 by 42 ft, about 1,900 sq ft of living space; see "Real sizes" below). The back hall runs straight from the living room to the spare room's door, so from the moment the hall opens, the player can see that door at the end of it. The spare room is in the back corner diagonally opposite the front door, as far from it as the House allows.
+
+### Real sizes (Dan, 2026-10-24)
+
+The drawing above shows which rooms join which. Its sizes read far too big in the game (the entry came out 13 by 20 ft), so Dan set real room sizes for a house of about 1,900 sq ft of living space (walls not counted), and the House is built to this drawing. **Draft until Dan OKs it in the game.**
+
+![The House at real sizes, in feet: the same layout, with a coat closet in the entry, a dining area between the living room and the kitchen, the en-suite along the bedroom's north wall, and hanging closets in the office and the spare room](house-floor-plan-sizes.svg)
+
+| Room | Size (ft) |
+|---|---|
+| Porch | 8 × 6 |
+| Entry | 8 × 13, with a coat closet (shut) behind its back wall |
+| Living room | 18 × 18 |
+| Dining area | 12 × 18, open to the living room and the kitchen; part of the kitchen in the core table |
+| Kitchen | 14 × 18 |
+| Back hall | 31 × 4 |
+| Main bedroom | about 310 sq ft, around the en-suite |
+| En-suite | 10 × 7, its long side along the bedroom's north wall; its door faces the bed wall |
+| Walk-in closet | 6 × 10, top right of the bedroom |
+| Hall bathroom | 6 × 9, under the closet |
+| Office | 13 × 14, a north window, a hanging closet on the south part of its right wall |
+| Spare room | 13 × 15, a hanging closet back to back with the office's |
+
+Furniture is ordinary size: a queen bed (5 × 6.7 ft), a 7.5 ft couch, a 6 ft table with six chairs, 2 ft deep counters, doors about 2 ft 8 in wide and 6 ft 8 in tall.
 
 Because the player only sees framed shots ([ADR-0003](../adr/0003-house-fixed-viewpoints.md)), each room only needs the walls its viewpoints can see. A room that isn't open yet is a shut door.
 
@@ -91,7 +114,7 @@ How the player moves is set by [ADR-0008](../adr/0008-house-doorway-and-wall-vie
 |---|---|---|---|---|
 | Porch | **P** | The front door | Dusk, the porch light, the front door | Start only (one way in) |
 | Entry | **E1** doorway | Into the entry | Boxes; Leo's moving box on top; the wide opening to the living room | Always |
-| | **E2** wall | The entry table | The entry table flush against the left wall, the car keys on it, a coat hook | Always |
+| | **E2** wall | The entry table | The entry table flush against the left wall, the car keys on it; the coat closet's door (shut) in the back wall (Dan, 2026-10-24) | Always |
 | Living room | **L1** doorway | Across the room | The couch sitting askew in the middle of the room, the TV wall, the big window, the dining table and kitchen beyond. The opening beat plays on first arrival here. | Always |
 | | **L2** wall | The big window | The street at dusk; rain after the Loss | Always |
 | | **L3** corner | The back-hall opening | Moving boxes blocking it at the start; after the opening beat, the hall and a warm lamp beyond | Always |
@@ -116,9 +139,11 @@ Where things would really be, a few days after moving in. Furniture is drawn in 
 - **Kitchen:** granite counters along the top wall, the right wall and a little of the bottom wall. No island or peninsula. The fridge along the top wall, a few feet in from the corner so it can open (Dan, 2026-10-20); the oven on the right wall (placed by me; move it if it belongs elsewhere).
 - **Dining table:** between the kitchen and the living room, on the kitchen side of the open plan, with a window on the south wall beside it.
 - **Kitchen, more:** the sink in the top counter, just left of the fridge; a window on the east wall, just left of (above) the oven.
-- **Main bedroom:** the bed in the nook on the left, its head against the west wall, a window above it and a nightstand either side, flush against that wall. The bedside lamp is on one nightstand. A dresser for each of them: one on the right wall near the bottom, next to the hall bathroom; one flush against the north wall, under a window. The record player in the top-right area. The en-suite and the walk-in closet open off the bedroom.
+- **Main bedroom:** the bed on the left (west) wall, centred between the en-suite's wall and the bedroom's bottom wall with about 2 ft clear at each end, its head against the wall, a window above it and a nightstand either side, flush against that wall (Dan, 2026-10-24). The bedside lamp is on one nightstand. A dresser for each of them: one on the right wall near the bottom, next to the hall bathroom; one flush against the north wall, under a window. The record player in the top-right area. The en-suite and the walk-in closet open off the bedroom.
+- **En-suite:** the vanity and mirror on the north wall, facing the door; the toilet on the far (left) wall; a shower in the corner by the door (Dan, 2026-10-24).
 - **Walk-in closet:** a little disorganized through M1. Boxes in the way of its door at first; after the Partner, things for both of them going in, boxes still on the floor.
-- **Spare room:** windows on the north and east walls. Leo's lounge chair in the north-east corner, its back to the corner and the ottoman towards the south-west, the onesie on it. The band poster and his guitar next to each other on the left side of the north wall; more boxes along the middle of the left wall and against the right wall.
+- **Office:** a hanging closet (not a walk-in) on the south part of its right wall, and a north window (Dan, 2026-10-24).
+- **Spare room:** windows on the north and east walls. A hanging closet back to back with the office's, on the other side of that wall (Dan, 2026-10-24). Leo's lounge chair in the north-east corner, its back to the corner and the ottoman towards the south-west, the onesie on it. The band poster and his guitar next to each other on the left side of the north wall; more boxes along the middle of the left wall and against the right wall.
 
 ### Chapter objects are always ready
 

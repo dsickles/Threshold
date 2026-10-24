@@ -285,6 +285,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 24. The House at real room sizes (2026-10-24)
+
+| | |
+|---|---|
+| **Was** | Room sizes came from reading the floor-plan drawing at 40 px to the metre: about 17 by 12 m, with a 13 by 20 ft entry and oversized doors. |
+| **Became** | Real sizes in feet for about 1,900 sq ft of living space, same layout: a coat closet in the entry, a dining area between the living room and the kitchen, the en-suite along the bedroom's north wall, hanging closets in the office and spare room. Ordinary furniture and door sizes. Draft until Dan OKs it in the game. |
+| **Why** | In the first build the House read far smaller than its numbers and the rooms felt wrong; the drawing had no real sizes. Dan's calls, 2026-10-24. |
+| **Record** | [house-floor-plan.md](house-floor-plan.md) "Real sizes"; [scope.md](../scope.md) Settled questions; DAS-93 (PR #30) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
