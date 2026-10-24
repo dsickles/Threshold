@@ -1,6 +1,6 @@
-# The House: floor plan (draft)
+# The House: floor plan
 
-**Status:** Draft for Dan to edit, 2026-10-18 (third pass, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)). Most of Dan's calls were decided on 2026-10-19 (see "Dan's calls" at the end); the spare room's role, the memory box, the House objects and the record player's later life are still open. Answers the open question in [scope.md](../scope.md): "The House's small floor plan: which rooms, where the chapter objects sit" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft".
+**Status:** Settled for M1 (Dan, 2026-10-22: "settled for M1 until it can be seen in the game"; [scope.md](../scope.md) Settled questions). The M1 rows below are what the core table (`game/_core/house/house_table.gd`) builds from; change this file first, then the table. The open calls at the end are M2's. History: draft for Dan to edit, 2026-10-18 (third pass, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)). Most of Dan's calls were decided on 2026-10-19 (see "Dan's calls" at the end); the spare room's role, the memory box, the House objects and the record player's later life are still open. Answers the question in [scope.md](../scope.md): "The House's small floor plan: which rooms, where the chapter objects sit" (needed by M1).
 
 Dan's direction, 2026-10-18: **3 bedrooms, 2 bathrooms.** The living room and kitchen are always open, because every house has them. The nursery is not near the front door. Think about where Leo starts, how he moves through the House as the story goes, and how places open up.
 

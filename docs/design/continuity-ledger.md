@@ -22,7 +22,8 @@ Every object, room, fact and motif the story uses, with its life across the chap
 |---|---|---|
 | Porch | The game starts here at dusk on moving day, facing the front door | decided (Dan, 2026-10-19) |
 | Entry, living room, kitchen | Open from the Start to the end. The everyday House. | proposed |
-| Back hall, main bedroom (with en-suite), hall bathroom | Shut until the opening beat (moving boxes block the back hall); open from then on | proposed |
+| Back hall, main bedroom (with en-suite) | Shut until the opening beat (moving boxes block the back hall); open from then on | proposed |
+| Hall bathroom | Shut for all of M1, never a chapter room (Dan, 2026-10-23, matching the floor plan's M1 build). Later: M2. | M1: decided (Dan, 2026-10-23) |
 | Bedroom 3: the office | Moving boxes stacked against its door from the opening beat; cleared after the Novice, when the bills arrive (the Provider); stays open | proposed (boxes as blockers: Dan, 2026-10-19) |
 | Bedroom 2: the spare room, later the nursery | Moving day: Leo's old-life boxes dumped inside, door shut. After the Partner: door ajar; Leo has started unpacking his bachelor things (lounge chair and ottoman, guitar on a stand, band poster), boxes still along the walls, the onesie on his chair. After the Loss: the door shut, nothing in front of it; they don't want to be reminded (Dan, 2026-10-20). After the Tuner: the door is ajar again, the room still full of Leo's boxes. After the Mourner: cleared and finished as the nursery, crib moved in. After the Arrival: the last room. | proposed. Open (Dan, 2026-10-19): he wants it not to read as a nursery at first and likes the onesie there, but the Mourner may need another angle than clearing Leo's things. |
 
