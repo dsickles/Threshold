@@ -10,7 +10,7 @@ extends RefCounted
 ## floor-plan drawing reads (40 px to the metre). y is up.
 
 const WALL_HEIGHT := 2.7
-const DOOR_HEIGHT := 2.1
+const DOOR_HEIGHT := 2.03
 const EYE_HEIGHT := 1.6
 ## Height of a doorway's ring, about where a hand would reach for it.
 const RING_HEIGHT := 1.3
@@ -49,22 +49,22 @@ const WALLS: Array[Dictionary] = [
 	{"from": Vector2(0, 0), "to": Vector2(17, 0), "openings": [
 		[3.4, 4.8, 0.9, 2.1, "glass"], [14.0, 15.3, 0.9, 2.1, "glass"]]},
 	{"from": Vector2(0, 12), "to": Vector2(17, 12), "openings": [
-		[1.4, 2.6, 0.0, DOOR_HEIGHT], [5.5, 9.5, 0.5, 2.3, "glass"], [11.8, 13.2, 0.9, 2.1, "glass"]]},
+		[1.55, 2.45, 0.0, DOOR_HEIGHT], [5.5, 9.5, 0.5, 2.3, "glass"], [11.8, 13.2, 0.9, 2.1, "glass"]]},
 	{"from": Vector2(0, 0), "to": Vector2(0, 12), "openings": [[3.5, 4.9, 1.0, 2.1, "glass"]]},
 	{"from": Vector2(17, 0), "to": Vector2(17, 12), "openings": [
 		[2.2, 3.6, 0.9, 2.1, "glass"], [8.5, 9.4, 1.0, 2.1, "glass"]]},
 	# En-suite.
-	{"from": Vector2(3, 0), "to": Vector2(3, 2.5), "openings": [[1.0, 1.9, 0.0, DOOR_HEIGHT]]},
+	{"from": Vector2(3, 0), "to": Vector2(3, 2.5), "openings": [[1.075, 1.825, 0.0, DOOR_HEIGHT]]},
 	{"from": Vector2(0, 2.5), "to": Vector2(3, 2.5), "openings": []},
 	# Bedroom's east wall: the walk-in closet's door.
-	{"from": Vector2(7, 0), "to": Vector2(7, 6), "openings": [[1.7, 2.6, 0.0, DOOR_HEIGHT]]},
+	{"from": Vector2(7, 0), "to": Vector2(7, 6), "openings": [[1.75, 2.55, 0.0, DOOR_HEIGHT]]},
 	{"from": Vector2(7, 3), "to": Vector2(9, 3), "openings": []},
 	{"from": Vector2(9, 0), "to": Vector2(9, 6), "openings": []},
 	# Office and spare room; the spare room's door is at the hall's far end.
-	{"from": Vector2(13, 0), "to": Vector2(13, 7.5), "openings": [[6.15, 7.35, 0.0, DOOR_HEIGHT]]},
+	{"from": Vector2(13, 0), "to": Vector2(13, 7.5), "openings": [[6.35, 7.15, 0.0, DOOR_HEIGHT]]},
 	# The back hall's north side: bedroom, hall bathroom, office.
 	{"from": Vector2(0, 6), "to": Vector2(13, 6), "openings": [
-		[5.2, 6.2, 0.0, DOOR_HEIGHT], [7.7, 8.5, 0.0, DOOR_HEIGHT], [10.5, 11.5, 0.0, DOOR_HEIGHT]]},
+		[5.3, 6.1, 0.0, DOOR_HEIGHT], [7.725, 8.475, 0.0, DOOR_HEIGHT], [10.6, 11.4, 0.0, DOOR_HEIGHT]]},
 	# Entry to the hall and the living room: the wide opening.
 	{"from": Vector2(4, 6), "to": Vector2(4, 12), "openings": [[8.3, 11.2, 0.0, DOOR_HEIGHT]]},
 	# The back hall's south side, then the spare room and kitchen.
@@ -82,26 +82,26 @@ const WALLS: Array[Dictionary] = [
 ## "end" hangs one on its east (or south) end, and "opens": "a" swings it back
 ## into "a", so an open door is out of the way of the view through it (the
 ## bedroom door blocked the bedroom, Dan 2026-10-24). "swing": how far it
-## opens, in degrees (80 if not set); the en-suite door folds back flat
-## against the bedroom wall.
+## opens, in degrees (80 if not set); the front door and the en-suite door
+## fold back flat against the wall.
 const DOORS := {
-	"front_door": {"a": "porch", "b": "entry", "at": Vector2(2.0, 12.0), "width": 1.2,
-			"panel": true, "one_way": true},
+	"front_door": {"a": "porch", "b": "entry", "at": Vector2(2.0, 12.0), "width": 0.9,
+			"panel": true, "one_way": true, "swing": 170.0},
 	"entry_opening": {"a": "entry", "b": "living_room", "at": Vector2(4.0, 9.75), "width": 2.9},
 	"kitchen_opening": {"a": "living_room", "b": "kitchen", "at": Vector2(11.0, 9.75), "width": 4.5},
 	"hall_opening": {"a": "living_room", "b": "back_hall", "at": Vector2(5.35, 7.5), "width": 1.5,
 			"boxes": ""},
-	"bedroom_door": {"a": "back_hall", "b": "bedroom", "at": Vector2(5.7, 6.0), "width": 1.0,
+	"bedroom_door": {"a": "back_hall", "b": "bedroom", "at": Vector2(5.7, 6.0), "width": 0.8,
 			"panel": true, "hinge": "end"},
-	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(3.0, 1.45), "width": 0.9,
-			"panel": true, "opens": "a", "swing": 170.0, "ring_b": Vector2(5.6, 2.8)},
-	"closet_door": {"a": "bedroom", "b": "closet", "at": Vector2(7.0, 2.15), "width": 0.9,
+	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(3.0, 1.45), "width": 0.75,
+			"panel": true, "swing": 170.0, "ring_b": Vector2(5.6, 2.8)},
+	"closet_door": {"a": "bedroom", "b": "closet", "at": Vector2(7.0, 2.15), "width": 0.8,
 			"boxes": "b", "ring_b": Vector2(4.4, 3.0)},
-	"spare_room_door": {"a": "back_hall", "b": "spare_room", "at": Vector2(13.0, 6.75), "width": 1.2,
+	"spare_room_door": {"a": "back_hall", "b": "spare_room", "at": Vector2(13.0, 6.75), "width": 0.8,
 			"panel": true, "hinge": "end", "ring_b": Vector2(9.5, 6.75)},
-	"office_door": {"a": "back_hall", "b": "office", "at": Vector2(11.0, 6.0), "width": 1.0,
+	"office_door": {"a": "back_hall", "b": "office", "at": Vector2(11.0, 6.0), "width": 0.8,
 			"panel": true, "boxes": "a"},
-	"hall_bath_door": {"a": "back_hall", "b": "hall_bath", "at": Vector2(8.1, 6.0), "width": 0.8,
+	"hall_bath_door": {"a": "back_hall", "b": "hall_bath", "at": Vector2(8.1, 6.0), "width": 0.75,
 			"panel": true},
 }
 

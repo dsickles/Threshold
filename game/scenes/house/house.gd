@@ -18,6 +18,9 @@ const ACCENT := Color(0.769, 0.647, 0.455)
 const INK := Color(0.957, 0.937, 0.902)
 const SURFACE := Color(0.11, 0.098, 0.086)
 const GLIDE_SECONDS := 2.0
+## The camera's lens: how tall a slice of the world it sees, in degrees (the
+## width follows the screen's shape).
+const LENS_FOV := 70.0
 const RING_SIZE := 110.0
 ## Rings are never smaller than this on the real screen (points on a phone),
 ## comfortably over the 44px minimum, so they grow on an upright phone.
@@ -90,7 +93,7 @@ func _ready() -> void:
 		door_states = HouseTable.doors(story_point)
 	_build_world()
 	_camera = Camera3D.new()
-	_camera.fov = 70.0
+	_camera.fov = LENS_FOV
 	_camera.near = 0.05
 	add_child(_camera)
 	_build_ui()

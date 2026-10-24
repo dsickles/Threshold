@@ -440,6 +440,76 @@ func test_with_the_hall_open_the_bedroom_can_be_reached_and_the_living_room_alwa
 		check("L1" in onward, "the living room can be reached from %s" % view)
 
 
+func test_doors_are_real_door_sizes_and_fit_their_wall_openings() -> void:
+	# Oversized doors make rooms read small (Dan, 2026-10-24).
+	for door_id: String in HouseLayout.DOORS:
+		var door: Dictionary = HouseLayout.DOORS[door_id]
+		if not door.get("panel", false):
+			continue
+		check(door.width >= 0.7 and door.width <= 0.95, "%s is a real door's width (%s m)" % [door_id, door.width])
+		var found := false
+		for wall: Dictionary in HouseLayout.WALLS:
+			var along_x: bool = is_equal_approx(wall.from.y, wall.to.y)
+			var on_line: bool = is_equal_approx(wall.from.y, door.at.y) if along_x else is_equal_approx(wall.from.x, door.at.x)
+			if not on_line:
+				continue
+			var middle: float = door.at.x if along_x else door.at.y
+			for opening: Array in wall.openings:
+				if opening.size() < 5 and opening[0] < middle and middle < opening[1]:
+					found = true
+					check(is_equal_approx(opening[1] - opening[0], door.width),
+							"%s's wall opening is as wide as the door" % door_id)
+		check(found, "%s has an opening in a wall" % door_id)
+	check(HouseLayout.DOOR_HEIGHT < 2.1, "doors are a real door's height")
+
+
+# How much of the screen a box covers: the share of a grid of screen points
+# whose ray from the camera hits it before any wall.
+func _screen_share(house: Node, box: MeshInstance3D) -> float:
+	var camera: Camera3D = house._camera
+	var size := house.get_viewport().get_visible_rect().size
+	var walls := house.get_node("BaseLayer").find_children("*", "MeshInstance3D", true, false)
+	var hits := 0
+	var count := 0
+	for col in 32:
+		for row in 18:
+			count += 1
+			var point := Vector2((col + 0.5) / 32.0 * size.x, (row + 0.5) / 18.0 * size.y)
+			var from := camera.project_ray_origin(point)
+			var dir := camera.project_ray_normal(point)
+			var at := _ray_distance(from, dir, box)
+			if at == INF:
+				continue
+			var hidden := false
+			for wall: MeshInstance3D in walls:
+				if _ray_distance(from, dir, wall) < at:
+					hidden = true
+					break
+			if not hidden:
+				hits += 1
+	return float(hits) / count
+
+
+# How far along a ray a box is, or INF if the ray misses it.
+static func _ray_distance(from: Vector3, dir: Vector3, mesh: MeshInstance3D) -> float:
+	var to_box := mesh.global_transform.affine_inverse()
+	var local_from := to_box * from
+	var local_dir := to_box.basis * dir
+	var box := mesh.get_aabb()
+	var near := 0.0
+	var far := INF
+	for axis in 3:
+		if absf(local_dir[axis]) < 1e-6:
+			if local_from[axis] < box.position[axis] or local_from[axis] > box.end[axis]:
+				return INF
+			continue
+		var t1 := (box.position[axis] - local_from[axis]) / local_dir[axis]
+		var t2 := (box.end[axis] - local_from[axis]) / local_dir[axis]
+		near = maxf(near, minf(t1, t2))
+		far = minf(far, maxf(t1, t2))
+	return near if near <= far else INF
+
+
 func test_an_open_door_swings_out_of_the_view_through_it() -> void:
 	var house := _open_house(ALL_OPEN)
 	await frames()
@@ -447,16 +517,15 @@ func test_an_open_door_swings_out_of_the_view_through_it() -> void:
 	for door_id: String in HouseLayout.DOORS:
 		var door: Dictionary = HouseLayout.DOORS[door_id]
 		var view: String = HouseLayout.ROOMS[door.b].doorway_view
-		if not door.get("panel", false) or view == "" or door_id == "front_door":
+		if not door.get("panel", false) or view == "":
 			continue
 		_stand_at(house, view)
-		var panel: MeshInstance3D = house.find_child("Door_%s" % door_id, true, false).get_child(0)
-		var centre := panel.global_position
-		if house._camera.is_position_behind(centre):
-			continue
-		var x: float = house._camera.unproject_position(centre).x
-		check(x < screen.x * 0.2 or x > screen.x * 0.8,
-				"%s: the open %s stays at the edge of the view (%d of %d)" % [view, door_id, x, screen.x])
+		var pivot: Node3D = house.find_child("Door_%s" % door_id, true, false)
+		# The front door opens as the player goes in.
+		pivot.rotation.y = house._open_angle(door_id)
+		var panel: MeshInstance3D = pivot.get_child(0)
+		check(_screen_share(house, panel) < 0.15, "%s: the open %s takes at most a sliver of the view (%d%%)"
+				% [view, door_id, roundi(_screen_share(house, panel) * 100.0)])
 
 
 func test_shut_and_blocked_doors_cannot_be_gone_through() -> void:
