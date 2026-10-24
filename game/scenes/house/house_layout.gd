@@ -81,7 +81,9 @@ const WALLS: Array[Dictionary] = [
 ## Doors open into "b" and are hung on their west (or north) end. "hinge":
 ## "end" hangs one on its east (or south) end, and "opens": "a" swings it back
 ## into "a", so an open door is out of the way of the view through it (the
-## bedroom door blocked the bedroom, Dan 2026-10-24).
+## bedroom door blocked the bedroom, Dan 2026-10-24). "swing": how far it
+## opens, in degrees (80 if not set); the en-suite door folds back flat
+## against the bedroom wall.
 const DOORS := {
 	"front_door": {"a": "porch", "b": "entry", "at": Vector2(2.0, 12.0), "width": 1.2,
 			"panel": true, "one_way": true},
@@ -92,7 +94,7 @@ const DOORS := {
 	"bedroom_door": {"a": "back_hall", "b": "bedroom", "at": Vector2(5.7, 6.0), "width": 1.0,
 			"panel": true, "hinge": "end"},
 	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(3.0, 1.45), "width": 0.9,
-			"panel": true, "opens": "a", "ring_b": Vector2(5.6, 2.8)},
+			"panel": true, "opens": "a", "swing": 170.0, "ring_b": Vector2(5.6, 2.8)},
 	"closet_door": {"a": "bedroom", "b": "closet", "at": Vector2(7.0, 2.15), "width": 0.9,
 			"boxes": "b", "ring_b": Vector2(4.4, 3.0)},
 	"spare_room_door": {"a": "back_hall", "b": "spare_room", "at": Vector2(13.0, 6.75), "width": 1.2,

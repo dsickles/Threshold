@@ -566,9 +566,10 @@ func _open_angle(door_id: String) -> float:
 	var flip := -1.0 if door.get("hinge", "") == "end" else 1.0
 	if door.get("opens", "b") == "a":
 		flip = -flip
+	var angle: float = deg_to_rad(door.get("swing", rad_to_deg(DOOR_OPEN_ANGLE)))
 	if _door_along_x(door_id):
-		return flip * (DOOR_OPEN_ANGLE if into.y < 0.0 else -DOOR_OPEN_ANGLE)
-	return flip * (DOOR_OPEN_ANGLE if into.x > 0.0 else -DOOR_OPEN_ANGLE)
+		return flip * (angle if into.y < 0.0 else -angle)
+	return flip * (angle if into.x > 0.0 else -angle)
 
 
 func _add_box_stack(parent: Node3D, door_id: String) -> void:
