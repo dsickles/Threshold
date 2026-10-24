@@ -49,17 +49,18 @@ test("the House opens on the porch and the front door leads in", async ({ game }
 });
 
 // The walk runs at laptop size only. In CI's software WebGL a single glide
-// at phone pixel densities takes most of a minute, so seven of them at two
+// at phone pixel densities takes most of a minute, so five of them at two
 // phone sizes don't fit in the job's time. On the phone this walk is Dan's
 // device test (porch to bedroom and back); the headless tests cover every
 // ring and reachability at every size.
 test("with the hall open, the bedroom and back", async ({ game }, testInfo) => {
   test.skip(testInfo.project.name !== "laptop", "laptop only: see the note above");
-  // Seven glides in software WebGL; CI's machines are slower than a thread's.
+  // Five glides in software WebGL; CI's machines are slower than a thread's.
   test.setTimeout(600_000);
+  // After the opening beat (core table): arriving in the living room.
   await game.tap("House: hall open");
   await game.waitForScene(HOUSE);
-  for (const view of ["E1", "L1", "H1", "B1", "B2"]) {
+  for (const view of ["H1", "B1", "B2"]) {
     await goTo(game, view);
   }
   await game.screenshot("house-bedroom");

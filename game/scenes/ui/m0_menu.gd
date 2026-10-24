@@ -10,8 +10,9 @@ extends Control
 ## on screen as chapters are added, and grows on an upright phone (DAS-76).
 ## Its look comes from the shared theme (DAS-72); "UI style" shows that theme
 ## at true size.
-## The two House buttons open the gray-box House (DAS-93) at a story point:
-## moving day, or with the back hall open so the bedroom can be reached.
+## The two House buttons open the gray-box House (DAS-93) at a story point
+## from the core table: moving day (the start), or after the opening beat,
+## with the back hall open so the bedroom can be reached.
 
 const SMOOTHNESS_SCENE := "res://scenes/m0_checks/smoothness/smoothness_check.tscn"
 const VIEWPOINTS_SCENE := "res://scenes/m0_checks/viewpoints_check.tscn"
@@ -36,8 +37,8 @@ func _ready() -> void:
 	%SmoothnessButton.pressed.connect(get_tree().change_scene_to_file.bind(SMOOTHNESS_SCENE))
 	%RhythmButton.pressed.connect(_open_check.bind(RHYTHM_CHECK))
 	%ViewpointsButton.pressed.connect(get_tree().change_scene_to_file.bind(VIEWPOINTS_SCENE))
-	%HouseStartButton.pressed.connect(_open_house.bind(&"start"))
-	%HouseHallOpenButton.pressed.connect(_open_house.bind(&"hall_open"))
+	%HouseStartButton.pressed.connect(_open_house.bind(HouseTable.START))
+	%HouseHallOpenButton.pressed.connect(_open_house.bind(HouseTable.AFTER_OPENING))
 	%UiStyleButton.pressed.connect(get_tree().change_scene_to_file.bind(UI_STYLE_SCENE))
 	%PartnerButton.pressed.connect(_enter_chapter.bind(&"partner"))
 	%StandInButton.pressed.connect(_enter_chapter.bind(ChapterList.STAND_IN))

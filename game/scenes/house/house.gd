@@ -9,10 +9,9 @@ extends Node3D
 ## short label under it saying where it goes. A short drag looks around a
 ## little. There is no back button.
 ##
-## Which doors are open, shut or blocked by boxes comes from the story point.
-## Until the core table (DAS-92) is on main, the stand-in points in
-## HouseLayout.STAND_IN_POINTS are used. The rooms, doors, furniture and views
-## are data in house_layout.gd. Close-ups, House objects, moods and the
+## Which doors are open, shut or boxed in, and which room the player arrives
+## in, come from the core table (HouseTable) at the story point. The rooms,
+## doors, furniture and views are data in house_layout.gd. Close-ups, House objects, moods and the
 ## opening beat come in later tickets. For now it opens from the M0 menu.
 
 const ACCENT := Color(0.769, 0.647, 0.455)
@@ -55,9 +54,10 @@ const COLOURS := {
 }
 const DUSK := Color(0.2, 0.22, 0.34)
 
-## The story point whose door states the House shows. Set before adding the
-## House to the tree (the M0 menu does). `door_states`, if set, wins.
-var story_point: StringName = &"start"
+## The story point the House shows. Set before adding the House to the tree
+## (the M0 menu does); left empty, it is the player's own point
+## (GameState.house_point()). `door_states`, if set, wins over its doors.
+var story_point: StringName = &""
 var door_states: Dictionary = {}
 
 var _current := ""
@@ -80,10 +80,14 @@ var _world_env: WorldEnvironment
 
 
 func _ready() -> void:
+	if story_point == &"":
+		# The GameState autoload, looked up by path as the M0 menu does.
+		story_point = get_node("/root/GameState").house_point()
+	if not story_point in HouseTable.POINTS:
+		push_error("House: no story point '%s'; showing the start." % story_point)
+		story_point = HouseTable.START
 	if door_states.is_empty():
-		if not HouseLayout.STAND_IN_POINTS.has(story_point):
-			push_error("House: no story point '%s'; showing the start." % story_point)
-		door_states = HouseLayout.STAND_IN_POINTS.get(story_point, HouseLayout.STAND_IN_POINTS[&"start"]).duplicate()
+		door_states = HouseTable.doors(story_point)
 	_build_world()
 	_camera = Camera3D.new()
 	_camera.fov = 70.0
@@ -93,7 +97,8 @@ func _ready() -> void:
 	# Deferred: the 3D view takes in its new size during the same frame, after
 	# the signal, so placing straight away would use the old projection.
 	get_viewport().size_changed.connect(_place_rings, CONNECT_DEFERRED)
-	_current = HouseLayout.START_VIEW
+	# The point's arrival room, at its doorway view.
+	_current = HouseLayout.ROOMS[HouseTable.arrive_in(story_point)].doorway_view
 	_set_base(HouseLayout.view_transform(_current))
 	_arrive()
 
@@ -103,11 +108,6 @@ func _ready() -> void:
 func _fit_camera() -> void:
 	var size := get_viewport().get_visible_rect().size
 	_camera.keep_aspect = Camera3D.KEEP_WIDTH if size.y > size.x else Camera3D.KEEP_HEIGHT
-
-
-# Hiding the tab pauses everything: the web build stops altogether while its
-# tab is hidden, glide included. Losing focus alone (a tap outside the game's
-# frame) doesn't stop a glide. Nothing in the House is saved.
 
 
 ## Whether a glide is under way.
@@ -512,7 +512,7 @@ func _wall_piece(parent: Node3D, wall: Dictionary, a: float, b: float, bottom: f
 
 
 # A doorway with a door gets a panel on a hinge, swung open or shut; one that
-# is blocked gets a stack of moving boxes on the side the floor plan puts it.
+# is boxed in gets a stack of moving boxes on the side the floor plan puts it.
 func _add_door(parent: Node3D, door_id: String) -> void:
 	var door: Dictionary = HouseLayout.DOORS[door_id]
 	var state: String = door_states.get(door_id, HouseLayout.SHUT)
@@ -534,7 +534,7 @@ func _add_door(parent: Node3D, door_id: String) -> void:
 		if state == HouseLayout.OPEN and door_id != "front_door":
 			pivot.rotation.y = _open_angle(door_id)
 		_door_pivots[door_id] = pivot
-	if state == HouseLayout.BLOCKED:
+	if state == HouseLayout.BOXED:
 		_add_box_stack(parent, door_id)
 
 

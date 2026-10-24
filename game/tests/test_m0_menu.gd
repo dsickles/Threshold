@@ -116,22 +116,23 @@ func test_ui_style_button_opens_the_ui_style_check() -> void:
 	await _check_scene_button("UiStyleButton", "res://scenes/m0_checks/ui_style_check.tscn")
 
 
-# DAS-93: the gray-box House opens from the menu, at moving day or with the
-# back hall open.
+# DAS-93: the gray-box House opens from the menu at a core-table story point:
+# moving day (on the porch), or after the opening beat (in the living room,
+# with the back hall open).
 func test_house_moving_day_opens_the_house_at_the_start() -> void:
-	await _check_house_button("HouseStartButton", &"start")
+	await _check_house_button("HouseStartButton", HouseTable.START, "P")
 
 
 func test_house_hall_open_opens_the_house_with_the_hall_open() -> void:
-	await _check_house_button("HouseHallOpenButton", &"hall_open")
+	await _check_house_button("HouseHallOpenButton", HouseTable.AFTER_OPENING, "L1")
 
 
-func _check_house_button(button: String, point: StringName) -> void:
+func _check_house_button(button: String, point: StringName, view: String) -> void:
 	await _check_scene_button(button, "res://scenes/house/house.tscn")
 	var house := get_tree().current_scene
 	if house != null and house.scene_file_path == "res://scenes/house/house.tscn":
 		check_eq(house.story_point, point, "%s's story point" % button)
-		check_eq(house._current, "P", "%s starts on the porch" % button)
+		check_eq(house._current, view, "%s starts in the point's arrival room" % button)
 	get_tree().unload_current_scene()
 	await frames()
 

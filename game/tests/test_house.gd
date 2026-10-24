@@ -9,9 +9,9 @@ const M1_VIEWS: Array[String] = ["P", "E1", "E2", "L1", "L2", "L3", "L4", "K1", 
 		"H1", "B1", "B2", "B3", "BA", "C1", "S1"]
 ## Every door open: each ring any view can ever have in M1.
 const ALL_OPEN := {
-	"front_door": "open", "entry_living": "open", "living_kitchen": "open",
-	"hall_opening": "open", "bedroom_door": "open", "ensuite_door": "open",
-	"closet_door": "open", "spare_door": "open", "office_door": "open", "bath2_door": "open",
+	"front_door": "open", "entry_opening": "open", "kitchen_opening": "open",
+	"hall_opening": "open", "bedroom_door": "open", "en_suite_door": "open",
+	"closet_door": "open", "spare_room_door": "open", "office_door": "open", "hall_bath_door": "open",
 }
 
 
@@ -55,12 +55,12 @@ func _ring_targets(house: Node) -> Array[String]:
 
 func test_every_m1_room_is_built() -> void:
 	var house := _open_house()
-	for room in ["porch", "entry", "living", "kitchen", "hall", "bedroom", "ensuite", "closet",
-			"bath2", "office", "spare"]:
+	for room in ["porch", "entry", "living_room", "kitchen", "back_hall", "bedroom", "en_suite", "closet",
+			"hall_bath", "office", "spare_room"]:
 		check(HouseLayout.ROOMS.has(room), "%s is in the layout" % room)
 		check(house.find_child("Floor_%s" % room, true, false) != null, "%s has a floor" % room)
 	check_eq(HouseLayout.ROOMS.office.doorway_view, "", "the office is never entered in M1")
-	check_eq(HouseLayout.ROOMS.bath2.doorway_view, "", "the hall bathroom is never entered in M1")
+	check_eq(HouseLayout.ROOMS.hall_bath.doorway_view, "", "the hall bathroom is never entered in M1")
 	var walls := house.get_node("BaseLayer").get_child_count()
 	check(walls > 60, "walls, floors and ceilings built (%d pieces)" % walls)
 
@@ -416,51 +416,54 @@ func test_keys_and_hover_do_nothing() -> void:
 # --- Doors, from the story point.
 
 func test_at_the_start_every_open_view_can_be_reached_and_the_living_room_always() -> void:
-	var doors: Dictionary = HouseLayout.STAND_IN_POINTS[&"start"]
+	var doors := HouseTable.doors(HouseTable.START)
 	var reached := HouseLayout.reachable("P", doors)
 	reached.sort()
 	check_eq(reached, ["E1", "E2", "K1", "K2", "K3", "L1", "L2", "L3", "L4", "P"],
 			"views reached at the start: porch, entry, living room and kitchen")
 	for view in reached:
 		var onward := HouseLayout.reachable(view, doors)
-		check(onward.any(func(v: String) -> bool: return HouseLayout.VIEWS[v].room == "living"),
+		check(onward.any(func(v: String) -> bool: return HouseLayout.VIEWS[v].room == "living_room"),
 				"the living room can be reached from %s" % view)
 
 
 func test_with_the_hall_open_the_bedroom_can_be_reached_and_the_living_room_always() -> void:
-	var doors: Dictionary = HouseLayout.STAND_IN_POINTS[&"hall_open"]
-	var reached := HouseLayout.reachable("P", doors)
+	# After the opening beat, arriving in the living room.
+	var doors := HouseTable.doors(HouseTable.AFTER_OPENING)
+	var reached := HouseLayout.reachable("L1", doors)
 	for view in ["H1", "B1", "B2", "B3", "BA"]:
 		check(view in reached, "%s can be reached with the hall open" % view)
-	for view in ["C1", "S1"]:
-		check(not view in reached, "%s stays out of reach (boxes, shut door)" % view)
+	for view in ["C1", "S1", "P"]:
+		check(not view in reached, "%s stays out of reach (boxes, shut doors)" % view)
 	for view in reached:
 		var onward := HouseLayout.reachable(view, doors)
 		check("L1" in onward, "the living room can be reached from %s" % view)
 
 
 func test_shut_and_blocked_doors_cannot_be_gone_through() -> void:
-	var house := _open_house({}, &"start")
+	var house := _open_house({}, HouseTable.START)
 	await frames()
 	_stand_at(house, "L1")
 	check(house.ring_to("H1") == null, "boxes in the back-hall opening: no ring to the hall")
 	check(house.find_child("Boxes_hall_opening", true, false) != null, "the boxes are there")
 	var doors: Dictionary = house.door_states
-	check(not HouseLayout.can_pass("spare_door", "hall", doors), "the spare room door is shut")
-	check(not HouseLayout.can_pass("bath2_door", "hall", doors), "the hall bathroom is shut")
-	check(not HouseLayout.can_pass("closet_door", "bedroom", doors), "boxes in front of the closet")
+	check(not HouseLayout.can_pass("spare_room_door", "back_hall", doors), "the spare room door is shut")
+	check(not HouseLayout.can_pass("hall_bath_door", "back_hall", doors), "the hall bathroom is shut")
+	check(not HouseLayout.can_pass("bedroom_door", "back_hall", doors), "the bedroom door is shut")
+	check(not HouseLayout.can_pass("closet_door", "bedroom", doors), "the closet is closed")
 	check(not HouseLayout.can_pass("front_door", "entry", doors), "no way back out to the porch")
-	var spare: Node3D = house.find_child("Door_spare_door", true, false)
+	var spare: Node3D = house.find_child("Door_spare_room_door", true, false)
 	check(spare != null and is_zero_approx(spare.rotation.y), "the spare room door panel is closed")
 	# The office never opens in M1, even if its door were open: no view inside.
-	check(not HouseLayout.can_pass("office_door", "hall", ALL_OPEN), "the office has no view to go to")
-	check(not HouseLayout.can_pass("bath2_door", "hall", ALL_OPEN), "the hall bathroom has no view to go to")
+	check(not HouseLayout.can_pass("office_door", "back_hall", ALL_OPEN), "the office has no view to go to")
+	check(not HouseLayout.can_pass("hall_bath_door", "back_hall", ALL_OPEN), "the hall bathroom has no view to go to")
 
 
 func test_an_unknown_story_point_is_reported_and_shows_the_start() -> void:
 	expect_error("no story point 'nowhere'")
 	var house := _open_house({}, &"nowhere")
-	check_eq(house.door_states, HouseLayout.STAND_IN_POINTS[&"start"], "the start's doors")
+	check_eq(house.story_point, HouseTable.START, "the start instead")
+	check_eq(house.door_states, HouseTable.doors(HouseTable.START), "the start's doors")
 
 
 func test_which_doors_are_open_comes_from_the_story_point() -> void:
@@ -469,16 +472,62 @@ func test_which_doors_are_open_comes_from_the_story_point() -> void:
 	_stand_at(start, "L1")
 	check(start.ring_to("H1") == null, "start: the hall is blocked")
 	start.free()
-	var opened := _open_house({}, &"hall_open")
+	var opened := _open_house({}, HouseTable.AFTER_OPENING)
 	await frames()
 	_stand_at(opened, "L1")
 	check(opened.ring_to("H1") != null, "hall open: a ring to the hall")
 	check(opened.find_child("Boxes_hall_opening", true, false) == null, "hall open: no boxes in the way")
 	check(opened.find_child("Boxes_office_door", true, false) != null, "hall open: boxes against the office")
-	var custom := _open_house({"front_door": "open", "entry_living": "shut"})
+	var custom := _open_house({"front_door": "open", "entry_opening": "shut"})
 	await frames()
 	_stand_at(custom, "E1")
 	check(custom.ring_to("L1") == null, "a door shut by the state passed in has no ring")
+
+
+func test_door_states_and_the_arrival_room_come_from_the_core_table() -> void:
+	var arrivals := {HouseTable.START: "P", HouseTable.AFTER_OPENING: "L1",
+			HouseTable.AFTER_PARTNER: "B1", HouseTable.AFTER_LOSS: "E1"}
+	for point: StringName in HouseTable.POINTS:
+		var house := _open_house({}, point)
+		await frames()
+		check_eq(house.door_states, HouseTable.doors(point), "%s: the table's doors" % point)
+		check_eq(house._current, arrivals[point], "%s: arrives at the table's room" % point)
+		check(_same_place(house._camera.global_transform, HouseLayout.view_transform(arrivals[point])),
+				"%s: the camera is there" % point)
+		house.free()
+	# Through the story, the rooms the table opens are the ones you can reach.
+	var partner := HouseLayout.reachable("B1", HouseTable.doors(HouseTable.AFTER_PARTNER))
+	for view in ["C1", "S1", "L1", "K1"]:
+		check(view in partner, "after the Partner: %s can be reached" % view)
+	var loss := HouseLayout.reachable("E1", HouseTable.doors(HouseTable.AFTER_LOSS))
+	check(not "S1" in loss, "after the Loss: the spare room is shut")
+	check("B1" in loss and "C1" in loss, "after the Loss: the bedroom and closet stay open")
+
+
+func test_with_no_story_point_set_the_house_shows_the_players_own() -> void:
+	var house := HOUSE.instantiate()
+	add_child(house)
+	check_eq(house.story_point, get_node("/root/GameState").house_point(), "the player's story point")
+
+
+func test_the_house_doors_and_rooms_are_the_core_tables() -> void:
+	var ids: Array = HouseLayout.DOORS.keys()
+	var table_ids: Array = []
+	for door: StringName in HouseTable.DOORS:
+		table_ids.append(String(door))
+		if not check(HouseLayout.DOORS.has(String(door)), "the House has the table's %s" % door):
+			continue
+		var built: Dictionary = HouseLayout.DOORS[String(door)]
+		var rooms := [String(HouseTable.DOORS[door].from), String(HouseTable.DOORS[door].to)]
+		rooms.sort()
+		var built_rooms := [built.a, built.b]
+		built_rooms.sort()
+		check_eq(built_rooms, rooms, "%s joins the table's rooms" % door)
+	ids.sort()
+	table_ids.sort()
+	check_eq(ids, table_ids, "no door the table doesn't know")
+	for room: StringName in HouseTable.ROOMS:
+		check(HouseLayout.ROOMS.has(String(room)), "the House builds the table's %s" % room)
 
 
 # --- Light.

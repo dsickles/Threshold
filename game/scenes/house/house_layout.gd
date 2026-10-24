@@ -15,12 +15,12 @@ const EYE_HEIGHT := 1.6
 ## Height of a doorway's ring, about where a hand would reach for it.
 const RING_HEIGHT := 1.3
 
-## Door states, set per story point (house-floor-plan.md, "How the House
-## opens up"). Open: you can go through. Shut: the door is closed. Blocked:
-## moving boxes are stacked in the way.
-const OPEN := "open"
-const SHUT := "shut"
-const BLOCKED := "blocked"
+## Door states, from the core table (HouseTable) for each story point. Open:
+## you can go through. Shut: the door is closed. Boxed: moving boxes are
+## stacked in the way. Room and door ids are the core table's.
+const OPEN := HouseTable.OPEN
+const SHUT := HouseTable.SHUT
+const BOXED := HouseTable.BOXED
 
 ## Each room's floor area (one or more rectangles, x/z position and size) and
 ## its doorway view, if it has one. A room with no doorway view (the office,
@@ -28,15 +28,15 @@ const BLOCKED := "blocked"
 const ROOMS := {
 	"porch": {"rects": [Rect2(0, 12, 4, 2.5)], "doorway_view": "P"},
 	"entry": {"rects": [Rect2(0, 6, 4, 6)], "doorway_view": "E1"},
-	"living": {"rects": [Rect2(4, 7.5, 7, 4.5)], "doorway_view": "L1"},
+	"living_room": {"rects": [Rect2(4, 7.5, 7, 4.5)], "doorway_view": "L1"},
 	"kitchen": {"rects": [Rect2(11, 7.5, 6, 4.5)], "doorway_view": "K1"},
-	"hall": {"rects": [Rect2(4, 6, 9, 1.5)], "doorway_view": "H1"},
+	"back_hall": {"rects": [Rect2(4, 6, 9, 1.5)], "doorway_view": "H1"},
 	"bedroom": {"rects": [Rect2(3, 0, 4, 2.5), Rect2(0, 2.5, 7, 3.5)], "doorway_view": "B1"},
-	"ensuite": {"rects": [Rect2(0, 0, 3, 2.5)], "doorway_view": "BA"},
+	"en_suite": {"rects": [Rect2(0, 0, 3, 2.5)], "doorway_view": "BA"},
 	"closet": {"rects": [Rect2(7, 0, 2, 3)], "doorway_view": "C1"},
-	"bath2": {"rects": [Rect2(7, 3, 2, 3)], "doorway_view": ""},
+	"hall_bath": {"rects": [Rect2(7, 3, 2, 3)], "doorway_view": ""},
 	"office": {"rects": [Rect2(9, 0, 4, 6)], "doorway_view": ""},
-	"spare": {"rects": [Rect2(13, 0, 4, 7.5)], "doorway_view": "S1"},
+	"spare_room": {"rects": [Rect2(13, 0, 4, 7.5)], "doorway_view": "S1"},
 }
 
 ## Walls, each a straight line from "from" to "to" (x, z), with openings
@@ -74,28 +74,28 @@ const WALLS: Array[Dictionary] = [
 ## Doorways between rooms. "at" is the middle of the doorway (x, z) and
 ## "width" its width. "panel": it has a door that can be shut. "one_way": you
 ## can only go from "a" to "b" (the front door: the porch is only at the
-## start). "boxes": which side a stack of boxes stands on when blocked ("a",
+## start). "boxes": which side a stack of boxes stands on when boxed ("a",
 ## "b", or "" for in the doorway). A ring for going from "b" back to "a" can
 ## sit somewhere else ("ring_b"): the en-suite, closet and spare room are
 ## only looked into from their doorway, so the way back is behind you.
 const DOORS := {
 	"front_door": {"a": "porch", "b": "entry", "at": Vector2(2.0, 12.0), "width": 1.2,
 			"panel": true, "one_way": true},
-	"entry_living": {"a": "entry", "b": "living", "at": Vector2(4.0, 9.75), "width": 2.9},
-	"living_kitchen": {"a": "living", "b": "kitchen", "at": Vector2(11.0, 9.75), "width": 4.5},
-	"hall_opening": {"a": "living", "b": "hall", "at": Vector2(5.35, 7.5), "width": 1.5,
+	"entry_opening": {"a": "entry", "b": "living_room", "at": Vector2(4.0, 9.75), "width": 2.9},
+	"kitchen_opening": {"a": "living_room", "b": "kitchen", "at": Vector2(11.0, 9.75), "width": 4.5},
+	"hall_opening": {"a": "living_room", "b": "back_hall", "at": Vector2(5.35, 7.5), "width": 1.5,
 			"boxes": ""},
-	"bedroom_door": {"a": "hall", "b": "bedroom", "at": Vector2(5.7, 6.0), "width": 1.0,
+	"bedroom_door": {"a": "back_hall", "b": "bedroom", "at": Vector2(5.7, 6.0), "width": 1.0,
 			"panel": true},
-	"ensuite_door": {"a": "bedroom", "b": "ensuite", "at": Vector2(3.0, 1.45), "width": 0.9,
+	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(3.0, 1.45), "width": 0.9,
 			"panel": true, "ring_b": Vector2(5.6, 2.8)},
 	"closet_door": {"a": "bedroom", "b": "closet", "at": Vector2(7.0, 2.15), "width": 0.9,
 			"boxes": "b", "ring_b": Vector2(4.4, 3.0)},
-	"spare_door": {"a": "hall", "b": "spare", "at": Vector2(13.0, 6.75), "width": 1.2,
+	"spare_room_door": {"a": "back_hall", "b": "spare_room", "at": Vector2(13.0, 6.75), "width": 1.2,
 			"panel": true, "ring_b": Vector2(9.5, 6.75)},
-	"office_door": {"a": "hall", "b": "office", "at": Vector2(11.0, 6.0), "width": 1.0,
+	"office_door": {"a": "back_hall", "b": "office", "at": Vector2(11.0, 6.0), "width": 1.0,
 			"panel": true, "boxes": "a"},
-	"bath2_door": {"a": "hall", "b": "bath2", "at": Vector2(8.1, 6.0), "width": 0.8,
+	"hall_bath_door": {"a": "back_hall", "b": "hall_bath", "at": Vector2(8.1, 6.0), "width": 0.8,
 			"panel": true},
 }
 
@@ -112,13 +112,13 @@ const VIEWS := {
 			"look": Vector3(2.8, 1.0, 7.0)},
 	"E2": {"label": "Entry table", "room": "entry", "kind": "wall", "stand": Vector2(2.9, 9.0),
 			"look": Vector3(0.3, 0.9, 9.6)},
-	"L1": {"label": "Living room", "room": "living", "kind": "doorway", "stand": Vector2(4.5, 9.9),
+	"L1": {"label": "Living room", "room": "living_room", "kind": "doorway", "stand": Vector2(4.5, 9.9),
 			"look": Vector3(12.0, 1.0, 9.6)},
-	"L2": {"label": "Big window", "room": "living", "kind": "wall", "stand": Vector2(7.0, 9.3),
+	"L2": {"label": "Big window", "room": "living_room", "kind": "wall", "stand": Vector2(7.0, 9.3),
 			"look": Vector3(7.5, 1.3, 12.0)},
-	"L3": {"label": "Hall corner", "room": "living", "kind": "wall", "stand": Vector2(7.6, 10.4),
+	"L3": {"label": "Hall corner", "room": "living_room", "kind": "wall", "stand": Vector2(7.6, 10.4),
 			"look": Vector3(5.35, 1.1, 7.5), "ring": Vector3(4.3, 2.0, 7.6)},
-	"L4": {"label": "TV wall", "room": "living", "kind": "wall", "stand": Vector2(8.3, 9.6),
+	"L4": {"label": "TV wall", "room": "living_room", "kind": "wall", "stand": Vector2(8.3, 9.6),
 			"look": Vector3(8.3, 1.0, 7.5)},
 	"K1": {"label": "Kitchen", "room": "kitchen", "kind": "doorway", "stand": Vector2(11.4, 8.9),
 			"look": Vector3(16.5, 1.0, 9.8)},
@@ -126,7 +126,7 @@ const VIEWS := {
 			"look": Vector3(15.05, 1.0, 7.6)},
 	"K3": {"label": "Dining table", "room": "kitchen", "kind": "wall", "stand": Vector2(15.2, 10.4),
 			"look": Vector3(12.5, 0.8, 10.4)},
-	"H1": {"label": "Back hall", "room": "hall", "kind": "doorway", "stand": Vector2(4.5, 6.75),
+	"H1": {"label": "Back hall", "room": "back_hall", "kind": "doorway", "stand": Vector2(4.5, 6.75),
 			"look": Vector3(13.0, 1.2, 6.75)},
 	"B1": {"label": "Bedroom", "room": "bedroom", "kind": "doorway", "stand": Vector2(5.7, 5.5),
 			"look": Vector3(1.0, 1.0, 3.8)},
@@ -134,28 +134,25 @@ const VIEWS := {
 			"look": Vector3(0.0, 1.0, 4.2)},
 	"B3": {"label": "Corner", "room": "bedroom", "kind": "wall", "stand": Vector2(4.6, 2.9),
 			"look": Vector3(6.6, 1.0, 0.4)},
-	"BA": {"label": "En-suite", "room": "ensuite", "kind": "doorway", "stand": Vector2(3.7, 1.45),
+	"BA": {"label": "En-suite", "room": "en_suite", "kind": "doorway", "stand": Vector2(3.7, 1.45),
 			"look": Vector3(0.4, 1.1, 1.2)},
 	"C1": {"label": "Closet", "room": "closet", "kind": "doorway", "stand": Vector2(6.2, 2.15),
 			"look": Vector3(8.8, 1.2, 1.4)},
-	"S1": {"label": "Spare room", "room": "spare", "kind": "doorway", "stand": Vector2(13.5, 6.8),
+	"S1": {"label": "Spare room", "room": "spare_room", "kind": "doorway", "stand": Vector2(13.5, 6.8),
 			"look": Vector3(16.3, 1.0, 1.0)},
 }
-
-## Where the House starts: on the porch, facing the front door.
-const START_VIEW := "P"
 
 ## Furniture as gray blocks, where house-floor-plan.md "Furniture" puts it:
 ## [id, room, centre, size, colour name, turn in degrees]. Not tappable.
 const FURNITURE: Array[Array] = [
 	["entry_table", "entry", Vector3(0.3, 0.4, 9.8), Vector3(0.5, 0.8, 1.8), "wood", 0.0],
 	["coat_hook", "entry", Vector3(0.05, 1.7, 8.6), Vector3(0.08, 0.1, 0.5), "dark", 0.0],
-	["couch", "living", Vector3(8.15, 0.42, 10.6), Vector3(2.3, 0.85, 0.9), "fabric", 9.0],
-	["tv_console", "living", Vector3(8.3, 0.25, 7.8), Vector3(2.0, 0.5, 0.45), "wood", 0.0],
-	["tv", "living", Vector3(8.3, 1.0, 7.75), Vector3(1.6, 0.9, 0.08), "dark", 0.0],
-	["av_receiver", "living", Vector3(8.3, 0.58, 7.85), Vector3(0.45, 0.15, 0.35), "dark", 0.0],
-	["speaker_left", "living", Vector3(7.0, 0.55, 7.8), Vector3(0.3, 1.1, 0.35), "dark", 0.0],
-	["speaker_right", "living", Vector3(9.6, 0.55, 7.8), Vector3(0.3, 1.1, 0.35), "dark", 0.0],
+	["couch", "living_room", Vector3(8.15, 0.42, 10.6), Vector3(2.3, 0.85, 0.9), "fabric", 9.0],
+	["tv_console", "living_room", Vector3(8.3, 0.25, 7.8), Vector3(2.0, 0.5, 0.45), "wood", 0.0],
+	["tv", "living_room", Vector3(8.3, 1.0, 7.75), Vector3(1.6, 0.9, 0.08), "dark", 0.0],
+	["av_receiver", "living_room", Vector3(8.3, 0.58, 7.85), Vector3(0.45, 0.15, 0.35), "dark", 0.0],
+	["speaker_left", "living_room", Vector3(7.0, 0.55, 7.8), Vector3(0.3, 1.1, 0.35), "dark", 0.0],
+	["speaker_right", "living_room", Vector3(9.6, 0.55, 7.8), Vector3(0.3, 1.1, 0.35), "dark", 0.0],
 	["dining_table", "kitchen", Vector3(12.5, 0.38, 10.4), Vector3(1.6, 0.75, 1.0), "wood", 0.0],
 	["dining_chair_1", "kitchen", Vector3(12.05, 0.45, 9.65), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
 	["dining_chair_2", "kitchen", Vector3(12.95, 0.45, 9.65), Vector3(0.45, 0.9, 0.45), "wood", 0.0],
@@ -174,34 +171,16 @@ const FURNITURE: Array[Array] = [
 	["nightstand_list_side", "bedroom", Vector3(0.3, 0.3, 5.38), Vector3(0.5, 0.6, 0.55), "wood", 0.0],
 	["dresser_north", "bedroom", Vector3(4.1, 0.45, 0.28), Vector3(1.4, 0.9, 0.45), "wood", 0.0],
 	["dresser_east", "bedroom", Vector3(6.7, 0.45, 4.15), Vector3(0.5, 0.9, 1.5), "wood", 0.0],
-	["vanity", "ensuite", Vector3(0.3, 0.45, 1.5), Vector3(0.55, 0.9, 1.3), "granite", 0.0],
-	["mirror", "ensuite", Vector3(0.03, 1.5, 1.5), Vector3(0.04, 0.8, 1.0), "glass", 0.0],
-	["bathtub", "ensuite", Vector3(1.6, 0.3, 0.42), Vector3(2.2, 0.6, 0.75), "white", 0.0],
+	["vanity", "en_suite", Vector3(0.3, 0.45, 1.5), Vector3(0.55, 0.9, 1.3), "granite", 0.0],
+	["mirror", "en_suite", Vector3(0.03, 1.5, 1.5), Vector3(0.04, 0.8, 1.0), "glass", 0.0],
+	["bathtub", "en_suite", Vector3(1.6, 0.3, 0.42), Vector3(2.2, 0.6, 0.75), "white", 0.0],
 	["closet_shelf_north", "closet", Vector3(8.0, 1.7, 0.25), Vector3(1.9, 0.04, 0.45), "wood", 0.0],
 	["closet_shelf_east", "closet", Vector3(8.75, 1.7, 1.5), Vector3(0.45, 0.04, 2.9), "wood", 0.0],
-	["lounge_chair", "spare", Vector3(16.2, 0.45, 0.85), Vector3(0.8, 0.9, 0.8), "leather", 45.0],
-	["ottoman", "spare", Vector3(15.45, 0.22, 1.7), Vector3(0.5, 0.45, 0.5), "leather", 45.0],
-	["spare_boxes_west", "spare", Vector3(13.3, 0.4, 4.05), Vector3(0.5, 0.8, 1.3), "box", 0.0],
-	["spare_boxes_east", "spare", Vector3(16.7, 0.4, 6.25), Vector3(0.5, 0.8, 1.3), "box", 0.0],
+	["lounge_chair", "spare_room", Vector3(16.2, 0.45, 0.85), Vector3(0.8, 0.9, 0.8), "leather", 45.0],
+	["ottoman", "spare_room", Vector3(15.45, 0.22, 1.7), Vector3(0.5, 0.45, 0.5), "leather", 45.0],
+	["spare_boxes_west", "spare_room", Vector3(13.3, 0.4, 4.05), Vector3(0.5, 0.8, 1.3), "box", 0.0],
+	["spare_boxes_east", "spare_room", Vector3(16.7, 0.4, 6.25), Vector3(0.5, 0.8, 1.3), "box", 0.0],
 ]
-
-## Stand-in story points until the core table (DAS-92) is on main; then the
-## House reads its door states from there. "start" is moving day; "hall_open"
-## is after the opening beat (the boxes cleared from the back hall), so the
-## bedroom can be reached from the test menu before the opening beat exists.
-const STAND_IN_POINTS := {
-	&"start": {
-		"front_door": OPEN, "entry_living": OPEN, "living_kitchen": OPEN,
-		"hall_opening": BLOCKED, "bedroom_door": OPEN, "ensuite_door": OPEN,
-		"closet_door": BLOCKED, "spare_door": SHUT, "office_door": SHUT, "bath2_door": SHUT,
-	},
-	&"hall_open": {
-		"front_door": OPEN, "entry_living": OPEN, "living_kitchen": OPEN,
-		"hall_opening": OPEN, "bedroom_door": OPEN, "ensuite_door": OPEN,
-		"closet_door": BLOCKED, "spare_door": SHUT, "office_door": BLOCKED, "bath2_door": SHUT,
-	},
-}
-
 
 ## Whether you can go through a doorway, from the given room, with these door
 ## states. Only open doors into a room that has a doorway view can be gone

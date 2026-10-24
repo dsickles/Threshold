@@ -11,6 +11,11 @@ extends Node
 ## Leaving a chapter early, hiding the tab or closing it mid-chapter saves
 ## nothing. Chapter ids and the result shape come from ChapterList and
 ## ChapterResult. Storage and the save format: ADR-0007.
+##
+## The opening beat is not a chapter, so its Stoic/Vulnerable answer is held
+## here in memory and saved only with the Partner's result (DAS-92). If the
+## player leaves before the Partner finishes, it is forgotten and the opening
+## beat plays again next visit.
 
 ## Emitted after a chapter is added to the finished-chapter list.
 signal progress_changed
@@ -25,6 +30,8 @@ var last_save_ok := true
 var _has_save := false
 
 var _finished: Array[Dictionary] = []
+# The opening beat's answer: "" until it has played.
+var _opening_answer := ""
 var _settings := {}
 var _file := SaveFile.new()
 
@@ -54,6 +61,7 @@ func load_save() -> bool:
 	for entry: Dictionary in data.finished:
 		_finished.append(_entry(entry.chapter, entry.answer, entry.get("house", {})))
 	_settings = data.get("settings", {})
+	_opening_answer = data.get("opening", "")
 	progress_changed.emit()
 	return true
 
@@ -82,6 +90,39 @@ func record_chapter_result(result: Dictionary) -> bool:
 	progress_changed.emit()
 	_save()
 	return true
+
+
+## Records that the opening beat has played, with Leo's closed-off ("stoic")
+## or open ("vulnerable") line. Held in memory, never saved on its own: it is
+## written with the Partner's result. Returns false (and changes nothing) for
+## another answer, or once the Partner is finished.
+func finish_opening_beat(answer: String) -> bool:
+	if not answer in [ChapterResult.STOIC, ChapterResult.VULNERABLE]:
+		push_warning("GameState: not an opening beat answer: '%s'" % answer)
+		return false
+	if opening_beat_done():
+		return false
+	_opening_answer = answer
+	progress_changed.emit()
+	return true
+
+
+## Whether the opening beat has played: this visit, or before a saved Partner.
+## A save with the Partner finished but no opening answer (the M0 menu starts
+## the Partner without the House) counts as played.
+func opening_beat_done() -> bool:
+	return _opening_answer != "" or is_finished("partner")
+
+
+## The opening beat's answer ("stoic" or "vulnerable"), or "" if it hasn't
+## played or the Partner was started without it.
+func opening_answer() -> String:
+	return _opening_answer
+
+
+## The House's story point, looked up in the core table (HouseTable).
+func house_point() -> StringName:
+	return HouseTable.point_for(finished_chapters(), opening_beat_done())
 
 
 ## The finished chapters' ids, in the order they were finished.
@@ -141,7 +182,11 @@ func to_save_data() -> Dictionary:
 	var finished: Array[Dictionary] = []
 	for entry in _finished:
 		finished.append(entry.duplicate(true))
-	return {"finished": finished, "settings": _settings.duplicate(true)}
+	var data := {"finished": finished, "settings": _settings.duplicate(true)}
+	# Saved only once the Partner is, so a save never holds it on its own.
+	if _opening_answer != "" and is_finished("partner"):
+		data.opening = _opening_answer
+	return data
 
 
 func _save() -> void:
@@ -156,6 +201,7 @@ func _clear() -> void:
 	_has_save = false
 	_finished.clear()
 	_settings = {}
+	_opening_answer = ""
 
 
 # "house" is left out when empty, as in the chapter result.
@@ -177,5 +223,9 @@ static func _is_valid(data: Dictionary) -> bool:
 		if not entry is Dictionary or not ChapterResult.is_story_result(entry):
 			return false
 		if entry.chapter != String(ChapterList.STORY_ORDER[i]):
+			return false
+	# The opening answer is saved only with the Partner's result.
+	if data.has("opening"):
+		if finished.is_empty() or not data.opening in [ChapterResult.STOIC, ChapterResult.VULNERABLE]:
 			return false
 	return true
