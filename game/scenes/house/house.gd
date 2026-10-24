@@ -98,7 +98,11 @@ func _ready() -> void:
 	# the signal, so placing straight away would use the old projection.
 	get_viewport().size_changed.connect(_place_rings, CONNECT_DEFERRED)
 	# The point's arrival room, at its doorway view.
-	_current = HouseLayout.ROOMS[HouseTable.arrive_in(story_point)].doorway_view
+	var arrival := String(HouseTable.arrive_in(story_point))
+	_current = HouseLayout.ROOMS.get(arrival, {}).get("doorway_view", "")
+	if _current == "":
+		push_error("House: '%s' arrives in %s, which has no doorway view; starting in the living room." % [story_point, arrival])
+		_current = HouseLayout.ROOMS.living_room.doorway_view
 	_set_base(HouseLayout.view_transform(_current))
 	_arrive()
 

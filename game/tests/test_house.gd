@@ -478,6 +478,7 @@ func test_which_doors_are_open_comes_from_the_story_point() -> void:
 	check(opened.ring_to("H1") != null, "hall open: a ring to the hall")
 	check(opened.find_child("Boxes_hall_opening", true, false) == null, "hall open: no boxes in the way")
 	check(opened.find_child("Boxes_office_door", true, false) != null, "hall open: boxes against the office")
+	check(opened.find_child("Boxes_closet_door", true, false) != null, "hall open: boxes in front of the closet")
 	var custom := _open_house({"front_door": "open", "entry_opening": "shut"})
 	await frames()
 	_stand_at(custom, "E1")
@@ -507,7 +508,10 @@ func test_door_states_and_the_arrival_room_come_from_the_core_table() -> void:
 func test_with_no_story_point_set_the_house_shows_the_players_own() -> void:
 	var house := HOUSE.instantiate()
 	add_child(house)
-	check_eq(house.story_point, get_node("/root/GameState").house_point(), "the player's story point")
+	var point: StringName = get_node("/root/GameState").house_point()
+	check_eq(house.story_point, point, "the player's story point")
+	check_eq(house.door_states, HouseTable.doors(point), "and its doors")
+	house.free()
 
 
 func test_the_house_doors_and_rooms_are_the_core_tables() -> void:
