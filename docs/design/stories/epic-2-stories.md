@@ -111,7 +111,7 @@ So that the rooms show the grief and the story has moved on.
 
 **Given** I am back in the House
 **When** I look around
-**Then** the House reads grief for every player, the crib is put away, and boxes are out
+**Then** the House reads grief for every player, and the spare room door is shut _(updated 2026-10-25: there is no crib until the Anchor; see the continuity ledger)_
 **And** no personal keepsake appears for how I ran
 
 **Given** I tap the journal

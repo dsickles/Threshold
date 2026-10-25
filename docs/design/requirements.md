@@ -66,7 +66,7 @@ FR15: Completing a minigame is the key that opens the next room or chapter. Name
 
 FR16: Chronological play order is The Partner (natural conception), The Protector (miscarriage), The Novice (six months of IVF), then The Provider, The Tuner, The Anchor, and The Mourner (the pregnancy wait), then The Ending.
 
-FR17: The calendar the journal and House can follow is Month 0 Partner, Month 2 Protector, Months 3–9 Novice, Month 10 Provider, Months 11–13 Tuner then Anchor then Mourner, and Month 14 the arrival. The Novice stretch starts desaturated and quiet. Color and chaos bleed in as the hormones take effect.
+FR17: The calendar the journal and House can follow is Month 0 Partner, Month 2 Protector, Months 3–9 Novice, Month 10 Provider, Month 12 Tuner, Month 17 Anchor then Mourner, and Month 18 the arrival _(updated 2026-10-25, [ADR-0009](../adr/0009-full-term-pregnancy-timeline.md): a full-term pregnancy)_. The Novice stretch starts desaturated and quiet. Color and chaos bleed in as the hormones take effect.
 
 FR18: The Partner is a rhythm chapter about trying to conceive. The player hits Connection Nodes in time with Maya's heartbeat or voice. It starts slow and intimate and builds to a joyous crescendo. A missed cue plays as awkward laughter, the song still ends, and the result is a positive pregnancy test.
 
@@ -250,7 +250,7 @@ FR15: Epic 1 — Finishing The Partner lets the story move on. Named rooms are n
 
 FR16: Players meet the chapters as Partner, Loss, Long Haul, Cost, Tuner, Anchor, Mourner, Arrival. The epics below are the build order.
 
-FR17: Epic 1 is month 0. Epic 2 is month 2. Epic 3 is months 3–9. Epic 4 is month 10. In play order, Epics 5, 7, and 6 are months 11–13. Epic 8 is month 14.
+FR17: Epic 1 is month 0. Epic 2 is month 2. Epic 3 is months 3–9. Epic 4 is month 10. In play order, Epic 5 is month 12, then Epics 7 and 6 are month 17. Epic 8 is month 18 _(updated 2026-10-25, ADR-0009)_.
 
 FR18: Epic 1 — The Partner.
 
