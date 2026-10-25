@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 808 718" width="808" height="718" font-family="Helvetica, Arial, sans-serif"><rect width="808" height="718" fill="#FFFFFF"/><rect x="40" y="60" width="280" height="266" fill="#D7E6F2" stroke="#3A3530" stroke-width="3"/>
+<rect x="40" y="60" width="140" height="98" fill="#D7E6F2" stroke="#3A3530" stroke-width="3"/>
+<rect x="320" y="60" width="84" height="140" fill="#D7E6F2" stroke="#3A3530" stroke-width="3"/>
+<rect x="320" y="200" width="84" height="126" fill="#E4E2DE" stroke="#3A3530" stroke-width="3"/>
+<rect x="404" y="130" width="182" height="196" fill="#E4E2DE" stroke="#3A3530" stroke-width="3"/>
+<rect x="586" y="172" width="182" height="210" fill="#F2D3D3" stroke="#3A3530" stroke-width="3"/>
+<rect x="152" y="326" width="434" height="56" fill="#DCEBF5" stroke="#3A3530" stroke-width="3"/>
+<rect x="558" y="228" width="28" height="84" fill="#EDEBE7" stroke="#3A3530" stroke-width="2"/>
+<rect x="586" y="228" width="28" height="84" fill="#EDEBE7" stroke="#3A3530" stroke-width="2"/>
+<line x1="558" y1="235.0" x2="558" y2="305.0" stroke="#E4E2DE" stroke-width="5"/>
+<line x1="558" y1="235.0" x2="558" y2="305.0" stroke="#3A3530" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="614" y1="235.0" x2="614" y2="305.0" stroke="#F2D3D3" stroke-width="5"/>
+<line x1="614" y1="235.0" x2="614" y2="305.0" stroke="#3A3530" stroke-width="1" stroke-dasharray="3 3"/>
+<rect x="40" y="326" width="112" height="56" fill="#BDB6AD" stroke="#3A3530" stroke-width="3"/>
+<rect x="54" y="354" width="70" height="28" fill="#E4E2DE" stroke="#3A3530" stroke-width="2"/>
+<rect x="40" y="382" width="112" height="182" fill="#F6E3B8" stroke="#3A3530" stroke-width="3"/>
+<rect x="152" y="382" width="252" height="252" fill="#F6E3B8" stroke="#3A3530" stroke-width="3"/>
+<rect x="404" y="382" width="168" height="252" fill="#F6E3B8" stroke="#3A3530" stroke-width="3"/>
+<rect x="572" y="382" width="196" height="252" fill="#F6E3B8" stroke="#3A3530" stroke-width="3"/>
+<rect x="40" y="564" width="112" height="84" fill="#ECE7DD" stroke="#3A3530" stroke-width="2"/>
+<line x1="404" y1="384" x2="404" y2="632" stroke="#F6E3B8" stroke-width="7"/>
+<line x1="404" y1="382" x2="404" y2="634" stroke="#3A3530" stroke-width="1.2" stroke-dasharray="6 6"/>
+<line x1="572" y1="384" x2="572" y2="632" stroke="#F6E3B8" stroke-width="7"/>
+<line x1="572" y1="382" x2="572" y2="634" stroke="#3A3530" stroke-width="1.2" stroke-dasharray="6 6"/>
+<line x1="75.0" y1="564" x2="117.0" y2="564" stroke="#F6E3B8" stroke-width="7"/>
+<line x1="75.0" y1="564" x2="117.0" y2="564" stroke="#3A3530" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="152" y1="417.0" x2="152" y2="536" stroke="#F6E3B8" stroke-width="7"/>
+<line x1="61.0" y1="382" x2="103.0" y2="382" stroke="#F6E3B8" stroke-width="7"/>
+<line x1="61.0" y1="382" x2="103.0" y2="382" stroke="#8C2F2F" stroke-width="3"/>
+<line x1="173.0" y1="382" x2="215.0" y2="382" stroke="#DCEBF5" stroke-width="7"/>
+<line x1="236" y1="326" x2="271.0" y2="326" stroke="#D7E6F2" stroke-width="7"/>
+<line x1="236" y1="326" x2="271.0" y2="326" stroke="#3A3530" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="138.28" y1="158" x2="172.72" y2="158" stroke="#D7E6F2" stroke-width="7"/>
+<line x1="138.28" y1="158" x2="172.72" y2="158" stroke="#3A3530" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="320" y1="88" x2="320" y2="123.0" stroke="#D7E6F2" stroke-width="7"/>
+<line x1="320" y1="88" x2="320" y2="123.0" stroke="#3A3530" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="348" y1="326" x2="383.0" y2="326" stroke="#E4E2DE" stroke-width="7"/>
+<line x1="348" y1="326" x2="383.0" y2="326" stroke="#8C2F2F" stroke-width="3"/>
+<line x1="460" y1="326" x2="495.0" y2="326" stroke="#E4E2DE" stroke-width="7"/>
+<line x1="460" y1="326" x2="495.0" y2="326" stroke="#8C2F2F" stroke-width="3"/>
+<line x1="586" y1="336.5" x2="586" y2="371.5" stroke="#F2D3D3" stroke-width="7"/>
+<line x1="586" y1="336.5" x2="586" y2="371.5" stroke="#3A3530" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="40" y1="214" x2="40" y2="270" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="215.0" y1="60" x2="271.0" y2="60" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="460" y1="130" x2="530" y2="130" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="208" y1="634" x2="348" y2="634" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="446" y1="634" x2="530" y2="634" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="768" y1="438" x2="768" y2="480" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="628" y1="172" x2="698" y2="172" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="768" y1="214" x2="768" y2="270" stroke="#7FB0D6" stroke-width="5"/>
+<line x1="54" y1="60" x2="89.0" y2="60" stroke="#7FB0D6" stroke-width="5"/>
+<rect x="41.4" y="431.0" width="17.5" height="56" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="50.15" y="462.5" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">table</text>
+<rect x="103.0" y="466" width="21.0" height="21.0" fill="#D9B98A" stroke="#8A8178" stroke-width="1.2"/>
+<text x="112.8" y="499.59999999999997" font-size="8" fill="#5A4630" text-anchor="middle" font-weight="normal">Leo's box</text>
+<rect x="257.0" y="383.40000000000003" width="84" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="299.0" y="397.40000000000003" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">TV + receiver</text>
+<rect x="237.4" y="383.40000000000003" width="14" height="16.8" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="346.59999999999997" y="383.40000000000003" width="14" height="16.8" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="229.0" y="494" width="105.0" height="42" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2" transform="rotate(9 281.5 515.0)"/>
+<text x="281.5" y="518.5" font-size="9" fill="#6B625A" text-anchor="middle" font-weight="normal">couch</text>
+<rect x="174.4" y="384.8" width="21.0" height="21.0" fill="#D9B98A" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="196.79999999999998" y="384.8" width="21.0" height="21.0" fill="#D9B98A" stroke="#8A8178" stroke-width="1.2"/>
+<text x="174.4" y="373.59999999999997" font-size="8.5" fill="#5A4630" text-anchor="start" font-weight="normal">boxes block the hall until the opening beat</text>
+<rect x="446" y="480" width="84" height="49.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="488.0" y="508.0" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">dining table</text>
+<rect x="454.4" y="456.2" width="21.0" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="454.4" y="531.8000000000001" width="21.0" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="486.59999999999997" y="456.2" width="21.0" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="486.59999999999997" y="531.8000000000001" width="21.0" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="518.8" y="456.2" width="21.0" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="518.8" y="531.8000000000001" width="21.0" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="573.4" y="383.40000000000003" width="98" height="28" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="622.4" y="400.90000000000003" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">counter</text>
+<rect x="628" y="386.2" width="36.4" height="22.400000000000002" fill="#E8ECEF" stroke="#8A8178" stroke-width="1.2"/>
+<text x="646.1999999999999" y="400.90000000000003" font-size="7" fill="#6B625A" text-anchor="middle" font-weight="normal">sink</text>
+<rect x="670" y="383.40000000000003" width="42" height="36.4" fill="#E8ECEF" stroke="#8A8178" stroke-width="1.2"/>
+<text x="691.0" y="405.1" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">fridge</text>
+<rect x="712" y="383.40000000000003" width="54.6" height="28" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="738.6" y="411.40000000000003" width="28" height="196" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="738.6" y="487.0" width="28" height="35.0" fill="#CFCFCF" stroke="#8A8178" stroke-width="1.2"/>
+<text x="752.6" y="508.0" font-size="7" fill="#6B625A" text-anchor="middle" font-weight="normal">oven</text>
+<rect x="670" y="604.6" width="96.60000000000001" height="28" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="718.3000000000001" y="622.1" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">counter</text>
+<rect x="41.4" y="207.0" width="93.8" height="70" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="88.30000000000001" y="245.5" font-size="9" fill="#6B625A" text-anchor="middle" font-weight="normal">queen bed</text>
+<rect x="41.4" y="186.0" width="21.0" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="41.4" y="277.0" width="21.0" height="21.0" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="66.6" y="198.60000000000002" font-size="7" fill="#6B625A" text-anchor="start" font-weight="normal">lamp</text>
+<rect x="208" y="61.4" width="70" height="22.400000000000002" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="243.0" y="76.1" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">dresser</text>
+<rect x="296.2" y="225.20000000000002" width="22.400000000000002" height="70" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="292.0" y="264.4" font-size="8" fill="#6B625A" text-anchor="end" font-weight="normal">dresser</text>
+<rect x="283.59999999999997" y="137.0" width="30.800000000000004" height="22.400000000000002" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="299.0" y="151.7" font-size="7" fill="#6B625A" text-anchor="middle" font-weight="normal">records</text>
+<line x1="51.2" y1="159.39999999999998" x2="51.2" y2="184.60000000000002" stroke="#4A7393" stroke-width="1"/>
+<text x="55.400000000000006" y="176.2" font-size="7.5" fill="#4A7393" text-anchor="start" font-weight="normal">2 ft</text>
+<line x1="51.2" y1="299.40000000000003" x2="51.2" y2="324.59999999999997" stroke="#4A7393" stroke-width="1"/>
+<text x="55.400000000000006" y="316.20000000000005" font-size="7.5" fill="#4A7393" text-anchor="start" font-weight="normal">2 ft</text>
+<rect x="96" y="61.4" width="56" height="25.2" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="124.0" y="77.5" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">vanity</text>
+<rect x="41.4" y="65.6" width="32.199999999999996" height="22.400000000000002" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="57.5" y="80.3" font-size="7" fill="#6B625A" text-anchor="middle" font-weight="normal">wc</text>
+<rect x="41.4" y="110.4" width="47.6" height="46.199999999999996" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<text x="65.2" y="137.0" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">shower</text>
+<rect x="321.40000000000003" y="61.4" width="81.2" height="18.2" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="384.40000000000003" y="81.0" width="18.2" height="117.60000000000001" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="717.6" y="180.39999999999998" width="44.800000000000004" height="44.800000000000004" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2" transform="rotate(45 740.0 202.79999999999998)"/>
+<text x="740.0" y="206.29999999999998" font-size="8" fill="#6B625A" text-anchor="middle" font-weight="normal">chair</text>
+<rect x="689.6" y="232.20000000000002" width="28" height="28" fill="#FBF7EE" stroke="#8A8178" stroke-width="1.2" transform="rotate(45 703.6 246.20000000000002)"/>
+<rect x="588.8000000000001" y="176.2" width="21.0" height="21.0" fill="#D9B98A" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="588.8000000000001" y="200.0" width="21.0" height="21.0" fill="#D9B98A" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="744.1999999999999" y="312" width="21.0" height="21.0" fill="#D9B98A" stroke="#8A8178" stroke-width="1.2"/>
+<rect x="744.1999999999999" y="335.8" width="21.0" height="21.0" fill="#D9B98A" stroke="#8A8178" stroke-width="1.2"/>
+<text x="632.1999999999999" y="194.39999999999998" font-size="7.5" fill="#6B625A" text-anchor="start" font-weight="normal">poster, guitar</text>
+<text x="572" y="274.20000000000005" font-size="7" fill="#6B625A" text-anchor="middle" font-weight="normal">closet</text>
+<text x="600" y="274.20000000000005" font-size="7" fill="#6B625A" text-anchor="middle" font-weight="normal">closet</text>
+<rect x="465.59999999999997" y="330.2" width="21.0" height="21.0" fill="#D9B98A" stroke="#8A8178" stroke-width="1.2"/>
+<text x="208" y="291.0" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Main bedroom</text>
+<text x="208" y="307.79999999999995" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">about 310 sq ft</text>
+<text x="131.0" y="124.4" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">En-suite</text>
+<text x="131.0" y="141.2" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">10×7</text>
+<text x="362" y="148.2" font-size="10.5" fill="#3A3530" text-anchor="middle" font-weight="bold">Walk-in</text>
+<text x="362" y="162.2" font-size="9.5" fill="#5A5048" text-anchor="middle" font-weight="normal">closet 6×10</text>
+<text x="362" y="256" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Hall bath</text>
+<text x="362" y="272.79999999999995" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">6×9 · shut</text>
+<text x="481.0" y="221.0" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Office</text>
+<text x="481.0" y="237.79999999999998" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">13×14 · shut</text>
+<text x="684" y="333.0" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Spare room</text>
+<text x="684" y="349.8" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">13×15</text>
+<text x="432" y="348.40000000000003" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Back hall</text>
+<text x="432" y="365.2" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">31×4</text>
+<text x="96" y="536" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Entry</text>
+<text x="96" y="552.8000000000001" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">8×13</text>
+<text x="89.0" y="376.40000000000003" font-size="8" fill="#5A5048" text-anchor="middle" font-weight="normal">coats</text>
+<text x="278" y="578" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Living room</text>
+<text x="278" y="594.8000000000001" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">18×18</text>
+<text x="488" y="592" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Dining</text>
+<text x="488" y="608.8000000000001" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">12×18</text>
+<text x="656" y="550" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Kitchen</text>
+<text x="656" y="566.8000000000001" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">14×18</text>
+<text x="96" y="610.1999999999999" font-size="12" fill="#3A3530" text-anchor="middle" font-weight="bold">Porch</text>
+<text x="96" y="627.0" font-size="10" fill="#5A5048" text-anchor="middle" font-weight="normal">8×6</text>
+<text x="40" y="685.8000000000001" font-size="9" fill="#3A3530" text-anchor="middle" font-weight="normal"></text>
+<line x1="600" y1="676" x2="740" y2="676" stroke="#3A3530" stroke-width="2"/>
+<line x1="600" y1="670.4" x2="600" y2="681.6" stroke="#3A3530" stroke-width="2"/>
+<line x1="670" y1="670.4" x2="670" y2="681.6" stroke="#3A3530" stroke-width="2"/>
+<line x1="740" y1="670.4" x2="740" y2="681.6" stroke="#3A3530" stroke-width="2"/>
+<text x="670" y="695.6" font-size="10" fill="#3A3530" text-anchor="middle" font-weight="normal">10 ft</text>
+<text x="40" y="29.199999999999996" font-size="15" fill="#3A3530" text-anchor="start" font-weight="bold">The House at real sizes: about 1,900 sq ft of living space (Dan, 2026-10-24; draft until he OKs it in the game)</text>
+<text x="40" y="46.0" font-size="10.5" fill="#5A5048" text-anchor="start" font-weight="normal">Street at the bottom. Dashed lines: open plan, no wall. Red door: shut. Tan squares: moving boxes.</text></svg>

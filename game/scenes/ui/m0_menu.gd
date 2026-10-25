@@ -10,11 +10,15 @@ extends Control
 ## on screen as chapters are added, and grows on an upright phone (DAS-76).
 ## Its look comes from the shared theme (DAS-72); "UI style" shows that theme
 ## at true size.
+## The two House buttons open the gray-box House (DAS-93) at a story point
+## from the core table: moving day (the start), or after the opening beat,
+## with the back hall open so the bedroom can be reached.
 
 const SMOOTHNESS_SCENE := "res://scenes/m0_checks/smoothness/smoothness_check.tscn"
 const VIEWPOINTS_SCENE := "res://scenes/m0_checks/viewpoints_check.tscn"
 const UI_STYLE_SCENE := "res://scenes/m0_checks/ui_style_check.tscn"
 const RHYTHM_CHECK := preload("res://scenes/ui/m0_rhythm_check.tscn")
+const HOUSE := preload("res://scenes/house/house.tscn")
 ## How much of the screen the menu may cover, and how far it may grow.
 const SCREEN_SHARE := 0.92
 const MAX_SCALE := 2.4
@@ -33,6 +37,8 @@ func _ready() -> void:
 	%SmoothnessButton.pressed.connect(get_tree().change_scene_to_file.bind(SMOOTHNESS_SCENE))
 	%RhythmButton.pressed.connect(_open_check.bind(RHYTHM_CHECK))
 	%ViewpointsButton.pressed.connect(get_tree().change_scene_to_file.bind(VIEWPOINTS_SCENE))
+	%HouseStartButton.pressed.connect(_open_house.bind(HouseTable.START))
+	%HouseHallOpenButton.pressed.connect(_open_house.bind(HouseTable.AFTER_OPENING))
 	%UiStyleButton.pressed.connect(get_tree().change_scene_to_file.bind(UI_STYLE_SCENE))
 	%PartnerButton.pressed.connect(_enter_chapter.bind(&"partner"))
 	%StandInButton.pressed.connect(_enter_chapter.bind(ChapterList.STAND_IN))
@@ -60,13 +66,13 @@ func _on_begin_pressed() -> void:
 # hand rather than inside a container.
 func _fit_menu() -> void:
 	# Chapters stack in one column on an upright phone and three across on a
-	# wide screen, and the checks go two by two, so the menu's shape matches
-	# the screen's.
+	# wide screen, so the menu's shape matches the screen's. The checks (and
+	# the House buttons) go three across on a wide screen and two upright.
 	var upright := size.y > size.x
 	var columns := 1 if upright else 3
 	if _chapters.columns != columns:
 		_chapters.columns = columns
-	var check_columns := 2 if upright else 4
+	var check_columns := 2 if upright else 3
 	if _checks.columns != check_columns:
 		_checks.columns = check_columns
 	var natural := _menu.get_combined_minimum_size()
@@ -85,6 +91,13 @@ func _open_check(scene: PackedScene) -> void:
 	check.tree_exited.connect(_menu.show)
 	_menu.hide()
 	add_child(check)
+
+
+# The House replaces the menu; reloading the page comes back here.
+func _open_house(point: StringName) -> void:
+	var house := HOUSE.instantiate()
+	house.story_point = point
+	get_tree().change_scene_to_node(house)
 
 
 # The menu stands in for the House: the runner hides it while the chapter
