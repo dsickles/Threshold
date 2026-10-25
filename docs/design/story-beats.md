@@ -1,6 +1,6 @@
-# Story beats: all eight chapters (draft)
+# Story beats: all eight chapters
 
-**Status:** Draft, 2026-10-18; updated 2026-10-25 with Dan's answers and the M1 decisions made since (floor plan, M1 words, the bedside lamp). Made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md), as a story pass across the whole game so that M1 doesn't paint M2 into a corner and every object has one lifeline. A line is `decided` only where it says so, with Dan's date; everything else is `proposed`.
+**Status:** Approved for now (Dan, 2026-10-25); expect adjustments as the game is built. Written 2026-10-18; updated 2026-10-25 with Dan's answers and the M1 decisions made since (floor plan, M1 words, the bedside lamp). Made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md), as a story pass across the whole game so that M1 doesn't paint M2 into a corner and every object has one lifeline. A line is `decided` only where it says so, with Dan's date; everything else is `proposed`.
 
 **What this is:** one beat sheet per chapter, in play order. Each one says what the player should feel, what happens, where the moment of levity is, what the House looks like before and after, and what the journal records. It says *where words go and what job they do*; it doesn't write them (CLAUDE.md: Claude drafts story words only when Dan asks).
 
