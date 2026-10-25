@@ -113,8 +113,9 @@ _Not in v1 ([ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md)): v1 dialogue 
   - _Note:_ Starts desaturated and quiet. Color and chaos bleed in as the hormones take effect.
 - **End of Month 9:** Conception via IVF (positive test at the end of _The Novice_).
 - **Month 10:** The bills for the pregnancy (_Provider_).
-- **Month 11-13:** The Wait (_Tuner, Anchor, Mourner_, in that order).
-- **Month 14:** The Arrival.
+- **Month 12:** The Wait begins: hearing the heartbeat (_Tuner_).
+- **Month 17:** The last weeks (_Anchor_, then _Mourner_).
+- **Month 18:** The Arrival, at full term (about 40 weeks). _(Updated 2026-10-25, [ADR-0009](../adr/0009-full-term-pregnancy-timeline.md).)_
 
 ### References
 

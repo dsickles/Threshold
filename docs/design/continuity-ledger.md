@@ -14,7 +14,7 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Miscarriage happened | From after the Loss, for good (history) | decided (GDD, 2026-09-22 O2) |
 | Pregnant (via IVF) | From after the Novice, to the Arrival | decided (GDD, 2026-09-22 O2) |
 | Baby born | After the Arrival | decided (GDD) |
-| Month (FR17) | Partner 0, Loss 2, Novice 3–9, Provider 10, Tuner/Anchor/Mourner 11–13, Arrival 14 | decided (requirements FR17) |
+| Month (FR17) | Partner 0, Loss 2, Novice 3–9, Provider 10, Tuner 12, Anchor and Mourner 17, Arrival 18 (a full-term pregnancy) | decided (FR17; ADR-0009, Dan, 2026-10-25) |
 
 ## Rooms
 

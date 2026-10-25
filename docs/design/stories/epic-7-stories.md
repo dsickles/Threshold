@@ -99,7 +99,7 @@ So that I can finish carrying the load.
 **Given** I tap the journal
 **When** the new entry opens
 **Then** the words are the same for every player
-**And** the page sits in months 11–13
+**And** the page is dated for month 17 _(updated 2026-10-25, ADR-0009)_
 
 **Given** the chapter has finished
 **When** the game saves
