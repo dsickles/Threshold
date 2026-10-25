@@ -362,6 +362,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 31. The Loss's run: the father's hand and three lanes, trees, and a storm that never stops (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | The first Loss design and its rough build: tap anywhere clears the next obstacle; a pale, open path floating over a void; at 2:55 the song and storm stop dead, the world turns a lighter gray, and the light goes out in silence. |
+| **Became** | Tap the left, middle or right of the screen and the father's hand moves the light into that lane; with a gap in reach the hand also lies across it. A trail through tall trees at the end of the day, with real shadows. The song drowns under a storm that never stops, through the light going out and into the car, and nothing gets lighter. The light starts as small as the fridge note's sesame seed and goes out in the father's open hand. |
+| **Why** | Dan's first play of the rough build, 2026-10-25: tap anywhere was too easy and too like the Partner; the light should be visibly protected by an outside force, the father; the setting was too bright and ethereal; the silence after the song felt like a mistake, the storm didn't come through, and the lighter gray read as the storm ending; the light needed to read as the baby, subtly. Still one tap scheme: lanes are tapped, never swiped. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) calls 13 to 16 (and 2, 4, 5, 11); [continuity-ledger.md](continuity-ledger.md) (Rain, the couple's song, the small light, the father's hand); [scope.md](../scope.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
