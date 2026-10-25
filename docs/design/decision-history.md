@@ -285,6 +285,28 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 26. The pregnancy runs full term; the story runs about 18 months (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | FR17: Provider month 10, Tuner, Anchor and Mourner months 11–13, the Arrival month 14. About a 14-month timeline (§4). That made the IVF pregnancy about five months long. |
+| **Became** | Provider 10, Tuner 12, Anchor and Mourner 17, the Arrival 18: a normal pregnancy of about 40 weeks, with no premature birth. |
+| **Why** | The journal pages are dated, and players who have been through IVF would notice a five-month pregnancy. Found in the story pass; Dan's call, 2026-10-25. |
+| **Record** | [ADR-0009](../adr/0009-full-term-pregnancy-timeline.md); FR17 in [requirements.md](requirements.md); [narrative-design.md](narrative-design.md) timeline; the journal-date lines in [stories/](stories/) epics 5–8 |
+
+---
+
+## 27. No crib after the Loss (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | Story 2.4: after the Loss "the crib is put away, and boxes are out". |
+| **Became** | There is no crib until the Anchor (one crib, one lifeline). After the Loss the spare room door is simply shut. |
+| **Why** | The floor plan and continuity ledger already had no crib until the Anchor (Dan, 2026-10-19). Dan agreed the floor plan wins, 2026-10-25. |
+| **Record** | [epic-2-stories.md](stories/epic-2-stories.md) Story 2.4; [continuity-ledger.md](continuity-ledger.md) (Crib) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
