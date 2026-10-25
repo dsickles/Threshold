@@ -1,64 +1,6 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/m0_menu.gd" id="1_script"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
-content_margin_left = 24.0
-content_margin_top = 16.0
-content_margin_right = 24.0
-content_margin_bottom = 16.0
-bg_color = Color(0.165, 0.145, 0.125, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.239, 0.22, 0.196, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
-content_margin_left = 24.0
-content_margin_top = 16.0
-content_margin_right = 24.0
-content_margin_bottom = 16.0
-bg_color = Color(0.239, 0.22, 0.196, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.769, 0.647, 0.455, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.769, 0.647, 0.455, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="Theme" id="Theme_m0"]
-default_font_size = 32
-Button/colors/font_color = Color(0.957, 0.937, 0.902, 1)
-Button/colors/font_hover_color = Color(0.957, 0.937, 0.902, 1)
-Button/colors/font_pressed_color = Color(0.957, 0.937, 0.902, 1)
-Button/colors/font_focus_color = Color(0.957, 0.937, 0.902, 1)
-Button/colors/font_hover_pressed_color = Color(0.957, 0.937, 0.902, 1)
-Button/styles/focus = SubResource("StyleBoxFlat_focus")
-Button/styles/hover = SubResource("StyleBoxFlat_normal")
-Button/styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
-Button/styles/normal = SubResource("StyleBoxFlat_normal")
-Button/styles/pressed = SubResource("StyleBoxFlat_pressed")
-Label/colors/font_color = Color(0.957, 0.937, 0.902, 1)
 
 [node name="M0Menu" type="Control"]
 layout_mode = 3
@@ -67,7 +9,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_m0")
 script = ExtResource("1_script")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -94,48 +35,106 @@ flat = true
 
 [node name="Menu" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(560, 0)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -260.0
-offset_right = 280.0
-offset_bottom = 260.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 16
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 0
+theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="Menu"]
+[node name="ChecksLabel" type="Label" parent="Menu"]
 layout_mode = 2
+theme_type_variation = &"LabelMuted"
 text = "M0 checks"
 horizontal_alignment = 1
 
-[node name="SmoothnessButton" type="Button" parent="Menu"]
+[node name="Checks" type="GridContainer" parent="Menu"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 4
+
+[node name="SmoothnessButton" type="Button" parent="Menu/Checks"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
 text = "Smoothness"
 
-[node name="RhythmButton" type="Button" parent="Menu"]
+[node name="RhythmButton" type="Button" parent="Menu/Checks"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
 text = "Rhythm timing"
 
-[node name="ViewpointsButton" type="Button" parent="Menu"]
+[node name="ViewpointsButton" type="Button" parent="Menu/Checks"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
 text = "Viewpoints"
+
+[node name="UiStyleButton" type="Button" parent="Menu/Checks"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
+text = "UI style"
+
+[node name="ChaptersLabel" type="Label" parent="Menu"]
+layout_mode = 2
+theme_type_variation = &"LabelMuted"
+text = "Chapters"
+horizontal_alignment = 1
+
+[node name="Chapters" type="GridContainer" parent="Menu"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 3
+
+[node name="PartnerButton" type="Button" parent="Menu/Chapters"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
+text = "The Partner (rough)"
+
+[node name="StandInButton" type="Button" parent="Menu/Chapters"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
+text = "Stand-in chapter"
+
+[node name="SaveRow" type="HBoxContainer" parent="Menu"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TestSaveButton" type="Button" parent="Menu/SaveRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
+text = "Test save"
+
+[node name="ClearSaveButton" type="Button" parent="Menu/SaveRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
+text = "Clear save"
+
+[node name="SaveStatus" type="Label" parent="Menu"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelMuted"
+horizontal_alignment = 1
 
 [node name="Status" type="Label" parent="Menu"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.604, 0.565, 0.518, 1)
+theme_type_variation = &"LabelMuted"
 horizontal_alignment = 1
 autowrap_mode = 3

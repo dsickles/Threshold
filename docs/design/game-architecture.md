@@ -63,9 +63,9 @@ res://
 
 One tap scheme, like a tap adventure game. Click is tap. Browser first, mobile second, PC/Steam third. Story Sequences use this same scheme. No WASD, no virtual stick, and no mouse-look. The House uses **fixed viewpoints** ([ADR-0003](../adr/0003-house-fixed-viewpoints.md)).
 
-- **Move:** Tap a viewpoint marker or doorway. The camera glides to that framed shot.
-- **Look:** At a viewpoint, a short drag turns the view a little.
-- **Use:** Tap an object (`MinigameTrigger`, `Journal`, `Door`) to use it.
+- **Move:** Tap a doorway to glide to the next room's doorway view; tap a wall or corner to glide to its wall view ([ADR-0008](../adr/0008-house-doorway-and-wall-views-close-ups.md)). Rings show the other views and doorways; off-screen ones pin to the screen edge. _(updated 2026-10-19)_
+- **Look:** In any view, a short drag turns the view a little.
+- **Use:** Tap an object (`MinigameTrigger`, `Journal`, `Door`, or a House object) to glide to its close-up; tap it again for its one action. Tap off it to step back. _(updated 2026-10-19)_
 - **Hit test:** Ray from the pointer into the House, not from the center of the camera.
 - **Interactable Class:** Base class for tappable objects.
 - **Visual Feedback:** Highlight the object that can be tapped. No crosshair. If it cannot be tapped, it is not the path.
@@ -175,8 +175,8 @@ To achieve the "Familiar yet Novel" aesthetic without 7 distinct asset pipelines
 
 ### 5.1 Save System (`SaveManager.gd`)
 
-- **Format:** JSON, stored in the browser.
-- **Content:** The finished-chapter list and settings (see §2.1).
+- **Format:** JSON, stored in the browser. _2026-10-19: one file, `user://save.json`, written by `GameState` with Godot's `FileAccess`; on the web Godot keeps it in IndexedDB ([ADR-0007](../adr/0007-saves-json-file-in-user-folder.md))._
+- **Content:** The finished-chapter list and settings (see §2.1), plus the opening beat's Stoic/Vulnerable answer once the Partner is saved ([ADR-0007](../adr/0007-saves-json-file-in-user-folder.md), 2026-10-22).
 - **Triggers:** Save only **between chapters**, when a chapter finishes. No mid-chapter checkpoints. Closing the tab mid-chapter restarts that chapter next time. Hiding the tab pauses the game but does not save.
 - **Failure:** In private browsing or a blocked frame the save can fail. Show "Couldn't save." and keep playing. Old test saves may fail to open; there is no save versioning.
 

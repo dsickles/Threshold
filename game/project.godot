@@ -9,12 +9,21 @@ config/name="Threshold"
 run/main_scene="res://scenes/ui/m0_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[autoload]
+
+GameState="*res://_core/state_manager/game_state.gd"
+WebTestProbe="*res://_core/test_probe/web_test_probe.gd"
+
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[gui]
+
+theme/custom="res://assets/ui/threshold_theme.tres"
 
 [rendering]
 

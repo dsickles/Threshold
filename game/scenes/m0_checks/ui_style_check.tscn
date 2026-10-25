@@ -1,0 +1,109 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/m0_checks/ui_style_check.gd" id="1_script"]
+
+[node name="UiStyleCheck" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.11, 0.098, 0.086, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 43
+theme_override_constants/margin_top = 29
+theme_override_constants/margin_right = 43
+theme_override_constants/margin_bottom = 29
+
+[node name="Column" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 14
+
+[node name="Display" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelDisplay"
+text = "Display 32"
+
+[node name="MicroShout" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelMicroShout"
+text = "MICRO-SHOUT 28"
+
+[node name="Reader" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelReader"
+text = "Reader 20"
+
+[node name="Subtitle" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelSubtitle"
+text = "Subtitle 18"
+
+[node name="Body" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Body 16"
+
+[node name="Muted" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelMuted"
+text = "Muted 16"
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="PrimaryButton" type="Button" parent="Margin/Column/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ButtonPrimary"
+text = "Primary"
+
+[node name="QuietButton" type="Button" parent="Margin/Column/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ButtonQuiet"
+text = "Quiet"
+
+[node name="QuietOffButton" type="Button" parent="Margin/Column/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ButtonQuiet"
+disabled = true
+text = "Quiet (off)"
+
+[node name="BackButton" type="Button" parent="Margin/Column/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ButtonQuiet"
+text = "Back to menu"
+
+[node name="Measure" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelMuted"
+autowrap_mode = 3

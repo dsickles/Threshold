@@ -219,6 +219,72 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 18. Automated gameplay tests start in M0, without an addon (2026-10-18)
+
+| | |
+|---|---|
+| **Was** | No automated tests in M0; the test addon and the first tests (core table, saves) came in M1. Everything else was checked only by playing. |
+| **Became** | Headless gameplay and logic tests in `game/tests/`, run by a small runner written in the repo, in every PR check. They cover the M0 checks now; every later feature adds its own. The addon question for the core table stays open for M1. |
+| **Why** | Threads were proving their work with one-off scripted runs that were then thrown away. Kept as tests, those runs catch breakage before a build reaches Dan's phone. Dan's call, 2026-10-18. |
+| **Record** | [scope.md](../scope.md) Settled questions, [game/tests/README.md](../../game/tests/README.md) |
+
+---
+
+## 19. Browser tests from M0 (2026-10-18)
+
+| | |
+|---|---|
+| **Was** | Nothing tested the exported web build itself; only the script check and export, and Dan's phone. |
+| **Became** | Playwright plays the exported web build in Chromium on every PR, at laptop and phone sizes, and checks it loads, has no console errors, starts sound only after a tap, and opens and leaves each screen. A test-only probe (web, `?probe` only) tells the tests what is on the canvas. |
+| **Why** | So threads can prove more of their own work before it reaches Dan. Dan's call, 2026-10-18. His phone tests still decide feel, timing and Safari. |
+| **Record** | [scope.md](../scope.md) Settled questions, [tests/web/README.md](../../tests/web/README.md) |
+
+---
+
+## 20. Saves built in M1, as a JSON file, tested without an addon (2026-10-19)
+
+| | |
+|---|---|
+| **Was** | Save/Continue came in M2 (roadmap). Which test addon covers the core table and saves was open for M1. |
+| **Became** | The save system is built in M1 (Continue and the title screen stay in M2). One JSON file in Godot's user folder, kept in IndexedDB on the web. The repo's own test runner covers it; no addon. |
+| **Why** | Every chapter after the Partner needs the same way to record that it is finished. Dan asked for it now (2026-10-19). One code path works on web and PC; the runner already does what an addon would. |
+| **Record** | [ADR-0007](../adr/0007-saves-json-file-in-user-folder.md), [scope.md](../scope.md) Settled questions |
+
+---
+
+## 21. House views: doorway views, wall views and close-ups (2026-10-19)
+
+| | |
+|---|---|
+| **Was** | ADR-0003: tap a viewpoint (a spot or a doorway) and the camera glides there. Objects were tapped to use them directly. |
+| **Became** | Each room has a doorway view and 2–4 wall views. Tapping an object opens its close-up; tapping it again does its one action. House objects that don't start a chapter are never required, scored or saved. |
+| **Why** | Fits the M0 finding that tapping a thing should look at it (entry 17), hides AI-art flaws, and gives one verb for walls, House objects and chapter objects. Dan's call, 2026-10-19. |
+| **Record** | [ADR-0008](../adr/0008-house-doorway-and-wall-views-close-ups.md) |
+
+---
+
+## 22. Claude may draft story words when Dan asks (2026-10-22)
+
+| | |
+|---|---|
+| **Was** | CLAUDE.md: don't invent story, dialogue or journal wording; placeholders only. The narrative-craft skill never wrote story words. |
+| **Became** | Claude drafts story words only when Dan asks, marks every line as a draft until he approves it, and tells him. |
+| **Why** | Dan asked for drafts of the M1 House writing (2026-10-20) and approved them with edits; a first draft to react to was faster for him. Dan's call, 2026-10-22. |
+| **Record** | CLAUDE.md "Changing things"; `.claude/skills/narrative-craft/SKILL.md`; [m1-words-draft.md](m1-words-draft.md) |
+
+---
+
+## 23. The House floor plan settled for M1 (2026-10-22)
+
+| | |
+|---|---|
+| **Was** | The House's small floor plan was an open question in scope.md, with [house-floor-plan.md](house-floor-plan.md) marked "draft". |
+| **Became** | Settled for M1 as the floor plan has it, until it can be seen in the game. Its remaining open calls are M2's. The core table (`game/_core/house/house_table.gd`) builds the four M1 story points from it. The opening beat's answer is held in memory and saved with the Partner's result. |
+| **Why** | The House can't be built on a draft, and the open calls only matter after the Loss. Dan's call, 2026-10-22. |
+| **Record** | [scope.md](../scope.md) Settled questions; [ADR-0007](../adr/0007-saves-json-file-in-user-folder.md) (the `opening` key); DAS-92 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

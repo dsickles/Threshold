@@ -100,7 +100,7 @@ FR32: Dad's Journal is an object in the House. Entries track medical facts and e
 
 FR33: Emotional pacing places a meditative chapter after high stress (The Mourner after The Provider) and uses Novice comedy and Tuner quiet joy to balance infertility and anxiety. Minigames adapt slightly so the player can complete the story.
 
-FR34: One pointer scheme on every platform. In the House, tap moves between fixed viewpoints, a short drag looks, and tap interacts _(updated 2026-10-17, [ADR-0003](../adr/0003-house-fixed-viewpoints.md))_. A click is a tap. Drag and hold exist only for Tuner knobs, Mourner placement, a short look, and Anchor hold zones. Keyboard Enter activates the focused menu control and is not a second way to move.
+FR34: One pointer scheme on every platform. In the House, tap moves between fixed viewpoints (doorway views, wall views and close-ups), a short drag looks, and tapping an object again does its one action _(updated 2026-10-19, [ADR-0003](../adr/0003-house-fixed-viewpoints.md), [ADR-0008](../adr/0008-house-doorway-and-wall-views-close-ups.md))_. A click is a tap. Drag and hold exist only for Tuner knobs, Mourner placement, a short look, and Anchor hold zones. Keyboard Enter activates the focused menu control and is not a second way to move.
 
 FR35: The score shifts genre with the chapter (synthwave for The Provider, acoustic or piano for The Mourner). Sound design includes domestic detail: rain, the fridge hum, and the heartbeat on the monitor.
 
@@ -198,7 +198,7 @@ UX-DR22: `provider-desk` lays documents out as Control pages on ink-colored pape
 
 UX-DR23: House overlay is subtitles and, when needed, a small pause control. No health, minimap, quest log, or stick. During a minigame the House chrome is gone and the chapter skin is up. Recurring HUD kinds keep their regions: status or resource top-start, a spatial map bottom-start only if that chapter truly needs one, primary action bottom-end, or center when the genre is the document itself.
 
-UX-DR24: Tap-to-move glides the camera to a tapped fixed viewpoint. Tap-to-look is a short drag at a viewpoint _(updated 2026-10-17, ADR-0003)_. Both use the same control path on web and mobile. They are not separate components from the House controls.
+UX-DR24: Tap-to-move glides the camera to the doorway view, wall view or close-up of what was tapped. Tap-to-look is a short drag in any view _(updated 2026-10-19, ADR-0003, ADR-0008)_. Both use the same control path on web and mobile. They are not separate components from the House controls.
 
 UX-DR25: Menu focus draws a 2px focus ring on the focused Control. Default is Play on the title and Resume on pause. Enter activates that Control. Prompts use words or the object itself. No Xbox or PlayStation glyphs.
 
