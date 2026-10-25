@@ -1,6 +1,6 @@
-# The Protector (the Loss): the run and the car (draft)
+# The Protector (the Loss): the run and the car
 
-**Status:** Draft for Dan to decide, 2026-10-22, updated 2026-10-25 for Dan's first answer: **a 3D run seen from behind, like Temple Run** (DAS-94, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)). Nothing here is decided until Dan says so. Answers the open question in [scope.md](../scope.md): "What the Loss and the Silence show, the run's tap action, its obstacles, the fade and the car" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft". The code tickets (DAS-97 the run, DAS-98 the car and the House in grief) wait until he approves it.
+**Status:** Decided for M1 (Dan, 2026-10-25: every call answered; see "Dan's calls" at the end). First drafted 2026-10-22 (DAS-94, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)); updated 2026-10-25 for a 3D run seen from behind, like Temple Run, the storm that drowns the song, and Dan's answers. Answers the question in [scope.md](../scope.md) "Settled questions": "What the Loss and the Silence show, the run's tap action, its obstacles, the fade and the car" (needed by M1). The code tickets (DAS-97 the run, DAS-98 the car and the House in grief) build from it; change this file first, then the code.
 
 Built from: [roadmap.md](../roadmap.md) M1 ("a hand-built runner path (3–4 minutes) ending in the fade, no warning, skip or retry"; "the Silence: the car, rain, no words"; success criterion 4), [gdd.md](gdd.md) §2 The Protector, [requirements.md](requirements.md) FR6, FR19, FR20, UX-DR26 and UX-DR28, [epic-2-stories.md](stories/epic-2-stories.md) Stories 2.1–2.4, [EXPERIENCE.md](ux/EXPERIENCE.md) (the Loss rows and the Jordan flow), [game-architecture.md](game-architecture.md) §4.2, [house-floor-plan.md](house-floor-plan.md) (the bedside lamp starts it; home through the front door), the [continuity ledger](continuity-ledger.md) and the Partner as built (DAS-73).
 
@@ -31,7 +31,7 @@ All simple shapes, no final art (M1):
   - **Branch:** a low bar across the path. Cleared, it lifts up and out of the way.
   - **Gap:** missing tiles across the path. Cleared, tiles rise up from below to fill it.
 - **The sky and the void:** plain colours (a gradient sky dome, fog the same colour) that change with each part of the run (below).
-- **The future silhouettes:** **Choice:** flat, softly lit cut-outs standing out in the void beside the path, passing by as the light runs, like the Partner's silhouettes of their past. They are never tappable and never labelled. **Dan:** which moments they are (story, not mine to pick; a placeholder list is in Dan's calls). None of them is a crib (there is no crib until the Anchor) and none becomes a House object.
+- **No silhouettes** (Dan, 2026-10-25: they might be too much and not sit well in the 3D run). The "planning and dreaming" of Story 2.2 is carried by the warm morning, the couple's song and the light growing, with nothing labelled.
 - **Not a car:** the runner is the light, never a vehicle, so the run can't read as a car accident (Dan's note, 2026-10-25, [story-beats.md](story-beats.md)).
 - **No HUD:** no score, no distance counter, no meter, no pause button on screen (the tab-hidden pause still works).
 
@@ -54,9 +54,9 @@ The whole run is one fixed timeline, the same length for every player: about 3 m
 | Time | Part | Sky and world | Music | Obstacles |
 |---|---|---|---|---|
 | 0:00–0:05 | Dark | Black. The lamp has just clicked off. A breath of quiet. | None | None |
-| 0:05–1:25 | **Euphoria** | The light fades up out of the black into a warm, sunny morning. Wide, clear, golden; long gentle bends. The future silhouettes pass by beside the path. The light grows a little over this part. | The song, bright (see "Music and sound") | 12, one every 2 bars, landing on the beat. Easy. |
-| 1:25–2:15 | **Confusion** | The sun goes hazy, the fog closes in and the colour starts to drain toward gray. Wind. The bends come sharper and less evenly. The silhouettes blur and thin out. Tiles at the path's edges crack and drop away into the void as the light passes (only beside and behind it, never in its way). | The song plays on, but wind and the first rain start to rise over it | 12, off the beat and at uneven gaps, so they stop feeling like a dance |
-| 2:15–2:55 | **Panic** | Dark and stormy. Rain. The fog is close, so the path ahead appears late. The path narrows to one tile wide, and each tile cracks and falls away just after the light crosses it, so the path seems to give way under it, but it always lands. No silhouettes. | The storm takes over: rain, wind and thunder drown the song until only scraps of it come through | 25, in tight clusters of two or three |
+| 0:05–1:25 | **Euphoria** | The light fades up out of the black into a warm, sunny morning. Wide, clear, golden; long gentle bends. The light grows a little over this part. | The song, bright (see "Music and sound") | 12, one every 2 bars, landing on the beat. Easy. |
+| 1:25–2:15 | **Confusion** | The sun goes hazy, the fog closes in and the colour starts to drain toward gray. Wind. The bends come sharper and less evenly. Tiles at the path's edges crack and drop away into the void as the light passes (only beside and behind it, never in its way). | The song plays on, but wind and the first rain start to rise over it | 12, off the beat and at uneven gaps, so they stop feeling like a dance |
+| 2:15–2:55 | **Panic** | Dark and stormy. Rain. The fog is close, so the path ahead appears late. The path narrows to one tile wide, and each tile cracks and falls away just after the light crosses it, so the path seems to give way under it, but it always lands. | The storm takes over: rain, wind and thunder drown the song until only scraps of it come through | 25, in tight clusters of two or three |
 | 2:55–3:35 | **Silence** | Everything stops at once: the music, the wind, the rain, the obstacles. The path is whole again, wide, flat and straight, and the fog lifts so it can be seen running far ahead with nothing on it. The world is fully gray. | None | None |
 
 **The obstacle sequence.** Hand-built and fixed (FR20). Times are when each one would reach the light; S stone, B branch, G gap.
@@ -96,7 +96,7 @@ No text, no "the end", no score, no button. The obstacles stop *before* the fade
 
 **Decided (Dan, 2026-10-25): the storm stops for the fade, then comes back in the car.** Keeping the storm going through the fade would lose the silence, which is the one stretch where the light visibly goes out with nothing touching it. Stopping it, then bringing back the very same storm over black, says the run was the night itself.
 
-**Why this is better than a new track:** one sound runs from the run into the car and on into the House, where the rain is on the windows (the ledger's rain row), so the weather carries the loss home. It needs no second track to find, license or tempo-check. **Choice:** the car's storm is mostly rain on the roof, with thunder only far off, once or twice, so it stays close to FR6 ("no words, just the sound of rain").
+**Why this is better than a new track:** one sound runs from the run into the car and on into the House, where the rain is on the windows (the ledger's rain row), so the weather carries the loss home. It needs no second track to find, license or tempo-check. **Dan, 2026-10-25:** the storm in the car is still fairly loud, heavy rain on the roof with thunder in the background. Still no words (FR6).
 
 All of it is made **ahead of time** by a script, the way `tools/partner/make_song.py` makes the Partner's track, and played as ordinary recorded audio. Nothing is generated or bent live: the browser's default audio mode drops on-the-fly effects (game-architecture §3.2).
 
@@ -108,7 +108,7 @@ All of it is made **ahead of time** by a script, the way `tools/partner/make_son
 | Panic | The storm, loud: heavy rain, wind, thunder, scraps of the song under it | The same storm recordings and song, mixed offline |
 | Clear / stumble | A soft, warm click for a clear; a dull thud for a stumble | Same |
 | Silence | Nothing. Not the House hum, not a tone. | — |
-| Car | The same storm, heard from inside: rain on the roof, thunder far off once or twice; the engine ticking as it cools, fading out in the first 20 seconds | The run's storm recordings, muffled; one engine-tick recording. The House's rain after the Loss uses the same recordings. |
+| Car | The same storm, heard from inside: loud rain on the roof, thunder in the background; the engine ticking as it cools, fading out in the first 20 seconds | The run's storm recordings, muffled; one engine-tick recording. The House's rain after the Loss uses the same recordings. |
 
 **Timing:** obstacles in the euphoria land on the song's beat (the song is 90 beats a minute, so one obstacle every 2 bars is every 5.3 s). The confusion and panic obstacles are off the beat on purpose, as the storm takes the beat away. The reach windows are wide, so the run needs none of the Partner's precise tap timing or calibration (ADR-0006); Godot's own audio clock is enough to keep obstacles on the beat. **Hiding the tab** pauses the music and the run together and saves nothing.
 
@@ -135,9 +135,9 @@ All of it is made **ahead of time** by a script, the way `tools/partner/make_son
 
 **What can be tapped.** Only the views: tap a view's ring to glide to it (2.0 s, as in the House), short-drag to look a little. No words, no subtitles, no objective text, no HUD, no skip (Story 2.3). Nothing to do with Maya: Leo can only be there. **Choice:** holding her hand is the Arrival's ending (the Partner's rhythm returns as holding the hand), so it is not spent here.
 
-**How long.** At least 60 seconds from when the car fades in. **Choice:** the rain fades up over black for 3 s first, so the silence of the run turns into rain before anything is seen.
+**How long.** At least 30 seconds from when the car fades in (Dan, 2026-10-25). **Choice:** the rain fades up over black for 3 s first, so the silence of the run turns into rain before anything is seen.
 
-**How it ends (Dan, call 8).** After 60 s the front door, seen from C1, quietly gets the same ring every House doorway has. Nothing else changes. When the player taps it, the car door opens (the rain gets louder for a moment), the screen goes to black over 2 s, and the chapter reports that it finished. The player chooses when to go in, and can sit as long as they like; there is still nothing to skip, because the minute in the car always happens.
+**How it ends (Dan, 2026-10-25).** After 30 s the front door, seen from C1, quietly gets the same ring every House doorway has. Nothing else changes. When the player taps it, the car door opens (the rain gets louder for a moment), the screen goes to black over 2 s, and the chapter reports that it finished. The player chooses when to go in, and can sit as long as they like; there is still nothing to skip, because the time in the car always happens.
 
 **Handing back to the House.** The chapter only reports `finished` (no Stoic/Vulnerable answer here). The core table turns that into the House in grief; the House opens at the entry (E1), gray, with rain on the windows and the keys dropped on the floor, as the floor plan says. **For the code tickets:** the House must have its gray mood and the E1 view set *before* it is shown, so the player never glimpses the warm bedroom where they left it. That is the core table's and the House's job (DAS-92, DAS-98), not the chapter's. M1 ends there, in the gray House, with no card.
 
@@ -161,7 +161,7 @@ What the recommendation gives up: A2's lower cost, B's and D's instant familiari
 
 ## Ledger changes
 
-Added to the [continuity ledger](continuity-ledger.md), all `proposed`:
+Added to the [continuity ledger](continuity-ledger.md); decided with Dan's answers on 2026-10-25 except where a row says an idea is for M2:
 
 - **Fact: the night of the loss.** A night in month 2 (FR17). They leave for the hospital in the night (never shown) and come home in the car in the rain.
 - **Place: the car**, parked outside the House on the night of the loss (the Silence). Seen only then in M1. An idea for later: the same car takes them to the hospital in the Arrival.
@@ -171,7 +171,6 @@ Added to the [continuity ledger](continuity-ledger.md), all `proposed`:
 - **Sound: the storm** (new): rises in the run's confusion, takes over in the panic, stops dead in the silence, comes back the same in the car, and its rain carries into the House.
 - **Sound: rain** (changed): part of the storm; starts in the run's confusion, stops dead in the silence, comes back in the car and carries into the House.
 - **Motif: the small light.** The Partner's lights and heart; the runner in the Loss, which fades. Introduced, so it should be paid off later (an idea: a small light in the Tuner or the Arrival; M2 decides).
-- **Motif: moments of their life as silhouettes.** The Partner shows their past together; the Loss shows the future they imagine, and takes it away. Paid off later if the Arrival shows one come true (M2 decides).
 - **Motif: coming home through the front door.** The first tap of the game; home from the car after the Loss. Leaving through it with the keys is still the Arrival's.
 
 ## Checks this design must pass
@@ -198,7 +197,7 @@ From the roadmap, the stories, CLAUDE.md and the narrative-craft skill. None is 
 
 **Needs Dan's device:** the run's feel on his iPhone (plain Safari, sideways, Hide Toolbar) and laptop Chrome; whether the reach windows feel fair; whether the silence lands; the car's length.
 
-**Story 2.2's "10–15 minutes"** is the full chapter in M3+. M1's run is 3–4 minutes (roadmap), so this draft is sized to that; M3 lengthens the euphoria and adds set pieces without changing the shape.
+**Story 2.2's "10–15 minutes"** is the full chapter in M3+. M1's run is 3–4 minutes (roadmap), so this design is sized to that; M3 lengthens the euphoria and adds set pieces without changing the shape.
 
 ### What success criterion 4 needs, and how the playtest checks it
 
@@ -210,7 +209,7 @@ Criterion 4: "Asked afterwards, most testers describe the Loss in emotional word
 2. **Input is honest.** Every tap with something in reach works; stray taps cost nothing; no obstacle needs two taps; perfect play is possible.
 3. **No game-over language.** No score, counter, buzzer, shake, "game over" sound or screen, and no retry to look for.
 4. **Joy first.** 80 seconds of easy, on-the-beat success to the couple's own song, so there is something to lose.
-5. **Not cheap or exploitative.** Restraint: no graphic image, no blood, no hospital, no words telling the player how to feel. The loss is shown only as a light going out and a song stopping. The car gives the player a minute of quiet with someone else in it.
+5. **Not cheap or exploitative.** Restraint: no graphic image, no blood, no hospital, no words telling the player how to feel. The loss is shown only as a light going out and a song stopping. The car gives the player time in the storm with someone else there, and no words.
 
 **How the M1 playtest checks it** (written up in `docs/playtests/`, as the roadmap asks):
 
@@ -222,19 +221,16 @@ Criterion 4: "Asked afterwards, most testers describe the Loss in emotional word
 
 ## Dan's calls
 
-Each has my recommended answer. Calls 1–5 and 11 shape the run (DAS-97); 6–9 the car (DAS-98); 10 is a doc conflict.
+All answered, 2026-10-25.
 
-1. **The concept: "Clear the way"** (the small light runs; the player's taps clear its path; it goes out on a clear stretch after the music stops)? *Recommended: yes.* Alternatives: the player as the runner, tapping to jump (B); laying the path in rhythm (C); a lane runner with steering (D). **Part decided (Dan, 2026-10-25): 3D, seen from behind, like Temple Run, built that way straight away (no 2D test first).** The concept itself is still open.
-2. **Tap anywhere, or tap the obstacle itself?** *Recommended: tap anywhere* (one obvious action for a cold tester, what the Partner just taught, fair on a phone). Tapping the obstacle itself feels more hands-on, and could be tried in a playtest if the run feels too easy.
-3. **Can every obstacle be cleared?** The GDD says both "obstacles become unavoidable" and "fades despite the player's perfect play", and those pull against each other. *Recommended: every obstacle can be cleared; what can't be stopped is the path giving way and the light going out.* An obstacle no tap can clear is the thing testers will most likely call unfair.
-4. **Taps during the silence:** a small ripple where the finger lands that never reaches the light, or nothing at all? *Recommended: the ripple.* With nothing at all, a tester may think the game froze; the ripple says "you're still here, and there's nothing to fix".
-5. **Music.** Decided in outline (Dan, 2026-10-25): the Partner's song, drowned by a storm, and the same storm in the car. **Decided (Dan, 2026-10-25): the storm stops dead with the song at 2:55, the light goes out in silence, and the same storm comes back over black for the car.**
-6. **The future silhouettes on the horizon:** keep them, and which moments? *Recommended: keep them, 4 to 6 moments.* **PLACEHOLDER ideas, not decided, Dan's to replace:** a walk with a pram, a small hand around a finger, a first birthday, a child on Leo's shoulders. Rules: no crib, nothing that later becomes a House object, simple silhouettes in the Partner's placeholder style.
-7. **The car: parked outside the House at night, Maya in the passenger seat turned to her window, three views (windshield, Maya, the wheel)?** *Recommended: yes.* The other way is the car still driving home, which shows motion but loses the front door through the windshield.
-8. **How the car ends:** the front door gets a ring after 60 s and the player taps it to go in, or the car fades out on its own after a fixed time? *Recommended: the ring after 60 s.* The player chooses when to go in, and the first door of the game is the last tap of the Loss. The risk is someone not noticing the ring; the playtest watches for it ("nobody gets stuck", criterion 2).
-9. **The car's sound: rain and a cooling engine only,** or also the turn signal still ticking, which the player can tap off? The blinker would be the dark stretch's "one beat of human awkwardness" (narrative-design.md) and the one thing Leo can still fix. *Recommended: rain and the engine only*, as FR6 says ("no words, just the sound of rain"); the awkward beat comes a minute later with the lasagna note in the fridge. If you like the blinker, it is cheap to add.
-10. **When is the loss?** The floor plan says the run is "the night after the test"; FR17 says the Loss is month 2, and the sesame-seed note says week 5. *Recommended: month 2, some weeks after the test* (FR17 is the newer, more specific line, and the journal page is dated month 2). If you agree, the floor plan line changes to "a night some weeks after the test" and decision-history records it.
-
-11. **Swipes or no swipes?** Temple Run steers, jumps and slides with swipes. *Recommended: no swipes; the path bends on its own and tap anywhere is the only action.* Swipes would break the one tap scheme (a CLAUDE.md rule, so changing it is a bigger decision), add a way to fail that isn't about protecting the light, and fight Safari on the iPhone (an edge swipe goes back a page; a swipe can bring the hidden toolbar back).
-
-When these are answered: the answers go into this file, scope.md's open question moves to "Settled questions", the ledger rows become `decided`, and DAS-97 can start.
+1. **The concept, "Clear the way":** **decided (Dan):** the light is the runner, and it disappears ("metaphorically interesting and heartbreaking"). **3D, seen from behind, like Temple Run**, built that way straight away (no 2D test first).
+2. **Tap anywhere** to clear the next obstacle in reach: **decided (Dan).**
+3. **Every obstacle can be cleared;** what can't be stopped is the path giving way and the light going out: **decided (Dan).** (The GDD's "obstacles become unavoidable" is read this way.)
+4. **Taps during the silence** make a small ripple that never reaches the light: **decided (Dan).**
+5. **Music:** **decided (Dan):** the Partner's song, drowned by a storm; everything stops at 2:55 and the light goes out in silence; the same storm comes back over black for the car.
+6. **Silhouettes:** **dropped (Dan):** they might be too much and not sit well in the 3D run.
+7. **The car:** parked outside the House at night, Maya in the passenger seat turned to her window, three views (windshield, Maya, the wheel): **decided (Dan).**
+8. **How the car ends:** the front door gets a ring **after 30 s** and the player taps it to go in: **decided (Dan).**
+9. **The car's sound:** the storm and the cooling engine only, no blinker: **decided (Dan).** The storm is fairly loud, with thunder in the background.
+10. **When is the loss:** month 2, some weeks after the test: **decided (Dan).** The floor plan line is fixed to match (decision-history 29).
+11. **No swipes:** the path bends on its own and tapping is the only action: **decided (Dan).**

@@ -318,6 +318,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 29. The loss is a night in month 2, some weeks after the test (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | The floor plan: the Loss starts "the night after the test". |
+| **Became** | A night in month 2, some weeks after the test. |
+| **Why** | FR17 puts the Loss at month 2 and the fridge note says week 5, so "the night after" didn't fit. Found in the Loss design; Dan's call, 2026-10-25. |
+| **Record** | [house-floor-plan.md](house-floor-plan.md); [the-loss-run-and-car.md](the-loss-run-and-car.md) call 10; [continuity-ledger.md](continuity-ledger.md) (The night of the loss) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
