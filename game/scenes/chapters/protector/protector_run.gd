@@ -56,8 +56,8 @@ const CRADLE_START := 187.0  # The hand starts to come in under the slowing ligh
 const LOOKS := [
 	[0.0, "#000000", "#000000", 0.0, 0.0, 0.03, "#FFC27A"],
 	[RunPlan.EUPHORIA_START, "#000000", "#000000", 0.0, 0.0, 0.03, "#FFC27A"],
-	[8.0, "#E3A15A", "#B48C63", 1.7, 0.32, 0.012, "#FFC27A"],
-	[RunPlan.CONFUSION_START, "#DE9752", "#AE865F", 1.6, 0.32, 0.014, "#FFBA70"],
+	[8.0, "#E3A15A", "#8E7B66", 1.7, 0.32, 0.012, "#FFC27A"],
+	[RunPlan.CONFUSION_START, "#DE9752", "#8A775F", 1.6, 0.32, 0.014, "#FFBA70"],
 	[100.0, "#8E8073", "#8C7E70", 0.6, 0.32, 0.026, "#D8C8B4"],
 	[RunPlan.PANIC_START, "#4A4542", "#5A524C", 0.25, 0.28, 0.04, "#A8A8AC"],
 	[142.0, "#22201F", "#3E3935", 0.06, 0.22, 0.06, "#9AA0A8"],
@@ -524,7 +524,7 @@ func _update_hand() -> void:
 		_hand.visible = true
 		return
 	var e := _t - _lane_at
-	var total := 0.12 + RunPlan.LANE_MOVE + 0.3
+	var total := 0.12 + RunPlan.LANE_MOVE + 0.45
 	if _push_dir == 0.0 or e < 0.0 or e > total:
 		_hand.visible = false
 		return
@@ -535,7 +535,7 @@ func _update_hand() -> void:
 	if e < 0.12:
 		away = 1.0 - e / 0.12
 	elif e > 0.12 + RunPlan.LANE_MOVE:
-		away = (e - 0.12 - RunPlan.LANE_MOVE) / 0.3
+		away = (e - 0.12 - RunPlan.LANE_MOVE) / 0.45
 	away = smoothstep(0.0, 1.0, away)
 	_hand.transform = Transform3D(turned, beside + basis.z * 2.0 * away - basis.y * 1.2 * away)
 	_hand.visible = true
