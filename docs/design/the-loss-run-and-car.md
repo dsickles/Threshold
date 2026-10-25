@@ -1,6 +1,6 @@
 # The Protector (the Loss): the run and the car (draft)
 
-**Status:** Draft for Dan to decide, 2026-10-22 (DAS-94, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)). Nothing here is decided until Dan says so. Answers the open question in [scope.md](../scope.md): "What the Loss and the Silence show, the run's tap action, its obstacles, the fade and the car" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft". The code tickets (DAS-97 the run, DAS-98 the car and the House in grief) wait until he approves it.
+**Status:** Draft for Dan to decide, 2026-10-22, updated 2026-10-25 for Dan's first answer: **a 3D run seen from behind, like Temple Run** (DAS-94, made with the [narrative-craft skill](../../.claude/skills/narrative-craft/SKILL.md)). Nothing here is decided until Dan says so. Answers the open question in [scope.md](../scope.md): "What the Loss and the Silence show, the run's tap action, its obstacles, the fade and the car" (needed by M1). Once Dan settles it, the answer moves to scope.md "Settled questions" and this file stops saying "draft". The code tickets (DAS-97 the run, DAS-98 the car and the House in grief) wait until he approves it.
 
 Built from: [roadmap.md](../roadmap.md) M1 ("a hand-built runner path (3–4 minutes) ending in the fade, no warning, skip or retry"; "the Silence: the car, rain, no words"; success criterion 4), [gdd.md](gdd.md) §2 The Protector, [requirements.md](requirements.md) FR6, FR19, FR20, UX-DR26 and UX-DR28, [epic-2-stories.md](stories/epic-2-stories.md) Stories 2.1–2.4, [EXPERIENCE.md](ux/EXPERIENCE.md) (the Loss rows and the Jordan flow), [game-architecture.md](game-architecture.md) §4.2, [house-floor-plan.md](house-floor-plan.md) (the bedside lamp starts it; home through the front door), the [continuity ledger](continuity-ledger.md) and the Partner as built (DAS-73).
 
@@ -14,25 +14,26 @@ Lines marked **Choice** are mine where the docs say nothing. Lines marked **Dan*
 
 ## The recommendation: "Clear the way"
 
-**Central image:** a small light running along a path, and the player's taps clearing the path ahead of it. The light is the same kind of light as the Partner's, now small and new. Leo is a fixer (narrative-design.md), and here the player's hands do exactly what a fixer does: see the problem coming and move it. It works, beautifully, for most of the run. Then the light goes out on a stretch of path where there is nothing left to fix.
+**Central image:** a small light running away from the camera down a path, and the player's taps clearing the path ahead of it. The light is the same kind of light as the Partner's, now small and new. Leo is a fixer (narrative-design.md), and here the player's hands do exactly what a fixer does: see the problem coming and move it. It works, beautifully, for most of the run. Then the light goes out on a stretch of path where there is nothing left to fix.
 
 Why this one (principle 1, the verb carries the feeling): the GDD and the game brief call the chapter "Pathfinder" and "clearing the path for the family", and the Protector archetype is protecting. Making the player the protector, not the runner, means the loss happens *to someone they were looking after*, which is the true shape of this grief for a father. And because the light fades where there is no obstacle at all, the fade can't be read as the player's mistake, which is what success criterion 4 needs.
 
 ### What the screen shows
 
-**Choice: 2D, seen from the side**, held sideways (1280×720, scope.md). This matches game-architecture §4.2 (a `CharacterBody2D` runner on a `TileMap` path), is the cheapest thing to build and to make look right with placeholder shapes, and reads instantly on a phone.
+**Dan, 2026-10-25: 3D, seen from behind, like Temple Run.** The camera follows just behind and a little above the light, and the path runs away into the distance. Held sideways (1280×720, scope.md). The House is already 3D, so this uses the same renderer, ordinary fog and lamp-style lighting, with no CompositorEffects.
 
 All simple shapes, no final art (M1):
 
-- **The path:** one row of flat tiles across the lower third of the screen, scrolling right to left at a steady pace. It is the only ground.
-- **The light (the runner):** a soft round glow about 80 px across, a third of the way in from the left, bobbing gently as it runs. It never moves left or right on screen; the world moves past it. Same warm amber as the Partner's heart, smaller.
-- **Obstacles** come in from the right on the path, three kinds, all plain shapes:
-  - **Stone:** a rounded block on the path. Cleared, it rolls off the edge.
-  - **Branch:** a low bar across the path. Cleared, it lifts away.
-  - **Gap:** a missing tile. Cleared, a tile slides in to fill it.
-- **The sky:** a plain colour gradient that changes with each part of the run (below).
-- **The horizon:** **Choice:** soft silhouettes of moments the couple imagines for their future drift past far in the background during the euphoria, like the Partner's silhouettes of their past. They are never tappable and never labelled. **Dan:** which moments they are (story, not mine to pick; a placeholder list is in Dan's calls). None of them is a crib (the crib appears once, in the Anchor) and none becomes a House object.
-- **No HUD:** no score, no meter, no counter, no pause button on screen (the tab-hidden pause still works).
+- **The path:** a raised walkway of plain square tiles, about three tiles wide, floating over a soft void, running into the distance. **Choice:** like Temple Run, it bends left and right and rises and dips on its own; the camera swings round each bend with the light. The player never steers: the bends are scenery, not choices. Ordinary distance fog hides where the path is being built ahead.
+- **The light (the runner):** a soft glowing ball in the middle of the path, in the lower middle of the screen, bobbing as it runs. It always stays in the middle of the path; the world comes toward it. Same warm amber as the Partner's heart, smaller. It lights the tiles around it, so it is also the scene's main lamp.
+- **Obstacles** come down the path toward the light, three kinds, all plain shapes:
+  - **Stone:** a rounded block in the middle of the path. Cleared, it rolls off the edge and drops away.
+  - **Branch:** a low bar across the path. Cleared, it lifts up and out of the way.
+  - **Gap:** missing tiles across the path. Cleared, tiles rise up from below to fill it.
+- **The sky and the void:** plain colours (a gradient sky dome, fog the same colour) that change with each part of the run (below).
+- **The future silhouettes:** **Choice:** flat, softly lit cut-outs standing out in the void beside the path, passing by as the light runs, like the Partner's silhouettes of their past. They are never tappable and never labelled. **Dan:** which moments they are (story, not mine to pick; a placeholder list is in Dan's calls). None of them is a crib (there is no crib until the Anchor) and none becomes a House object.
+- **Not a car:** the runner is the light, never a vehicle, so the run can't read as a car accident (Dan's note, 2026-10-25, [story-beats.md](story-beats.md)).
+- **No HUD:** no score, no distance counter, no meter, no pause button on screen (the tab-hidden pause still works).
 
 ### The one tap action
 
@@ -42,8 +43,9 @@ All simple shapes, no final art (M1):
 - **A tap with nothing in reach** makes a small ripple where the finger landed, and nothing else. No penalty, no sound of failure. (The Partner's lesson: punishing extra taps is what makes people say a game "counted my tap wrong".)
 - **Every tap that has something to clear, clears it.** No obstacle ever needs two taps, and no tap is ever silently ignored. Honest input is the first protection against "unfair".
 - **Choice:** tap anywhere, not "tap the obstacle itself". It is one obvious action for a cold tester, it is what the Partner taught them minutes ago, and moving targets are hard to hit with a thumb. **Dan:** see call 2.
+- **No swipes.** Temple Run steers, jumps and slides with swipes. Here the light never needs steering: the path bends on its own, and clearing is the only action. That keeps the one tap scheme (CLAUDE.md) and avoids a real problem on Dan's phone: in Safari a swipe in from the edge goes back a page, and a swipe can bring the hidden toolbar back. **Dan:** see call 11.
 
-**What a stumble does.** If an obstacle reaches the light uncleared, the light goes through it: the stone cracks apart, the branch snaps, the light lurches over the gap. A dull, soft thud (not a buzzer). The light flickers dimmer for about 0.6 s and recovers fully. It never slows, never stops, never falls, and never loses ground. There is no count of stumbles and nothing carries over: by the time the next obstacle arrives, the light is exactly as it was. No screen shake, ever, not only with reduced motion (UX-DR26, "Loss does not add juice").
+**What a stumble does.** If an obstacle reaches the light uncleared, the light goes through it: the stone cracks apart, the branch snaps, the light hops over the gap with a lurch. A dull, soft thud (not a buzzer). The light flickers dimmer for about 0.6 s and recovers fully. It never slows, never stops, never falls, and never loses ground. There is no count of stumbles and nothing carries over: by the time the next obstacle arrives, the light is exactly as it was. No screen shake, ever, not only with reduced motion (UX-DR26, "Loss does not add juice").
 
 ### The run, part by part
 
@@ -52,10 +54,10 @@ The whole run is one fixed timeline, the same length for every player: about 3 m
 | Time | Part | Sky and world | Music | Obstacles |
 |---|---|---|---|---|
 | 0:00–0:05 | Dark | Black. The lamp has just clicked off. A breath of quiet. | None | None |
-| 0:05–1:25 | **Euphoria** | The light fades up out of the black into a warm, sunny morning. Wide, clear, golden. The future silhouettes drift past on the horizon. The light grows a little over this part. | The song, bright (see "Music and sound") | 12, one every 2 bars, landing on the beat. Easy. |
-| 1:25–2:15 | **Confusion** | The sun goes hazy and the colour starts to drain toward gray. Wind. The silhouettes blur and thin out. Behind the light, cleared tiles crack and drop away (only behind it, seen in its wake, never in its way). | The song, slipping: its pitch and timing drift a little | 12, off the beat and at uneven gaps, so they stop feeling like a dance |
-| 2:15–2:55 | **Panic** | Dark and stormy. Rain. The edges of the screen darken. Tiles crack and fall away just after the light crosses them, so the path seems to give way under it, but it always lands. No silhouettes. | A fast, heavy, heartbeat-like drum over a broken fragment of the song | 25, in tight clusters of two or three |
-| 2:55–3:35 | **Silence** | Everything stops at once: the music, the wind, the rain, the obstacles. The path is whole, flat and clear. The world is fully gray. | None | None |
+| 0:05–1:25 | **Euphoria** | The light fades up out of the black into a warm, sunny morning. Wide, clear, golden; long gentle bends. The future silhouettes pass by beside the path. The light grows a little over this part. | The song, bright (see "Music and sound") | 12, one every 2 bars, landing on the beat. Easy. |
+| 1:25–2:15 | **Confusion** | The sun goes hazy, the fog closes in and the colour starts to drain toward gray. Wind. The bends come sharper and less evenly. The silhouettes blur and thin out. Tiles at the path's edges crack and drop away into the void as the light passes (only beside and behind it, never in its way). | The song, slipping: its pitch and timing drift a little | 12, off the beat and at uneven gaps, so they stop feeling like a dance |
+| 2:15–2:55 | **Panic** | Dark and stormy. Rain. The fog is close, so the path ahead appears late. The path narrows to one tile wide, and each tile cracks and falls away just after the light crosses it, so the path seems to give way under it, but it always lands. No silhouettes. | A fast, heavy, heartbeat-like drum over a broken fragment of the song | 25, in tight clusters of two or three |
+| 2:55–3:35 | **Silence** | Everything stops at once: the music, the wind, the rain, the obstacles. The path is whole again, wide, flat and straight, and the fog lifts so it can be seen running far ahead with nothing on it. The world is fully gray. | None | None |
 
 **The obstacle sequence.** Hand-built and fixed (FR20). Times are when each one would reach the light; S stone, B branch, G gap.
 
@@ -69,13 +71,16 @@ The whole run is one fixed timeline, the same length for every player: about 3 m
 
 ### How the fade lands
 
-The fade is the same for a perfect run and a stumbling one, because nothing in it depends on play:
+In one line: **the music stops, the light runs on alone down an empty path, slows to a stop, and goes out. Then the screen goes black and the car begins.** The run doesn't just stop, and there is no blank ending: the car follows it within seconds.
 
-1. **2:55:** the music stops dead (a short "tape stop", the effect the Partner's song tool already has), and the storm cuts out with it. The path is clear in every direction. The light is fully bright, exactly as bright for every player, because stumbles never carry over.
-2. **2:55–3:05:** the light keeps running on the clear, gray path in total silence. Nothing comes. A tap makes the small ripple where the finger lands; it never reaches the light. **Dan:** call 4.
-3. **3:05–3:15:** the path slows to a stop. The light stops with it.
-4. **3:15–3:25:** the light dims and shrinks to nothing. No sound when it goes out, no flash, no sting.
-5. **3:25–3:35:** the empty gray path, still. Then black.
+Second by second (the same for a perfect run and a stumbling one, because nothing in it depends on play):
+
+1. **2:55, the music stops dead.** A short "tape stop" (the effect the Partner's song tool already has), and the storm cuts out with it. The path straightens and the fog lifts: the player can see the path running far ahead, empty. The light is fully bright, exactly as bright for every player, because stumbles never carry over.
+2. **2:55–3:05, it keeps running.** Ten seconds in total silence on the clear, gray path. Nothing comes. A tap makes the small ripple where the finger lands; it never reaches the light. **Dan:** call 4.
+3. **3:05–3:15, it slows to a stop.** The camera slows with it and comes to rest just behind it.
+4. **3:15–3:25, it goes out.** The light dims and shrinks to nothing. The tiles it was lighting go dark with it. No sound when it goes out, no flash, no sting.
+5. **3:25–3:35, the empty path.** The gray path, still, with nothing on it. Then black.
+6. **3:35, the rain.** Over black, the sound of rain fades up, and the car begins (below).
 
 No text, no "the end", no score, no button. The obstacles stop *before* the fade on purpose: the light doesn't go out because something hit it. Nobody can point at a moment and say "if I'd tapped that, it would have lived". That is the truest thing the run can say to people who have been through this, and the main protection against "unfair".
 
@@ -99,8 +104,9 @@ All of it is made **ahead of time** by a script, the way `tools/partner/make_son
 
 ### The look, inside the rules
 
-- **The gray drain** (Story 2.1, "a gray drain the chapter can fill in"): the sky colours are authored per part, and a whole-screen tint eases from none to `house-grief` (#5C534C) across the confusion and panic. By the silence the run is the same gray as the House it hands back to. No CompositorEffects; a plain 2D tint and colours do it in the browser.
-- **Rain** in the panic is simple 2D particles, cheap on a phone.
+- **The gray drain** (Story 2.1, "a gray drain the chapter can fill in"): the sky, fog, light and tile colours are authored per part and ease toward `house-grief` (#5C534C) across the confusion and panic. By the silence the run is the same gray as the House it hands back to. No CompositorEffects and no volumetric fog; colours, ordinary fog and the light do it in the browser.
+- **Rain** in the panic is simple particles (CPU particles, which the web renderer handles well), cheap on a phone.
+- **On the phone:** a few hundred plain tiles, three obstacle shapes, one moving light and fog. Old tiles are removed behind the camera, so the scene stays small. It must meet the same iPhone headroom bar as the House (scope.md), checked on Dan's phone.
 - **No flash, no shake, no confetti, no slow-motion**, in any setting.
 
 ## The car (the Silence)
@@ -133,13 +139,15 @@ All of it is made **ahead of time** by a script, the way `tools/partner/make_son
 
 ## Alternatives considered
 
+**A2. The same run, in 2D seen from the side.** This was the first draft's view: the path scrolls right to left and the light stays a third of the way in. Cheaper to build, and easy to read on a phone. Dan chose 3D (2026-10-25): the view from behind puts the player with the light, looking where it's going, which makes the path ahead and its giving way much more felt. Better at: cost.
+
 **B. "Run with her": the player is the runner, tap to jump.** The classic one-button runner (the light, or the couple, jumps over obstacles). Simplest to understand. But the player *is* the thing that fades, which turns the fade into "I died", the language of failing a level. To make obstacles "unavoidable", jumps would have to fail even when timed well, which is exactly what testers call unfair. Better at: instant familiarity.
 
 **C. "Lay the path": tap in rhythm to lay each stone ahead of the light.** The truest "pathfinder": the path is dark ahead and the player builds it stone by stone on the beat; later the stones crack as they're laid. Strong image of providing. But it is the Partner's verb again (tap in time), which blunts the contrast between chapters, and it brings back the rhythm-timing risk ("counted my tap wrong") in the one chapter that must never feel unfair. Better at: a direct line to Leo's "provide" flaw.
 
-**D. A 3D lane runner, seen from behind.** The light runs into the screen toward a horizon; tap left or right to change lanes. Most cinematic. But it costs a 3D scene and far more art, a tap-side rule is easy to get wrong held sideways, and it reads like a mobile endless runner, the wrong genre memory for this moment. Better at: drama.
+**D. A 3D lane runner, with steering.** The view Dan chose, but with Temple Run's controls: tap left or right (or swipe) to change lanes or turn at corners. More like the game it comes from. But steering adds a second action and a way to fail that has nothing to do with protecting the light, a tap-side rule is easy to get wrong held sideways, and swipes fight Safari on the phone. Better at: being a familiar game.
 
-What the recommendation gives up: B's instant familiarity (mitigated by teaching on two lone stones) and C's direct "provider" image (the clearing verb carries "protector" instead, which is this chapter's archetype).
+What the recommendation gives up: A2's lower cost, B's and D's instant familiarity (mitigated by teaching on two lone stones) and C's direct "provider" image (the clearing verb carries "protector" instead, which is this chapter's archetype).
 
 ## Ledger changes
 
@@ -163,8 +171,8 @@ From the roadmap, the stories, CLAUDE.md and the narrative-craft skill. None is 
 
 - **No warning, no skip, no retry.** Nothing before the lamp click points at the loss (the lamp is "going to sleep"). No title card. No skip control anywhere in the run or the car. No retry, "try again" or "chapter failed" at the fade or after.
 - **One result.** Every player reaches the same fade, the same car and the same House. Stumbles change nothing that lasts. The chapter offers no Stoic/Vulnerable answer.
-- **One tap scheme.** Tap anywhere (the run) and tap a ring (the car). No WASD, stick, mouse-look or gamepad. Nothing on hover. Targets over 44 px.
-- **No CompositorEffects.** 2D colours, a tint and particles only.
+- **One tap scheme.** Tap anywhere (the run) and tap a ring (the car). No swipes, WASD, stick, mouse-look or gamepad. Nothing on hover. Targets over 44 px.
+- **No CompositorEffects, no volumetric fog.** Colours, ordinary fog, the light and particles only.
 - **The UI never explains the metaphor.** No words on screen at all; nothing names the light, the parts of the run or what happened.
 - **Saves only between chapters.** Hidden tab pauses; leaving restarts from the lamp.
 
@@ -203,9 +211,9 @@ Criterion 4: "Asked afterwards, most testers describe the Loss in emotional word
 
 ## Dan's calls
 
-Each has my recommended answer. Calls 1–5 shape the run (DAS-97); 6–9 the car (DAS-98); 10 is a doc conflict.
+Each has my recommended answer. Calls 1–5 and 11 shape the run (DAS-97); 6–9 the car (DAS-98); 10 is a doc conflict.
 
-1. **The concept: "Clear the way"** (the small light runs; the player's taps clear its path; it goes out on a clear stretch after the music stops)? *Recommended: yes.* Alternatives: the player as the runner, tapping to jump (B); laying the path in rhythm (C); a 3D lane runner (D).
+1. **The concept: "Clear the way"** (the small light runs; the player's taps clear its path; it goes out on a clear stretch after the music stops)? *Recommended: yes.* Alternatives: the player as the runner, tapping to jump (B); laying the path in rhythm (C); a lane runner with steering (D). **Part decided (Dan, 2026-10-25): 3D, seen from behind, like Temple Run, built that way straight away (no 2D test first).** The concept itself is still open.
 2. **Tap anywhere, or tap the obstacle itself?** *Recommended: tap anywhere* (one obvious action for a cold tester, what the Partner just taught, fair on a phone). Tapping the obstacle itself feels more hands-on, and could be tried in a playtest if the run feels too easy.
 3. **Can every obstacle be cleared?** The GDD says both "obstacles become unavoidable" and "fades despite the player's perfect play", and those pull against each other. *Recommended: every obstacle can be cleared; what can't be stopped is the path giving way and the light going out.* An obstacle no tap can clear is the thing testers will most likely call unfair.
 4. **Taps during the silence:** a small ripple where the finger lands that never reaches the light, or nothing at all? *Recommended: the ripple.* With nothing at all, a tester may think the game froze; the ripple says "you're still here, and there's nothing to fix".
@@ -215,5 +223,7 @@ Each has my recommended answer. Calls 1–5 shape the run (DAS-97); 6–9 the ca
 8. **How the car ends:** the front door gets a ring after 60 s and the player taps it to go in, or the car fades out on its own after a fixed time? *Recommended: the ring after 60 s.* The player chooses when to go in, and the first door of the game is the last tap of the Loss. The risk is someone not noticing the ring; the playtest watches for it ("nobody gets stuck", criterion 2).
 9. **The car's sound: rain and a cooling engine only,** or also the turn signal still ticking, which the player can tap off? The blinker would be the dark stretch's "one beat of human awkwardness" (narrative-design.md) and the one thing Leo can still fix. *Recommended: rain and the engine only*, as FR6 says ("no words, just the sound of rain"); the awkward beat comes a minute later with the lasagna note in the fridge. If you like the blinker, it is cheap to add.
 10. **When is the loss?** The floor plan says the run is "the night after the test"; FR17 says the Loss is month 2, and the sesame-seed note says week 5. *Recommended: month 2, some weeks after the test* (FR17 is the newer, more specific line, and the journal page is dated month 2). If you agree, the floor plan line changes to "a night some weeks after the test" and decision-history records it.
+
+11. **Swipes or no swipes?** Temple Run steers, jumps and slides with swipes. *Recommended: no swipes; the path bends on its own and tap anywhere is the only action.* Swipes would break the one tap scheme (a CLAUDE.md rule, so changing it is a bigger decision), add a way to fail that isn't about protecting the light, and fight Safari on the iPhone (an edge swipe goes back a page; a swipe can bring the hidden toolbar back).
 
 When these are answered: the answers go into this file, scope.md's open question moves to "Settled questions", the ledger rows become `decided`, and DAS-97 can start.

@@ -126,7 +126,7 @@ To achieve the "Familiar yet Novel" aesthetic without 7 distinct asset pipelines
 
 ### 4.2 The Protector (Pathfinder)
 
-- **Nodes:** `CharacterBody2D` for the Runner, `TileMap` for the path.
+- **Nodes:** a 3D run seen from behind, like Temple Run: a `Node3D` light that stays in the middle of the path, a following `Camera3D`, and a path built from plain tile pieces ahead of it and removed behind it. No steering. _(updated 2026-10-25: was `CharacterBody2D` and `TileMap`, a 2D runner; Dan chose 3D. Design: [the-loss-run-and-car.md](the-loss-run-and-car.md))_
 - **Logic:** A fixed, authored sequence of obstacles ending in the forced loss. Not random.
 
 ### 4.3 The Novice (WarioWare)
@@ -176,7 +176,7 @@ To achieve the "Familiar yet Novel" aesthetic without 7 distinct asset pipelines
 ### 5.1 Save System (`SaveManager.gd`)
 
 - **Format:** JSON, stored in the browser. _2026-10-19: one file, `user://save.json`, written by `GameState` with Godot's `FileAccess`; on the web Godot keeps it in IndexedDB ([ADR-0007](../adr/0007-saves-json-file-in-user-folder.md))._
-- **Content:** The finished-chapter list and settings (see §2.1).
+- **Content:** The finished-chapter list and settings (see §2.1), plus the opening beat's Stoic/Vulnerable answer once the Partner is saved ([ADR-0007](../adr/0007-saves-json-file-in-user-folder.md), 2026-10-22).
 - **Triggers:** Save only **between chapters**, when a chapter finishes. No mid-chapter checkpoints. Closing the tab mid-chapter restarts that chapter next time. Hiding the tab pauses the game but does not save.
 - **Failure:** In private browsing or a blocked frame the save can fail. Show "Couldn't save." and keep playing. Old test saves may fail to open; there is no save versioning.
 

@@ -68,7 +68,7 @@ So that the picture of the baby is the reward.
 **Given** I tap the journal
 **When** the new entry opens
 **Then** the words are the same for every player
-**And** the page sits in months 11–13
+**And** the page is dated for month 12 _(updated 2026-10-25, ADR-0009)_
 
 **Given** the chapter has finished
 **When** the game saves

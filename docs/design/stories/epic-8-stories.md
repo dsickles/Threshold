@@ -70,7 +70,7 @@ So that the arrival ends where the story lives.
 **Given** I am in the House
 **When** I look around and open the journal
 **Then** the House has changed in the same way for every player, and the entry words are the same
-**And** the page is dated for month 14, and no personal keepsake appears
+**And** the page is dated for month 18 _(updated 2026-10-25, ADR-0009)_, and no personal keepsake appears
 
 **Given** the ending has finished
 **When** the game saves

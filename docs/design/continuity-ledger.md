@@ -14,8 +14,8 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Miscarriage happened | From after the Loss, for good (history) | decided (GDD, 2026-09-22 O2) |
 | Pregnant (via IVF) | From after the Novice, to the Arrival | decided (GDD, 2026-09-22 O2) |
 | Baby born | After the Arrival | decided (GDD) |
-| The night of the loss | A night in month 2 (FR17), some weeks after the test. They leave for the hospital in the night (never shown) and come home in the car in the rain (the Silence). The floor plan's "the night after the test" conflicts with month 2: Dan's call 10 in the Loss draft. | proposed ([the-loss-run-and-car.md](the-loss-run-and-car.md)) |
-| Month (FR17) | Partner 0, Loss 2, Novice 3–9, Provider 10, Tuner/Anchor/Mourner 11–13, Arrival 14 | decided (requirements FR17) |
+| The night of the loss | A night in month 2 (FR17), some weeks after the test. They leave for the hospital in the night (never shown) and come home in the car in the rain (the Silence). The hospital night comes back as a bill in the Provider (Dan, 2026-10-25; [continuity-ledger-additions.md](continuity-ledger-additions.md)). | proposed ([the-loss-run-and-car.md](the-loss-run-and-car.md)); Provider bill decided (Dan, 2026-10-25) |
+| Month (FR17) | Partner 0, Loss 2, Novice 3–9, Provider 10, Tuner 12, Anchor and Mourner 17, Arrival 18 (a full-term pregnancy) | decided (FR17; ADR-0009, Dan, 2026-10-25) |
 
 ## Rooms
 
@@ -24,7 +24,8 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Porch | The game starts here at dusk on moving day, facing the front door | decided (Dan, 2026-10-19) |
 | The car (not a room of the House) | Seen only in the Silence, after the Loss: parked outside the House at night, engine off, rain. Three views: the windshield (the front door and porch light through the rain), Maya in the passenger seat, the wheel with the keys in the ignition. An idea for later: the same car takes them to the hospital in the Arrival (M2). | proposed ([the-loss-run-and-car.md](the-loss-run-and-car.md)) |
 | Entry, living room, kitchen | Open from the Start to the end. The everyday House. | proposed |
-| Back hall, main bedroom (with en-suite), hall bathroom | Shut until the opening beat (moving boxes block the back hall); open from then on | proposed |
+| Back hall, main bedroom (with en-suite) | Shut until the opening beat (moving boxes block the back hall); open from then on | proposed |
+| Hall bathroom | Shut for all of M1, never a chapter room (Dan, 2026-10-23, matching the floor plan's M1 build). Later: M2. | M1: decided (Dan, 2026-10-23) |
 | Bedroom 3: the office | Moving boxes stacked against its door from the opening beat; cleared after the Novice, when the bills arrive (the Provider); stays open | proposed (boxes as blockers: Dan, 2026-10-19) |
 | Bedroom 2: the spare room, later the nursery | Moving day: Leo's old-life boxes dumped inside, door shut. After the Partner: door ajar; Leo has started unpacking his bachelor things (lounge chair and ottoman, guitar on a stand, band poster), boxes still along the walls, the onesie on his chair. After the Loss: the door shut, nothing in front of it; they don't want to be reminded (Dan, 2026-10-20). After the Tuner: the door is ajar again, the room still full of Leo's boxes. After the Mourner: cleared and finished as the nursery, crib moved in. After the Arrival: the last room. | proposed. Open (Dan, 2026-10-19): he wants it not to read as a nursery at first and likes the onesie there, but the Mourner may need another angle than clearing Leo's things. |
 

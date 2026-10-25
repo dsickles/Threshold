@@ -17,6 +17,7 @@ export type ProbeState = {
 export const MENU = "res://scenes/ui/m0_menu.tscn";
 export const SMOOTHNESS = "res://scenes/m0_checks/smoothness/smoothness_check.tscn";
 export const VIEWPOINTS = "res://scenes/m0_checks/viewpoints_check.tscn";
+export const UI_STYLE = "res://scenes/m0_checks/ui_style_check.tscn";
 export const RHYTHM = "res://scenes/ui/m0_rhythm_check.tscn";
 export const PARTNER = "res://scenes/chapters/partner/partner.tscn";
 

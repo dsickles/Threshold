@@ -274,6 +274,50 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 23. The House floor plan settled for M1 (2026-10-22)
+
+| | |
+|---|---|
+| **Was** | The House's small floor plan was an open question in scope.md, with [house-floor-plan.md](house-floor-plan.md) marked "draft". |
+| **Became** | Settled for M1 as the floor plan has it, until it can be seen in the game. Its remaining open calls are M2's. The core table (`game/_core/house/house_table.gd`) builds the four M1 story points from it. The opening beat's answer is held in memory and saved with the Partner's result. |
+| **Why** | The House can't be built on a draft, and the open calls only matter after the Loss. Dan's call, 2026-10-22. |
+| **Record** | [scope.md](../scope.md) Settled questions; [ADR-0007](../adr/0007-saves-json-file-in-user-folder.md) (the `opening` key); DAS-92 |
+
+---
+
+## 26. The pregnancy runs full term; the story runs about 18 months (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | FR17: Provider month 10, Tuner, Anchor and Mourner months 11–13, the Arrival month 14. About a 14-month timeline (§4). That made the IVF pregnancy about five months long. |
+| **Became** | Provider 10, Tuner 12, Anchor and Mourner 17, the Arrival 18: a normal pregnancy of about 40 weeks, with no premature birth. |
+| **Why** | The journal pages are dated, and players who have been through IVF would notice a five-month pregnancy. Found in the story pass; Dan's call, 2026-10-25. |
+| **Record** | [ADR-0009](../adr/0009-full-term-pregnancy-timeline.md); FR17 in [requirements.md](requirements.md); [narrative-design.md](narrative-design.md) timeline; the journal-date lines in [stories/](stories/) epics 5–8 |
+
+---
+
+## 27. No crib after the Loss (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | Story 2.4: after the Loss "the crib is put away, and boxes are out". |
+| **Became** | There is no crib until the Anchor (one crib, one lifeline). After the Loss the spare room door is simply shut. |
+| **Why** | The floor plan and continuity ledger already had no crib until the Anchor (Dan, 2026-10-19). Dan agreed the floor plan wins, 2026-10-25. |
+| **Record** | [epic-2-stories.md](stories/epic-2-stories.md) Story 2.4; [continuity-ledger.md](continuity-ledger.md) (Crib) |
+
+---
+
+## 28. The Loss's run is 3D, seen from behind (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | game-architecture §4.2 and requirements: a 2D runner (`CharacterBody2D` on a `TileMap` path). The first Loss draft (2026-10-22) followed it with a side-on 2D view. |
+| **Became** | A 3D run seen from behind, like Temple Run: the camera follows the light down a path that bends on its own. Built that way straight away, with no 2D test first. |
+| **Why** | Dan's call, 2026-10-25: Temple Run is the game he had in mind. Seen from behind, the player looks where the light is going, so the path ahead and its giving way are felt more. The tap action, the timeline and the fade are unchanged. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md); [game-architecture.md](game-architecture.md) §4.2; [requirements.md](requirements.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
