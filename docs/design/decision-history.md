@@ -329,6 +329,28 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 28. The Loss's run is 3D, seen from behind (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | game-architecture §4.2 and requirements: a 2D runner (`CharacterBody2D` on a `TileMap` path). The first Loss draft (2026-10-22) followed it with a side-on 2D view. |
+| **Became** | A 3D run seen from behind, like Temple Run: the camera follows the light down a path that bends on its own. Built that way straight away, with no 2D test first. |
+| **Why** | Dan's call, 2026-10-25: Temple Run is the game he had in mind. Seen from behind, the player looks where the light is going, so the path ahead and its giving way are felt more. The tap action, the timeline and the fade are unchanged. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md); [game-architecture.md](game-architecture.md) §4.2; [requirements.md](requirements.md) |
+
+---
+
+## 29. The loss is a night in month 2, some weeks after the test (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | The floor plan: the Loss starts "the night after the test". |
+| **Became** | A night in month 2, some weeks after the test. |
+| **Why** | FR17 puts the Loss at month 2 and the fridge note says week 5, so "the night after" didn't fit. Found in the Loss design; Dan's call, 2026-10-25. |
+| **Record** | [house-floor-plan.md](house-floor-plan.md); [the-loss-run-and-car.md](the-loss-run-and-car.md) call 10; [continuity-ledger.md](continuity-ledger.md) (The night of the loss) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

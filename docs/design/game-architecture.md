@@ -126,7 +126,7 @@ To achieve the "Familiar yet Novel" aesthetic without 7 distinct asset pipelines
 
 ### 4.2 The Protector (Pathfinder)
 
-- **Nodes:** `CharacterBody2D` for the Runner, `TileMap` for the path.
+- **Nodes:** a 3D run seen from behind, like Temple Run: a `Node3D` light that stays in the middle of the path, a following `Camera3D`, and a path built from plain tile pieces ahead of it and removed behind it. No steering. _(updated 2026-10-25: was `CharacterBody2D` and `TileMap`, a 2D runner; Dan chose 3D. Design: [the-loss-run-and-car.md](the-loss-run-and-car.md))_
 - **Logic:** A fixed, authored sequence of obstacles ending in the forced loss. Not random.
 
 ### 4.3 The Novice (WarioWare)
