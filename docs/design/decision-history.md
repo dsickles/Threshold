@@ -351,6 +351,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 30. The Loss is the night itself; nothing off screen is named (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | The car was "the drive home from the hospital", and the ledger said they left for the hospital in the night. Dan's story-pass note left open whether the loss was found at the first scan instead (story-beats). |
+| **Became** | The night of the Loss: the lamp goes off, the run is that night, and the car comes later that same night. The scan is not used in the Loss. Moments are named only by what happens in the game (the lamp, the run, the car), never by places or events the player doesn't see; an object the player sees, such as the hospital bag, keeps its name. |
+| **Why** | Hopper found the errand question unanswered after #28 merged. Dan picked the night of the Loss, then asked that the docs not name the hospital, since it is never seen. Dan's calls, 2026-10-25, in the project thread. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 12; [continuity-ledger.md](continuity-ledger.md) (The night of the loss, Car keys, The car); [story-beats.md](story-beats.md) (the Loss, the Provider's bill); [house-floor-plan.md](house-floor-plan.md) (the dropped keys); `.claude/skills/narrative-craft/SKILL.md` |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

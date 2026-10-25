@@ -2,7 +2,7 @@
 
 **Status:** written alongside [story-beats.md](story-beats.md), 2026-10-18; updated 2026-10-25 to match the [continuity ledger](continuity-ledger.md) as it now stands and Dan's answers. Rows are `proposed` unless they say `decided`.
 
-**Why a separate file:** the Loss design (draft PR #28) is also editing the ledger, and most of these rows are M2. Once Dan agrees them, they move into the ledger and this file is deleted.
+**Why a separate file:** when this was written, the Loss design (PR #28, merged and settled 2026-10-25) was also editing the ledger, and most of these rows are M2. Once Dan agrees them, they move into the ledger and this file is deleted.
 
 Same columns and story points as the ledger. Months follow [ADR-0009](../adr/0009-full-term-pregnancy-timeline.md). Each row says whether it is **new** or a **change** to an existing ledger row.
 
