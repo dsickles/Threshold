@@ -19,7 +19,9 @@ const run = (game: any) => game.screen(PROTECTOR);
 test("opens with no words or buttons, and the light runs into the morning", async ({ game }) => {
   await openRun(game);
   expect((await game.state()).buttons, "nothing to press: no skip, no menu").toEqual([]);
-  await expect.poll(async () => (await run(game))?.part, { timeout: 30_000 }).toBe("EUPHORIA");
+  // The 5 s of dark first. Phone sizes draw a few frames a second here, and
+  // Godot counts at most 8/60 s a frame, so it takes longer than 5 s.
+  await expect.poll(async () => (await run(game))?.part, { timeout: 120_000 }).toBe("EUPHORIA");
   await expect.poll(async () => (await run(game)).music).toBe(true);
   await expect.poll(() => game.audioStates()).toContain("running");
   await game.screenshot("protector-euphoria");
