@@ -4,7 +4,7 @@
 
 **What this is:** one beat sheet per chapter, in play order. Each one says what the player should feel, what happens, where the moment of levity is, what the House looks like before and after, and what the journal records. It says *where words go and what job they do*; it doesn't write them (CLAUDE.md: Claude drafts story words only when Dan asks).
 
-**What it defers to:** the rooms and House objects are in [house-floor-plan.md](house-floor-plan.md) and the [continuity ledger](continuity-ledger.md); the M1 words are in [m1-words-draft.md](m1-words-draft.md); the Partner is in [partner-song-and-beat-chart.md](partner-song-and-beat-chart.md); the Loss's run and car are being designed in `the-loss-run-and-car.md` (draft PR #28). Where this file and those disagree, those win. This pass's new and changed ledger rows are in [continuity-ledger-additions.md](continuity-ledger-additions.md), to merge into the ledger once Dan has agreed them.
+**What it defers to:** the rooms and House objects are in [house-floor-plan.md](house-floor-plan.md) and the [continuity ledger](continuity-ledger.md); the M1 words are in [m1-words-draft.md](m1-words-draft.md); the Partner is in [partner-song-and-beat-chart.md](partner-song-and-beat-chart.md); the Loss's run and car are in [the-loss-run-and-car.md](the-loss-run-and-car.md) (settled for M1, Dan, 2026-10-25). Where this file and those disagree, those win. This pass's new and changed ledger rows are in [continuity-ledger-additions.md](continuity-ledger-additions.md), to merge into the ledger once Dan has agreed them.
 
 Months follow [ADR-0009](../adr/0009-full-term-pregnancy-timeline.md) (a full-term pregnancy, Dan, 2026-10-25).
 
@@ -64,11 +64,11 @@ Written and approved: [m1-words-draft.md](m1-words-draft.md) §1, "Did you lock 
 
 **Month:** 2.
 
-**Decided (Dan, 2026-10-19):** the Loss starts by turning off the bedside lamp to go to sleep. The loss happens in play, in the run, through no fault of the player's. The quiet car in the rain is the drive home from the hospital afterwards, and the player comes back in through the front door to the dropped keys. The keys start only the Arrival.
+**Decided (Dan, 2026-10-19):** the Loss starts by turning off the bedside lamp to go to sleep. The loss happens in play, in the run, through no fault of the player's. The quiet car in the rain comes after the run, later the same night, and the player comes back in through the front door to the dropped keys. The keys start only the Arrival.
 
-**Dan's note, 2026-10-25:** the drive to the first scan is still a possible errand, and the drive itself could have been the game, but a car runner risks reading as a car accident, so the run must not be a car. Not locked in. This pulls against the lamp decision, which makes the run the night itself. **Recommended:** keep the lamp and the night, and treat "where they had been" as the hospital, as the floor plan has it. If Dan wants the scan in the story, the place for it is the Loss design (PR #28), which already uses an abstract light, not a car.
+**Dan's note, 2026-10-25 (before the decision below):** the drive to the first scan was still a possible errand, and the drive itself could have been the game, but a car runner risks reading as a car accident, so the run must not be a car. At the time it was not locked in, and it pulled against the lamp decision, which makes the run the night itself. **Decided (Dan, 2026-10-25):** the night of the Loss. The lamp and the night stay, the car comes after the run, and the scan is not used in the Loss ([the-loss-run-and-car.md](the-loss-run-and-car.md) call 12).
 
-**The run and the car:** designed in `the-loss-run-and-car.md` (draft PR #28, waiting on Dan's 10 calls). Its recommendation, "Clear the way", fits this pass: the player clears the path for a small light, it works, and the light goes out on a clear stretch. It is not a car.
+**The run and the car:** settled for M1 in [the-loss-run-and-car.md](the-loss-run-and-car.md) (Dan, 2026-10-25). "Clear the way": a 3D run seen from behind, like Temple Run; the player clears the path for a small light, it works, and the light goes out on a clear stretch after the storm and the song stop. It is not a car.
 
 **House after (decided for M1):** gray, rain, the keys dropped in the entry, the test and onesie gone from view, the lamp off, the spare room door shut.
 
@@ -109,15 +109,15 @@ Written and approved: [m1-words-draft.md](m1-words-draft.md) §1, "Did you lock 
 
 **Month:** 10.
 
-**Decided (Dan, 2026-10-25): the "one injury" is the Loss.** Among the IVF and new-pregnancy bills is the hospital night from month 2. The memory of the loss stays with you, and the paperwork brings it back. Dan's shape for it: the bills are ridiculous, then one of them stops Leo, a moment of reflection, and then the absurdity of the system comes back around it. It must be handled carefully because of how sensitive it is.
+**Decided (Dan, 2026-10-25): the "one injury" is the Loss.** Among the IVF and new-pregnancy bills is the bill for the night of the Loss, month 2. The memory of the loss stays with you, and the paperwork brings it back. Dan's shape for it: the bills are ridiculous, then one of them stops Leo, a moment of reflection, and then the absurdity of the system comes back around it. It must be handled carefully because of how sensitive it is.
 
 **Chapter beats** (three acts, Story 4.3):
 1. **The Invoices:** simple and readable, with absurd line items. Leo is good at this; the fixer's confidence.
-2. **The Insurance:** harder documents, read in the large-type reader. The hospital night turns up here, in billing language. **The pause:** the desk goes quiet for a moment; the Due Date doesn't press, nothing drains. Stamping it is the player's choice of when.
+2. **The Insurance:** harder documents, read in the large-type reader. The bill for the night of the Loss turns up here, in billing language. **The pause:** the desk goes quiet for a moment; the Due Date doesn't press, nothing drains. Stamping it is the player's choice of when.
 3. **The Audit:** the absurdity comes back, harder and funnier (the system asks for proof of things that can't be proved). The Due Date runs; the Bank Account drains.
 4. **The result:** the bills are dealt with, or the Due Date runs out. The story moves on either way, with the same journal entry.
 
-**Care points for the hospital bill** (proposed): the game never jokes *about* the bill or the loss; the humour is always about the system around it. The bill uses the cold words a real one would, and the UI adds nothing. It can't be stamped wrong in a way that costs money. Whatever the player stamps, the result is the same.
+**Care points for the bill from the Loss** (proposed): the game never jokes *about* the bill or the loss; the humour is always about the system around it. The bill uses the cold words a real one would, and the UI adds nothing. It can't be stamped wrong in a way that costs money. Whatever the player stamps, the result is the same.
 
 **House after:** tight and anxious; the House creaks (FR31); the fridge hum lower and louder. Bills filed on the desk. The home doppler on the bedside nightstand is the next object.
 

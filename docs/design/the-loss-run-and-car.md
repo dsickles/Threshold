@@ -123,7 +123,7 @@ All of it is made **ahead of time** by a script, the way `tools/partner/make_son
 
 **Central image:** the House's front door, seen through rain on a windshield. The first tap of the whole game crossed that door at dusk on moving day (view P, the porch). Now the player sees it again, at night, from the car, and doesn't want to go in yet (principle 2, change the familiar).
 
-**Choice: the car is parked outside the House**, engine off, after the drive home from the hospital in the night. The hospital is never shown. This joins the floor plan's facts: the player comes in through the front door and finds the keys dropped on the entry floor.
+**Choice: the car is parked outside the House**, engine off, later the same night as the run. Where they drove back from is never shown, so nothing in the game or these docs names it (Dan, 2026-10-25). This joins the floor plan's facts: the player comes in through the front door and finds the keys dropped on the entry floor.
 
 **What is seen.** The same kind of fixed views as the House, in simple shapes, at night:
 
@@ -163,8 +163,8 @@ What the recommendation gives up: A2's lower cost, B's and D's instant familiari
 
 Added to the [continuity ledger](continuity-ledger.md); decided with Dan's answers on 2026-10-25 except where a row says an idea is for M2:
 
-- **Fact: the night of the loss.** A night in month 2 (FR17). They leave for the hospital in the night (never shown) and come home in the car in the rain.
-- **Place: the car**, parked outside the House on the night of the loss (the Silence). Seen only then in M1. An idea for later: the same car takes them to the hospital in the Arrival.
+- **Fact: the night of the Loss.** A night in month 2 (FR17). The lamp goes off, the run is that night, and the car comes after it, outside the House in the rain.
+- **Place: the car**, parked outside the House on the night of the loss (the Silence). Seen only then in M1. An idea for later: the same car is the one they leave in at the Arrival.
 - **Object: the porch light.** On at dusk on moving day; on again through the rain from the car (left on when they rushed out).
 - **Object: car keys** (changed): in the ignition in the car, seen but not tappable, before they are dropped on the entry floor.
 - **Sound: the couple's song** (the Partner's song): the Partner; then the Loss's euphoria; drowned by the storm in the confusion and panic; stopped dead at the silence.
@@ -234,3 +234,4 @@ All answered, 2026-10-25.
 9. **The car's sound:** the storm and the cooling engine only, no blinker: **decided (Dan).** The storm is fairly loud, with thunder in the background.
 10. **When is the loss:** month 2, some weeks after the test: **decided (Dan).** The floor plan line is fixed to match (decision-history 29).
 11. **No swipes:** the path bends on its own and tapping is the only action: **decided (Dan).**
+12. **The night of the Loss, not the drive to the first scan:** **decided (Dan, 2026-10-25).** The lamp goes off, the run is that night, and the car comes after it, later the same night. The scan is not used in the Loss. Moments are named only by what happens in the game (the lamp, the run, the car), never by places or events the player doesn't see (Dan, 2026-10-25, [project thread](https://claude.ai/code/project/chan_01Heqb6NDEptT8ADwVXQfsSV?thread=cmsg_01Heqb6NDEptT8ADwVXQfsSVMvnBrqVsaEwzQ4GogNduwV)). (Raised by Dan's story-pass note in [story-beats.md](story-beats.md); added after the merge, from Hopper's review.)

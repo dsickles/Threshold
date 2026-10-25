@@ -2,7 +2,7 @@
 
 **Status:** written alongside [story-beats.md](story-beats.md), 2026-10-18; updated 2026-10-25 to match the [continuity ledger](continuity-ledger.md) as it now stands and Dan's answers. Rows are `proposed` unless they say `decided`.
 
-**Why a separate file:** the Loss design (draft PR #28) is also editing the ledger, and most of these rows are M2. Once Dan agrees them, they move into the ledger and this file is deleted.
+**Why a separate file:** when this was written, the Loss design (PR #28, merged and settled 2026-10-25) was also editing the ledger, and most of these rows are M2. Once Dan agrees them, they move into the ledger and this file is deleted.
 
 Same columns and story points as the ledger. Months follow [ADR-0009](../adr/0009-full-term-pregnancy-timeline.md). Each row says whether it is **new** or a **change** to an existing ledger row.
 
@@ -10,7 +10,7 @@ Same columns and story points as the ledger. Months follow [ADR-0009](../adr/000
 
 | Fact | Lifeline | New/change | Status |
 |---|---|---|---|
-| The hospital night after the Loss | Month 2, for good (history). Behind the car scene and the dropped keys. Comes back as a bill in the Provider. | new | Provider bill: decided (Dan, 2026-10-25) |
+| The night of the Loss | Month 2, for good (history). The run, then the car and the dropped keys. Comes back as a bill in the Provider. | new | Provider bill: decided (Dan, 2026-10-25) |
 | Decided to try IVF | From the decision beat after the Loss, for good | new | proposed |
 | Heard the baby's heartbeat | From after the Tuner, for good | new | proposed |
 | Nursery ready | From after the Mourner | new | proposed |
@@ -22,7 +22,7 @@ Same columns and story points as the ledger. Months follow [ADR-0009](../adr/000
 | Clinic folder | After the Loss (M2): on the kitchen table, tapped to play the decision beat. Then filed in the office. | new | proposed |
 | IVF medication | After the decision beat: the box in the fridge, the Novice's chapter object; opening it is "OPEN THE BOX!". After the Novice: gone. | change: comes after the decision beat | proposed |
 | Positive test (second, IVF) | After the Novice: on the en-suite counter, where the first one was. After the Tuner: kept in a bathroom drawer, not the memory box. | new | proposed |
-| Bills | After the Novice: on the office desk. Among them, the hospital night from the Loss. After the Provider: filed. | change: adds the hospital bill | decided (Dan, 2026-10-25) |
+| Bills | After the Novice: on the office desk. Among them, the bill for the night of the Loss. After the Provider: filed. | change: adds the bill from the Loss | decided (Dan, 2026-10-25) |
 | Home doppler | After the Provider: on the bedside nightstand where the lamp was turned off, the Tuner's chapter object. Stays to the end. | change: splits "Baby monitor or home doppler" | proposed |
 | Baby monitor | After the Mourner: in the nursery, new. After the Arrival: its small light on; the baby heard through it. | change: splits "Baby monitor or home doppler" | proposed |
 | Scan picture | After the Tuner: on the fridge door, to the end. The picture the Tuner cleared. | new (the floor plan lists it as an idea) | proposed |
