@@ -296,6 +296,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 25. Backing out of a room, the bathroom and the end of the hall (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | 17 views. A wall view had rings only to the room's doorways and its other wall views, so from the bed wall there was no way back to the bedroom's doorway view. The en-suite (ring "En-suite") was only looked into from its doorway. The back hall had one view, from its front end. |
+| **Became** | 18 views. Every wall view has a ring back to its room's doorway view. The en-suite's ring says "Bathroom" and its view stands inside it, showing the vanity, toilet and shower. A new wall view, H2 ("End of hall"), stands near the far end of the hall to see the shut office and spare room doors. |
+| **Why** | Dan's review of the real-size House in the game, 2026-10-25. |
+| **Record** | [house-floor-plan.md](house-floor-plan.md) "Views (M1)"; [scope.md](../scope.md) Settled questions; DAS-93 (PR #30) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

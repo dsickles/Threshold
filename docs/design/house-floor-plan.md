@@ -102,13 +102,13 @@ Only the first four rows are built in M1. The rest are a sketch so M2 doesn't pa
 
 ## M1 build
 
-The porch shot, the shared front (entry, living room and kitchen as one open space), the back hall, the main bedroom, and the en-suite, the walk-in closet and the spare room each seen from its doorway only. The office and the hall bathroom are shut doors. That is at the top of the roadmap's "2–3 rooms". Decided (Dan, 2026-10-19).
+The porch shot, the shared front (entry, living room and kitchen as one open space), the back hall, the main bedroom, the en-suite (stood in, so its things can be seen: Dan, 2026-10-25), and the walk-in closet and the spare room each seen from its doorway only. The office and the hall bathroom are shut doors. That is at the top of the roadmap's "2–3 rooms". Decided (Dan, 2026-10-19).
 
 ### Views (M1)
 
 How the player moves is set by [ADR-0008](../adr/0008-house-doorway-and-wall-views-close-ups.md): tapping a doorway glides to that room's **doorway view**; tapping a wall or corner glides to its **wall view**; tapping an object glides to its **close-up**, and tapping it again does its one action. Rings show every other view and doorway; anything off screen pins to the screen edge with an arrow. Glide 2.0 s (M0 check, DAS-69). In the drawing, doorway views are green and wall views blue; the point shows which way the camera faces.
 
-17 views. Each room's doorways are rings in every view of that room.
+18 views: the 17 first planned, plus H2 at the end of the back hall (Dan, 2026-10-25). Each room's doorways are rings in every view of that room, and every wall view has a ring back to the room's doorway view, so you can always back out into the room (Dan, 2026-10-25).
 
 | Room | View | Faces | What the shot shows | Open |
 |---|---|---|---|---|
@@ -123,10 +123,11 @@ How the player moves is set by [ADR-0008](../adr/0008-house-doorway-and-wall-vie
 | | **K2** wall | The fridge | The fridge | Always |
 | | **K3** wall | The dining table | The dining table and its chairs, between the kitchen and the living room | Always |
 | Back hall | **H1** doorway | Down the hall | Straight to the spare room's door at the far end (shut after the Loss); the office door with boxes against it; the bedroom door with lamp light spilling out | After the opening beat |
+| | **H2** wall | The far end of the hall | Walked down the hall: the office door and the spare room door, both shut (the spare room door ajar after the Partner). The ring leads back to H1. Ring label "End of hall" (placeholder) (Dan, 2026-10-25) | After the opening beat |
 | Bedroom | **B1** doorway | Into the bedroom | The bed against the far (west) wall under its window, the lamp lit, the wrapped photo leaning against the wall | After the opening beat |
 | | **B2** wall | The bed wall | The bed, a nightstand either side (the lamp on one, Maya's list on the other), the window above | After the opening beat |
 | | **B3** corner | The top-right corner | The record player on a moving box, the dresser under the north window | After the opening beat |
-| | **BA** doorway | Into the en-suite | Sink and mirror; the test on the counter after the Partner | After the opening beat |
+| | **BA** doorway | Inside the en-suite, from just in the door | The vanity and mirror, the toilet and the shower; the test on the counter after the Partner. Ring label "Bathroom" (Dan, 2026-10-25) | After the opening beat |
 | | **C1** doorway | Into the walk-in closet | Boxes in the way at first; after the Partner, their clothes half hung up, boxes on the floor | Boxes block it until the Partner |
 | Spare room | **S1** doorway | Into the spare room | Leo's lounge chair in the far (north-east) corner between the two windows, the ottoman in front of it, the onesie on the chair, his guitar on a stand, the band poster, boxes along the walls. The player only looks in from the door. | After the Partner, until the Loss |
 

@@ -1,12 +1,13 @@
 extends TestCase
-## The gray-box House (DAS-93): the M1 rooms, furniture and 17 views from
+## The gray-box House (DAS-93): the M1 rooms, furniture and 18 views from
 ## docs/design/house-floor-plan.md, moved through by tapping rings (ADR-0008).
 
 const HOUSE := preload("res://scenes/house/house.tscn")
 const SCREENS: Array[Vector2i] = [Vector2i(1280, 720), Vector2i(390, 844), Vector2i(844, 390)]
-## The 17 views in house-floor-plan.md "Views (M1)".
+## The 17 views in house-floor-plan.md "Views (M1)", plus H2 at the end of
+## the back hall (Dan, 2026-10-25).
 const M1_VIEWS: Array[String] = ["P", "E1", "E2", "L1", "L2", "L3", "L4", "K1", "K2", "K3",
-		"H1", "B1", "B2", "B3", "BA", "C1", "S1"]
+		"H1", "H2", "B1", "B2", "B3", "BA", "C1", "S1"]
 ## Every door open: each ring any view can ever have in M1.
 const ALL_OPEN := {
 	"front_door": "open", "entry_opening": "open", "kitchen_opening": "open",
@@ -91,8 +92,8 @@ func test_only_rings_can_be_tapped() -> void:
 
 # --- Views and rings.
 
-func test_all_17_m1_views_exist_in_their_rooms() -> void:
-	check_eq(HouseLayout.VIEWS.size(), 17, "number of views")
+func test_all_18_views_exist_in_their_rooms() -> void:
+	check_eq(HouseLayout.VIEWS.size(), 18, "number of views")
 	for view in M1_VIEWS:
 		if not check(HouseLayout.VIEWS.has(view), "view %s exists" % view):
 			continue
@@ -106,7 +107,7 @@ func test_all_17_m1_views_exist_in_their_rooms() -> void:
 			check_eq(HouseLayout.VIEWS[doorway].room, room, "%s's doorway view's room" % room)
 
 
-func test_each_view_rings_every_doorway_in_its_room_and_its_other_wall_views() -> void:
+func test_each_view_rings_every_doorway_in_its_room_its_other_wall_views_and_the_way_back() -> void:
 	for view in M1_VIEWS:
 		var room: String = HouseLayout.VIEWS[view].room
 		var expected: Array[String] = []
@@ -123,6 +124,10 @@ func test_each_view_rings_every_doorway_in_its_room_and_its_other_wall_views() -
 			if other != view and HouseLayout.VIEWS[other].room == room \
 					and HouseLayout.VIEWS[other].kind == "wall":
 				expected.append(other)
+		# From a wall view, back out to where the room was entered.
+		var entered: String = HouseLayout.ROOMS[room].doorway_view
+		if HouseLayout.VIEWS[view].kind == "wall":
+			expected.append(entered)
 		expected.sort()
 		var got: Array[String] = []
 		for ring in HouseLayout.rings_for(view, ALL_OPEN):
@@ -135,6 +140,14 @@ func test_each_view_rings_every_doorway_in_its_room_and_its_other_wall_views() -
 		living.append(ring.target)
 	living.sort()
 	check_eq(living, ["E1", "H1", "K1", "L2", "L3", "L4"], "L1's rings")
+	var bed_wall: Array[String] = []
+	for ring in HouseLayout.rings_for("B2", ALL_OPEN):
+		bed_wall.append(ring.target)
+	check("B1" in bed_wall, "from the bed wall, back to the bedroom: %s" % [bed_wall])
+	var hall_end: Array[String] = []
+	for ring in HouseLayout.rings_for("H2", HouseTable.doors(HouseTable.START)):
+		hall_end.append(ring.target)
+	check("H1" in hall_end, "from the end of the hall, back to its front: %s" % [hall_end])
 
 
 func test_from_each_view_every_ring_leads_to_the_view_it_names() -> void:

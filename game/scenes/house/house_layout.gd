@@ -1,6 +1,6 @@
 class_name HouseLayout
 extends RefCounted
-## The M1 House as data: rooms, walls, doorways, furniture and the 17 views,
+## The M1 House as data: rooms, walls, doorways, furniture and the 18 views,
 ## from docs/design/house-floor-plan.md ("M1 build", "Views (M1)",
 ## "Furniture") and its drawing. Moving between views follows ADR-0008.
 ## house.gd builds the gray-box House from this; the tests check it.
@@ -79,8 +79,9 @@ const WALLS: Array[Dictionary] = [
 ## can only go from "a" to "b" (the front door: the porch is only at the
 ## start). "boxes": which side a stack of boxes stands on when boxed ("a",
 ## "b", or "" for in the doorway). A ring for going from "b" back to "a" can
-## sit somewhere else ("ring_b"): the en-suite, closet and spare room are
-## only looked into from their doorway, so the way back is behind you.
+## sit somewhere else ("ring_b"): the closet and spare room are only looked
+## into from their doorway, so the way back is behind you. The en-suite is
+## stood in (Dan, 2026-10-25), so its way back is its door.
 ## Doors open into "b" and are hung on their west (or north) end. "hinge":
 ## "end" hangs one on its east (or south) end, so an open door is out of the
 ## way of the view through it (the bedroom door blocked the bedroom, Dan
@@ -93,14 +94,15 @@ const DOORS := {
 	"kitchen_opening": {"a": "living_room", "b": "kitchen", "at": Vector2(7.925, 9.754), "width": 5.486},
 	"hall_opening": {"a": "living_room", "b": "back_hall", "at": Vector2(3.505, 7.01), "width": 1.2, "boxes": ""},
 	"bedroom_door": {"a": "back_hall", "b": "bedroom", "at": Vector2(4.359, 5.791), "width": 0.8, "panel": true, "hinge": "end"},
-	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(2.515, 2.134), "width": 0.75, "panel": true, "swing": 170.0, "ring_b": Vector2(4.267, 3.048)},
+	"en_suite_door": {"a": "bedroom", "b": "en_suite", "at": Vector2(2.515, 2.134), "width": 0.75, "panel": true, "swing": 170.0},
 	"closet_door": {"a": "bedroom", "b": "closet", "at": Vector2(6.096, 0.991), "width": 0.8, "boxes": "b", "ring_b": Vector2(3.962, 2.743)},
 	"spare_room_door": {"a": "back_hall", "b": "spare_room", "at": Vector2(11.887, 6.401), "width": 0.8, "panel": true, "hinge": "end", "ring_b": Vector2(9.144, 6.401)},
 	"office_door": {"a": "back_hall", "b": "office", "at": Vector2(9.525, 5.791), "width": 0.8, "panel": true, "boxes": "a"},
 	"hall_bath_door": {"a": "back_hall", "b": "hall_bath", "at": Vector2(7.087, 5.791), "width": 0.75, "panel": true},
 }
 
-## The 17 M1 views, in the floor plan's order. "stand" is where the camera
+## The 17 M1 views, in the floor plan's order, plus H2 at the far end of the
+## back hall, to see its shut doors (Dan, 2026-10-25). "stand" is where the camera
 ## stands (x, z), "look" what it looks at. A wall view's ring sits on what it
 ## looks at, unless "ring" says otherwise (L3's would sit in the hall opening,
 ## on top of the doorway's own ring). "label" is the word under the ring that
@@ -129,14 +131,16 @@ const VIEWS := {
 			"look": Vector3(9.754, 0.8, 9.677)},
 	"H1": {"label": "Back hall", "room": "back_hall", "kind": "doorway", "stand": Vector2(2.743, 6.401),
 			"look": Vector3(11.887, 1.2, 6.401)},
+	"H2": {"label": "End of hall", "room": "back_hall", "kind": "wall", "stand": Vector2(7.925, 6.553),
+			"look": Vector3(11.887, 1.1, 6.248), "ring": Vector3(7.925, 1.0, 6.553)},
 	"B1": {"label": "Bedroom", "room": "bedroom", "kind": "doorway", "stand": Vector2(4.359, 5.334),
 			"look": Vector3(0.61, 1.0, 3.962)},
 	"B2": {"label": "Bed wall", "room": "bedroom", "kind": "wall", "stand": Vector2(3.658, 3.962),
 			"look": Vector3(0.0, 1.0, 3.962)},
 	"B3": {"label": "Corner", "room": "bedroom", "kind": "wall", "stand": Vector2(3.353, 3.962),
 			"look": Vector3(5.791, 1.0, 0.305)},
-	"BA": {"label": "En-suite", "room": "en_suite", "kind": "doorway", "stand": Vector2(2.515, 2.804),
-			"look": Vector3(1.829, 1.0, 0.305)},
+	"BA": {"label": "Bathroom", "room": "en_suite", "kind": "doorway", "stand": Vector2(2.804, 1.829),
+			"look": Vector3(0.762, 0.9, 0.457)},
 	"C1": {"label": "Closet", "room": "closet", "kind": "doorway", "stand": Vector2(5.425, 0.991),
 			"look": Vector3(7.772, 1.2, 0.914)},
 	"S1": {"label": "Spare room", "room": "spare_room", "kind": "doorway", "stand": Vector2(12.375, 6.401),
@@ -209,7 +213,8 @@ static func other_room(door_id: String, room: String) -> String:
 
 ## The rings shown in a view: one for every doorway in its room that can be
 ## gone through (leading to the next room's doorway view), and one for each
-## of the room's other wall views. Each is {target, at, door}; "door" is the
+## of the room's other wall views, and from a wall view one back to the
+## room's doorway view, where it was entered. Each is {target, at, door}; "door" is the
 ## doorway gone through, or "" for a wall view.
 static func rings_for(view_id: String, doors: Dictionary) -> Array[Dictionary]:
 	var room: String = VIEWS[view_id].room
@@ -229,6 +234,12 @@ static func rings_for(view_id: String, doors: Dictionary) -> Array[Dictionary]:
 		if other == view_id or view.room != room or view.kind != "wall":
 			continue
 		rings.append({"target": other, "at": view.get("ring", view.look), "door": ""})
+	# From a wall view, a way back out to where the room was entered (Dan,
+	# 2026-10-25: from the bed wall you couldn't get back to the bedroom).
+	var entered: String = ROOMS[room].doorway_view
+	if VIEWS[view_id].kind == "wall" and entered != "":
+		var back: Vector2 = VIEWS[entered].stand
+		rings.append({"target": entered, "at": Vector3(back.x, RING_HEIGHT, back.y), "door": ""})
 	return rings
 
 
