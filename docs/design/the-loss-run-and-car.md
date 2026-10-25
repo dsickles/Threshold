@@ -234,3 +234,4 @@ All answered, 2026-10-25.
 9. **The car's sound:** the storm and the cooling engine only, no blinker: **decided (Dan).** The storm is fairly loud, with thunder in the background.
 10. **When is the loss:** month 2, some weeks after the test: **decided (Dan).** The floor plan line is fixed to match (decision-history 29).
 11. **No swipes:** the path bends on its own and tapping is the only action: **decided (Dan).**
+12. **Where they had been: the hospital night, not the drive to the first scan:** **decided (Dan, 2026-10-25).** The lamp goes off, the run is that night, and the car is the drive home from the hospital. The scan is not used in the Loss. (Raised by Dan's story-pass note in [story-beats.md](story-beats.md); added after the merge, from Hopper's review.)
