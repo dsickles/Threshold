@@ -7,10 +7,10 @@ extends Control
 ## Test scaffolding like the other M0 checks, not game code.
 
 const MENU_SCENE := "res://scenes/ui/m0_menu.tscn"
-## The shrink the theme's sizes were worked out for: a sideways iPhone 17 Pro
-## in Safari with the toolbar hidden is 402 points tall, and the layout is
-## 720 tall.
-const THEME_SHOWN_SCALE := 402.0 / 720.0
+## The shrink the theme's sizes were worked out for: on a sideways iPhone 17
+## Pro in Safari with the toolbar hidden, the game's frame is 377 points tall
+## (measured on Dan's phone, 2026-10-25), and the layout is 720 tall.
+const THEME_SHOWN_SCALE := 377.0 / 720.0
 const BODY_DESIGN_PT := 16.0
 
 @onready var _measure: Label = %Measure

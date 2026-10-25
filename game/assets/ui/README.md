@@ -8,23 +8,25 @@ it without setting anything. Chapter skins may override it while they play
 ## Sizes
 
 `docs/design/ux/DESIGN.md` sizes are what the player sees on a phone held
-sideways. A sideways iPhone 17 Pro in Safari with the toolbar hidden is 402
-points tall, and the layout is 720 tall (`canvas_items` stretch, `expand`), so
-the layout shows at 402/720, about 56%. Every size in the theme is the
-DESIGN.md size × 720/402 (about 1.79), rounded:
+sideways. On a sideways iPhone 17 Pro in Safari with the toolbar hidden, the
+game's frame on itch.io is 377 points tall, and the layout is 720 tall
+(`canvas_items` stretch, `expand`), so the layout shows at 377/720, about 52%.
+(Measured on Dan's phone, 2026-10-25: the first sizes assumed the full 402
+points and the UI style check showed 52% and body 15.2 pt.) Every size in the
+theme is the DESIGN.md size × 720/377 (about 1.91), rounded:
 
 | DESIGN.md | On the phone | In the theme |
 |---|---|---|
-| body (default) | 16 | 29 |
-| subtitle (`LabelSubtitle`) | 18 | 32 |
-| reader (`LabelReader`) | 20 | 36 |
-| micro-shout (`LabelMicroShout`) | 28 | 50 |
-| display (`LabelDisplay`) | 32 | 57 |
+| body (default) | 16 | 31 |
+| subtitle (`LabelSubtitle`) | 18 | 34 |
+| reader (`LabelReader`) | 20 | 38 |
+| micro-shout (`LabelMicroShout`) | 28 | 53 |
+| display (`LabelDisplay`) | 32 | 61 |
 | border | 1 | 2 |
 | focus ring | 2 | 4 |
-| rounded.md corners | 8 | 14 |
-| button padding (sides / top and bottom) | 16 / 12 | 29 / 21 |
-| smallest tap target | 44 | 79 |
+| rounded.md corners | 8 | 15 |
+| button padding (sides / top and bottom) | 16 / 12 | 31 / 23 |
+| smallest tap target | 44 | 84 |
 
 If the phone check shows a different shrink (the M0 menu's "UI style" check
 prints it), change the sizes by the same rule and the numbers in

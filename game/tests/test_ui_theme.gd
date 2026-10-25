@@ -5,11 +5,13 @@ extends TestCase
 
 const THEME_PATH := "res://assets/ui/threshold_theme.tres"
 const UI_STYLE := preload("res://scenes/m0_checks/ui_style_check.tscn")
-## A sideways iPhone 17 Pro in Safari with the toolbar hidden, in points.
-const IPHONE_SIDEWAYS := Vector2i(874, 402)
+## The game's frame on a sideways iPhone 17 Pro in Safari with the toolbar
+## hidden, in points: 377 tall, measured on Dan's phone (2026-10-25: the UI
+## style check showed 52% and body 15.2 pt with the 402-point sizes).
+const IPHONE_SIDEWAYS := Vector2i(874, 377)
 ## DESIGN.md sizes are what the player sees there; the 720-tall layout shrinks
-## to 402/720, so each layout size is the DESIGN.md size x 720/402.
-const TO_LAYOUT := 720.0 / 402.0
+## to 377/720, so each layout size is the DESIGN.md size x 720/377.
+const TO_LAYOUT := 720.0 / 377.0
 const DESIGN_SIZES := {
 	"Label": 16, "LabelSubtitle": 18, "LabelReader": 20, "LabelMicroShout": 28, "LabelDisplay": 32,
 }
@@ -63,7 +65,7 @@ func _find_files(dir: String, out: PackedStringArray) -> void:
 func test_font_sizes_are_the_design_scale_scaled_for_the_phone() -> void:
 	var theme := _theme()
 	check_eq(theme.default_font_size, _layout(16), "body (the default) is 16 on the phone")
-	check_eq(theme.default_font_size, 29, "body is 29 on the layout")
+	check_eq(theme.default_font_size, 31, "body is 31 on the layout")
 	for type in DESIGN_SIZES:
 		if type == "Label":
 			continue
@@ -78,7 +80,7 @@ func test_text_on_a_sideways_iphone_is_the_design_size() -> void:
 	var screen := add_scene(UI_STYLE)
 	await frames(2)
 	var shown: float = screen.current_shown_scale()
-	check_near(shown, 402.0 / 720.0, 0.002, "the layout shrinks to 402/720")
+	check_near(shown, 377.0 / 720.0, 0.002, "the layout shrinks to 377/720")
 	var names := {"Label": "Body", "LabelSubtitle": "Subtitle", "LabelReader": "Reader",
 			"LabelMicroShout": "MicroShout", "LabelDisplay": "Display"}
 	for type in DESIGN_SIZES:
@@ -90,8 +92,8 @@ func test_text_on_a_sideways_iphone_is_the_design_size() -> void:
 
 func test_shown_scale_uses_points_not_device_pixels() -> void:
 	var script: GDScript = UI_STYLE.instantiate().get_script()
-	# An iPhone 17 Pro sideways is 2622 x 1206 pixels at 3 pixels a point.
-	check_near(script.shown_scale(Vector2(2622, 1206), 3.0, Vector2(1565, 720)), 402.0 / 720.0, 0.001,
+	# The game's frame on an iPhone 17 Pro sideways: 1131 pixels tall at 3 pixels a point.
+	check_near(script.shown_scale(Vector2(2622, 1131), 3.0, Vector2(1669, 720)), 377.0 / 720.0, 0.001,
 			"three pixels per point")
 	check_eq(script.shown_scale(Vector2(100, 100), 1.0, Vector2.ZERO), 0.0, "no layout yet")
 
@@ -167,7 +169,7 @@ func test_a_plain_button_is_at_least_44_points_on_the_phone() -> void:
 		add_child(button)
 		var size := button.get_combined_minimum_size()
 		check(size.y >= _layout(44), "%s is at least %d tall on the layout (is %s)" % [type, _layout(44), size])
-		check(size.y * 402.0 / 720.0 >= 44.0, "%s is at least 44 pt on the phone" % type)
+		check(size.y * 377.0 / 720.0 >= 44.0, "%s is at least 44 pt on the phone" % type)
 		button.free()
 
 
