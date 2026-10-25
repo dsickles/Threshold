@@ -196,7 +196,7 @@ The pizza box is gone.
 
 | Object | Where (view) | Action | What it says |
 |---|---|---|---|
-| The car keys, dropped | Entry floor by the door (E1) | Pick them up and put them on the table | They came home from the hospital in the night and let them fall. |
+| The car keys, dropped | Entry floor by the door (E1) | Pick them up and put them on the table | They came in from the car in the night and let them fall. |
 | The fridge | Kitchen (K2) | Open it: dishes of food from family, one with a note (Dan's words). Its door is bare: the card is gone. | What people do after a loss: kind, a little awkward, the dark stretch's human beat. And absence: the plan was taken down. |
 | A blanket and pillow on the couch | Living room (L1) | Fold the blanket | Leo has been sleeping out here (Dan, 2026-10-19). Nothing says so; the player works it out. |
 | The window in rain | Living room (L2) | Draw the curtain: rain | The Silence in the car, carried into the House. |
