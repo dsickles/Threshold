@@ -55,8 +55,8 @@ The whole run is one fixed timeline, the same length for every player: about 3 m
 |---|---|---|---|---|
 | 0:00–0:05 | Dark | Black. The lamp has just clicked off. A breath of quiet. | None | None |
 | 0:05–1:25 | **Euphoria** | The light fades up out of the black into a warm, sunny morning. Wide, clear, golden; long gentle bends. The future silhouettes pass by beside the path. The light grows a little over this part. | The song, bright (see "Music and sound") | 12, one every 2 bars, landing on the beat. Easy. |
-| 1:25–2:15 | **Confusion** | The sun goes hazy, the fog closes in and the colour starts to drain toward gray. Wind. The bends come sharper and less evenly. The silhouettes blur and thin out. Tiles at the path's edges crack and drop away into the void as the light passes (only beside and behind it, never in its way). | The song slips and sags for about 10 s, then a **new, uneasy track** takes over | 12, off the beat and at uneven gaps, so they stop feeling like a dance |
-| 2:15–2:55 | **Panic** | Dark and stormy. Rain. The fog is close, so the path ahead appears late. The path narrows to one tile wide, and each tile cracks and falls away just after the light crosses it, so the path seems to give way under it, but it always lands. No silhouettes. | The new track builds: a fast, heavy, heartbeat-like drum, wind and rain | 25, in tight clusters of two or three |
+| 1:25–2:15 | **Confusion** | The sun goes hazy, the fog closes in and the colour starts to drain toward gray. Wind. The bends come sharper and less evenly. The silhouettes blur and thin out. Tiles at the path's edges crack and drop away into the void as the light passes (only beside and behind it, never in its way). | The song plays on, but wind and the first rain start to rise over it | 12, off the beat and at uneven gaps, so they stop feeling like a dance |
+| 2:15–2:55 | **Panic** | Dark and stormy. Rain. The fog is close, so the path ahead appears late. The path narrows to one tile wide, and each tile cracks and falls away just after the light crosses it, so the path seems to give way under it, but it always lands. No silhouettes. | The storm takes over: rain, wind and thunder drown the song until only scraps of it come through | 25, in tight clusters of two or three |
 | 2:55–3:35 | **Silence** | Everything stops at once: the music, the wind, the rain, the obstacles. The path is whole again, wide, flat and straight, and the fog lifts so it can be seen running far ahead with nothing on it. The world is fully gray. | None | None |
 
 **The obstacle sequence.** Hand-built and fixed (FR20). Times are when each one would reach the light; S stone, B branch, G gap.
@@ -75,27 +75,28 @@ In one line: **the music stops, the light runs on alone down an empty path, slow
 
 Second by second (the same for a perfect run and a stumbling one, because nothing in it depends on play):
 
-1. **2:55, the music stops dead.** The new track ends in a short "tape stop" (the effect the Partner's song tool already has), and the storm cuts out with it. The path straightens and the fog lifts: the player can see the path running far ahead, empty. The light is fully bright, exactly as bright for every player, because stumbles never carry over.
+1. **2:55, everything stops dead.** The storm and the last scraps of the song cut out at once (the end of the song in a short "tape stop", the effect the Partner's song tool already has). The path straightens and the fog lifts: the player can see the path running far ahead, empty. The light is fully bright, exactly as bright for every player, because stumbles never carry over.
 2. **2:55–3:05, it keeps running.** Ten seconds in total silence on the clear, gray path. Nothing comes. A tap makes the small ripple where the finger lands; it never reaches the light. **Dan:** call 4.
 3. **3:05–3:15, it slows to a stop.** The camera slows with it and comes to rest just behind it.
 4. **3:15–3:25, it goes out.** The light dims and shrinks to nothing. The tiles it was lighting go dark with it. No sound when it goes out, no flash, no sting.
 5. **3:25–3:35, the empty path.** The gray path, still, with nothing on it. Then black.
-6. **3:35, the rain.** Over black, the sound of rain fades up, and the car begins (below).
+6. **3:35, the storm again.** Over black, the same storm fades up, heard now from inside a car, and the car begins (below). It is the storm from the run: it was real.
 
 No text, no "the end", no score, no button. The obstacles stop *before* the fade on purpose: the light doesn't go out because something hit it. Nobody can point at a moment and say "if I'd tapped that, it would have lived". That is the truest thing the run can say to people who have been through this, and the main protection against "unfair".
 
 ### Music and sound
 
-**The run starts on the Partner's song and changes to a different track when things go wrong** (Dan, 2026-10-25: start with the same song, then a tonal shift to something else). The Partner as built uses "Dreamy Lo-Fi Beat" (NewEraMusic via Pixabay, Pixabay Content Licence, already cleared for edited use in the game, [CREDITS.md](../../game/assets/audio/partner/CREDITS.md)). The Loss picks up the couple's song where the Partner left it, so the joy is the same joy (principle 5).
+**The song is not replaced: the storm drowns it** (Dan, 2026-10-25: the sounds of the storm overtake the song, and the couple sits in the car in the same storm, with the same sounds). The Partner as built uses "Dreamy Lo-Fi Beat" (NewEraMusic via Pixabay, Pixabay Content Licence, already cleared for edited use in the game, [CREDITS.md](../../game/assets/audio/partner/CREDITS.md)). The Loss picks up the couple's song where the Partner left it, so the joy is the same joy (principle 5), and nothing is ever swapped in for it: the weather simply takes it away.
 
-**Choice: where the switch happens.** Not with a hard cut at 1:25: a cut there would sound like a level change, the language of games. Instead the couple's song goes wrong first, then something else takes its place:
+1. **0:05–1:25, the song**, bright.
+2. **1:25–2:15, the storm comes in.** Wind and the first rain rise under and then over the song as the sky goes hazy. The song keeps playing, getting further away.
+3. **2:15–2:55, the storm takes over.** Heavy rain, wind and thunder. The song is drowned until only scraps of it come through.
+4. **2:55, everything stops dead.** Storm and song together. This is the silence the roadmap asks for (euphoria, confusion, panic, silence), and the light goes out in it, with nothing to hear.
+5. **3:35, the same storm, from inside the car.** The same recordings, muffled as if on a car roof and windows. The player knows that sound: the run and the car are the same night.
 
-1. **1:25–1:35, the song slips.** Its pitch sags and its speed wobbles, like a tape slowing, just as the sun goes hazy. The player hears the song they know going wrong before they can say why.
-2. **1:35, the new track.** The couple's song is gone, and a different track has faded in under it: sparse, uneasy, no clear beat, so it matches the off-beat obstacles. It never resolves.
-3. **2:15, it builds.** The same new track grows into the panic: a fast, heavy drum like a racing heartbeat, louder and harsher, with wind and rain.
-4. **2:55, it stops dead** in a tape stop, and the silence begins.
+**Choice: the storm stops for the fade, then comes back in the car.** Keeping the storm going through the fade would lose the silence, which is the one stretch where the light visibly goes out with nothing touching it. Stopping it, then bringing back the very same storm over black, says the run was the night itself.
 
-**Choice:** one new track for the confusion and the panic, not two. One track that starts uneasy and builds over about 80 seconds is simpler to cut, and keeps the second half feeling like one thing happening. **Dan:** the track is yours to pick, as with the Partner's song (call 5).
+**Why this is better than a new track:** one sound runs from the run into the car and on into the House, where the rain is on the windows (the ledger's rain row), so the weather carries the loss home. It needs no second track to find, license or tempo-check. **Choice:** the car's storm is mostly rain on the roof, with thunder only far off, once or twice, so it stays close to FR6 ("no words, just the sound of rain").
 
 All of it is made **ahead of time** by a script, the way `tools/partner/make_song.py` makes the Partner's track, and played as ordinary recorded audio. Nothing is generated or bent live: the browser's default audio mode drops on-the-fly effects (game-architecture §3.2).
 
@@ -103,13 +104,13 @@ All of it is made **ahead of time** by a script, the way `tools/partner/make_son
 |---|---|---|
 | Dark | The lamp click (the House's sound for the lamp), then nothing | House |
 | Euphoria | The song's bright version, as at the Partner's best | Partner's song, edited |
-| Confusion | The Partner's song sagging and wobbling for 10 s, then the new track, uneasy, with no clear beat | Partner's song, edited offline; the new track: a Pixabay track under the same licence (Dan picks), or AI-made (ADR-0005) |
-| Panic | The new track building: a fast low drum like a racing heartbeat, wind and rain | The new track, plus wind and rain: free licensed sound effects (Pixabay or CC0), listed in CREDITS.md |
+| Confusion | The song, with wind and rain rising over it | Partner's song; storm recordings: free licensed sound effects (Pixabay or CC0), listed in CREDITS.md, or AI-made (ADR-0005) |
+| Panic | The storm, loud: heavy rain, wind, thunder, scraps of the song under it | The same storm recordings and song, mixed offline |
 | Clear / stumble | A soft, warm click for a clear; a dull thud for a stumble | Same |
 | Silence | Nothing. Not the House hum, not a tone. | — |
-| Car | Rain on the car roof; the engine ticking as it cools, fading out in the first 20 seconds | The House's rain loop, muffled; one engine-tick recording |
+| Car | The same storm, heard from inside: rain on the roof, thunder far off once or twice; the engine ticking as it cools, fading out in the first 20 seconds | The run's storm recordings, muffled; one engine-tick recording. The House's rain after the Loss uses the same recordings. |
 
-**Timing:** obstacles in the euphoria land on the song's beat (the song is 90 beats a minute, so one obstacle every 2 bars is every 5.3 s). The confusion and panic obstacles are off the beat on purpose, so the new track needs no tempo check; its build just has to peak around 2:15–2:55, which the script can line up by trimming. The reach windows are wide, so the run needs none of the Partner's precise tap timing or calibration (ADR-0006); Godot's own audio clock is enough to keep obstacles on the beat. **Hiding the tab** pauses the music and the run together and saves nothing.
+**Timing:** obstacles in the euphoria land on the song's beat (the song is 90 beats a minute, so one obstacle every 2 bars is every 5.3 s). The confusion and panic obstacles are off the beat on purpose, as the storm takes the beat away. The reach windows are wide, so the run needs none of the Partner's precise tap timing or calibration (ADR-0006); Godot's own audio clock is enough to keep obstacles on the beat. **Hiding the tab** pauses the music and the run together and saves nothing.
 
 ### The look, inside the rules
 
@@ -166,9 +167,9 @@ Added to the [continuity ledger](continuity-ledger.md), all `proposed`:
 - **Place: the car**, parked outside the House on the night of the loss (the Silence). Seen only then in M1. An idea for later: the same car takes them to the hospital in the Arrival.
 - **Object: the porch light.** On at dusk on moving day; on again through the rain from the car (left on when they rushed out).
 - **Object: car keys** (changed): in the ignition in the car, seen but not tappable, before they are dropped on the entry floor.
-- **Sound: the couple's song** (the Partner's song): the Partner; then the Loss's euphoria; it slips and is replaced by another track at the confusion.
-- **Sound: the Loss's track** (new, Dan picks): uneasy in the confusion, building into the panic, stopped dead at the silence. Heard only in the run.
-- **Sound: rain** (changed): starts in the run's panic, stops dead in the silence, comes back in the car and carries into the House.
+- **Sound: the couple's song** (the Partner's song): the Partner; then the Loss's euphoria; drowned by the storm in the confusion and panic; stopped dead at the silence.
+- **Sound: the storm** (new): rises in the run's confusion, takes over in the panic, stops dead in the silence, comes back the same in the car, and its rain carries into the House.
+- **Sound: rain** (changed): part of the storm; starts in the run's confusion, stops dead in the silence, comes back in the car and carries into the House.
 - **Motif: the small light.** The Partner's lights and heart; the runner in the Loss, which fades. Introduced, so it should be paid off later (an idea: a small light in the Tuner or the Arrival; M2 decides).
 - **Motif: moments of their life as silhouettes.** The Partner shows their past together; the Loss shows the future they imagine, and takes it away. Paid off later if the Arrival shows one come true (M2 decides).
 - **Motif: coming home through the front door.** The first tap of the game; home from the car after the Loss. Leaving through it with the keys is still the Arrival's.
@@ -227,7 +228,7 @@ Each has my recommended answer. Calls 1–5 and 11 shape the run (DAS-97); 6–9
 2. **Tap anywhere, or tap the obstacle itself?** *Recommended: tap anywhere* (one obvious action for a cold tester, what the Partner just taught, fair on a phone). Tapping the obstacle itself feels more hands-on, and could be tried in a playtest if the run feels too easy.
 3. **Can every obstacle be cleared?** The GDD says both "obstacles become unavoidable" and "fades despite the player's perfect play", and those pull against each other. *Recommended: every obstacle can be cleared; what can't be stopped is the path giving way and the light going out.* An obstacle no tap can clear is the thing testers will most likely call unfair.
 4. **Taps during the silence:** a small ripple where the finger lands that never reaches the light, or nothing at all? *Recommended: the ripple.* With nothing at all, a tester may think the game froze; the ripple says "you're still here, and there's nothing to fix".
-5. **Music.** Part decided (Dan, 2026-10-25): it starts on the Partner's song and changes to something else when things go wrong. Still open: *which track?* *Recommended:* one uneasy, beatless track that builds to something harsh over about 80 seconds, from Pixabay under the same licence as the Partner's song, so nothing new needs clearing. And *where it changes:* *recommended:* the couple's song sags for 10 seconds at 1:25, then the new track has taken over by 1:35, rather than a hard cut, which would sound like a new level.
+5. **Music.** Decided in outline (Dan, 2026-10-25): the Partner's song, drowned by a storm, and the same storm in the car. Still open: *does the storm stop for the fade, then come back in the car?* *Recommended: yes*, so the light goes out in silence (the roadmap's fourth part) and the storm's return over black says the run was that night. The other way is the storm carrying straight through the fade into the car, which joins them more tightly but loses the silence.
 6. **The future silhouettes on the horizon:** keep them, and which moments? *Recommended: keep them, 4 to 6 moments.* **PLACEHOLDER ideas, not decided, Dan's to replace:** a walk with a pram, a small hand around a finger, a first birthday, a child on Leo's shoulders. Rules: no crib, nothing that later becomes a House object, simple silhouettes in the Partner's placeholder style.
 7. **The car: parked outside the House at night, Maya in the passenger seat turned to her window, three views (windshield, Maya, the wheel)?** *Recommended: yes.* The other way is the car still driving home, which shows motion but loses the front door through the windshield.
 8. **How the car ends:** the front door gets a ring after 60 s and the player taps it to go in, or the car fades out on its own after a fixed time? *Recommended: the ring after 60 s.* The player chooses when to go in, and the first door of the game is the last tap of the Loss. The risk is someone not noticing the ring; the playtest watches for it ("nobody gets stuck", criterion 2).

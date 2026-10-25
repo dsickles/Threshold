@@ -63,8 +63,8 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Thing | Lifeline | Status |
 |---|---|---|
 | Fridge hum | Always; pitch and volume follow the House mood | decided (architecture §3.2) |
-| Rain | Starts in the Loss's run, in the panic; stops dead in the silence; back in the car (the Silence) and carried into the House; until after the Novice | proposed (run and car: [the-loss-run-and-car.md](the-loss-run-and-car.md)) |
-| The couple's song (the Partner's song, "Dreamy Lo-Fi Beat") | The Partner. Then the Loss's euphoria, bright; at the confusion it sags and is replaced by the Loss's own track (Dan, 2026-10-25), which builds through the panic and stops dead at the silence. Later: Dan's call. | Partner: decided (Dan, 2026-10-21). In the Loss: proposed ([the-loss-run-and-car.md](the-loss-run-and-car.md)) |
+| Rain (the storm) | One storm, the same recordings throughout: rises in the Loss's run in the confusion and drowns the couple's song in the panic (Dan, 2026-10-25); stops dead in the silence; back the same in the car (the Silence), heard from inside; its rain carried into the House; until after the Novice | proposed (run and car: [the-loss-run-and-car.md](the-loss-run-and-car.md)) |
+| The couple's song (the Partner's song, "Dreamy Lo-Fi Beat") | The Partner. Then the Loss's euphoria, bright; the storm rises over it in the confusion and drowns it in the panic (Dan, 2026-10-25); it stops dead at the silence. Later: Dan's call. | Partner: decided (Dan, 2026-10-21). In the Loss: proposed ([the-loss-run-and-car.md](the-loss-run-and-car.md)) |
 | House light | Start cold and bare. After the Partner warm (`house-hope`). After the Loss gray (`house-grief`). After the Novice colour bleeds back. Later rows: M2. | Partner and Loss rows decided (UX-DR28); rest proposed |
 
 ## Motifs
