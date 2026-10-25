@@ -567,3 +567,30 @@ func _assert_no_words_or_buttons(root: Node) -> void:
 	for node in _all(root):
 		check(not node is Label and not node is RichTextLabel and not node is BaseButton
 				and not node is Label3D, "nothing to read or press: %s" % node.get_path())
+
+
+# The web build stutters the first time it draws a new kind of thing, so
+# one of everything is drawn behind the black first, and obstacles share
+# their shapes (Dan saw blips, 2026-10-25).
+func test_everything_is_drawn_once_behind_the_black_before_the_light() -> void:
+	check(_run._warm != null, "drawn at the start")
+	check(_run._sun.light_energy > 0.0 and _run._lamp.light_energy > 0.0, "lit, behind the black")
+	check_eq(_run._overlay.color.a, 1.0, "the screen is still black")
+	_step_to(RunPlan.EUPHORIA_START)
+	check(_run._warm == null, "gone before the light fades up")
+	var stones: Array[Mesh] = []
+	for obstacle: Dictionary in _run._obstacles:
+		if obstacle.kind == RunPlan.Kind.STONE and obstacle.node:
+			for child in obstacle.node.get_children():
+				if child is MeshInstance3D:
+					stones.append(child.mesh)
+	_step_to(40.0)
+	for obstacle: Dictionary in _run._obstacles:
+		if obstacle.kind == RunPlan.Kind.STONE and obstacle.node:
+			for child in obstacle.node.get_children():
+				if child is MeshInstance3D:
+					stones.append(child.mesh)
+	check(stones.size() >= 2, "stones to compare (%d)" % stones.size())
+	for mesh in stones:
+		check(mesh == _run._stone_mesh, "every stone shares one shape")
+

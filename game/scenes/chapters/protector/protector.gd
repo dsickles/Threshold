@@ -40,3 +40,8 @@ func _on_run_ended() -> void:
 
 func probe_state() -> Dictionary:
 	return _run.probe_state()
+
+
+## Seconds into the run, for the playtest overlay's clock.
+func playtest_time() -> float:
+	return _run.time()

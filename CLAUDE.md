@@ -143,3 +143,7 @@ Pinned engine: **Godot 4.7.2**, standard build (not .NET). Private test link: a 
 Automated tests cover game rules, taps and layout that can be checked headless (and, from M1, the core table and save/load); feel, sound timing on a real phone and anything only a person can judge is checked by playing, including on Dan's phone.
 
 Claude can't see the game running. End every change Dan needs to play with a short "what to look for" list: where to go, what to tap, and what should happen.
+
+## Rough chapters
+
+While a chapter is rough (still being built and tuned), every screen of the review build shows a small playtest overlay in the top-left corner: frames a second, the clock since the game opened, the chapter's own clock, and the last slow frame with when it happened, so Dan can give timestamps (Dan, 2026-10-25). It is `game/_core/test_probe/playtest_overlay.gd`. Each chapter's root scene gives its clock with `playtest_time()` (seconds in); `test_every_chapter_has_a_playtest_clock` fails if a new chapter leaves it out. Only review builds (`publish.sh --review`) and an address with `?overlay` show it; the main test page and players never do.

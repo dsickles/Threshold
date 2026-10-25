@@ -47,6 +47,7 @@ const RIPPLE_TIME := 0.5
 const SLOT := TILE * 2.0  # Trees and the forest floor come in slots this long.
 const DRIFT_HOME := 2.0  # Seconds the light takes back to the middle as it slows.
 const CRADLE_START := 187.0  # The hand starts to come in under the slowing light.
+const WARM_END := 3.0  # Everything is drawn once, unseen, in the dark before this.
 
 # The look of each part: sky (and fog), tiles, sun energy, ambient energy,
 # fog density, sun colour, at run times between which it eases. Low gold sun
@@ -108,6 +109,16 @@ var _trunk_material: StandardMaterial3D
 var _canopy_material: StandardMaterial3D
 var _ground_material: StandardMaterial3D
 var _skin: StandardMaterial3D
+# Shared by every obstacle and hand, so none is built while the light runs.
+var _stone_mesh: SphereMesh
+var _stone_material: StandardMaterial3D
+var _branch_meshes := {}  # Lanes it spans -> CylinderMesh.
+var _branch_material: StandardMaterial3D
+var _bar_mesh: BoxMesh
+var _palm_mesh: BoxMesh
+var _finger_mesh: CapsuleMesh
+var _thumb_mesh: CapsuleMesh
+var _warm: Node3D  # One of each thing drawn in the dark, then freed (_build_warm).
 var _music: AudioStreamPlayer
 var _hand_player: AudioStreamPlayer
 var _stumble_player: AudioStreamPlayer
@@ -375,6 +386,14 @@ func _update() -> void:
 	_update_hand()
 	_update_camera()
 	_update_look()
+	if _warm and _t >= WARM_END:
+		_warm.queue_free()
+		_warm = null
+	elif _warm:
+		# The sun and the light's lamp are on too, behind the black, so
+		# everything is ready to be drawn lit before the light fades up.
+		_sun.light_energy = 1.7
+		_lamp.light_energy = 2.4
 	if not _ended and _t >= RunPlan.BLACK:
 		_ended = true
 		# PLACEHOLDER until the car (DAS-98), where the same rain carries on.
@@ -800,11 +819,9 @@ func _make_obstacle(obstacle: Dictionary) -> Node3D:
 	if obstacle.kind == RunPlan.Kind.GAP:
 		# The warm outline it gets when it comes into reach, so it reads
 		# without colour alone: a bar along each of its edges.
-		var bar := BoxMesh.new()
-		bar.size = Vector3(TILE * 3.0 - 0.2, 0.06, 0.12)
 		for edge in [first * TILE, (first + 2) * TILE]:
 			var rim := MeshInstance3D.new()
-			rim.mesh = bar
+			rim.mesh = _bar_mesh
 			rim.material_override = line
 			rim.position = Vector3(0.0, 0.02, obstacle.distance - edge)
 			outline.add_child(rim)
@@ -820,12 +837,9 @@ func _make_obstacle(obstacle: Dictionary) -> Node3D:
 		var body := MeshInstance3D.new()
 		match obstacle.kind:
 			RunPlan.Kind.STONE:
-				var mesh := SphereMesh.new()
-				mesh.radius = 0.6
-				mesh.height = 1.0
-				body.mesh = mesh
+				body.mesh = _stone_mesh
 				body.position = Vector3(lane * TILE, 0.5, 0.0)
-				body.material_override = _solid(Color("#7D7268"))
+				body.material_override = _stone_material
 			RunPlan.Kind.BRANCH:
 				pass
 		if body.mesh:
@@ -836,18 +850,24 @@ func _make_obstacle(obstacle: Dictionary) -> Node3D:
 		var lanes: Array = obstacle.lanes
 		var mid: float = (lanes[0] + lanes[-1]) / 2.0
 		var body := MeshInstance3D.new()
-		var mesh := CylinderMesh.new()
-		mesh.top_radius = 0.22
-		mesh.bottom_radius = 0.28
-		mesh.height = TILE * lanes.size() + 0.4
-		body.mesh = mesh
+		body.mesh = _branch_mesh(lanes.size())
 		body.rotation = Vector3(0.0, 0.0, PI / 2.0)
 		body.position = Vector3(mid * TILE, 0.45, 0.0)
-		body.material_override = _solid(Color("#4E3A2C"))
+		body.material_override = _branch_material
 		node.add_child(body)
 		_add_shell(outline, body, line)
 	add_child(node)
 	return node
+
+
+func _branch_mesh(lanes: int) -> CylinderMesh:
+	if not _branch_meshes.has(lanes):
+		var mesh := CylinderMesh.new()
+		mesh.top_radius = 0.22
+		mesh.bottom_radius = 0.28
+		mesh.height = TILE * lanes + 0.4
+		_branch_meshes[lanes] = mesh
+	return _branch_meshes[lanes]
 
 
 func _add_shell(outline: Node3D, body: MeshInstance3D, line: StandardMaterial3D) -> void:
@@ -947,6 +967,21 @@ func _build_world() -> void:
 	_ground_material = _solid(Color("#2E261D"))
 	_skin = _solid(SKIN)
 	_skin.roughness = 0.75
+	_stone_mesh = SphereMesh.new()
+	_stone_mesh.radius = 0.6
+	_stone_mesh.height = 1.0
+	_stone_material = _solid(Color("#7D7268"))
+	_branch_material = _solid(Color("#4E3A2C"))
+	_bar_mesh = BoxMesh.new()
+	_bar_mesh.size = Vector3(TILE * 3.0 - 0.2, 0.06, 0.12)
+	_palm_mesh = BoxMesh.new()
+	_palm_mesh.size = Vector3(0.82, 0.2, 0.9)
+	_finger_mesh = CapsuleMesh.new()
+	_finger_mesh.radius = 0.095
+	_finger_mesh.height = 0.78
+	_thumb_mesh = CapsuleMesh.new()
+	_thumb_mesh.radius = 0.11
+	_thumb_mesh.height = 0.6
 
 	_light_material = StandardMaterial3D.new()
 	_light_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -996,6 +1031,60 @@ func _build_world() -> void:
 	_leaves.mesh = leaf
 	_leaves.emitting = false
 	_camera.add_child(_leaves)
+	_build_warm()
+
+
+# The web build makes each new kind of thing ready the first time it is
+# drawn, and on a phone that is a visible stutter: the first stone, the first
+# gap and its hand, the first rain, the first moment the sun and lamp are
+# on. So one of each is drawn, lit, in the first 3 s, while the screen is
+# still covered in black, then freed.
+func _build_warm() -> void:
+	_warm = Node3D.new()
+	_warm.name = "Warm"
+	_warm.position = Vector3(0.0, 0.0, -6.0)
+	_camera.add_child(_warm)
+	var unseen := func(material: StandardMaterial3D) -> StandardMaterial3D:
+		var copy: StandardMaterial3D = material.duplicate()
+		copy.albedo_color.a = 0.0
+		return copy
+	var line := StandardMaterial3D.new()
+	line.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	line.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	line.albedo_color = Color(1.0, 1.0, 1.0, 0.0)
+	var outline := Node3D.new()
+	_warm.add_child(outline)
+	var stone := MeshInstance3D.new()
+	stone.mesh = _stone_mesh
+	stone.material_override = _stone_material
+	_warm.add_child(stone)
+	_add_shell(outline, stone, line)
+	var branch := MeshInstance3D.new()
+	branch.mesh = _branch_mesh(2)
+	branch.material_override = _branch_material
+	_warm.add_child(branch)
+	var rim := MeshInstance3D.new()
+	rim.mesh = _bar_mesh
+	rim.material_override = line
+	_warm.add_child(rim)
+	_warm.add_child(_make_hand())
+	# The song too, silent, so starting it at 0:05 doesn't catch.
+	var song := AudioStreamPlayer.new()
+	song.stream = MUSIC
+	song.volume_db = -80.0
+	_warm.add_child(song)
+	song.play()
+	var ball := MeshInstance3D.new()
+	ball.mesh = _light.mesh
+	ball.material_override = unseen.call(_light_material)
+	_warm.add_child(ball)
+	for source: CPUParticles3D in [_heavy_rain, _leaves]:
+		var copy := CPUParticles3D.new()
+		_warm.add_child(copy)
+		copy.amount = 4
+		copy.mesh = source.mesh.duplicate()
+		copy.mesh.material = unseen.call(source.mesh.material)
+		copy.emitting = true
 
 
 func _make_rain(amount: int) -> CPUParticles3D:
@@ -1029,26 +1118,18 @@ func _make_rain(amount: int) -> CPUParticles3D:
 func _make_hand() -> Node3D:
 	var hand := Node3D.new()
 	var palm := MeshInstance3D.new()
-	var palm_mesh := BoxMesh.new()
-	palm_mesh.size = Vector3(0.82, 0.2, 0.9)
-	palm.mesh = palm_mesh
+	palm.mesh = _palm_mesh
 	palm.material_override = _skin
 	hand.add_child(palm)
-	var finger_mesh := CapsuleMesh.new()
-	finger_mesh.radius = 0.095
-	finger_mesh.height = 0.78
 	for k in 4:
 		var finger := MeshInstance3D.new()
-		finger.mesh = finger_mesh
+		finger.mesh = _finger_mesh
 		finger.material_override = _skin
 		finger.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
 		finger.position = Vector3(-0.3 + 0.2 * k, 0.0, -0.45 - 0.3 + 0.04 * absf(k - 1.5))
 		hand.add_child(finger)
 	var thumb := MeshInstance3D.new()
-	var thumb_mesh := CapsuleMesh.new()
-	thumb_mesh.radius = 0.11
-	thumb_mesh.height = 0.6
-	thumb.mesh = thumb_mesh
+	thumb.mesh = _thumb_mesh
 	thumb.material_override = _skin
 	thumb.rotation = Vector3(-PI / 2.0, -0.6, 0.0)
 	thumb.position = Vector3(0.5, -0.02, -0.15)

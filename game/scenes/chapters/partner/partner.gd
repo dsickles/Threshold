@@ -538,6 +538,11 @@ func _refresh_prompt() -> void:
 			_prompt.text = ""
 
 
+## Seconds into the song, for the playtest overlay's clock; -1 before it.
+func playtest_time() -> float:
+	return _song_time
+
+
 ## For the browser tests' probe (game/_core/test_probe/web_test_probe.gd):
 ## what the canvas shows, since the tests can't read it.
 func probe_state() -> Dictionary:
