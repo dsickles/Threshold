@@ -145,6 +145,12 @@ export class Game {
     await this.tapButton({ text: "", x: size.x / 2, y: size.y / 2, disabled: false });
   }
 
+  /** Taps a point given as fractions of the screen (0 to 1 across, 0 to 1 down). */
+  async tapAt(across: number, down: number) {
+    const { size } = (await this.state())!;
+    await this.tapButton({ text: "", x: size.x * across, y: size.y * down, disabled: false });
+  }
+
   async audioStates(): Promise<string[]> {
     return this.page.evaluate(() => (window as any).__audioContexts.map((c: AudioContext) => c.state));
   }

@@ -1,7 +1,9 @@
 // The Protector's run (DAS-97): it opens from the menu (until the bedside
 // lamp in the House can start it, DAS-95), plays with no console errors, a
-// tap clears an obstacle in reach, hiding the tab pauses it until a tap, and
-// the ending reaches the black and hands back with the chapter finished.
+// tap on a third of the screen moves the light to that lane, a tap with a
+// gap in reach lays the hand across it, hiding the tab pauses it until a
+// tap, it still rains after the song, and the ending reaches the black and
+// hands back with the chapter finished.
 // Headless Chromium has no speaker and draws phone sizes slowly, so the
 // run's feel and sound are Dan's to check on his phone; the whole run
 // (3:35) is played by the Godot tests instead (game/tests/test_protector.gd).
@@ -16,7 +18,7 @@ const openRun = async (game: any, query = "") => {
 
 const run = (game: any) => game.screen(PROTECTOR);
 
-test("opens with no words or buttons, and the light runs into the morning", async ({ game }) => {
+test("opens with no words or buttons, and the light runs into the evening", async ({ game }) => {
   await openRun(game);
   expect((await game.state()).buttons, "nothing to press: no skip, no menu").toEqual([]);
   // The 5 s of dark first. Phone sizes draw a few frames a second here, and
@@ -27,14 +29,24 @@ test("opens with no words or buttons, and the light runs into the morning", asyn
   await game.screenshot("protector-euphoria");
 });
 
-test("a tap clears an obstacle in reach", async ({ game, page }) => {
-  // The first stone touches the light at 0:13 and is in reach from 0:11.7.
-  await openRun(game, "&protector_from=10.5");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(10.5);
+test("a tap on a third of the screen moves the light to that lane", async ({ game }) => {
+  await openRun(game, "&protector_from=8");
+  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(8);
+  await game.tapAt(0.1, 0.5);
+  await expect.poll(async () => (await run(game)).lane).toBe(-1);
+  await game.tapAt(0.9, 0.5);
+  await expect.poll(async () => (await run(game)).lane).toBe(1);
+  await game.screenshot("protector-right-lane");
+});
+
+test("a tap with a gap in reach lays the hand across it", async ({ game, page }) => {
+  // The first gap touches the light at 0:34 and is in reach from 0:32.7.
+  await openRun(game, "&protector_from=31.5");
+  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(31.5);
   // Headless Chromium draws slowly: a tap sent from here after reading the
-  // probe lands too late for the 1.3 s window. So the page itself watches
-  // for the stone to come into reach and clicks the middle of the canvas
-  // in the same frame.
+  // probe can land too late for the 1.3 s window. So the page itself watches
+  // for the gap to come into reach and clicks the middle of the canvas in
+  // the same frame.
   await page.evaluate(
     (scene) =>
       new Promise<void>((resolve) => {
@@ -52,9 +64,10 @@ test("a tap clears an obstacle in reach", async ({ game, page }) => {
       }),
     PROTECTOR,
   );
-  await expect.poll(async () => (await run(game)).cleared).toBe(1);
-  expect((await run(game)).stumbled).toBe(0);
-  await game.screenshot("protector-cleared");
+  await expect.poll(async () => (await run(game)).bridged).toBe(1);
+  await game.screenshot("protector-hand-across-gap");
+  await expect.poll(async () => (await run(game)).time, { timeout: 60_000 }).toBeGreaterThan(34.2);
+  expect((await run(game)).stumbled, "the light ran over the hand").toBe(0);
 });
 
 test("hiding the tab pauses the run until a tap", async ({ game, page }) => {
@@ -81,15 +94,17 @@ test("hiding the tab pauses the run until a tap", async ({ game, page }) => {
   expect((await game.state()).progress.finished, "hiding never saves").toEqual([]);
 });
 
-test("the panic and the silence", async ({ game }) => {
+test("the panic, and the rain after the song", async ({ game }) => {
   await openRun(game, "&protector_from=150");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(151);
+  expect((await run(game)).raining).toBe(true);
   await game.screenshot("protector-panic");
   await openRun(game, "&protector_from=178");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(179);
-  expect((await run(game)).part).toBe("SILENCE");
-  expect((await run(game)).music, "nothing plays in the silence").toBe(false);
-  await game.screenshot("protector-silence");
+  expect((await run(game)).part).toBe("FADE");
+  expect((await run(game)).music, "the storm plays on").toBe(true);
+  expect((await run(game)).raining, "and it is still raining").toBe(true);
+  await game.screenshot("protector-after-the-song");
 });
 
 test("the light goes out, then black, then the chapter is finished and saved", async ({ game }) => {
@@ -97,11 +112,12 @@ test("the light goes out, then black, then the chapter is finished and saved", a
   // After the Partner, so the Protector is the next chapter and can be saved.
   await openRun(game, "&finish=partner&protector_from=197");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(198);
+  expect((await run(game)).held, "the light is in the father's hand").toBe(true);
   await game.screenshot("protector-going-out");
   await expect
     .poll(async () => (await run(game))?.brightness ?? 0, { timeout: 60_000 })
     .toBe(0);
-  await game.screenshot("protector-empty-path");
+  await game.screenshot("protector-empty-hand");
   // PLACEHOLDER until the car (DAS-98): the chapter finishes at the black.
   // Phone sizes draw a few frames a second here, so the last 18 s take longer.
   await expect
