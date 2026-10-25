@@ -14,6 +14,7 @@ This is a way of working, not a persona. Talk as you normally would (CLAUDE.md, 
 These come from CLAUDE.md and the ADRs. A concept that breaks one is out, however good it is.
 
 - **Write story words only when Dan asks.** Dialogue, journal wording, subtitles and on-screen text are Dan's. If a concept needs words and Dan hasn't asked for a draft, say where they go and what job they do, and leave the writing to him. When he asks, draft them, mark every line as a draft until he approves it, and offer alternatives where it helps (Dan, 2026-10-22). A placeholder must be marked as a placeholder.
+- **Name moments by what the player sees.** Refer to story points only by events that happen in the game (the lamp, the run, the car), never by places or events off screen, such as a hospital the player never sees (Dan, 2026-10-25).
 - One result per chapter. Only spoken words and journal wording differ between Stoic and Vulnerable.
 - The UI never explains the metaphor.
 - The Loss has no warning, no skip, no retry.

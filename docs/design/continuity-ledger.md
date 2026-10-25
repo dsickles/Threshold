@@ -14,7 +14,7 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Miscarriage happened | From after the Loss, for good (history) | decided (GDD, 2026-09-22 O2) |
 | Pregnant (via IVF) | From after the Novice, to the Arrival | decided (GDD, 2026-09-22 O2) |
 | Baby born | After the Arrival | decided (GDD) |
-| The night of the loss | A night in month 2 (FR17), some weeks after the test. They leave for the hospital in the night (never shown) and come home in the car in the rain (the Silence). The hospital night comes back as a bill in the Provider (Dan, 2026-10-25; [continuity-ledger-additions.md](continuity-ledger-additions.md)). | decided (Dan, 2026-10-25; [the-loss-run-and-car.md](the-loss-run-and-car.md)) |
+| The night of the loss | A night in month 2 (FR17), some weeks after the test. The lamp goes off, the run is that night, and the car (the Silence) comes after it, outside the House in the rain. Where they drove back from is never shown or named (Dan, 2026-10-25). The night comes back as a bill in the Provider (Dan, 2026-10-25; [continuity-ledger-additions.md](continuity-ledger-additions.md)). | decided (Dan, 2026-10-25; [the-loss-run-and-car.md](the-loss-run-and-car.md)) |
 | Month (FR17) | Partner 0, Loss 2, Novice 3–9, Provider 10, Tuner 12, Anchor and Mourner 17, Arrival 18 (a full-term pregnancy) | decided (FR17; ADR-0009, Dan, 2026-10-25) |
 
 ## Rooms
@@ -22,7 +22,7 @@ Every object, room, fact and motif the story uses, with its life across the chap
 | Room | Lifeline | Status |
 |---|---|---|
 | Porch | The game starts here at dusk on moving day, facing the front door | decided (Dan, 2026-10-19) |
-| The car (not a room of the House) | Seen only in the Silence, after the Loss: parked outside the House at night, engine off, rain. Three views: the windshield (the front door and porch light through the rain), Maya in the passenger seat, the wheel with the keys in the ignition. After 30 s the front door gets a ring. An idea for later (proposed, M2): the same car takes them to the hospital in the Arrival. | decided (Dan, 2026-10-25; [the-loss-run-and-car.md](the-loss-run-and-car.md)) |
+| The car (not a room of the House) | Seen only in the Silence, after the Loss: parked outside the House at night, engine off, rain. Three views: the windshield (the front door and porch light through the rain), Maya in the passenger seat, the wheel with the keys in the ignition. After 30 s the front door gets a ring. An idea for later (proposed, M2): the same car is the one they leave in at the Arrival. | decided (Dan, 2026-10-25; [the-loss-run-and-car.md](the-loss-run-and-car.md)) |
 | Entry, living room, kitchen | Open from the Start to the end. The everyday House. | proposed |
 | Back hall, main bedroom (with en-suite) | Shut until the opening beat (moving boxes block the back hall); open from then on | proposed |
 | Hall bathroom | Shut for all of M1, never a chapter room (Dan, 2026-10-23, matching the floor plan's M1 build). Later: M2. | M1: decided (Dan, 2026-10-23) |
@@ -35,7 +35,7 @@ Every object, room, fact and motif the story uses, with its life across the chap
 |---|---|---|
 | Porch light | On at dusk on moving day (view P). On again in the Silence, seen through the rain from the car: left on when they rushed out in the night. | decided (Dan, 2026-10-25; [the-loss-run-and-car.md](the-loss-run-and-car.md)) |
 | Record player | Start: set up on a moving box in the main bedroom, the first thing they unpacked. Partner's chapter object. After the Partner: lid closed. Later: open (see Dan's calls in the floor plan). | proposed |
-| Car keys | On the entry table from the Start, just there. The Silence: in the car's ignition, seen but not tappable (decided, Dan, 2026-10-25). After the Loss: dropped on the entry floor, after the drive home from the hospital (a House object: put them back on the table). From the Novice on they live in a little basket on the kitchen counter. They start the Arrival from that basket. | Arrival only, not the Loss: decided (Dan, 2026-10-19). Places proposed. |
+| Car keys | On the entry table from the Start, just there. The Silence: in the car's ignition, seen but not tappable (decided, Dan, 2026-10-25). After the Loss: dropped on the entry floor, as they come in from the car (a House object: put them back on the table). From the Novice on they live in a little basket on the kitchen counter. They start the Arrival from that basket. | Arrival only, not the Loss: decided (Dan, 2026-10-19). Places proposed. |
 | Positive test (first) | After the Partner: on the en-suite bathroom counter (Dan, 2026-10-20; a House object: pick it up). After the Loss: gone from view (decided, Dan, 2026-10-20), kept in the memory box (proposed, M2). | Bathroom counter and gone after the Loss: decided (Dan, 2026-10-20) |
 | The onesie (the first small baby thing) | After the Partner: on Leo's lounge chair in the spare room (Dan, 2026-10-20). After the Loss: in the memory box. Found again in the Mourner. Where it ends is Dan's call. | Onesie as the early hope: decided (Dan, 2026-10-19). Its lifeline after the Loss: proposed. |
 | Memory box (a shoebox) | After the Loss: holds the test and the onesie; sits shut in the spare room among Leo's boxes. Mourner: found and dealt with (Dan's call on how). | proposed |

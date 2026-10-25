@@ -64,9 +64,9 @@ Written and approved: [m1-words-draft.md](m1-words-draft.md) §1, "Did you lock 
 
 **Month:** 2.
 
-**Decided (Dan, 2026-10-19):** the Loss starts by turning off the bedside lamp to go to sleep. The loss happens in play, in the run, through no fault of the player's. The quiet car in the rain is the drive home from the hospital afterwards, and the player comes back in through the front door to the dropped keys. The keys start only the Arrival.
+**Decided (Dan, 2026-10-19):** the Loss starts by turning off the bedside lamp to go to sleep. The loss happens in play, in the run, through no fault of the player's. The quiet car in the rain comes after the run, later the same night, and the player comes back in through the front door to the dropped keys. The keys start only the Arrival.
 
-**Dan's note, 2026-10-25:** the drive to the first scan is still a possible errand, and the drive itself could have been the game, but a car runner risks reading as a car accident, so the run must not be a car. Not locked in. This pulls against the lamp decision, which makes the run the night itself. **Decided (Dan, 2026-10-25):** the hospital night. The lamp and the night stay, the car is the drive home from the hospital, and the scan is not used in the Loss ([the-loss-run-and-car.md](the-loss-run-and-car.md) call 12).
+**Dan's note, 2026-10-25:** the drive to the first scan is still a possible errand, and the drive itself could have been the game, but a car runner risks reading as a car accident, so the run must not be a car. Not locked in. This pulls against the lamp decision, which makes the run the night itself. **Decided (Dan, 2026-10-25):** the night of the Loss. The lamp and the night stay, the car comes after the run, and the scan is not used in the Loss ([the-loss-run-and-car.md](the-loss-run-and-car.md) call 12).
 
 **The run and the car:** settled for M1 in [the-loss-run-and-car.md](the-loss-run-and-car.md) (Dan, 2026-10-25). "Clear the way": a 3D run seen from behind, like Temple Run; the player clears the path for a small light, it works, and the light goes out on a clear stretch after the storm and the song stop. It is not a car.
 
@@ -109,15 +109,15 @@ Written and approved: [m1-words-draft.md](m1-words-draft.md) §1, "Did you lock 
 
 **Month:** 10.
 
-**Decided (Dan, 2026-10-25): the "one injury" is the Loss.** Among the IVF and new-pregnancy bills is the hospital night from month 2. The memory of the loss stays with you, and the paperwork brings it back. Dan's shape for it: the bills are ridiculous, then one of them stops Leo, a moment of reflection, and then the absurdity of the system comes back around it. It must be handled carefully because of how sensitive it is.
+**Decided (Dan, 2026-10-25): the "one injury" is the Loss.** Among the IVF and new-pregnancy bills is the bill for the night of the Loss, month 2. The memory of the loss stays with you, and the paperwork brings it back. Dan's shape for it: the bills are ridiculous, then one of them stops Leo, a moment of reflection, and then the absurdity of the system comes back around it. It must be handled carefully because of how sensitive it is.
 
 **Chapter beats** (three acts, Story 4.3):
 1. **The Invoices:** simple and readable, with absurd line items. Leo is good at this; the fixer's confidence.
-2. **The Insurance:** harder documents, read in the large-type reader. The hospital night turns up here, in billing language. **The pause:** the desk goes quiet for a moment; the Due Date doesn't press, nothing drains. Stamping it is the player's choice of when.
+2. **The Insurance:** harder documents, read in the large-type reader. The bill for the night of the Loss turns up here, in billing language. **The pause:** the desk goes quiet for a moment; the Due Date doesn't press, nothing drains. Stamping it is the player's choice of when.
 3. **The Audit:** the absurdity comes back, harder and funnier (the system asks for proof of things that can't be proved). The Due Date runs; the Bank Account drains.
 4. **The result:** the bills are dealt with, or the Due Date runs out. The story moves on either way, with the same journal entry.
 
-**Care points for the hospital bill** (proposed): the game never jokes *about* the bill or the loss; the humour is always about the system around it. The bill uses the cold words a real one would, and the UI adds nothing. It can't be stamped wrong in a way that costs money. Whatever the player stamps, the result is the same.
+**Care points for the bill from the Loss** (proposed): the game never jokes *about* the bill or the loss; the humour is always about the system around it. The bill uses the cold words a real one would, and the UI adds nothing. It can't be stamped wrong in a way that costs money. Whatever the player stamps, the result is the same.
 
 **House after:** tight and anxious; the House creaks (FR31); the fridge hum lower and louder. Bills filed on the desk. The home doppler on the bedside nightstand is the next object.
 
