@@ -152,15 +152,24 @@ func test_a_tap_on_a_lane_always_moves_the_light_there() -> void:
 	check(not _run._hand.visible, "the hand has drawn back out of sight")
 
 
-func test_a_tap_on_the_screen_picks_the_lane_by_its_third() -> void:
+func test_a_tap_on_the_left_or_right_moves_the_light_one_lane_that_way() -> void:
 	_step_to(8.0)
 	var size: Vector2 = _run.get_viewport().get_visible_rect().size
-	tap_at(Vector2(4, size.y / 2.0))  # Through the viewport, like a player.
-	check_eq(_run.lane(), -1, "the left third is the left lane")
-	tap_at(Vector2(size.x - 4, 4))
-	check_eq(_run.lane(), 1, "the right third is the right lane, top to bottom")
-	tap_at(Vector2(size.x / 2.0, size.y - 4))
-	check_eq(_run.lane(), 0, "the middle third is the middle lane")
+	var left := Vector2(4, size.y / 2.0)
+	var right := Vector2(size.x - 4, 4)
+	# Through the viewport, like a player.
+	tap_at(right)
+	check_eq(_run.lane(), 1, "from the middle, a tap on the right goes one lane right")
+	tap_at(right)
+	check_eq(_run.lane(), 1, "already at the right edge: it stays")
+	check_eq(_run.ripple_count(), 1, "and that tap only ripples")
+	tap_at(left)
+	check_eq(_run.lane(), 0, "from the right lane, a tap on the left goes to the middle")
+	tap_at(Vector2(size.x / 2.0 - 1.0, size.y - 4))
+	check_eq(_run.lane(), -1, "just left of the middle counts as the left, top to bottom")
+	tap_at(Vector2(size.x / 2.0 + 1.0, 4))
+	tap_at(right)
+	check_eq(_run.lane(), 1, "two taps on the right move it two lanes")
 
 
 func test_the_father_s_hand_moves_the_light() -> void:

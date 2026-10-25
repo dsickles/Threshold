@@ -1,12 +1,12 @@
 extends Node3D
 ## The Protector's run (DAS-97), in plain gray-box shapes: a small light runs
 ## away from the camera down a trail of square tiles through tall trees, and
-## the father's hand keeps it safe. Tap the left, middle or right third of the
-## screen and the hand moves the light into that lane, out of the way of the
-## stones and branches coming; with a gap in reach the tap also lays the hand
+## the father's hand keeps it safe. Tap the left or right of the screen and
+## the hand moves the light one lane that way, out of the way of the stones
+## and branches coming; with a gap in reach the tap also lays the hand
 ## across it. Seen from behind, like Temple Run; the path bends on its own.
 ## Built from docs/design/the-loss-run-and-car.md (Dan, 2026-10-25, revised
-## after his first play: calls 13 to 16).
+## after his first and second plays: calls 13 to 17).
 ##
 ## Everything follows one fixed timeline (run_plan.gd), the same for every
 ## player: the euphoria, the confusion, the panic, then the fade, where the
@@ -252,14 +252,16 @@ func count(status: Status) -> int:
 	return n
 
 
-## A tap at a point on the screen: its third of the screen is the lane.
+## A tap at a point on the screen: the left half moves the light one lane
+## left, the right half one lane right (Dan, 2026-10-25, call 17). From an
+## edge lane, a tap toward that edge leaves it where it is.
 func tap(at: Vector2) -> int:
 	var width := get_viewport().get_visible_rect().size.x
-	var lane_tapped := clampi(floori(at.x / width * 3.0), 0, 2) - 1
-	return tap_lane(lane_tapped, at)
+	var step := -1 if at.x < width / 2.0 else 1
+	return tap_lane(clampi(_lane + step, -1, 1), at)
 
 
-## A tap on a lane. The hand moves the light there, and lays itself across a
+## A tap that sends the light to a lane. The hand moves the light there, and lays itself across a
 ## gap in reach; returns that gap's index, or -1. A tap that changes nothing
 ## (its own lane, no gap in reach) makes a ripple where it landed and nothing
 ## else: no penalty, no sound of failure. From 3:05 the hand is holding the
@@ -1076,7 +1078,7 @@ func _build_sound() -> void:
 
 
 # The black for the fade-up and the end, and the ripples. Nothing on it can
-# be tapped: the screen's thirds are the lanes. No text, ever.
+# be tapped: each half of the screen moves the light a lane. No text, ever.
 func _build_screen() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)

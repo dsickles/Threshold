@@ -31,8 +31,9 @@ concurrency:
 jobs:
   browser-tests:
     runs-on: ubuntu-latest
-    # The 3D House draws slowly in software WebGL at phone sizes (DAS-93).
-    timeout-minutes: 45
+    # The 3D House and the Protector's run (trees, sun shadow, rain) draw
+    # slowly in software WebGL at phone sizes (DAS-93, DAS-97).
+    timeout-minutes: 75
     defaults:
       run:
         working-directory: tests/web

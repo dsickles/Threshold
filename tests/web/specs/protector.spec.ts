@@ -1,6 +1,6 @@
 // The Protector's run (DAS-97): it opens from the menu (until the bedside
 // lamp in the House can start it, DAS-95), plays with no console errors, a
-// tap on a third of the screen moves the light to that lane, a tap with a
+// tap on the left or right moves the light one lane that way, a tap with a
 // gap in reach lays the hand across it, hiding the tab pauses it until a
 // tap, it still rains after the song, and the ending reaches the black and
 // hands back with the chapter finished.
@@ -29,11 +29,13 @@ test("opens with no words or buttons, and the light runs into the evening", asyn
   await game.screenshot("protector-euphoria");
 });
 
-test("a tap on a third of the screen moves the light to that lane", async ({ game }) => {
+test("a tap on the left or right moves the light one lane that way", async ({ game }) => {
   await openRun(game, "&protector_from=8");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(8);
   await game.tapAt(0.1, 0.5);
   await expect.poll(async () => (await run(game)).lane).toBe(-1);
+  await game.tapAt(0.9, 0.5);
+  await expect.poll(async () => (await run(game)).lane, "one lane right: the middle").toBe(0);
   await game.tapAt(0.9, 0.5);
   await expect.poll(async () => (await run(game)).lane).toBe(1);
   await game.screenshot("protector-right-lane");
@@ -94,13 +96,22 @@ test("hiding the tab pauses the run until a tap", async ({ game, page }) => {
   expect((await game.state()).progress.finished, "hiding never saves").toEqual([]);
 });
 
-test("the panic, and the rain after the song", async ({ game }) => {
+// Phone sizes draw a few frames a second here, and Godot counts at most
+// 8/60 s a frame, so a few seconds of run can take a minute or more.
+const SLOW = { timeout: 150_000 };
+
+test("the panic: dark and raining", async ({ game }) => {
+  test.setTimeout(240_000);
   await openRun(game, "&protector_from=150");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(151);
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(150.5);
   expect((await run(game)).raining).toBe(true);
   await game.screenshot("protector-panic");
+});
+
+test("after the song: the storm plays on and it is still raining", async ({ game }) => {
+  test.setTimeout(240_000);
   await openRun(game, "&protector_from=178");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(179);
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(178.5);
   expect((await run(game)).part).toBe("FADE");
   expect((await run(game)).music, "the storm plays on").toBe(true);
   expect((await run(game)).raining, "and it is still raining").toBe(true);
@@ -110,16 +121,18 @@ test("the panic, and the rain after the song", async ({ game }) => {
 test("the light goes out, then black, then the chapter is finished and saved", async ({ game }) => {
   test.setTimeout(300_000);
   // After the Partner, so the Protector is the next chapter and can be saved.
-  await openRun(game, "&finish=partner&protector_from=197");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(198);
+  // From 3:23, near the end of the light going out (3:15 to 3:25), so the
+  // slow phone sizes reach the black in time.
+  await openRun(game, "&finish=partner&protector_from=203");
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(203.2);
   expect((await run(game)).held, "the light is in the father's hand").toBe(true);
   await game.screenshot("protector-going-out");
   await expect
-    .poll(async () => (await run(game))?.brightness ?? 0, { timeout: 60_000 })
+    .poll(async () => (await run(game))?.brightness ?? 0, SLOW)
     .toBe(0);
   await game.screenshot("protector-empty-hand");
   // PLACEHOLDER until the car (DAS-98): the chapter finishes at the black.
-  // Phone sizes draw a few frames a second here, so the last 18 s take longer.
+  // Phone sizes draw a few frames a second here, so the last 12 s take longer.
   await expect
     .poll(async () => (await game.state())?.overlays, { timeout: 200_000 })
     .toEqual([]);
