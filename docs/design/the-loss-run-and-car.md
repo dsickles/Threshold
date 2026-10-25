@@ -6,7 +6,7 @@ Built from: [roadmap.md](../roadmap.md) M1 ("a hand-built runner path (3–4 min
 
 What the docs already fix: no warning, no skip, no retry, no title card; it starts from an ordinary tap on the bedside lamp; the run starts sunny and clear while the couple is planning and dreaming, and the UI doesn't label that; a fixed, hand-built obstacle sequence on a flat tiled path, not random; the pacing runs euphoria, confusion, panic, silence; a stumble never ends the run; the runner (the baby) fades even after perfect play; no "Chapter failed. Try again?"; no hit-shake with reduced motion; no care UI; then the car, rain and no words; then the House in grief, coming in through the front door. Leaving mid-chapter starts it again from the beginning, and nothing saves until the car is over.
 
-Lines marked **Choice** are mine where the docs say nothing. Lines marked **Dan** are his calls; the full list, each with a recommended answer, is at the end. **No story words are written here**: the run and the car have none, and nothing below is on-screen text.
+Lines marked **Choice** are Claude's picks where the docs say nothing; Dan approved the design with them on 2026-10-25, and the numbers (reach windows, timings) are to tune in playtests. Dan's answers are listed at the end. **No story words are written here**: the run and the car have none, and nothing below is on-screen text.
 
 ## The feeling
 
