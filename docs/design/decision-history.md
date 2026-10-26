@@ -371,6 +371,17 @@ The documents were written in one day, in this order: brainstorming session → 
 | **Why** | Dan's first play of the rough build, 2026-10-25: tap anywhere was too easy and too like the Partner; the light should be visibly protected by an outside force, the father; the setting was too bright and ethereal; the silence after the song felt like a mistake, the storm didn't come through, and the lighter gray read as the storm ending; the light needed to read as the baby, subtly. Still one tap scheme: lanes are tapped, never swiped. |
 | **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) calls 13 to 16 (and 2, 4, 5, 11); [continuity-ledger.md](continuity-ledger.md) (Rain, the couple's song, the small light, the father's hand); [scope.md](../scope.md) |
 
+
+---
+
+## 32. The Loss's ending: fireflies go out at random, and a shorter storm (2026-10-26)
+
+| | |
+|---|---|
+| **Was** | From 2:55 the light runs on down an empty path, slows and goes out in the father's hand with nothing else happening; the panic lasts 40 s with 25 obstacles (49 in all) and black is at 3:35. |
+| **Became** | Fireflies drift along the trail from the euphoria; when the path empties at 2:45 they go out one by one at random (a fixed order that looks random), some never, and one or two still glow as the light goes out in the hand. The panic lasts 30 s with 17 obstacles (41 in all), and everything after it moves 10 s earlier: black at 3:25. |
+| **Why** | Dan's third play, 2026-10-26: the storm felt a little long, and the light going out needed something to happen that shows the randomness more explicitly in the last 45 seconds. Fireflies show chance without giving the loss a cause the player could have stopped. Dan may still want more, possibly a last obstacle nobody can clear (open). |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 18; [continuity-ledger.md](continuity-ledger.md) (Fireflies, the small light, the couple's song); [scope.md](../scope.md) |
 ---
 
 ## What did not change
