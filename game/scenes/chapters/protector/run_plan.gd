@@ -15,11 +15,11 @@ enum Kind { STONE, BRANCH, GAP }
 const EUPHORIA_START := 5.0
 const CONFUSION_START := 85.0
 const PANIC_START := 135.0
-const FADE_START := 175.0  # 2:55: the obstacles stop; the song is gone under the rain.
-const SLOW_START := 185.0  # 3:05: the light slows, and the father's hand comes under it.
-const STOPPED := 195.0  # 3:15: it has stopped in his hand, and goes out.
-const OUT := 205.0  # 3:25: it is out; the empty hand.
-const BLACK := 215.0  # 3:35: black. The car begins (DAS-98).
+const FADE_START := 165.0  # 2:45: the obstacles stop; the song is gone under the rain.
+const SLOW_START := 175.0  # 2:55: the light slows, and the father's hand comes under it.
+const STOPPED := 185.0  # 3:05: it has stopped in his hand, and goes out.
+const OUT := 195.0  # 3:15: it is out; the empty hand.
+const BLACK := 205.0  # 3:25: black. The car begins (DAS-98).
 const RAIN_START := 110.0  # 1:50: the first rain. It never stops (call 15).
 const HEAVY_RAIN := 135.0
 
@@ -58,9 +58,21 @@ const CLUSTER_GAP := 0.6
 const PANIC := [
 	[137.0, ["S:L", "S:R"]], [140.0, ["B:LM", "S:M", "G"]], [145.0, ["G", "S:R"]],
 	[148.0, ["S:M", "B:MR", "S:M"]], [152.0, ["B:LM", "G"]], [156.0, ["S:R", "S:M", "G"]],
-	[159.0, ["G", "B:MR"]], [163.0, ["S:L", "G", "S:M"]], [167.0, ["B:MR", "S:M"]],
-	[171.0, ["G", "B:LM", "S:M"]],
+	[159.0, ["G", "B:MR"]],
+]  # Its last three clusters were cut to shorten the storm (call 18).
+# The fireflies left along the trail when the path empties (call 18): how far
+# each sits from where the light comes to rest (metres along the path), how
+# far to the side (metres, + right), how high, and when it goes out (-1:
+# never). Hand-placed so the order looks random but is the same every time:
+# one, then one far off, then two close together; some never go out, and one
+# is still glowing beside the hand as the light goes out.
+const LAST_FIREFLIES := [
+	[-95.0, -3.2, 0.9, 167.5], [-45.0, 4.0, 1.6, 171.0], [-63.0, -4.5, 2.2, 172.2],
+	[10.0, 3.0, 0.7, 176.8], [-9.0, -2.8, 1.2, 179.0], [23.0, -5.5, 2.6, 182.5],
+	[15.0, 5.0, 1.9, 183.1], [6.0, 2.6, 0.5, 188.0], [29.0, 1.5, 3.0, 191.5],
+	[-105.0, 3.5, 1.1, -1.0], [4.0, -2.4, 0.9, -1.0], [18.0, 3.6, 1.3, -1.0], [35.0, -3.8, 2.0, -1.0],
 ]
+const FIREFLY_OUT_TIME := 0.8  # Seconds a firefly takes to go out.
 const KINDS := {"S": Kind.STONE, "B": Kind.BRANCH, "G": Kind.GAP}
 const LANE_NAMES := {"L": -1, "M": 0, "R": 1}
 
@@ -131,7 +143,7 @@ static func distance(t: float) -> float:
 
 
 ## The light's brightness from the timeline alone, 0 to 1: it fades up out of
-## the black, is full all run, and goes out from 3:15 to 3:25.
+## the black, is full all run, and goes out from 3:05 to 3:15.
 static func base_brightness(t: float) -> float:
 	if t < EUPHORIA_START:
 		return 0.0
@@ -156,3 +168,25 @@ static func stumble_factor(t: float, stumbled_at: float) -> float:
 	if since < 0.0 or since >= STUMBLE_TIME:
 		return 1.0
 	return lerpf(STUMBLE_DIM, 1.0, since / STUMBLE_TIME)
+
+
+## How brightly a last firefly glows at time t, 1 to 0: full until its time,
+## then out over FIREFLY_OUT_TIME. One that never goes out stays at 1.
+static func firefly_glow(firefly: Array, t: float) -> float:
+	var out_at: float = firefly[3]
+	if out_at < 0.0:
+		return 1.0
+	return 1.0 - smoothstep(out_at, out_at + FIREFLY_OUT_TIME, t)
+
+
+## How many of the fireflies between the trees are out at time t, 0 to 1:
+## all of them in the euphoria, fewer as the storm comes, none once the path
+## is empty (only the last ones are left then).
+static func firefly_density(t: float) -> float:
+	if t < CONFUSION_START:
+		return 1.0
+	if t < 120.0:
+		return lerpf(1.0, 0.35, smoothstep(CONFUSION_START, 120.0, t))
+	if t < PANIC_START + 10.0:
+		return lerpf(0.35, 0.08, smoothstep(120.0, PANIC_START + 10.0, t))
+	return 0.08 if t < FADE_START else 0.0

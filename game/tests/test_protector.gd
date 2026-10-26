@@ -21,16 +21,16 @@ func before_each() -> void:
 
 func test_the_obstacle_list_matches_the_design() -> void:
 	var list := RunPlan.obstacles()
-	check_eq(list.size(), 49, "obstacles in the run")
+	check_eq(list.size(), 41, "obstacles in the run")
 	var by_part := {}
 	for obstacle in list:
 		by_part[obstacle.part] = by_part.get(obstacle.part, 0) + 1
 	check_eq(by_part.get(RunPlan.Part.EUPHORIA, 0), 12, "in the euphoria")
 	check_eq(by_part.get(RunPlan.Part.CONFUSION, 0), 12, "in the confusion")
-	check_eq(by_part.get(RunPlan.Part.PANIC, 0), 25, "in the panic")
+	check_eq(by_part.get(RunPlan.Part.PANIC, 0), 17, "in the panic")
 	check_eq(by_part.get(RunPlan.Part.FADE, 0), 0, "none as the light goes out")
 	check_eq(by_part.get(RunPlan.Part.DARK, 0), 0, "in the dark")
-	check_near(list[-1].time, 172.2, 0.001, "the last one (2:52)")
+	check_near(list[-1].time, 159.6, 0.001, "the last one (2:40)")
 	for i in range(1, list.size()):
 		check(list[i].time > list[i - 1].time, "obstacle %d comes after the one before" % i)
 	# The euphoria's land on the song's beat: every 2 bars at 90 BPM from 0:13.
@@ -46,7 +46,7 @@ func test_the_obstacle_list_matches_the_design() -> void:
 	check_eq(specs.strip_edges(), " ".join([
 		"S:M S:LR B:LM S:R G B:MR S:L G B:LM S:M G S:LR",
 		"S:LM G B:MR S:L S:R B:LM G S:MR B:LM G S:LR G",
-		"S:L S:R B:LM S:M G G S:R S:M B:MR S:M B:LM G S:R S:M G G B:MR S:L G S:M B:MR S:M G B:LM S:M",
+		"S:L S:R B:LM S:M G G S:R S:M B:MR S:M B:LM G S:R S:M G G B:MR",
 	]), "the shapes and lanes in order")
 	# The first is a lone stone straight ahead, so the tap is learned first.
 	check_eq(_spec(list[0]), "S:M", "the first is a stone in the light's lane")
@@ -79,7 +79,7 @@ func test_every_obstacle_can_be_avoided_by_perfect_play() -> void:
 		check(not free.is_empty(), "the cluster at %.1f s has a lane free all through" % list[i].time)
 		clusters += 1
 		i = j
-	check_eq(clusters, 10, "ten panic clusters")
+	check_eq(clusters, 7, "seven panic clusters")
 	# Outside a cluster, at least 2 s before an obstacle that needs a new lane.
 	for k in range(1, start):
 		check(list[k].time - list[k - 1].time >= 2.0, "time to move before obstacle %d" % k)
@@ -110,32 +110,32 @@ func test_the_music_starts_at_five_seconds_and_the_storm_plays_to_the_black() ->
 	check(not _run._music.playing, "silent in the dark")
 	_step_to(5.1)
 	check(_run._music.playing, "the song from 0:05")
-	_step_to(176.0)
+	_step_to(166.0)
 	check(_run._music.playing, "the storm goes on after the song is gone (no dead stop)")
-	_step_to(214.5)
+	_step_to(204.5)
 	check(_run._music.playing, "still playing as it goes black")
 	check(_run.MUSIC.get_length() >= RunPlan.BLACK - RunPlan.EUPHORIA_START - 0.1,
-			"the track runs from 0:05 to 3:35")
+			"the track runs from 0:05 to 3:25")
 
 
 func test_a_perfect_run_and_an_empty_run_reach_the_same_ending() -> void:
 	var perfect := _play(true)
 	var empty := _play(false)
-	check_eq(perfect.passed, 49, "the perfect run gets past every obstacle")
+	check_eq(perfect.passed, 41, "the perfect run gets past every obstacle")
 	check_eq(perfect.stumbled, 0, "and never stumbles")
 	var in_the_middle := 0
 	for obstacle in RunPlan.obstacles():
 		if 0 in obstacle.lanes:
 			in_the_middle += 1
 	check_eq(empty.stumbled, in_the_middle, "the empty run stumbles on everything in the middle lane")
-	check_eq(empty.passed, 49 - in_the_middle, "and only gets past what isn't")
-	check_eq(perfect.brightness_at_fade, 1.0, "the light is fully bright at 2:55 after a perfect run")
+	check_eq(empty.passed, 41 - in_the_middle, "and only gets past what isn't")
+	check_eq(perfect.brightness_at_fade, 1.0, "the light is fully bright at 2:45 after a perfect run")
 	check_eq(empty.brightness_at_fade, perfect.brightness_at_fade, "and exactly as bright after an empty one")
-	check_eq(empty.distance_at_fade, perfect.distance_at_fade, "the light is as far along at 2:55")
+	check_eq(empty.distance_at_fade, perfect.distance_at_fade, "the light is as far along at 2:45")
 	check_eq(empty.lane_when_held, perfect.lane_when_held, "and in the same lane once the hand holds it")
-	check_near(perfect.out_at, RunPlan.OUT, STEP, "the perfect run's light goes out at 3:25")
+	check_near(perfect.out_at, RunPlan.OUT, STEP, "the perfect run's light goes out at 3:15")
 	check_eq(empty.out_at, perfect.out_at, "the empty run's at the same moment")
-	check_near(perfect.finished_at, RunPlan.BLACK, STEP, "the perfect run finishes at 3:35")
+	check_near(perfect.finished_at, RunPlan.BLACK, STEP, "the perfect run finishes at 3:25")
 	check_eq(empty.finished_at, perfect.finished_at, "the empty run at the same moment")
 	check_eq(perfect.finishes, 1, "the perfect run finishes once")
 	check_eq(empty.finishes, 1, "the empty run finishes once")
@@ -216,8 +216,8 @@ func test_every_gap_can_be_bridged_at_the_edge_of_its_reach() -> void:
 		_step_to(obstacle.time - RunPlan.reach(obstacle.part) + 0.01)
 		check(_run.is_in_reach(i), "gap %d in reach as its window opens" % i)
 		check_eq(_run.tap_lane(_run.lane()), i, "gap %d bridged" % i)
-	check_eq(gaps, 14, "every gap")
-	_step_to(176.0)
+	check_eq(gaps, 12, "every gap")
+	_step_to(166.0)
 	for obstacle in _run.obstacles():
 		if obstacle.kind == RunPlan.Kind.GAP:
 			check_eq(obstacle.status, _run.Status.PASSED, "the light crossed every gap on the hand")
@@ -257,12 +257,12 @@ func test_the_light_starts_as_small_as_a_seed_and_grows() -> void:
 
 
 func test_after_the_song_taps_still_move_the_light_until_the_hand_holds_it() -> void:
-	_step_to(180.0)
+	_step_to(170.0)
 	check_eq(_run.part(), RunPlan.Part.FADE, "the obstacles have stopped")
 	_run.tap_lane(1)
 	check_eq(_run.lane(), 1, "a tap still does what it says")
 	_step_to(RunPlan.SLOW_START + 0.1)
-	check(_run.is_held(), "from 3:05 the hand has come for it")
+	check(_run.is_held(), "from 2:55 the hand has come for it")
 	check_eq(_run.lane(), 0, "the light drifts back to the middle")
 	var before := _snapshot()
 	for k in 5:
@@ -272,24 +272,24 @@ func test_after_the_song_taps_still_move_the_light_until_the_hand_holds_it() -> 
 
 
 func test_the_light_slows_settles_into_the_hand_and_goes_out_there() -> void:
-	_step_to(184.0)
+	_step_to(RunPlan.SLOW_START - 1.0)
 	check_eq(_run.light_brightness(), 1.0, "fully bright as it runs on in the rain")
 	var a: float = _run.light_distance()
-	_step_to(185.0)
-	check_near(_run.light_distance() - a, RunPlan.SPEED, 0.01, "still at full speed at 3:04")
+	_step_to(RunPlan.SLOW_START)
+	check_near(_run.light_distance() - a, RunPlan.SPEED, 0.01, "still at full speed at 2:54")
 	_step_to(RunPlan.STOPPED)
 	var stopped: float = _run.light_distance()
 	check(_run._hand.visible, "the hand is there as it stops")
 	var under: Vector3 = _run._light.global_position - _run._hand.global_position
 	check(under.length() < 0.6 and under.y > 0.0, "the light rests in the open hand, just above the palm")
-	_step_to(200.0)
-	check_eq(_run.light_distance(), stopped, "stopped by 3:15")
+	_step_to(RunPlan.STOPPED + 5.0)
+	check_eq(_run.light_distance(), stopped, "stopped by 3:05")
 	check(_run.light_brightness() < 1.0 and _run.light_brightness() > 0.0, "going out")
-	_step_to(205.5)
-	check_eq(_run.light_brightness(), 0.0, "out by 3:25")
+	_step_to(RunPlan.OUT + 0.5)
+	check_eq(_run.light_brightness(), 0.0, "out by 3:15")
 	check(not _run._light.visible, "nothing left of it")
 	check(_run._hand.visible, "the empty hand stays")
-	check(not _run.has_ended(), "until 3:35")
+	check(not _run.has_ended(), "until 3:25")
 
 
 func test_the_rain_never_stops_and_nothing_gets_lighter_after_the_panic() -> void:
@@ -439,7 +439,7 @@ func test_no_compositor_effects_or_volumetric_fog() -> void:
 
 
 func test_nothing_on_screen_has_words_a_button_or_a_count_all_run() -> void:
-	for t in [10.0, 100.0, 150.0, 180.0, 200.0, 214.0]:
+	for t in [10.0, 100.0, 150.0, 170.0, 190.0, 204.0]:
 		_step_to(t)
 		_assert_no_words_or_buttons(_chapter)
 
@@ -453,11 +453,11 @@ func test_the_path_is_three_lanes_and_gives_way_only_behind_the_light() -> void:
 			if tile != null and tile.get_meta("fall") != INF:
 				var falls_at := RunPlan.distance(tile.get_meta("fall"))
 				check(falls_at > (row + 1) * _run.TILE - 0.01, "row %d falls only once the light is past it" % row)
-	_step_to(176.0)
+	_step_to(166.0)
 	var row := _row_at(_run.light_distance() + 10.0)
 	check_eq(_tiles_in(row), 3, "whole once the obstacles stop")
 	for tile in _run._rows[row]:
-		check_eq(tile.get_meta("fall"), INF, "nothing falls after 2:55")
+		check_eq(tile.get_meta("fall"), INF, "nothing falls after 2:45")
 
 
 # --- Helpers.
@@ -594,3 +594,53 @@ func test_everything_is_drawn_once_behind_the_black_before_the_light() -> void:
 	for mesh in stones:
 		check(mesh == _run._stone_mesh, "every stone shares one shape")
 
+
+
+# Call 18: fireflies between the trees in the euphoria, fewer in the storm;
+# when the path empties the last ones go out one by one, in a fixed order
+# that looks random, and some are still glowing when the light goes out.
+func test_the_fireflies_go_out_at_random_once_the_path_is_empty() -> void:
+	_step_to(40.0)
+	check(_slot_fireflies_visible() >= 20, "fireflies between the trees in the euphoria (%d)" % _slot_fireflies_visible())
+	var euphoria := _slot_fireflies_visible()
+	_step_to(RunPlan.PANIC_START + 12.0)
+	check(_slot_fireflies_visible() < euphoria / 3, "few left in the storm")
+	_step_to(RunPlan.FADE_START - 0.1)
+	var all := RunPlan.LAST_FIREFLIES.size()
+	check_eq(_run.fireflies_glowing(), all, "every last one glowing until the path is empty")
+	_step_to(RunPlan.FADE_START + 0.5)
+	check_eq(_slot_fireflies_visible(), 0, "only the last ones are left")
+	var gaps: Array[float] = []
+	var last := RunPlan.FADE_START
+	var never := 0
+	for firefly: Array in RunPlan.LAST_FIREFLIES:
+		if firefly[3] < 0.0:
+			never += 1
+			continue
+		check(firefly[3] >= RunPlan.FADE_START, "none goes out before the path is empty")
+		check(firefly[3] + RunPlan.FIREFLY_OUT_TIME <= RunPlan.OUT, "each goes out before the light is out")
+		gaps.append(firefly[3] - last)
+		last = firefly[3]
+	check(never >= 2, "some never go out")
+	gaps.sort()
+	check(gaps[-1] > 3.0 * gaps[0], "no rhythm: uneven gaps between them")
+	_step_to(RunPlan.STOPPED + 5.0)
+	var glowing: int = _run.fireflies_glowing()
+	check(glowing >= never and glowing < all, "some gone, some still glowing as the light goes out")
+	var near := false
+	for firefly: Node3D in _run._last_fireflies:
+		if firefly.visible and firefly.global_position.distance_to(_run._light.global_position) < 8.0:
+			near = true
+	check(near, "one still glowing near the hand as the light goes out")
+	_step_to(RunPlan.OUT + 1.0)
+	check_eq(_run.fireflies_glowing(), never, "the ones that never go out outlast the light")
+
+
+func _slot_fireflies_visible() -> int:
+	var n := 0
+	for slot in _run._slots:
+		var nodes: Array = _run._slots[slot]
+		for k in range(3, nodes.size()):
+			if nodes[k].visible:
+				n += 1
+	return n

@@ -6,7 +6,7 @@
 // hands back with the chapter finished.
 // Headless Chromium has no speaker and draws phone sizes slowly, so the
 // run's feel and sound are Dan's to check on his phone; the whole run
-// (3:35) is played by the Godot tests instead (game/tests/test_protector.gd).
+// (3:25) is played by the Godot tests instead (game/tests/test_protector.gd).
 import { test, expect, MENU, PROTECTOR } from "./game";
 
 const openRun = async (game: any, query = "") => {
@@ -110,8 +110,8 @@ test("the panic: dark and raining", async ({ game }) => {
 
 test("after the song: the storm plays on and it is still raining", async ({ game }) => {
   test.setTimeout(240_000);
-  await openRun(game, "&protector_from=178");
-  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(178.5);
+  await openRun(game, "&protector_from=168");
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(168.5);
   expect((await run(game)).part).toBe("FADE");
   expect((await run(game)).music, "the storm plays on").toBe(true);
   expect((await run(game)).raining, "and it is still raining").toBe(true);
@@ -121,10 +121,10 @@ test("after the song: the storm plays on and it is still raining", async ({ game
 test("the light goes out, then black, then the chapter is finished and saved", async ({ game }) => {
   test.setTimeout(300_000);
   // After the Partner, so the Protector is the next chapter and can be saved.
-  // From 3:23, near the end of the light going out (3:15 to 3:25), so the
+  // From 3:13, near the end of the light going out (3:05 to 3:15), so the
   // slow phone sizes reach the black in time.
-  await openRun(game, "&finish=partner&protector_from=203");
-  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(203.2);
+  await openRun(game, "&finish=partner&protector_from=193");
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(193.2);
   expect((await run(game)).held, "the light is in the father's hand").toBe(true);
   await game.screenshot("protector-going-out");
   await expect

@@ -14,13 +14,13 @@ extends Node3D
 ## goes out there. A stumble dims the light for a moment and changes nothing
 ## else. No words, no HUD, no retry, no skip, no shake, no flash.
 ##
-## The run only reports `ended` (3:35, black). The chapter (protector.gd)
+## The run only reports `ended` (3:25, black). The chapter (protector.gd)
 ## decides what follows. It never touches the House or saved state.
 ##
 ## The run's clock moves in advance(), from _process; tests turn
 ## auto_advance off and move it themselves.
 
-## 3:35: the screen is black and the run is over.
+## 3:25: the screen is black and the run is over.
 signal ended
 
 const RunPlan := preload("res://scenes/chapters/protector/run_plan.gd")
@@ -46,7 +46,7 @@ const GRAVITY := 14.0
 const RIPPLE_TIME := 0.5
 const SLOT := TILE * 2.0  # Trees and the forest floor come in slots this long.
 const DRIFT_HOME := 2.0  # Seconds the light takes back to the middle as it slows.
-const CRADLE_START := 187.0  # The hand starts to come in under the slowing light.
+const CRADLE_START := 177.0  # The hand starts to come in under the slowing light.
 const WARM_END := 3.0  # Everything is drawn once, unseen, in the dark before this.
 
 # The look of each part: sky (and fog), tiles, sun energy, ambient energy,
@@ -119,6 +119,11 @@ var _palm_mesh: BoxMesh
 var _finger_mesh: CapsuleMesh
 var _thumb_mesh: CapsuleMesh
 var _warm: Node3D  # One of each thing drawn in the dark, then freed (_build_warm).
+var _firefly_mesh: SphereMesh
+var _firefly_halo_mesh: SphereMesh
+var _firefly_material: StandardMaterial3D  # Shared by the fireflies between the trees.
+var _firefly_halo: StandardMaterial3D
+var _last_fireflies: Array[Node3D] = []  # The ones left when the path empties (call 18).
 var _music: AudioStreamPlayer
 var _hand_player: AudioStreamPlayer
 var _stumble_player: AudioStreamPlayer
@@ -234,7 +239,7 @@ func lane() -> int:
 	return _lane
 
 
-## True from 3:05: the hand has come for the light, and taps only ripple.
+## True from 2:55: the hand has come for the light, and taps only ripple.
 func is_held() -> bool:
 	return _t >= RunPlan.SLOW_START
 
@@ -275,7 +280,7 @@ func tap(at: Vector2) -> int:
 ## A tap that sends the light to a lane. The hand moves the light there, and lays itself across a
 ## gap in reach; returns that gap's index, or -1. A tap that changes nothing
 ## (its own lane, no gap in reach) makes a ripple where it landed and nothing
-## else: no penalty, no sound of failure. From 3:05 the hand is holding the
+## else: no penalty, no sound of failure. From 2:55 the hand is holding the
 ## light, and every tap only ripples.
 func tap_lane(lane_tapped: int, at := Vector2.ZERO) -> int:
 	if _paused:
@@ -332,6 +337,7 @@ func probe_state() -> Dictionary:
 		"size": RunPlan.light_size(_t),
 		"held": is_held() and _hand.visible,
 		"raining": is_raining() and _rain.emitting,
+		"fireflies": fireflies_glowing(),
 		"music": is_music_playing(),
 		"ended": _ended,
 	}
@@ -382,6 +388,7 @@ func _update() -> void:
 	_update_obstacles()
 	_update_rows()
 	_update_trees()
+	_update_fireflies()
 	_update_light()
 	_update_hand()
 	_update_camera()
@@ -403,7 +410,7 @@ func _update() -> void:
 
 func _update_sound() -> void:
 	# The song and the storm are one track from 0:05 to the black. The song
-	# drowns under the storm by 2:55; the rain never stops.
+	# drowns under the storm by 2:45; the rain never stops.
 	if not _music_started and _t >= RunPlan.EUPHORIA_START and _t < RunPlan.BLACK:
 		_music_started = true
 		_music.play(_t - RunPlan.EUPHORIA_START)
@@ -531,7 +538,7 @@ func _hop() -> float:
 
 
 # The hand that moves the light: in from behind and below on the side it
-# pushes from, across with the light, then back out of sight. From 3:05 it
+# pushes from, across with the light, then back out of sight. From 2:55 it
 # comes in under the light, palm up, and holds it as it stops and goes out;
 # then it stays, empty, to the black.
 func _update_hand() -> void:
@@ -792,7 +799,89 @@ func _build_slot(slot: int) -> void:
 		ground.add_child(slab)
 	add_child(ground)
 	nodes.append(ground)
+	# A firefly on each side, drifting between the trunks. Each has its own
+	# threshold, so as the storm comes they go one by one (firefly_density).
+	for side: int in [-1, 1]:
+		var h := _hash01(slot, side * 11)
+		var firefly := _make_firefly(_firefly_material, _firefly_halo)
+		var along := (_hash01(slot, side * 13) - 0.5) * SLOT
+		var at: float = s + along
+		firefly.set_meta("base", _path_at(at) + _path_basis(at).x * side * (2.4 + 3.0 * h)
+				+ Vector3.UP * (0.4 + 2.4 * _hash01(slot, side * 17)))
+		firefly.set_meta("threshold", h)
+		firefly.set_meta("phase", h * TAU * 3.0)
+		add_child(firefly)
+		nodes.append(firefly)
 	_slots[slot] = nodes
+
+
+# --- The fireflies.
+
+# A firefly: a small warm point and a faint glow round it, both unshaded and
+# not dimmed by the fog, so they show through the storm. They light nothing:
+# the world never gets lighter from them.
+func _make_firefly(core: StandardMaterial3D, halo: StandardMaterial3D) -> Node3D:
+	var firefly := Node3D.new()
+	for part: Array in [[_firefly_mesh, core], [_firefly_halo_mesh, halo]]:
+		var mesh := MeshInstance3D.new()
+		mesh.mesh = part[0]
+		mesh.material_override = part[1]
+		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		firefly.add_child(mesh)
+	return firefly
+
+
+func _firefly_material_with(colour: Color) -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.disable_fog = true
+	mat.albedo_color = colour
+	return mat
+
+
+func _build_last_fireflies() -> void:
+	var rest := RunPlan.distance(RunPlan.STOPPED)
+	for plan: Array in RunPlan.LAST_FIREFLIES:
+		var at: float = rest + plan[0]
+		var firefly := _make_firefly(_firefly_material.duplicate(), _firefly_halo.duplicate())
+		firefly.position = _path_at(at) + _path_basis(at).x * plan[1] + Vector3.UP * plan[2]
+		firefly.set_meta("plan", plan)
+		firefly.visible = false
+		add_child(firefly)
+		_last_fireflies.append(firefly)
+
+
+func _update_fireflies() -> void:
+	var density := RunPlan.firefly_density(_t)
+	for slot in _slots.keys():
+		var nodes: Array = _slots[slot]
+		for k in range(3, nodes.size()):
+			var firefly: Node3D = nodes[k]
+			firefly.visible = firefly.get_meta("threshold") < density
+			if firefly.visible:
+				var phase: float = firefly.get_meta("phase")
+				firefly.position = firefly.get_meta("base") + Vector3(0.3 * sin(_t * 0.7 + phase),
+						0.18 * sin(_t * 1.1 + phase * 1.7), 0.3 * cos(_t * 0.6 + phase))
+	# The last ones: low by the trail from the panic on, each going out at its
+	# own moment once the path is empty, and some never.
+	for k in _last_fireflies.size():
+		var firefly := _last_fireflies[k]
+		var glow := RunPlan.firefly_glow(firefly.get_meta("plan"), _t)
+		firefly.visible = _t >= RunPlan.PANIC_START and glow > 0.0
+		if firefly.visible:
+			var shimmer := 0.8 + 0.2 * sin(_t * (1.1 + 0.37 * k) + k * 2.1)
+			(firefly.get_child(0) as MeshInstance3D).material_override.albedo_color.a = glow * shimmer
+			(firefly.get_child(1) as MeshInstance3D).material_override.albedo_color.a = 0.22 * glow * shimmer
+
+
+## How many of the last fireflies are glowing now (for tests).
+func fireflies_glowing() -> int:
+	var n := 0
+	for firefly in _last_fireflies:
+		if firefly.visible and RunPlan.firefly_glow(firefly.get_meta("plan"), _t) > 0.5:
+			n += 1
+	return n
 
 
 # A fixed number from 0 to 1 for a slot and side: scenery that looks
@@ -982,6 +1071,18 @@ func _build_world() -> void:
 	_thumb_mesh = CapsuleMesh.new()
 	_thumb_mesh.radius = 0.11
 	_thumb_mesh.height = 0.6
+	_firefly_mesh = SphereMesh.new()
+	_firefly_mesh.radius = 0.06
+	_firefly_mesh.height = 0.12
+	_firefly_mesh.radial_segments = 8
+	_firefly_mesh.rings = 4
+	_firefly_halo_mesh = SphereMesh.new()
+	_firefly_halo_mesh.radius = 0.24
+	_firefly_halo_mesh.height = 0.48
+	_firefly_halo_mesh.radial_segments = 8
+	_firefly_halo_mesh.rings = 4
+	_firefly_material = _firefly_material_with(Color("#FFC46A"))
+	_firefly_halo = _firefly_material_with(Color("#FFB45C", 0.22))
 
 	_light_material = StandardMaterial3D.new()
 	_light_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -1031,6 +1132,7 @@ func _build_world() -> void:
 	_leaves.mesh = leaf
 	_leaves.emitting = false
 	_camera.add_child(_leaves)
+	_build_last_fireflies()
 	_build_warm()
 
 
@@ -1068,6 +1170,7 @@ func _build_warm() -> void:
 	rim.material_override = line
 	_warm.add_child(rim)
 	_warm.add_child(_make_hand())
+	_warm.add_child(_make_firefly(unseen.call(_firefly_material), unseen.call(_firefly_halo)))
 	# The song too, silent, so starting it at 0:05 doesn't catch.
 	var song := AudioStreamPlayer.new()
 	song.stream = MUSIC
