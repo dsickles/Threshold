@@ -19,6 +19,9 @@ const openRun = async (game: any, query = "") => {
 const run = (game: any) => game.screen(PROTECTOR);
 
 test("opens with no words or buttons, and the light runs into the evening", async ({ game }) => {
+  // The 5 s of dark and the fade-up draw slowly at phone sizes, more so with
+  // the fireflies; the waits below are already up to 120 s on their own.
+  test.setTimeout(240_000);
   await openRun(game);
   expect((await game.state()).buttons, "nothing to press: no skip, no menu").toEqual([]);
   // The 5 s of dark first. Phone sizes draw a few frames a second here, and
