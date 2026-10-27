@@ -328,6 +328,20 @@ func test_a_quick_tap_heard_after_a_slow_frame_is_still_a_tap() -> void:
 	check(not _run.is_holding(), "a lift at the same moment as the press is not a hold")
 	_run.release(Vector2(size.x - 4, 10))
 	check_eq(_run.lane(), 1, "it is a tap: one lane right")
+	# The lift reaches the page only after a slow frame took the press for a
+	# hold: the browser's times still say tap (CI's phone runs, 2026-10-27).
+	var lifted := [500.0]  # The last lift the page has heard of.
+	_run.down_clock = func() -> float: return 600.0
+	_run.up_clock = func() -> float: return lifted[0] if lifted[0] >= 600.0 else now[0]
+	now[0] = 600.0
+	_run.press(Vector2(4, 10))
+	now[0] = 603.0
+	_run.advance(STEP)
+	check(_run.is_holding(), "a slow frame before the lift arrives takes it for a hold")
+	lifted[0] = 600.0001
+	_run.release(Vector2(4, 10))
+	check(not _run.is_holding(), "the hand comes off")
+	check_eq(_run.lane(), 0, "and the tap moves the lane: one lane left")
 
 
 func test_at_the_fade_falling_tiles_carry_on_and_no_row_is_rebuilt() -> void:

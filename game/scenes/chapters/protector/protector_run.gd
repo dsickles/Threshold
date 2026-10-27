@@ -410,16 +410,21 @@ func press(at: Vector2) -> void:
 func release(at: Vector2) -> void:
 	if _press_at < 0.0:
 		return
-	# Held long enough by the real clock is a hold, even if no frame has
-	# come since to say so: a slow frame must not turn a hold into a tap.
+	# How long the finger was really down decides, whatever the frames saw.
+	# Held long enough is a hold, even if no frame has come since to say so:
+	# a slow frame must not turn a hold into a tap. And a quick tap is a tap
+	# even if a slow frame took it for a hold: the browser can hand the page
+	# the lift only after that frame (CI's phone runs, 2026-10-27), so the
+	# hand comes off and the lane moves.
 	_last_up = _up_time()
-	var was_hold: bool = _holding or _last_up - _press_real >= HOLD_START
+	var was_hold: bool = _last_up - _press_real >= HOLD_START
 	_last_release = {"down": _press_real, "up": _last_up, "hold": was_hold, "now": real_clock.call()}
 	_press_at = -1.0
+	var was_holding := _holding
 	_holding = false
-	if was_hold:
+	if was_hold or was_holding:
 		_let_go()
-	else:
+	if not was_hold:
 		tap(at)
 
 
