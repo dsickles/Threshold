@@ -297,6 +297,16 @@ func test_a_quick_tap_heard_after_a_slow_frame_is_still_a_tap() -> void:
 	now[0] = 200.9
 	_run.release(Vector2(size.x - 4, 10))
 	check_eq(_run.lane(), -1, "a 0.25 s hold heard late is still a hold")
+	# A press the browser didn't note keeps the last press's time: not a hold
+	# straight away (Hopper, 2026-10-27).
+	now[0] = 300.0
+	_run.up_clock = func() -> float: return now[0]
+	_run.press(Vector2(size.x - 4, 10))
+	_run.advance(STEP)
+	check(not _run.is_holding(), "a stale browser time doesn't make a fresh press a hold")
+	now[0] = 300.04
+	_run.release(Vector2(size.x - 4, 10))
+	check_eq(_run.lane(), 0, "it is a tap: one lane right")
 
 
 func test_at_the_fade_falling_tiles_carry_on_and_no_row_is_rebuilt() -> void:

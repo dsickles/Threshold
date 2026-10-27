@@ -101,6 +101,7 @@ var _lane_time := RunPlan.LANE_MOVE
 var _push_dir := 0.0  # Which way the hand last pushed: -1 left, 1 right.
 var _press_at := -1.0  # When the finger went down; -1 when none is down.
 var _press_real := 0.0  # The same moment by real_clock.
+var _last_up := -INF  # When the last press lifted, by up_clock.
 var _press_pos := Vector2.ZERO
 var _press_index := 0  # Which finger: only the first one down counts.
 var _holding := false  # The press has lasted HOLD_START: a hold.
@@ -394,6 +395,10 @@ func press(at: Vector2) -> void:
 		return
 	_press_at = _t
 	_press_real = down_clock.call()
+	# A browser time from before the last lift belongs to an earlier press
+	# (one the browser didn't note, such as a second finger): use now.
+	if _press_real <= _last_up:
+		_press_real = real_clock.call()
 	_press_pos = at
 
 
@@ -404,7 +409,8 @@ func release(at: Vector2) -> void:
 		return
 	# Held long enough by the real clock is a hold, even if no frame has
 	# come since to say so: a slow frame must not turn a hold into a tap.
-	var was_hold: bool = _holding or up_clock.call() - _press_real >= HOLD_START
+	_last_up = up_clock.call()
+	var was_hold: bool = _holding or _last_up - _press_real >= HOLD_START
 	_press_at = -1.0
 	_holding = false
 	if was_hold:
@@ -1365,10 +1371,11 @@ func _build_warm() -> void:
 	stone.material_override = _stone_material
 	_warm.add_child(stone)
 	_add_shell(outline, stone, line)
-	var branch := MeshInstance3D.new()
-	branch.mesh = _branch_mesh(2)
-	branch.material_override = _branch_material
-	_warm.add_child(branch)
+	for lanes in [1, 2]:  # The obstacles' branches, and the fallen tree's.
+		var branch := MeshInstance3D.new()
+		branch.mesh = _branch_mesh(lanes)
+		branch.material_override = _branch_material
+		_warm.add_child(branch)
 	var rim := MeshInstance3D.new()
 	rim.mesh = _bar_mesh
 	rim.material_override = line
