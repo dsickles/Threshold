@@ -185,25 +185,87 @@ func test_a_tap_that_changes_nothing_changes_nothing() -> void:
 	var first: Dictionary = _run.obstacles()[0]
 	_step_to(first.time - 2.0)
 	var before := _snapshot()
-	check_eq(_run.tap_lane(0, Vector2(640, 360)), -1, "no gap bridged")
+	check_eq(_run.tap_lane(0, Vector2(640, 360)), false, "nothing moved")
 	check_eq(_snapshot(), before, "nothing changed: it was already in that lane")
 	check_eq(_run.ripple_count(), 1, "a small ripple where the finger landed")
 
 
-func test_a_tap_with_a_gap_in_reach_bridges_exactly_that_gap() -> void:
+func test_a_hold_with_a_gap_in_reach_lays_the_hand_across_exactly_that_gap() -> void:
 	var i := _first_gap_from(0)
 	var gap: Dictionary = _run.obstacles()[i]
-	_step_to(gap.time - 0.5)
+	_step_to(gap.time - 0.6)
 	check(_run.is_in_reach(i), "the gap is in reach")
-	check_eq(_run.tap_lane(1), i, "the tap lays the hand across it")
-	check_eq(_run.lane(), 1, "and moves the light to the lane tapped")
-	check(not _run.is_in_reach(i), "it needs no second tap")
+	var lane: int = _run.lane()
+	_run.press(Vector2(900, 360))
+	_step_to(gap.time - 0.5)
+	check(not gap.bridged, "not yet: a press this short could still be a tap")
+	_step_to(gap.time - 0.35)
+	check(_run.is_holding(), "held: a hold")
+	check(gap.bridged, "the hold lays the hand across it")
+	check_eq(_run.lane(), lane, "and never moves the light a lane, on either side of the screen")
 	var next := _first_gap_from(i + 1)
 	check(not _run.obstacles()[next].bridged, "the next gap is still open")
-	_step_to(gap.time - 0.3)
 	check(gap.node.get_node("Hand").visible, "the hand is seen across the gap")
 	_step_to(gap.time + 0.1)
+	_run.release(Vector2(900, 360))
 	check_eq(gap.status, _run.Status.PASSED, "the light runs over the hand, no stumble")
+	check_eq(_run.lane(), lane, "letting go of a hold moves nothing")
+
+
+func test_a_tap_with_a_gap_in_reach_only_moves_the_lane() -> void:
+	var i := _first_gap_from(0)
+	var gap: Dictionary = _run.obstacles()[i]
+	_step_to(gap.time - 0.6)
+	var size: Vector2 = _run.get_viewport().get_visible_rect().size
+	tap_at(Vector2(size.x - 4, size.y / 2.0))
+	check_eq(_run.lane(), 1, "the tap moves the light")
+	check(not gap.bridged, "and doesn't cross the gap: that takes a hold")
+	_step_to(gap.time + 0.1)
+	check_eq(gap.status, _run.Status.STUMBLED, "so the light stumbles over it")
+
+
+func test_a_quick_press_moves_the_lane_when_the_finger_lifts() -> void:
+	_step_to(8.0)
+	var size: Vector2 = _run.get_viewport().get_visible_rect().size
+	_run.press(Vector2(size.x - 4, 10))
+	check_eq(_run.lane(), 0, "nothing moves while the finger is down")
+	_step_to(8.0 + _run.HOLD_START - STEP)
+	_run.release(Vector2(size.x - 4, 10))
+	check_eq(_run.lane(), 1, "lifted in time: a tap, one lane right")
+	_run.press(Vector2(4, 10))
+	_step_to(9.0)
+	_run.release(Vector2(4, 10))
+	check_eq(_run.lane(), 1, "held: no lane move")
+	check_eq(_run.ripple_count(), 1, "a hold with nothing to cross only ripples")
+
+
+func test_letting_go_before_the_gap_lifts_the_hand_and_the_light_stumbles() -> void:
+	var i := _first_gap_from(0)
+	var gap: Dictionary = _run.obstacles()[i]
+	_step_to(gap.time - 0.8)
+	_run.press(Vector2(640, 360))
+	_step_to(gap.time - 0.4)
+	check(gap.bridged, "the hand is across it")
+	_run.release(Vector2(640, 360))
+	check(not gap.bridged, "let go too soon: the hand lifts")
+	check(gap.node.get_node("Hand").visible, "seen lifting away")
+	_step_to(gap.time + 0.1)
+	check_eq(gap.status, _run.Status.STUMBLED, "the light stumbles over the open gap")
+
+
+func test_a_hold_from_before_the_gap_is_in_reach_lays_the_hand_when_it_is() -> void:
+	var i := _first_gap_from(0)
+	var gap: Dictionary = _run.obstacles()[i]
+	var opens: float = gap.time - RunPlan.reach(gap.part)
+	_step_to(opens - 1.0)
+	_run.press(Vector2(640, 360))
+	_step_to(opens - 0.2)
+	check(_run.is_holding() and not gap.bridged, "held, but nothing in reach yet")
+	_step_to(opens + 0.05)
+	check(gap.bridged, "the hand goes down as soon as the gap is in reach")
+	_step_to(gap.time + 0.1)
+	_run.release(Vector2(640, 360))
+	check_eq(gap.status, _run.Status.PASSED, "and the light crosses")
 
 
 func test_every_gap_can_be_bridged_at_the_edge_of_its_reach() -> void:
@@ -213,9 +275,14 @@ func test_every_gap_can_be_bridged_at_the_edge_of_its_reach() -> void:
 		if obstacle.kind != RunPlan.Kind.GAP:
 			continue
 		gaps += 1
-		_step_to(obstacle.time - RunPlan.reach(obstacle.part) + 0.01)
-		check(_run.is_in_reach(i), "gap %d in reach as its window opens" % i)
-		check_eq(_run.tap_lane(_run.lane()), i, "gap %d bridged" % i)
+		# A hold that starts as the window opens: down at the edge, held.
+		var opens: float = obstacle.time - RunPlan.reach(obstacle.part)
+		_step_to(opens - _run.HOLD_START + 0.01)
+		_run.press(Vector2(640, 360))
+		_step_to(opens + 0.11)
+		check(obstacle.bridged, "gap %d bridged by a hold that starts as it comes into reach" % i)
+		_step_to(obstacle.time + 0.05)
+		_run.release(Vector2(640, 360))
 	check_eq(gaps, 12, "every gap")
 	_step_to(166.0)
 	for obstacle in _run.obstacles():
@@ -266,7 +333,7 @@ func test_after_the_song_taps_still_move_the_light_until_the_hand_holds_it() -> 
 	check_eq(_run.lane(), 0, "the light drifts back to the middle")
 	var before := _snapshot()
 	for k in 5:
-		check_eq(_run.tap_lane(-1, Vector2(100, 100)), -1, "nothing to bridge")
+		check_eq(_run.tap_lane(-1, Vector2(100, 100)), false, "nothing moves")
 	check_eq(_snapshot(), before, "the taps change nothing")
 	check_eq(_run.ripple_count(), 5, "each tap only ripples")
 
@@ -344,8 +411,9 @@ func test_hiding_the_tab_pauses_the_run_and_saves_nothing() -> void:
 	check_near(_run.time(), 30.0, STEP, "the clock stopped")
 	check(not state.has_save(), "nothing saved")
 	var lane: int = _run.lane()
-	check_eq(_run.tap_lane(lane + 1, Vector2(640, 360)), -1, "the tap that resumes bridges nothing")
-	check_eq(_run.lane(), lane, "and moves nothing")
+	_run.press(Vector2(1200, 360))
+	_run.release(Vector2(1200, 360))
+	check_eq(_run.lane(), lane, "the tap that resumes moves nothing")
 	check_eq(_run.ripple_count(), 0, "and makes no ripple")
 	check(not _run.is_paused(), "running again after a tap")
 	_run.advance(1.0)
@@ -468,8 +536,8 @@ func _step_to(t: float) -> void:
 
 
 # Plays the whole run on a fresh chapter: a perfect player, who moves the
-# light to a lane free of whatever comes in the next second and bridges each
-# gap as soon as it is in reach, or one who never taps.
+# light to a lane free of whatever comes in the next second and holds a
+# finger down across each gap, or one who never taps.
 func _play(perfect: bool) -> Dictionary:
 	var chapter: Node = add_scene(PROTECTOR)
 	var run: Node = chapter.run()
@@ -481,12 +549,32 @@ func _play(perfect: bool) -> Dictionary:
 	for k in ceili((RunPlan.BLACK + 2.0) / STEP):
 		run.advance(STEP)
 		if perfect:
+			# One finger, like a player: it lifts to tap a lane, and holds
+			# from just before a gap until the light is on the hand.
 			var safe := _safe_lane(run)
-			var gap := false
-			for i in run.obstacles().size():
-				gap = gap or run.is_in_reach(i)
-			if safe != run.lane() or gap:
+			var gap_soon := false
+			for obstacle in run.obstacles():
+				if obstacle.kind == RunPlan.Kind.GAP and obstacle.status == run.Status.PENDING \
+						and obstacle.time - run.time() < 1.2:
+					gap_soon = true
+			var down: bool = run._press_at >= 0.0
+			# A finger on a gap the light hasn't reached stays down; the lane
+			# can wait until the light is across.
+			var crossing := false
+			for obstacle in run.obstacles():
+				if obstacle.kind == RunPlan.Kind.GAP and obstacle.status == run.Status.PENDING \
+						and obstacle.bridged:
+					crossing = true
+			if down and crossing:
+				pass
+			elif safe != run.lane():
+				if down:
+					run.release(Vector2(640, 360))
 				run.tap_lane(safe)
+			elif gap_soon and not down:
+				run.press(Vector2(640, 360))
+			elif not gap_soon and down:
+				run.release(Vector2(640, 360))
 		if not out.has("brightness_at_fade") and run.time() >= RunPlan.FADE_START:
 			out.brightness_at_fade = run.light_brightness()
 			out.distance_at_fade = run.light_distance()

@@ -48,6 +48,7 @@ const SLOT := TILE * 2.0  # Trees and the forest floor come in slots this long.
 const DRIFT_HOME := 2.0  # Seconds the light takes back to the middle as it slows.
 const CRADLE_START := 177.0  # The hand starts to come in under the slowing light.
 const WARM_END := 3.0  # Everything is drawn once, unseen, in the dark before this.
+const HOLD_START := 0.2  # A press this long is a hold, not a tap (call 19). Choice, to tune.
 
 # The look of each part: sky (and fog), tiles, sun energy, ambient energy,
 # fog density, sun colour, at run times between which it eases. Low gold sun
@@ -83,6 +84,10 @@ var _lane_from_x := 0.0  # Where the light was when it set off for it.
 var _lane_at := -INF  # When it set off.
 var _lane_time := RunPlan.LANE_MOVE
 var _push_dir := 0.0  # Which way the hand last pushed: -1 left, 1 right.
+var _press_at := -1.0  # When the finger went down; -1 when none is down.
+var _press_pos := Vector2.ZERO
+var _press_index := 0  # Which finger: only the first one down counts.
+var _holding := false  # The press has lasted HOLD_START: a hold.
 var _rows := {}  # Row number -> Array of 3 tiles.
 var _row_falls := {}  # Row number -> when its first and last tiles fall.
 var _slots := {}  # Slot number -> [left tree, right tree, ground].
@@ -139,6 +144,7 @@ func _ready() -> void:
 		obstacle.status = Status.PENDING
 		obstacle.at = 0.0  # When it passed, was bridged or was stumbled.
 		obstacle.bridged = false
+		obstacle.lifted_at = -1.0  # When a hold ended before the light reached it.
 		obstacle.distance = RunPlan.distance(plan.time) + CONTACT
 		obstacle.node = null
 		_obstacles.append(obstacle)
@@ -175,6 +181,10 @@ func advance(delta: float) -> void:
 	if _paused or _ended:
 		return
 	_t += delta
+	if _press_at >= 0.0 and not _holding and _t - _press_at >= HOLD_START:
+		_start_hold()
+	if _holding:
+		_lay_hand_across()
 	_update()
 
 
@@ -207,6 +217,11 @@ func pause() -> void:
 		return
 	_paused = true
 	_music.stream_paused = true
+	# The finger is gone by the time anyone comes back.
+	if _holding:
+		_let_go()
+	_press_at = -1.0
+	_holding = false
 
 
 func is_paused() -> bool:
@@ -268,48 +283,107 @@ func count(status: Status) -> int:
 	return n
 
 
+## A finger (or the mouse button) goes down at a point on the screen.
+## Nothing moves yet: if it lifts within HOLD_START it is a tap, and if it
+## stays down it is a hold (Dan, 2026-10-27, call 19). The press that brings
+## a paused run back does nothing else.
+func press(at: Vector2) -> void:
+	if _paused:
+		resume()
+		return
+	if _ended or _press_at >= 0.0:
+		return
+	_press_at = _t
+	_press_pos = at
+
+
+## The finger lifts. A quick press was a tap, and moves the light a lane
+## now; the end of a hold lifts the hand from a gap the light hasn't reached.
+func release(at: Vector2) -> void:
+	if _press_at < 0.0:
+		return
+	var was_hold := _holding
+	_press_at = -1.0
+	_holding = false
+	if was_hold:
+		_let_go()
+	else:
+		tap(at)
+
+
+func is_holding() -> bool:
+	return _holding
+
+
 ## A tap at a point on the screen: the left half moves the light one lane
 ## left, the right half one lane right (Dan, 2026-10-25, call 17). From an
 ## edge lane, a tap toward that edge leaves it where it is.
-func tap(at: Vector2) -> int:
+func tap(at: Vector2) -> bool:
 	var width := get_viewport().get_visible_rect().size.x
 	var step := -1 if at.x < width / 2.0 else 1
 	return tap_lane(clampi(_lane + step, -1, 1), at)
 
 
-## A tap that sends the light to a lane. The hand moves the light there, and lays itself across a
-## gap in reach; returns that gap's index, or -1. A tap that changes nothing
-## (its own lane, no gap in reach) makes a ripple where it landed and nothing
-## else: no penalty, no sound of failure. From 2:55 the hand is holding the
-## light, and every tap only ripples.
-func tap_lane(lane_tapped: int, at := Vector2.ZERO) -> int:
+## A tap that sends the light to a lane: the hand moves the light there.
+## Returns whether it moved. A tap that changes nothing (its own lane) makes
+## a ripple where it landed and nothing else: no penalty, no sound of
+## failure. A tap never bridges a gap; a hold does (call 19). From 2:55 the
+## hand is holding the light, and every tap only ripples.
+func tap_lane(lane_tapped: int, at := Vector2.ZERO) -> bool:
 	if _paused:
 		resume()  # The tap that brings the run back does nothing else.
-		return -1
+		return false
 	if _ended:
-		return -1
-	if is_held():
-		_ripples.append(Vector3(at.x, at.y, 0.0))
-		return -1
-	var bridged := -1
-	for i in _obstacles.size():
-		if is_in_reach(i):
-			_obstacles[i].bridged = true
-			_obstacles[i].at = _t
-			bridged = i
-			break
-	var moved := lane_tapped != _lane
+		return false
+	var moved := lane_tapped != _lane and not is_held()
 	if moved:
 		_push_dir = signf(lane_tapped - _lane_x())
 		_lane_from_x = _lane_x()
 		_lane = lane_tapped
 		_lane_at = _t
 		_lane_time = RunPlan.LANE_MOVE
-	if moved or bridged >= 0:
 		_hand_player.play()
 	else:
 		_ripples.append(Vector3(at.x, at.y, 0.0))
+	return moved
+
+
+# The press has lasted long enough to be a hold. With nothing to lay the
+# hand across now, it ripples; a gap that comes into reach while the finger
+# stays down still gets the hand.
+func _start_hold() -> void:
+	_holding = true
+	var any := false
+	for i in _obstacles.size():
+		if is_in_reach(i):
+			any = true
+	if not any or is_held():
+		_ripples.append(Vector3(_press_pos.x, _press_pos.y, 0.0))
+
+
+# While the finger is down, the hand lies across every gap in reach.
+func _lay_hand_across() -> int:
+	var bridged := -1
+	if is_held():
+		return bridged
+	for i in _obstacles.size():
+		if is_in_reach(i):
+			_obstacles[i].bridged = true
+			_obstacles[i].at = _t
+			_obstacles[i].lifted_at = -1.0
+			_hand_player.play()
+			bridged = i
 	return bridged
+
+
+# The finger lifts: the hand comes up off any gap the light hasn't reached,
+# so that gap is open again when it arrives. Once the light is on the hand,
+# letting go changes nothing.
+func _let_go() -> void:
+	for obstacle in _obstacles:
+		if obstacle.kind == RunPlan.Kind.GAP and obstacle.bridged and obstacle.status == Status.PENDING:
+			obstacle.bridged = false
+			obstacle.lifted_at = _t
 
 
 func ripple_count() -> int:
@@ -333,6 +407,7 @@ func probe_state() -> Dictionary:
 		"passed": count(Status.PASSED),
 		"stumbled": count(Status.STUMBLED),
 		"bridged": bridged,
+		"holding": _holding,
 		"brightness": light_brightness(),
 		"size": RunPlan.light_size(_t),
 		"held": is_held() and _hand.visible,
@@ -344,17 +419,21 @@ func probe_state() -> Dictionary:
 
 
 func _input(event: InputEvent) -> void:
-	# One tap scheme: a touch, or a real mouse click. Touches also arrive as
-	# emulated clicks, which are skipped so a tap isn't counted twice.
-	var pressed := false
+	# One tap scheme: a touch, or a real mouse click, going down and lifting
+	# (a tap or a hold, call 19). Touches also arrive as emulated clicks,
+	# which are skipped so a press isn't counted twice.
 	if event is InputEventScreenTouch:
-		pressed = event.pressed
-	elif event is InputEventMouseButton:
-		pressed = event.pressed and event.button_index == MOUSE_BUTTON_LEFT \
-				and event.device != InputEvent.DEVICE_ID_EMULATION
-	if pressed:
-		get_viewport().set_input_as_handled()
-		tap(event.position)
+		if event.index != _press_index and _press_at >= 0.0:
+			return  # Only the first finger down counts.
+		_press_index = event.index
+	elif not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT
+			and event.device != InputEvent.DEVICE_ID_EMULATION):
+		return
+	get_viewport().set_input_as_handled()
+	if event.pressed:
+		press(event.position)
+	else:
+		release(event.position)
 
 
 func _notification(what: int) -> void:
@@ -987,8 +1066,14 @@ func _pose_obstacle(i: int, obstacle: Dictionary) -> void:
 	if obstacle.kind == RunPlan.Kind.GAP:
 		node.transform = place
 		var hand: Node3D = node.get_node("Hand")
-		hand.visible = obstacle.bridged and _t < obstacle.time + 1.6
-		if hand.visible:
+		var lifting: bool = obstacle.lifted_at >= 0.0 and _t < obstacle.lifted_at + 0.35
+		hand.visible = (obstacle.bridged and _t < obstacle.time + 1.6) or lifting
+		if lifting and not obstacle.bridged:
+			# Let go too soon: the hand lifts off before the light gets there.
+			var off := smoothstep(obstacle.lifted_at, obstacle.lifted_at + 0.35, _t)
+			var flat := Basis(Vector3.UP, -PI / 2.0).scaled(Vector3.ONE * 2.9)
+			hand.transform = Transform3D(flat, Vector3(-0.9, 0.1 + 3.0 * off, hand.get_meta("centre")))
+		elif hand.visible:
 			# Comes down from above and lies flat across the gap; lifts away
 			# once the light is over.
 			var down := smoothstep(0.0, 0.3, e)

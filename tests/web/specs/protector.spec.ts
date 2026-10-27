@@ -1,7 +1,7 @@
 // The Protector's run (DAS-97): it opens from the menu (until the bedside
 // lamp in the House can start it, DAS-95), plays with no console errors, a
-// tap on the left or right moves the light one lane that way, a tap with a
-// gap in reach lays the hand across it, hiding the tab pauses it until a
+// tap on the left or right moves the light one lane that way, a hold through
+// a gap lays the hand across it, hiding the tab pauses it until a
 // tap, it still rains after the song, and the ending reaches the black and
 // hands back with the chapter finished.
 // Headless Chromium has no speaker and draws phone sizes slowly, so the
@@ -44,34 +44,26 @@ test("a tap on the left or right moves the light one lane that way", async ({ ga
   await game.screenshot("protector-right-lane");
 });
 
-test("a tap with a gap in reach lays the hand across it", async ({ game, page }) => {
+test("a hold through a gap lays the hand across it and the light crosses", async ({ game, page }) => {
   // The first gap touches the light at 0:34 and is in reach from 0:32.7.
   await openRun(game, "&protector_from=31.5");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(31.5);
-  // Headless Chromium draws slowly: a tap sent from here after reading the
-  // probe can land too late for the 1.3 s window. So the page itself watches
-  // for the gap to come into reach and clicks the middle of the canvas in
-  // the same frame.
-  await page.evaluate(
-    (scene) =>
-      new Promise<void>((resolve) => {
-        const look = () => {
-          const probe = JSON.parse((window as any).thresholdProbe ?? "{}");
-          if (!(probe.screens?.[scene]?.in_reach > 0)) return requestAnimationFrame(look);
-          const canvas = document.querySelector("canvas")!;
-          const r = canvas.getBoundingClientRect();
-          const at = { clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 0, bubbles: true };
-          canvas.dispatchEvent(new MouseEvent("mousedown", at));
-          canvas.dispatchEvent(new MouseEvent("mouseup", at));
-          resolve();
-        };
-        look();
-      }),
-    PROTECTOR,
-  );
-  await expect.poll(async () => (await run(game)).bridged).toBe(1);
+  // A finger goes down in the middle of the screen before the gap is in
+  // reach and stays down; the hand goes across when the gap comes into reach.
+  const mouse = (type: string) =>
+    page.evaluate((type) => {
+      const canvas = document.querySelector("canvas")!;
+      const r = canvas.getBoundingClientRect();
+      const at = { clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 0, bubbles: true };
+      canvas.dispatchEvent(new MouseEvent(type, at));
+    }, type);
+  await mouse("mousedown");
+  await expect.poll(async () => (await run(game)).holding).toBe(true);
+  await expect.poll(async () => (await run(game)).bridged, { timeout: 60_000 }).toBe(1);
+  expect((await run(game)).lane, "a hold never moves the lane").toBe(0);
   await game.screenshot("protector-hand-across-gap");
   await expect.poll(async () => (await run(game)).time, { timeout: 60_000 }).toBeGreaterThan(34.2);
+  await mouse("mouseup");
   expect((await run(game)).stumbled, "the light ran over the hand").toBe(0);
 });
 
