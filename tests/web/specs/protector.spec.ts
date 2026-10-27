@@ -33,6 +33,9 @@ test("opens with no words or buttons, and the light runs into the evening", asyn
 });
 
 test("a tap on the left or right moves the light one lane that way", async ({ game }) => {
+  // Three taps and a screenshot at phone sizes, a few frames a second: about
+  // 2 minutes in CI, over the default 120 s.
+  test.setTimeout(240_000);
   await openRun(game, "&protector_from=8");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(8);
   await game.tapAt(0.1, 0.5);
