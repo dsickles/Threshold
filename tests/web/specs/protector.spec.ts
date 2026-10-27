@@ -52,12 +52,21 @@ test("a tap on the left or right moves the light one lane that way", async ({ ga
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(8);
   expect((await run(game)).hints, "the hint on each half").toEqual(["tap here", "tap here"]);
   await game.screenshot("protector-tap-here");
-  await game.tapAt(0.1, 0.5);
-  await expect.poll(async () => (await run(game)).lane).toBe(-1);
-  await game.tapAt(0.9, 0.5);
-  await expect.poll(async () => (await run(game)).lane, "one lane right: the middle").toBe(0);
-  await game.tapAt(0.9, 0.5);
-  await expect.poll(async () => (await run(game)).lane).toBe(1);
+  // On a miss, say how the run heard the press (CI's phone runs, 2026-10-27).
+  const heard = async () =>
+    JSON.stringify({
+      run: await run(game),
+      pointer: await game.page.evaluate(() => [(window as any).thresholdPointer, performance.now() / 1000]),
+    });
+  const tapTo = async (across: number, lane: number, what: string) => {
+    await game.tapAt(across, 0.5);
+    await expect.poll(async () => (await run(game)).lane, { timeout: 30_000 }).toBe(lane).catch(async (e: Error) => {
+      throw new Error(`${what}: ${e.message}\n${await heard()}`);
+    });
+  };
+  await tapTo(0.1, -1, "one lane left");
+  await tapTo(0.9, 0, "one lane right: the middle");
+  await tapTo(0.9, 1, "one lane right again");
   await game.screenshot("protector-right-lane");
 });
 

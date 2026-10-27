@@ -104,6 +104,7 @@ var _push_dir := 0.0  # Which way the hand last pushed: -1 left, 1 right.
 var _press_at := -1.0  # When the finger went down; -1 when none is down.
 var _press_real := 0.0  # The same moment by real_clock.
 var _last_up := -INF  # When the last press lifted, by up_clock.
+var _last_release := {}  # The last press's times, for the browser tests.
 var _press_pos := Vector2.ZERO
 var _press_index := 0  # Which finger: only the first one down counts.
 var _holding := false  # The press has lasted HOLD_START: a hold.
@@ -413,6 +414,7 @@ func release(at: Vector2) -> void:
 	# come since to say so: a slow frame must not turn a hold into a tap.
 	_last_up = _up_time()
 	var was_hold: bool = _holding or _last_up - _press_real >= HOLD_START
+	_last_release = {"down": _press_real, "up": _last_up, "hold": was_hold, "now": real_clock.call()}
 	_press_at = -1.0
 	_holding = false
 	if was_hold:
@@ -527,6 +529,8 @@ func probe_state() -> Dictionary:
 		"stumbled": count(Status.STUMBLED),
 		"bridged": bridged,
 		"holding": _holding,
+		"pressed": _press_at >= 0.0,
+		"last_release": _last_release,
 		"brightness": light_brightness(),
 		"size": RunPlan.light_size(_t),
 		"held": is_held() and _hand.visible,
