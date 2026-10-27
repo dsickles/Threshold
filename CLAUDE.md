@@ -58,6 +58,7 @@ A narrative anthology game about becoming a father, built in Godot 4 (GDScript) 
 
 Follow [docs/agents/pull-requests.md](docs/agents/pull-requests.md) and fill in [the PR template](.github/pull_request_template.md). In short:
 
+- Ticket first. Before the first commit, check there is a Linear ticket for the work. If the thread started without one (research, a quick fix, a decision to record), create it first, then branch. There is no PR without a ticket: Hopper's review starts only when a ticket moves to In Review.
 - Open every PR as a draft.
 - Before it leaves draft, list every acceptance criterion from the Linear ticket in the PR body, word for word, each with its proof: a test name, a `file:line`, or a CI run on the latest commit. Anything only a person can check is marked "Needs Dan's device" with what Dan should do; it waits for him and is never skipped.
 - List any existing test the PR weakens or deletes, and why.

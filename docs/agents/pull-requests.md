@@ -6,7 +6,7 @@ How every Threshold PR is opened and made ready. CLAUDE.md points here.
 
 Open each PR as a **draft**. It leaves draft (is marked "Ready for review") only when all of the following are true. Hopper reviews once the ticket reaches In Review, which happens only when the PR leaves draft (see "Linear status"), so this is the line between "still working" and "check my claim".
 
-0. **The Linear ticket id comes first.** The body's first line is `Ticket: DAS-<n>` with its link (in a Claude Project thread, the first line after the required two-line attribution block), so reviewers pull the right ticket's criteria.
+0. **The Linear ticket id comes first.** The body's first line is `Ticket: DAS-<n>` with its link (in a Claude Project thread, the first line after the required two-line attribution block), so reviewers pull the right ticket's criteria. There is no PR without a ticket. Before the first commit, check there is a Linear ticket for the work; if the thread started without one (research, a quick fix, a decision to record), create it first, then branch. Without a ticket nothing moves to In Review, so Hopper never reviews.
 1. **Every acceptance criterion is in the PR body with its proof.** Copy each criterion from the Linear ticket word for word, in order, into the "Acceptance criteria" table in [the PR template](../../.github/pull_request_template.md). None is left out, merged or reworded.
 2. **Each criterion has a status and proof.**
    - **Met:** a test name (file and test function), a `file:line`, or a CI run on the current head commit. "Tests pass" on its own is not proof; name the test that shows this criterion.
