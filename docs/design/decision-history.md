@@ -373,6 +373,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 32. M1.5, an asset pass after M1 (2026-10-26)
+
+| | |
+|---|---|
+| **Was** | Final art came later (M3+ chapter looks, then Polish & Ship); M1 lists "final art" as not in M1, and no milestone covered an art pass on what is built. |
+| **Became** | Finish M1, then M1.5 replaces the gray-box art of what M1 built (the House, the Loss and its car, the Partner) with free packs under ADR-0010, and AI-made Partner pictures where no pack fits (Dan, 2026-10-27: no art budget). |
+| **Why** | Free packs make an art pass cheap now, and the House and Loss gain the most from it. Dan's call, 2026-10-26, in the project thread. |
+| **Record** | [roadmap.md](../roadmap.md); DAS-104 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
