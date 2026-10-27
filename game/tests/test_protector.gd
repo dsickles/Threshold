@@ -266,6 +266,32 @@ func test_a_quick_tap_on_a_slow_frame_still_moves_the_lane() -> void:
 	check_eq(_run.lane(), 1, "a 0.25 s hold inside one slow frame doesn't move the lane")
 
 
+func test_a_quick_tap_heard_after_a_slow_frame_is_still_a_tap() -> void:
+	# On the web Godot hears of the finger lifting only at the next frame, so
+	# the browser's own times for the touch decide (CI's phone run, 2026-10-27).
+	_step_to(8.0)
+	var now := [100.0]
+	var up := [100.05]
+	_run.real_clock = func() -> float: return now[0]
+	_run.down_clock = func() -> float: return 100.0
+	_run.up_clock = func() -> float: return up[0]
+	var size: Vector2 = _run.get_viewport().get_visible_rect().size
+	_run.press(Vector2(4, 10))
+	now[0] = 100.9  # A slow frame; the finger lifted 50 ms after it went down.
+	_run.advance(STEP)  # A frame comes before Godot hears of the lift.
+	check(not _run.is_holding(), "already lifted in the browser: not a hold")
+	_run.release(Vector2(4, 10))
+	check_eq(_run.lane(), -1, "a 50 ms tap heard 0.9 s late is a tap")
+	_run.down_clock = func() -> float: return 200.0
+	up[0] = 200.25
+	now[0] = 200.0
+	_run.press(Vector2(size.x - 4, 10))
+	_run.advance(STEP)
+	now[0] = 200.9
+	_run.release(Vector2(size.x - 4, 10))
+	check_eq(_run.lane(), -1, "a 0.25 s hold heard late is still a hold")
+
+
 func test_at_the_fade_falling_tiles_carry_on_and_no_row_is_rebuilt() -> void:
 	# At 2:45 the path is whole again, but nothing snaps back and nothing is
 	# built again all at once (Hopper, 2026-10-27).

@@ -74,6 +74,13 @@ var auto_advance := true
 ## finger is really down, not how far the run moved, so one slow frame can't
 ## turn a quick tap into a hold. Tests that step the run swap in its own clock.
 var real_clock: Callable = func() -> float: return Time.get_ticks_usec() / 1000000.0
+## When the finger went down, and when it came up (or now, while it is still
+## down), on real_clock. On the web these are the browser's own times for the
+## touch or click, because Godot only hears of it at the next frame: after a
+## slow frame a quick tap would otherwise look long. Elsewhere, and in tests,
+## the moment Godot hears of it.
+var down_clock: Callable = func() -> float: return real_clock.call()
+var up_clock: Callable = func() -> float: return real_clock.call()
 
 var _t := 0.0
 var _paused := false
@@ -165,11 +172,46 @@ func _ready() -> void:
 	_build_sound()
 	_build_screen()
 	if OS.has_feature("web"):
+		_use_browser_times()
 		# Hiding the tab pauses the run; Godot doesn't say so on the web.
 		_document = JavaScriptBridge.get_interface("document")
 		_visibility_callback = JavaScriptBridge.create_callback(_on_visibility_change)
 		_document.addEventListener("visibilitychange", _visibility_callback)
 	_update()
+
+
+# The browser notes when the first finger (or the left button) went down and
+# came up, by its own clock; press() and release() read those times.
+func _use_browser_times() -> void:
+	JavaScriptBridge.eval("""
+		if (!window.thresholdPointer) {
+			const p = window.thresholdPointer = { down: -1, up: -1, touchEnd: -1 };
+			const opts = { capture: true, passive: true };
+			window.addEventListener('touchstart', (e) => {
+				if (e.touches.length === 1) p.down = e.timeStamp / 1000;
+			}, opts);
+			window.addEventListener('touchend', (e) => {
+				if (e.touches.length === 0) p.up = p.touchEnd = e.timeStamp / 1000;
+			}, opts);
+			window.addEventListener('mousedown', (e) => {
+				if (e.button === 0 && e.timeStamp / 1000 - p.touchEnd > 1) p.down = e.timeStamp / 1000;
+			}, opts);
+			window.addEventListener('mouseup', (e) => {
+				if (e.button === 0 && e.timeStamp / 1000 - p.touchEnd > 1) p.up = e.timeStamp / 1000;
+			}, opts);
+		}
+	""", true)
+	real_clock = func() -> float: return float(JavaScriptBridge.eval("performance.now() / 1000", true))
+	down_clock = func() -> float: return _browser_time("down")
+	# The finger may already be up in the browser before Godot hears of it.
+	up_clock = func() -> float:
+		var up := _browser_time("up")
+		return up if up >= _browser_time("down") else real_clock.call()
+
+
+func _browser_time(which: String) -> float:
+	var at: Variant = JavaScriptBridge.eval("window.thresholdPointer.%s" % which, true)
+	return float(at) if at != null and float(at) >= 0.0 else real_clock.call()
 
 
 func _exit_tree() -> void:
@@ -189,7 +231,7 @@ func advance(delta: float) -> void:
 	if _paused or _ended:
 		return
 	_t += delta
-	if _press_at >= 0.0 and not _holding and real_clock.call() - _press_real >= HOLD_START:
+	if _press_at >= 0.0 and not _holding and up_clock.call() - _press_real >= HOLD_START:
 		_start_hold()
 	if _holding:
 		_lay_hand_across()
@@ -302,7 +344,7 @@ func press(at: Vector2) -> void:
 	if _ended or _press_at >= 0.0:
 		return
 	_press_at = _t
-	_press_real = real_clock.call()
+	_press_real = down_clock.call()
 	_press_pos = at
 
 
@@ -313,7 +355,7 @@ func release(at: Vector2) -> void:
 		return
 	# Held long enough by the real clock is a hold, even if no frame has
 	# come since to say so: a slow frame must not turn a hold into a tap.
-	var was_hold: bool = _holding or real_clock.call() - _press_real >= HOLD_START
+	var was_hold: bool = _holding or up_clock.call() - _press_real >= HOLD_START
 	_press_at = -1.0
 	_holding = false
 	if was_hold:
