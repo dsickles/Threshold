@@ -1,6 +1,6 @@
 # Protector audio credits
 
-- `run.mp3`: the run's one pre-mixed track (0:05 to 3:25), made by
+- `run.mp3`: the run's one pre-mixed track (0:03 to 2:45, since call 20), made by
   `tools/protector/make_audio.py`. In it:
   - "Dreamy Lo-Fi Beat" by NewEraMusic via Pixabay
     (https://pixabay.com/music/beats-dreamy-lo-fi-beat-549997/), Pixabay

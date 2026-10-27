@@ -7,22 +7,23 @@ Built from docs/design/the-loss-run-and-car.md, "Music and sound" (Dan,
 15: the song drowns instead of stopping, and the rain never stops). Writes
 game/assets/audio/protector/:
 
-- run.mp3: one pre-mixed track for the run, from 0:05 (the light fades up)
-  to 3:25 (black). The run starts it at 0:05 and it plays to the end.
-  - 0:05-1:25 the euphoria: the Partner's song, bright.
-  - 1:25-2:15 the confusion: wind, then the first rain, rise over the song.
-  - 2:15-2:45 the panic: heavy rain, wind and thunder drown the song until
-    only scraps of it come through, and by 2:45 it is gone under the rain.
-  - 2:45-3:25 the light goes out: the storm without the song, the wind
+- run.mp3: one pre-mixed track for the run, from 0:03 (the light fades up)
+  to 2:45 (black). The run starts it at 0:03 and it plays to the end.
+  - 0:03-1:03 the euphoria: the Partner's song, bright.
+  - 1:03-1:43 the confusion: wind, then the first rain, rise over the song.
+  - 1:43-2:08 the panic: heavy rain, wind and thunder drown the song until
+    only scraps of it come through, and by 2:08 it is gone under the rain.
+  - 2:08-2:45 the light goes out: the storm without the song, the wind
     easing, the rain not; thunder far off, and none while the light goes out.
+  (Times revised after Dan's fourth play, call 20.)
 - placeholder_clear.wav: a soft, warm sound when the hand moves the light or
   covers a gap.
 - placeholder_stumble.wav: a dull, soft thud when something reaches the light.
 
 The song is "Dreamy Lo-Fi Beat" by NewEraMusic via Pixabay (see
 tools/partner/make_song.py for the licence and where the source file is). It
-starts on a bar line at 0:05 so the euphoria's obstacles, every 2 bars from
-0:13, land on its beat; the bar map is in BARS below.
+starts on a bar line at 0:03 so the euphoria's obstacles, every 2 bars from
+0:11, land on its beat; the bar map is in BARS below.
 
 The storm is three Pixabay recordings Dan picked (2026-10-25), kept in
 /mnt/project-files/protector/ (credits in game/assets/audio/protector/CREDITS.md):
@@ -52,25 +53,25 @@ WIND = SOURCES / "source-dragon-studio-harsh-wind-515272.mp3"
 STORM = SOURCES / "source-eco-art-sounds-of-a-storm-with-wind-and-thunder-375923.mp3"
 
 # Run times (seconds from the lamp click), as in run_plan.gd.
-START = 5.0  # The file's time 0.
-CONFUSION = 85.0
-PANIC = 135.0
-FADE = 165.0  # The song is gone under the rain (2:45 since call 18).
-STOPPED = 185.0
-OUT_AT = 195.0
-BLACK = 205.0
-LENGTH = BLACK - START  # 200 s.
+START = 3.0  # The file's time 0.
+CONFUSION = 63.0
+PANIC = 103.0
+FADE = 128.0  # The song is gone under the rain (2:08 since call 20).
+HELD = 145.0  # The hand holds the light at the fallen tree; it goes out.
+OUT_AT = 155.0
+BLACK = 165.0
+LENGTH = BLACK - START  # 162 s.
 
 # Source bars (1-based) in the order they play: from the bar where the beat
-# comes in, through the fullest part, then the fullest part again past 2:45.
-# 64 bars is 170.7 s.
-BARS = list(range(9, 57)) + list(range(41, 57))
+# comes in, through the fullest part, then most of the fullest part again
+# past 2:08. 61 bars is 162.7 s.
+BARS = list(range(9, 57)) + list(range(41, 54))
 # Thunder (run time, level, how far off: 0 near, 1 far): one far off as the
 # confusion ends, near through the panic, far off after, none while the light
-# goes out (3:05 to 3:15).
-THUNDER = [(124.0, 0.35, 1.0), (139.5, 0.8, 0.3), (146.0, 1.0, 0.0), (151.5, 0.8, 0.4),
-           (157.0, 1.0, 0.0), (161.5, 0.9, 0.2), (168.5, 0.55, 0.7), (177.5, 0.4, 0.9),
-           (198.0, 0.3, 1.0)]
+# goes out (2:25 to 2:35).
+THUNDER = [(94.2, 0.35, 1.0), (106.75, 0.8, 0.3), (112.2, 1.0, 0.0), (116.75, 0.8, 0.4),
+           (121.3, 1.0, 0.0), (125.1, 0.9, 0.2), (131.0, 0.55, 0.7), (138.8, 0.4, 0.9),
+           (157.3, 0.3, 1.0)]
 # The steady parts of each recording, in seconds, that are looped.
 RAIN_LOOP = (2.0, 26.0)
 WIND_LOOP = (1.0, 12.0)
@@ -151,15 +152,15 @@ def run_track(source):
     song = song / rms(song[: int((CONFUSION - START) * SR)])
     # The song: full, then further away as the storm comes in, then only
     # scraps of it come through the panic, fewer and fainter until it is
-    # gone under the rain at 2:45.
+    # gone under the rain at 2:08.
     grid = np.arange(PANIC, FADE + 2, 0.9)
     scraps = np.clip(np.interp(t, grid, RNG.uniform(-0.15, 0.35, len(grid))), 0.0, 1.0)
     song_level = ramp(t, [(START, 1.0), (CONFUSION, 1.0), (PANIC, 0.5), (PANIC + 12, 0.12)])
     under = ramp(t, [(PANIC + 12, 1.0), (FADE - 8, 0.5), (FADE, 0.0)])
     song_level = np.where(t >= PANIC + 12, (0.06 + scraps * 0.45) * under, song_level)
-    wind_level = ramp(t, [(START, 0.0), (CONFUSION, 0.0), (CONFUSION + 20, 0.3), (PANIC, 0.55),
+    wind_level = ramp(t, [(START, 0.0), (CONFUSION, 0.0), (CONFUSION + 16, 0.3), (PANIC, 0.55),
                           (PANIC + 8, 0.75), (FADE, 0.75), (FADE + 10, 0.45), (BLACK, 0.45)])
-    rain_level = ramp(t, [(START, 0.0), (CONFUSION + 10, 0.0), (CONFUSION + 25, 0.2),
+    rain_level = ramp(t, [(START, 0.0), (CONFUSION + 8, 0.0), (CONFUSION + 20, 0.2),
                           (PANIC, 0.45), (PANIC + 8, 1.0), (BLACK, 1.0)])
     rain = ffilter(loop(RAIN, RAIN_LOOP, n), "highpass=f=120")
     wind = loop(WIND, WIND_LOOP, n)

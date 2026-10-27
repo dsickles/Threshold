@@ -6,21 +6,23 @@ extends Node3D
 ## and branches coming; hold a finger down with a gap in reach and the hand
 ## lays across it. Seen from behind, like Temple Run; the path bends on its
 ## own. Built from docs/design/the-loss-run-and-car.md (Dan, 2026-10-25,
-## revised after each of his plays: calls 13 to 19).
+## revised after each of his plays: calls 13 to 20).
 ##
 ## Everything follows one fixed timeline (run_plan.gd), the same for every
 ## player: the euphoria, the confusion, the panic, then the fade, where the
-## light runs on in the rain, slows, settles into the father's open hand and
-## goes out there. A stumble dims the light for a moment and changes nothing
-## else. No words, no HUD, no retry, no skip, no shake, no flash.
+## light runs on in the rain, stops against a fallen tree it can't get past,
+## and the father's hand comes under it; it goes out there. A stumble dims
+## the light for a moment and changes nothing else. No words but the two
+## hints at the start ("tap here", "hold"), no HUD, no retry, no skip, no
+## shake, no flash.
 ##
-## The run only reports `ended` (3:25, black). The chapter (protector.gd)
+## The run only reports `ended` (2:45, black). The chapter (protector.gd)
 ## decides what follows. It never touches the House or saved state.
 ##
 ## The run's clock moves in advance(), from _process; tests turn
 ## auto_advance off and move it themselves.
 
-## 3:25: the screen is black and the run is over.
+## 2:45: the screen is black and the run is over.
 signal ended
 
 const RunPlan := preload("res://scenes/chapters/protector/run_plan.gd")
@@ -46,7 +48,9 @@ const GRAVITY := 14.0
 const RIPPLE_TIME := 0.5
 const SLOT := TILE * 2.0  # Trees and the forest floor come in slots this long.
 const DRIFT_HOME := 2.0  # Seconds the light takes back to the middle as it slows.
-const CRADLE_START := 177.0  # The hand starts to come in under the slowing light.
+const TREE_RADIUS := 0.75  # The fallen tree's trunk: taller than the light (call 20).
+const TREE_LENGTH := 15.0  # Across the path and out past both edges into the trees.
+const HINT_COLOR := Color(1.0, 0.97, 0.9, 0.85)
 const WARM_END := 3.0  # Everything is drawn once, unseen, in the dark before this.
 const HOLD_START := 0.2  # A press this long is a hold, not a tap (call 19). Choice, to tune.
 
@@ -58,11 +62,11 @@ const HOLD_START := 0.2  # A press this long is a hold, not a tap (call 19). Cho
 const LOOKS := [
 	[0.0, "#000000", "#000000", 0.0, 0.0, 0.03, "#FFC27A"],
 	[RunPlan.EUPHORIA_START, "#000000", "#000000", 0.0, 0.0, 0.03, "#FFC27A"],
-	[8.0, "#E3A15A", "#8E7B66", 1.7, 0.32, 0.012, "#FFC27A"],
+	[RunPlan.EUPHORIA_START + 3.0, "#E3A15A", "#8E7B66", 1.7, 0.32, 0.012, "#FFC27A"],
 	[RunPlan.CONFUSION_START, "#DE9752", "#8A775F", 1.6, 0.32, 0.014, "#FFBA70"],
-	[100.0, "#8E8073", "#8C7E70", 0.6, 0.32, 0.026, "#D8C8B4"],
+	[RunPlan.CONFUSION_START + 12.0, "#8E8073", "#8C7E70", 0.6, 0.32, 0.026, "#D8C8B4"],
 	[RunPlan.PANIC_START, "#4A4542", "#5A524C", 0.25, 0.28, 0.04, "#A8A8AC"],
-	[142.0, "#22201F", "#3E3935", 0.06, 0.22, 0.06, "#9AA0A8"],
+	[RunPlan.PANIC_START + 6.0, "#22201F", "#3E3935", 0.06, 0.22, 0.06, "#9AA0A8"],
 	[RunPlan.FADE_START, "#22201F", "#3E3935", 0.06, 0.22, 0.06, "#9AA0A8"],
 	[RunPlan.STOPPED, "#1E1C1B", "#3A3532", 0.04, 0.2, 0.06, "#9AA0A8"],
 	[RunPlan.BLACK, "#1E1C1B", "#3A3532", 0.04, 0.2, 0.06, "#9AA0A8"],
@@ -114,6 +118,8 @@ var _light: MeshInstance3D
 var _light_material: StandardMaterial3D
 var _lamp: OmniLight3D
 var _hand: Node3D  # The hand that moves the light, and holds it at the end.
+var _tree: Node3D  # The fallen tree the light stops against (call 20).
+var _tree_distance := 0.0
 var _rain: CPUParticles3D
 var _heavy_rain: CPUParticles3D
 var _leaves: CPUParticles3D
@@ -149,6 +155,8 @@ var _hand_player: AudioStreamPlayer
 var _stumble_player: AudioStreamPlayer
 var _overlay: ColorRect
 var _ripple_layer: Control
+var _tap_hints: Array[Label] = []  # "tap here", on the left half and the right.
+var _hold_hint: Label
 var _document: JavaScriptObject
 var _visibility_callback: JavaScriptObject
 
@@ -173,6 +181,7 @@ func _ready() -> void:
 	_build_screen()
 	if OS.has_feature("web"):
 		_use_browser_times()
+		_bring_sound_back()
 		# Hiding the tab pauses the run; Godot doesn't say so on the web.
 		_document = JavaScriptBridge.get_interface("document")
 		_visibility_callback = JavaScriptBridge.create_callback(_on_visibility_change)
@@ -209,12 +218,51 @@ func _use_browser_times() -> void:
 		return up if up >= _browser_time("down") else real_clock.call()
 
 
+# After the tab has been away, the first tap brings the sound back (Dan,
+# 2026-10-27, call 20: it was lost and never came back). Safari can leave the
+# page's sound stopped, or say it is running while it is silent, so the tap
+# restarts every audio context the page made (the export's head_include keeps
+# the list). It runs in the browser's own tap handler, which is the only place
+# a phone lets sound start. Only while the run is on screen.
+func _bring_sound_back() -> void:
+	JavaScriptBridge.eval("""
+		if (!window.thresholdSoundBack) {
+			const back = window.thresholdSoundBack = { on: false, away: false, restarts: 0 };
+			document.addEventListener('visibilitychange', () => {
+				if (document.hidden) back.away = true;
+			});
+			const tapped = () => {
+				if (!back.on || document.hidden) return;
+				for (const ctx of window.thresholdAudioContexts || []) {
+					if (ctx.state === 'closed') continue;
+					if (ctx.state !== 'running') {
+						ctx.resume();
+					} else if (back.away) {
+						// Both asked for inside the tap, so a phone allows the resume.
+						back.restarts += 1;
+						ctx.suspend();
+						ctx.resume();
+					}
+				}
+				back.away = false;
+			};
+			for (const type of ['touchend', 'mouseup', 'keydown']) {
+				window.addEventListener(type, tapped, true);
+			}
+		}
+		window.thresholdSoundBack.on = true;
+		window.thresholdSoundBack.away = false;
+	""", true)
+
+
 func _browser_time(which: String) -> float:
 	var at: Variant = JavaScriptBridge.eval("window.thresholdPointer.%s" % which, true)
 	return float(at) if at != null and float(at) >= 0.0 else real_clock.call()
 
 
 func _exit_tree() -> void:
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("if (window.thresholdSoundBack) window.thresholdSoundBack.on = false;", true)
 	if _document:
 		_document.removeEventListener("visibilitychange", _visibility_callback)
 		_document = null
@@ -304,7 +352,8 @@ func lane() -> int:
 	return _lane
 
 
-## True from 2:55: the hand has come for the light, and taps only ripple.
+## True from 2:20: the light is slowing at the fallen tree, the hand is
+## coming for it, and taps only ripple.
 func is_held() -> bool:
 	return _t >= RunPlan.SLOW_START
 
@@ -380,7 +429,7 @@ func tap(at: Vector2) -> bool:
 ## A tap that sends the light to a lane: the hand moves the light there.
 ## Returns whether it moved. A tap that changes nothing (its own lane) makes
 ## a ripple where it landed and nothing else: no penalty, no sound of
-## failure. A tap never bridges a gap; a hold does (call 19). From 2:55 the
+## failure. A tap never bridges a gap; a hold does (call 19). From 2:20 the
 ## hand is holding the light, and every tap only ripples.
 func tap_lane(lane_tapped: int, at := Vector2.ZERO) -> bool:
 	if _paused:
@@ -466,6 +515,7 @@ func probe_state() -> Dictionary:
 		"held": is_held() and _hand.visible,
 		"raining": is_raining() and _rain.emitting,
 		"fireflies": fireflies_glowing(),
+		"hints": hints_shown(),
 		"music": is_music_playing(),
 		"ended": _ended,
 	}
@@ -536,6 +586,8 @@ func _update() -> void:
 	_update_hand()
 	_update_camera()
 	_update_look()
+	_update_hints()
+	_tree.visible = light_distance() > _tree_distance - AHEAD
 	if _warm and _t >= WARM_END:
 		_warm.queue_free()
 		_warm = null
@@ -552,8 +604,8 @@ func _update() -> void:
 
 
 func _update_sound() -> void:
-	# The song and the storm are one track from 0:05 to the black. The song
-	# drowns under the storm by 2:45; the rain never stops.
+	# The song and the storm are one track from 0:03 to the black. The song
+	# drowns under the storm by 2:08; the rain never stops.
 	if not _music_started and _t >= RunPlan.EUPHORIA_START and _t < RunPlan.BLACK:
 		_music_started = true
 		_music.play(_t - RunPlan.EUPHORIA_START)
@@ -681,14 +733,14 @@ func _hop() -> float:
 
 
 # The hand that moves the light: in from behind and below on the side it
-# pushes from, across with the light, then back out of sight. From 2:55 it
-# comes in under the light, palm up, and holds it as it stops and goes out;
-# then it stays, empty, to the black.
+# pushes from, across with the light, then back out of sight. Once the light
+# has stopped against the fallen tree (2:22) it comes in under it, palm up,
+# and holds it as it goes out; then it stays, empty, to the black.
 func _update_hand() -> void:
 	var d := light_distance()
 	var basis := _path_basis(d)
-	if _t >= CRADLE_START:
-		var come := smoothstep(CRADLE_START, RunPlan.STOPPED - 1.0, _t)
+	if _t >= RunPlan.STOPPED:
+		var come := smoothstep(RunPlan.STOPPED, RunPlan.HELD - 0.5, _t)
 		var rest := _path_at(d) + basis.x * _lane_x() * TILE + Vector3.UP * (LIGHT_HEIGHT - 0.22)
 		var place := rest - basis.y * 1.6 * (1.0 - come) + basis.z * 2.5 * (1.0 - come)
 		_hand.transform = Transform3D(basis, place)
@@ -1097,7 +1149,9 @@ func _branch_mesh(lanes: int) -> CylinderMesh:
 		var mesh := CylinderMesh.new()
 		mesh.top_radius = 0.22
 		mesh.bottom_radius = 0.28
-		mesh.height = TILE * lanes + 0.4
+		# Short, ending well inside its second lane, so the free lane
+		# beside it is plainly empty (Dan, 2026-10-27, call 20).
+		mesh.height = TILE * (lanes - 1) + 1.0
 		_branch_meshes[lanes] = mesh
 	return _branch_meshes[lanes]
 
@@ -1255,8 +1309,9 @@ func _build_world() -> void:
 	_hand.name = "Hand"
 	_hand.visible = false
 	add_child(_hand)
+	_build_tree()
 
-	# Rain from 1:50 to the black, heavier from 2:15, and leaves blowing in
+	# Rain from 1:23 to the black, heavier from 1:43, and leaves blowing in
 	# the storm: simple CPU particles, cheap on a phone.
 	_rain = _make_rain(160)
 	_heavy_rain = _make_rain(520)
@@ -1319,8 +1374,12 @@ func _build_warm() -> void:
 	rim.material_override = line
 	_warm.add_child(rim)
 	_warm.add_child(_make_hand())
+	var trunk := MeshInstance3D.new()
+	trunk.mesh = _trunk_mesh
+	trunk.material_override = _trunk_material
+	_warm.add_child(trunk)
 	_warm.add_child(_make_firefly(unseen.call(_firefly_material), unseen.call(_firefly_halo)))
-	# The song too, silent, so starting it at 0:05 doesn't catch.
+	# The song too, silent, so starting it at 0:03 doesn't catch.
 	var song := AudioStreamPlayer.new()
 	song.stream = MUSIC
 	song.volume_db = -80.0
@@ -1410,8 +1469,9 @@ func _build_sound() -> void:
 	add_child(_stumble_player)
 
 
-# The black for the fade-up and the end, and the ripples. Nothing on it can
-# be tapped: each half of the screen moves the light a lane. No text, ever.
+# The black for the fade-up and the end, the ripples and the two hints.
+# Nothing on it can be tapped: each half of the screen moves the light a
+# lane. The hints are the only words, ever (call 20).
 func _build_screen() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
@@ -1420,8 +1480,113 @@ func _build_screen() -> void:
 	_ripple_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_ripple_layer.draw.connect(_draw_ripples)
 	layer.add_child(_ripple_layer)
+	# "tap here" in the middle of each half, a little below the middle of the
+	# screen; "hold" in the middle, above the light.
+	for half: float in [0.25, 0.75]:
+		var hint := _hint("HintLeft" if half < 0.5 else "HintRight", RunPlan.TAP_HINT, half, 0.62)
+		layer.add_child(hint)
+		_tap_hints.append(hint)
+	_hold_hint = _hint("HintHold", RunPlan.HOLD_HINT, 0.5, 0.42)
+	layer.add_child(_hold_hint)
 	_overlay = ColorRect.new()
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_overlay.color = Color.BLACK
 	layer.add_child(_overlay)
+
+
+# A hint: plain words, centred on a point given as a share of the screen.
+func _hint(node_name: String, text: String, x: float, y: float) -> Label:
+	var hint := Label.new()
+	hint.name = node_name
+	hint.text = text
+	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hint.add_theme_font_size_override("font_size", 34)
+	hint.add_theme_color_override("font_color", HINT_COLOR)
+	hint.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.55))
+	hint.add_theme_constant_override("outline_size", 6)
+	hint.anchor_left = x
+	hint.anchor_right = x
+	hint.anchor_top = y
+	hint.anchor_bottom = y
+	hint.offset_left = -200.0
+	hint.offset_right = 200.0
+	hint.offset_top = -30.0
+	hint.offset_bottom = 30.0
+	hint.visible = false
+	return hint
+
+
+# The hints fade in and out on the timeline alone (RunPlan.hints), the same
+# on every run: the Loss is played once (call 20).
+func _update_hints() -> void:
+	var tap := 0.0
+	var hold := 0.0
+	for hint: Array in RunPlan.hints(_t):
+		if hint[0] == RunPlan.TAP_HINT:
+			tap = hint[1]
+		else:
+			hold = hint[1]
+	for label in _tap_hints:
+		label.visible = tap > 0.0
+		label.modulate.a = tap
+	_hold_hint.visible = hold > 0.0
+	_hold_hint.modulate.a = hold
+
+
+## The words on screen now: only ever the hints.
+func hints_shown() -> Array[String]:
+	var out: Array[String] = []
+	for label: Label in _tap_hints + [_hold_hint]:
+		if label.visible:
+			out.append(label.text)
+	return out
+
+
+# The fallen tree (call 20): a great trunk lying across the whole path where
+# the light comes to rest, out past both edges into the trees, its roots at
+# one end and its crown at the other, with a few broken branches. It is not an
+# obstacle: nothing lights it up, and nothing gets past it. It shares the
+# trees' shapes, so drawing it costs no first-time stutter.
+func _build_tree() -> void:
+	_tree_distance = RunPlan.distance(RunPlan.STOPPED) + LIGHT_RADIUS + TREE_RADIUS + 0.1
+	_tree = Node3D.new()
+	_tree.name = "FallenTree"
+	_tree.transform = Transform3D(_path_basis(_tree_distance), _path_at(_tree_distance))
+	var trunk := MeshInstance3D.new()
+	trunk.mesh = _trunk_mesh
+	trunk.material_override = _trunk_material
+	trunk.rotation = Vector3(0.0, 0.08, PI / 2.0)
+	trunk.scale = Vector3(TREE_RADIUS / 0.4, TREE_LENGTH, TREE_RADIUS / 0.4)
+	trunk.position = Vector3(0.8, TREE_RADIUS - 0.1, 0.0)
+	_tree.add_child(trunk)
+	var roots := MeshInstance3D.new()
+	roots.mesh = _canopy_mesh
+	roots.material_override = _trunk_material
+	roots.scale = Vector3(1.2, 1.6, 1.1)
+	roots.position = Vector3(0.8 - TREE_LENGTH / 2.0, 1.0, 0.0)
+	_tree.add_child(roots)
+	var crown := MeshInstance3D.new()
+	crown.mesh = _canopy_mesh
+	crown.material_override = _canopy_material
+	crown.scale = Vector3(3.2, 2.0, 2.6)
+	crown.position = Vector3(0.8 + TREE_LENGTH / 2.0 + 1.5, 1.4, -0.5)
+	_tree.add_child(crown)
+	for stub: Array in [[-1.7, 0.6, -0.5], [0.9, -0.7, 0.4], [3.4, 0.9, -0.2]]:
+		var branch := MeshInstance3D.new()
+		branch.mesh = _branch_mesh(1)
+		branch.material_override = _branch_material
+		branch.rotation = Vector3(stub[1], 0.0, stub[2])
+		branch.position = Vector3(stub[0], TREE_RADIUS * 1.6, -0.2)
+		_tree.add_child(branch)
+	for part in _tree.get_children():
+		(part as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_tree.visible = false
+	add_child(_tree)
+
+
+## Where the fallen tree lies, in metres along the path (for tests).
+func tree_distance() -> float:
+	return _tree_distance

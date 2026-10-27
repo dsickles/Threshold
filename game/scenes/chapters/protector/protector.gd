@@ -32,7 +32,7 @@ func run() -> ProtectorRun:
 
 
 func _on_run_ended() -> void:
-	# PLACEHOLDER: the car (the Silence) goes here, from the black at 3:25,
+	# PLACEHOLDER: the car (the Silence) goes here, from the black at 2:45,
 	# and the chapter finishes only when the player goes in through the
 	# front door (DAS-98). Until then it finishes at the black.
 	finished.emit()

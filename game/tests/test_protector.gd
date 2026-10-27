@@ -1,7 +1,7 @@
 extends TestCase
 ## The Protector's run (DAS-97), on the run's own clock instead of real time.
 ## The rules come from docs/design/the-loss-run-and-car.md, "Checks this
-## design must pass" (revised after each of Dan's plays, calls 13 to 19). Feel,
+## design must pass" (revised after each of Dan's plays, calls 13 to 20). Feel,
 ## sound and the fade's weight are Dan's to check on his phone.
 
 const PROTECTOR := preload("res://scenes/chapters/protector/protector.tscn")
@@ -22,32 +22,32 @@ func before_each() -> void:
 
 func test_the_obstacle_list_matches_the_design() -> void:
 	var list := RunPlan.obstacles()
-	check_eq(list.size(), 41, "obstacles in the run")
+	check_eq(list.size(), 31, "obstacles in the run")
 	var by_part := {}
 	for obstacle in list:
 		by_part[obstacle.part] = by_part.get(obstacle.part, 0) + 1
-	check_eq(by_part.get(RunPlan.Part.EUPHORIA, 0), 12, "in the euphoria")
-	check_eq(by_part.get(RunPlan.Part.CONFUSION, 0), 12, "in the confusion")
-	check_eq(by_part.get(RunPlan.Part.PANIC, 0), 17, "in the panic")
+	check_eq(by_part.get(RunPlan.Part.EUPHORIA, 0), 9, "in the euphoria")
+	check_eq(by_part.get(RunPlan.Part.CONFUSION, 0), 10, "in the confusion")
+	check_eq(by_part.get(RunPlan.Part.PANIC, 0), 12, "in the panic")
 	check_eq(by_part.get(RunPlan.Part.FADE, 0), 0, "none as the light goes out")
 	check_eq(by_part.get(RunPlan.Part.DARK, 0), 0, "in the dark")
-	check_near(list[-1].time, 159.6, 0.001, "the last one (2:40)")
+	check_near(list[-1].time, 125.0, 0.001, "the last one (2:05)")
 	for i in range(1, list.size()):
 		check(list[i].time > list[i - 1].time, "obstacle %d comes after the one before" % i)
-	# The euphoria's land on the song's beat: every 2 bars at 90 BPM from 0:13.
-	var design := [13, 18, 24, 29, 34, 40, 45, 50, 56, 61, 66, 72]
-	for k in 12:
-		check_near(list[k].time, 13.0 + k * 16.0 / 3.0, 0.001, "euphoria obstacle %d on the beat" % k)
+	# The euphoria's land on the song's beat: every 2 bars at 90 BPM from 0:11.
+	var design := [11, 16, 22, 27, 32, 38, 43, 48, 54]
+	for k in 9:
+		check_near(list[k].time, 11.0 + k * 16.0 / 3.0, 0.001, "euphoria obstacle %d on the beat" % k)
 		check_near(list[k].time, design[k], 0.5, "euphoria obstacle %d at the design's time" % k)
-	check_eq(list[11].time < 73.0, true, "1:12 to 1:25 is clear")
+	check_eq(list[8].time < 55.0, true, "0:54 to 1:03 is clear")
 	# Each one's shape and lanes, in order, as the design lists them.
 	var specs := ""
 	for obstacle in list:
 		specs += _spec(obstacle) + " "
 	check_eq(specs.strip_edges(), " ".join([
-		"S:M S:LR B:LM S:R G B:MR S:L G B:LM S:M G S:LR",
-		"S:LM G B:MR S:L S:R B:LM G S:MR B:LM G S:LR G",
-		"S:L S:R B:LM S:M G G S:R S:M B:MR S:M B:LM G S:R S:M G G B:MR",
+		"S:M S:LR B:LM S:R G B:MR S:L G B:LM",
+		"S:LM G B:MR S:L S:R B:LM G S:MR B:LM G",
+		"S:L S:R B:LM S:M G G S:R S:M B:MR B:LM G S:R",
 	]), "the shapes and lanes in order")
 	# The first is a lone stone straight ahead, so the tap is learned first.
 	check_eq(_spec(list[0]), "S:M", "the first is a stone in the light's lane")
@@ -60,7 +60,7 @@ func test_every_obstacle_can_be_avoided_by_perfect_play() -> void:
 		var obstacle: Dictionary = list[i]
 		if obstacle.kind == RunPlan.Kind.GAP:
 			check_eq(obstacle.lanes, RunPlan.LANES, "gap %d is across all three lanes" % i)
-			check(RunPlan.reach(obstacle.part) >= 0.8, "gap %d can be bridged" % i)
+			check(RunPlan.reach(obstacle.part) >= 1.0, "gap %d can be bridged, with at least 1 s" % i)
 		else:
 			check(not RunPlan.free_lanes(obstacle).is_empty(), "obstacle %d leaves a lane free" % i)
 	# Inside each panic cluster one lane stays free all the way through.
@@ -73,14 +73,16 @@ func test_every_obstacle_can_be_avoided_by_perfect_play() -> void:
 		var free: Array[int] = []
 		free.assign(RunPlan.LANES)
 		var j := i
-		while j < list.size() and (j == i or list[j].time - list[j - 1].time < 0.7):
+		if i > start:
+			check(list[i].time - list[i - 1].time >= 2.0, "time to move before the cluster at %.1f s" % list[i].time)
+		while j < list.size() and (j == i or list[j].time - list[j - 1].time < 0.9):
 			free = free.filter(func(lane: int) -> bool: return not lane in list[j].lanes \
 					or list[j].kind == RunPlan.Kind.GAP)
 			j += 1
 		check(not free.is_empty(), "the cluster at %.1f s has a lane free all through" % list[i].time)
 		clusters += 1
 		i = j
-	check_eq(clusters, 7, "seven panic clusters")
+	check_eq(clusters, 6, "six panic clusters, the last a single stone")
 	# Outside a cluster, at least 2 s before an obstacle that needs a new lane.
 	for k in range(1, start):
 		check(list[k].time - list[k - 1].time >= 2.0, "time to move before obstacle %d" % k)
@@ -107,37 +109,42 @@ func test_the_run_starts_from_the_lamp_with_no_title_or_skip() -> void:
 	_assert_no_words_or_buttons(_chapter)
 
 
-func test_the_music_starts_at_five_seconds_and_the_storm_plays_to_the_black() -> void:
-	_step_to(4.9)
+func test_the_music_starts_at_three_seconds_and_the_storm_plays_to_the_black() -> void:
+	_step_to(2.9)
 	check(not _run._music.playing, "silent in the dark")
-	_step_to(5.1)
-	check(_run._music.playing, "the song from 0:05")
-	_step_to(166.0)
+	_step_to(3.1)
+	check(_run._music.playing, "the song from 0:03")
+	_step_to(RunPlan.FADE_START + 1.0)
 	check(_run._music.playing, "the storm goes on after the song is gone (no dead stop)")
-	_step_to(204.5)
+	_step_to(RunPlan.BLACK - 0.5)
 	check(_run._music.playing, "still playing as it goes black")
 	check(_run.MUSIC.get_length() >= RunPlan.BLACK - RunPlan.EUPHORIA_START - 0.1,
-			"the track runs from 0:05 to 3:25")
+			"the track runs from 0:03 to 2:45")
+	check(_run.MUSIC.get_length() < RunPlan.BLACK - RunPlan.EUPHORIA_START + 5.0,
+			"and not on long past it")
 
 
 func test_a_perfect_run_and_an_empty_run_reach_the_same_ending() -> void:
 	var perfect := _play(true)
 	var empty := _play(false)
-	check_eq(perfect.passed, 41, "the perfect run gets past every obstacle")
+	check_eq(perfect.passed, 31, "the perfect run gets past every obstacle")
 	check_eq(perfect.stumbled, 0, "and never stumbles")
 	var in_the_middle := 0
 	for obstacle in RunPlan.obstacles():
 		if 0 in obstacle.lanes:
 			in_the_middle += 1
 	check_eq(empty.stumbled, in_the_middle, "the empty run stumbles on everything in the middle lane")
-	check_eq(empty.passed, 41 - in_the_middle, "and only gets past what isn't")
-	check_eq(perfect.brightness_at_fade, 1.0, "the light is fully bright at 2:45 after a perfect run")
+	check_eq(empty.passed, 31 - in_the_middle, "and only gets past what isn't")
+	check_eq(perfect.brightness_at_fade, 1.0, "the light is fully bright at 2:08 after a perfect run")
 	check_eq(empty.brightness_at_fade, perfect.brightness_at_fade, "and exactly as bright after an empty one")
-	check_eq(empty.distance_at_fade, perfect.distance_at_fade, "the light is as far along at 2:45")
+	check_eq(empty.distance_at_fade, perfect.distance_at_fade, "the light is as far along at 2:08")
+	check_eq(empty.distance_stopped, perfect.distance_stopped, "and stops at the fallen tree in the same place")
+	check_eq(empty.stumbled_at_fade, empty.stumbled, "the tree is no stumble, after an empty run")
+	check_eq(perfect.stumbled_at_fade, 0, "or a perfect one")
 	check_eq(empty.lane_when_held, perfect.lane_when_held, "and in the same lane once the hand holds it")
-	check_near(perfect.out_at, RunPlan.OUT, STEP, "the perfect run's light goes out at 3:15")
+	check_near(perfect.out_at, RunPlan.OUT, STEP, "the perfect run's light goes out at 2:35")
 	check_eq(empty.out_at, perfect.out_at, "the empty run's at the same moment")
-	check_near(perfect.finished_at, RunPlan.BLACK, STEP, "the perfect run finishes at 3:25")
+	check_near(perfect.finished_at, RunPlan.BLACK, STEP, "the perfect run finishes at 2:45")
 	check_eq(empty.finished_at, perfect.finished_at, "the empty run at the same moment")
 	check_eq(perfect.finishes, 1, "the perfect run finishes once")
 	check_eq(empty.finishes, 1, "the empty run finishes once")
@@ -358,8 +365,8 @@ func test_every_gap_can_be_bridged_at_the_edge_of_its_reach() -> void:
 		check(obstacle.bridged, "gap %d bridged by a hold that starts as it comes into reach" % i)
 		_step_to(obstacle.time + 0.05)
 		_run.release(Vector2(640, 360))
-	check_eq(gaps, 12, "every gap")
-	_step_to(166.0)
+	check_eq(gaps, 8, "every gap")
+	_step_to(RunPlan.FADE_START + 1.0)
 	for obstacle in _run.obstacles():
 		if obstacle.kind == RunPlan.Kind.GAP:
 			check_eq(obstacle.status, _run.Status.PASSED, "the light crossed every gap on the hand")
@@ -399,12 +406,12 @@ func test_the_light_starts_as_small_as_a_seed_and_grows() -> void:
 
 
 func test_after_the_song_taps_still_move_the_light_until_the_hand_holds_it() -> void:
-	_step_to(170.0)
+	_step_to(RunPlan.FADE_START + 5.0)
 	check_eq(_run.part(), RunPlan.Part.FADE, "the obstacles have stopped")
 	_run.tap_lane(1)
 	check_eq(_run.lane(), 1, "a tap still does what it says")
 	_step_to(RunPlan.SLOW_START + 0.1)
-	check(_run.is_held(), "from 2:55 the hand has come for it")
+	check(_run.is_held(), "from 2:20 the hand is coming for it")
 	check_eq(_run.lane(), 0, "the light drifts back to the middle")
 	var before := _snapshot()
 	for k in 5:
@@ -413,30 +420,98 @@ func test_after_the_song_taps_still_move_the_light_until_the_hand_holds_it() -> 
 	check_eq(_run.ripple_count(), 5, "each tap only ripples")
 
 
-func test_the_light_slows_settles_into_the_hand_and_goes_out_there() -> void:
+func test_the_light_stops_at_the_tree_settles_into_the_hand_and_goes_out_there() -> void:
 	_step_to(RunPlan.SLOW_START - 1.0)
 	check_eq(_run.light_brightness(), 1.0, "fully bright as it runs on in the rain")
 	var a: float = _run.light_distance()
 	_step_to(RunPlan.SLOW_START)
-	check_near(_run.light_distance() - a, RunPlan.SPEED, 0.01, "still at full speed at 2:54")
+	check_near(_run.light_distance() - a, RunPlan.SPEED, 0.01, "still at full speed at 2:19")
 	_step_to(RunPlan.STOPPED)
 	var stopped: float = _run.light_distance()
-	check(_run._hand.visible, "the hand is there as it stops")
+	check(not _run._hand.visible or _run._hand.global_position.y < _run._light.global_position.y - 0.5,
+			"the hand only comes once it has stopped")
+	_step_to(RunPlan.HELD)
+	check(_run._hand.visible, "the hand has come under it")
 	var under: Vector3 = _run._light.global_position - _run._hand.global_position
 	check(under.length() < 0.6 and under.y > 0.0, "the light rests in the open hand, just above the palm")
-	_step_to(RunPlan.STOPPED + 5.0)
-	check_eq(_run.light_distance(), stopped, "stopped by 3:05")
+	check_eq(_run.light_brightness(), 1.0, "still fully bright as the hand takes it")
+	_step_to(RunPlan.HELD + 5.0)
+	check_eq(_run.light_distance(), stopped, "stopped by 2:22")
 	check(_run.light_brightness() < 1.0 and _run.light_brightness() > 0.0, "going out")
 	_step_to(RunPlan.OUT + 0.5)
-	check_eq(_run.light_brightness(), 0.0, "out by 3:15")
+	check_eq(_run.light_brightness(), 0.0, "out by 2:35")
 	check(not _run._light.visible, "nothing left of it")
 	check(_run._hand.visible, "the empty hand stays")
-	check(not _run.has_ended(), "until 3:25")
+	check(not _run.has_ended(), "until 2:45")
+
+
+# Call 20: after the obstacles, a whole tree across the path that nothing
+# gets past. It stops the light gently and is no obstacle to clear.
+func test_the_light_stops_against_a_fallen_tree_it_cannot_get_past() -> void:
+	var tree: Node3D = _run._tree
+	check(not (tree in _run.obstacles().map(func(o: Dictionary) -> Variant: return o.node)), "not one of the obstacles")
+	check_eq(RunPlan.part_at(RunPlan.STOPPED), RunPlan.Part.FADE, "it comes after the obstacles stop")
+	check(RunPlan.STOPPED - RunPlan.obstacles()[-1].time >= 15.0, "well after the last one")
+	check(_run.TREE_LENGTH > 3.0 * _run.TILE + 6.0, "wider than the path, out past both edges")
+	check(2.0 * _run.TREE_RADIUS - 0.1 > _run.LIGHT_HEIGHT + _run.LIGHT_RADIUS, "taller than the light")
+	_step_to(RunPlan.FADE_START + 1.0)
+	var stumbled: int = _run.count(_run.Status.STUMBLED)
+	_step_to(RunPlan.STOPPED - 8.0)
+	check(tree.visible, "seen coming, ahead in the fog")
+	_step_to(RunPlan.STOPPED)
+	var front: float = _run.tree_distance() - _run.TREE_RADIUS
+	var reach: float = _run.light_distance() + _run.LIGHT_RADIUS
+	check(reach <= front and front - reach < 0.25, "the light stops right against it")
+	check_eq(_run.light_brightness(), 1.0, "no flicker: it isn't hurt")
+	check(_run._last_stumble < RunPlan.FADE_START, "no thud and no stumble since the obstacles stopped")
+	check_eq(_run.count(_run.Status.STUMBLED), stumbled, "and it isn't a stumble")
+	_step_to(RunPlan.BLACK - 1.0)
+	check_eq(_run.light_distance(), RunPlan.distance(RunPlan.STOPPED), "it never gets past")
+	for node in _all(tree):
+		if node is GeometryInstance3D:
+			check((node as GeometryInstance3D).material_override in [_run._trunk_material,
+					_run._canopy_material, _run._branch_material], "nothing lights it up: %s" % node.name)
+
+
+func test_the_hints_say_tap_here_at_the_start_and_hold_for_the_first_two_gaps() -> void:
+	_step_to(1.0)
+	check_eq(_run.hints_shown(), [], "nothing in the dark")
+	_step_to(RunPlan.EUPHORIA_START + 2.0)
+	check_eq(_run.hints_shown(), ["tap here", "tap here"], "tap here, on the left and the right")
+	var size: Vector2 = _run.get_viewport().get_visible_rect().size
+	var left: Label = _run._tap_hints[0]
+	var right: Label = _run._tap_hints[1]
+	check(left.get_global_rect().get_center().x < size.x / 2.0, "one on the left half")
+	check(right.get_global_rect().get_center().x > size.x / 2.0, "one on the right half")
+	check_eq(left.mouse_filter, Control.MOUSE_FILTER_IGNORE, "and they take no taps")
+	var second: Dictionary = _run.obstacles()[1]
+	_step_to(second.time)
+	check_eq(_run.hints_shown(), ["tap here", "tap here"], "until the second stone has passed")
+	_step_to(second.time + 1.0)
+	check_eq(_run.hints_shown(), [], "then gone")
+	var gaps := 0
+	for i in _run.obstacles().size():
+		var gap: Dictionary = _run.obstacles()[i]
+		if gap.kind != RunPlan.Kind.GAP:
+			continue
+		gaps += 1
+		var opens: float = gap.time - RunPlan.reach(gap.part)
+		_step_to(opens - 2.0)
+		check_eq(_run.hints_shown(), [], "no hint long before gap %d" % gaps)
+		_step_to(opens - 0.3)
+		check_eq(_run.hints_shown(), ["hold"] if gaps <= 2 else [], "hold, just before gap %d is in reach" % gaps)
+		_step_to(gap.time)
+		check_eq(_run.hints_shown(), ["hold"] if gaps <= 2 else [], "and until it reaches the light")
+		_step_to(gap.time + 1.0)
+		check_eq(_run.hints_shown(), [], "then gone")
+		if gaps == 3:
+			break
+	check_eq(gaps, 3, "the first two gaps had it, the third didn't")
 
 
 func test_the_rain_never_stops_and_nothing_gets_lighter_after_the_panic() -> void:
 	_step_to(RunPlan.RAIN_START - 1.0)
-	check(not _run._rain.emitting, "dry before 1:50")
+	check(not _run._rain.emitting, "dry before 1:23")
 	var sky_before: float = _run._env.background_color.get_luminance()
 	_step_to(RunPlan.PANIC_START + 0.5)
 	var last := INF
@@ -471,7 +546,7 @@ func test_the_trees_bend_in_the_storm() -> void:
 	_step_to(60.0)
 	var tree: Node3D = _run._slots.values()[-1][0]
 	check_eq(tree.transform, tree.get_meta("base"), "still in the euphoria")
-	_step_to(150.0)
+	_step_to(RunPlan.PANIC_START + 15.0)
 	tree = _run._slots.values()[-1][0]
 	check(not tree.transform.is_equal_approx(tree.get_meta("base")), "bending in the panic")
 
@@ -585,13 +660,13 @@ func test_no_compositor_effects_or_volumetric_fog() -> void:
 
 
 func test_nothing_on_screen_has_words_a_button_or_a_count_all_run() -> void:
-	for t in [10.0, 100.0, 150.0, 170.0, 190.0, 204.0]:
+	for t in [10.0, 30.0, 80.0, 115.0, 135.0, 150.0, 164.0]:
 		_step_to(t)
 		_assert_no_words_or_buttons(_chapter)
 
 
 func test_the_path_is_three_lanes_and_gives_way_only_behind_the_light() -> void:
-	for t in [60.0, 110.0, 150.0]:
+	for t in [50.0, 88.0, 115.0]:
 		_step_to(t)
 		check_eq(_tiles_in(_row_at(_run.light_distance() + 12.0)), 3, "three lanes ahead at %.0f s" % t)
 	for row in _run._rows:
@@ -599,11 +674,11 @@ func test_the_path_is_three_lanes_and_gives_way_only_behind_the_light() -> void:
 			if tile != null and tile.get_meta("fall") != INF:
 				var falls_at := RunPlan.distance(tile.get_meta("fall"))
 				check(falls_at > (row + 1) * _run.TILE - 0.01, "row %d falls only once the light is past it" % row)
-	_step_to(166.0)
+	_step_to(RunPlan.FADE_START + 1.0)
 	var row := _row_at(_run.light_distance() + 10.0)
 	check_eq(_tiles_in(row), 3, "whole once the obstacles stop")
 	for tile in _run._rows[row]:
-		check_eq(tile.get_meta("fall"), INF, "nothing falls after 2:45")
+		check_eq(tile.get_meta("fall"), INF, "nothing falls after 2:08")
 
 
 # --- Helpers.
@@ -657,8 +732,12 @@ func _play(perfect: bool) -> Dictionary:
 		if not out.has("brightness_at_fade") and run.time() >= RunPlan.FADE_START:
 			out.brightness_at_fade = run.light_brightness()
 			out.distance_at_fade = run.light_distance()
+		if not out.has("stumbled_at_fade") and run.time() >= RunPlan.FADE_START:
+			out.stumbled_at_fade = run.count(run.Status.STUMBLED)
 		if not out.has("lane_when_held") and run.time() >= RunPlan.SLOW_START + 1.0:
 			out.lane_when_held = run.lane()
+		if not out.has("distance_stopped") and run.time() >= RunPlan.STOPPED:
+			out.distance_stopped = run.light_distance()
 		if out.out_at < 0.0 and run.time() > RunPlan.STOPPED and run.light_brightness() == 0.0:
 			out.out_at = run.time()
 	out.passed = run.count(run.Status.PASSED)
@@ -730,8 +809,13 @@ func _all(node: Node) -> Array[Node]:
 	return out
 
 
+# Nothing to read or press, but the two hints when they show (call 20).
 func _assert_no_words_or_buttons(root: Node) -> void:
 	for node in _all(root):
+		if node is Label and node.name.begins_with("Hint") and node.text in [RunPlan.TAP_HINT, RunPlan.HOLD_HINT]:
+			check(not node.visible or node.text in RunPlan.hints(_run.time()).map(
+					func(h: Array) -> String: return h[0]), "a hint only when it's due: %s" % node.text)
+			continue
 		check(not node is Label and not node is RichTextLabel and not node is BaseButton
 				and not node is Label3D, "nothing to read or press: %s" % node.get_path())
 
@@ -791,7 +875,7 @@ func test_the_fireflies_go_out_at_random_once_the_path_is_empty() -> void:
 	check(never >= 2, "some never go out")
 	gaps.sort()
 	check(gaps[-1] > 3.0 * gaps[0], "no rhythm: uneven gaps between them")
-	_step_to(RunPlan.STOPPED + 5.0)
+	_step_to(RunPlan.HELD + 2.0)
 	var glowing: int = _run.fireflies_glowing()
 	check(glowing >= never and glowing < all, "some gone, some still glowing as the light goes out")
 	var near := false
