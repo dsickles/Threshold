@@ -40,7 +40,7 @@ A "did we miss anything" list for questions that cover a whole chapter or the wh
 ## Production
 
 - Build cost in the current milestone
-- New art or sound needed (AI-generated, ADR-0005)
+- New art or sound needed (free asset packs first, AI only to fill gaps, ADR-0010)
 - Words added against the budget (about 5,000 dialogue, 2,000 journal, NFR8)
 - Tests and success criteria from the roadmap and stories that apply
 

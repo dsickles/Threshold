@@ -81,11 +81,11 @@ The screen, in the abstract version:
 
 ### Making the song
 
-The music is AI-generated ([ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md)). AI music tools often drift off tempo, which would break a beat chart. So before a song is accepted:
+The music is AI-generated ([ADR-0005](../adr/0005-ai-assets-text-dialogue-v1.md)). _(updated 2026-10-26: the song is a Pixabay track, Dan's pick 2026-10-21, credited in `game/assets/audio/partner/CREDITS.md`; v1 assets follow [ADR-0010](../adr/0010-free-asset-packs-first-ai-fills-gaps.md))_ AI music tools often drift off tempo, which would break a beat chart. So before a song is accepted:
 
 1. Put it in an audio editor with a 120 BPM click and find the exact time of bar 1, beat 1 (this is the chart's **start offset**).
 2. Check bar 100, beat 1 still lands within about 10 ms of where 120 BPM says it should (3:18.000 plus the offset). If it drifts, the track is rejected.
-3. If no tool holds the tempo, the fallback is to build the track from fixed-tempo loops in a free audio editor. **Dan:** which tool you generate with, and checking its commercial terms (ADR-0005), are yours.
+3. If no tool holds the tempo, the fallback is to build the track from fixed-tempo loops in a free audio editor. **Dan:** which tool you generate with, and checking its commercial terms (ADR-0005), are yours. _(updated 2026-10-26: no longer needed; see the note above)_
 
 File format: Ogg Vorbis, which Godot plays well in the browser.
 
