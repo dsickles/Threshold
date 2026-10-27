@@ -95,6 +95,8 @@ test("a hold through a gap lays the hand across it and the light crosses", async
 });
 
 test("hiding the tab pauses the run until a tap, and the sound comes back", async ({ game, page }) => {
+  // About 2 minutes at phone sizes in CI, over the default 120 s (CI on 4d0dfba).
+  test.setTimeout(240_000);
   await openRun(game, "&protector_from=20");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(21);
   const setHidden = (hidden: boolean) => hide(page, hidden);
@@ -118,6 +120,8 @@ test("hiding the tab pauses the run until a tap, and the sound comes back", asyn
 });
 
 test("after the tab comes back, the first tap restarts the sound", async ({ game, page }) => {
+  // About 2 minutes at phone sizes in CI, over the default 120 s (CI on 4d0dfba).
+  test.setTimeout(240_000);
   // Safari can say the page's sound is running while it is silent after a
   // tab switch (Dan, 2026-10-27, call 20), so the first tap back restarts it.
   await openRun(game, "&protector_from=20");
