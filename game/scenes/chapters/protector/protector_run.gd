@@ -470,7 +470,7 @@ func _update() -> void:
 		_whole = true
 		for row in _rows.keys():
 			var falls := Vector2(INF, -INF)
-			for tile: MeshInstance3D in _rows[row]:
+			for tile: Variant in _rows[row]:
 				if not is_instance_valid(tile):
 					continue
 				if _t < float(tile.get_meta("fall")):
