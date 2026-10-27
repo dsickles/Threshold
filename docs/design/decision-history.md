@@ -362,6 +362,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 31. Free asset packs first; AI only fills gaps (2026-10-27)
+
+| | |
+|---|---|
+| **Was** | v1 art, music and sound are AI-generated (ADR-0005, §11). |
+| **Became** | Free packs with commercial licenses first (CC0, CC-BY, royalty-free such as Sonniss); AI-generated assets only where no pack fits. Every asset is listed in CREDITS.md. Text dialogue and no voice acting are unchanged. |
+| **Why** | Packs look more consistent than AI models, have clear terms for Steam, and shrink the AI disclosure. Dan's call, 2026-10-27, in the project thread. |
+| **Record** | [ADR-0010](../adr/0010-free-asset-packs-first-ai-fills-gaps.md); [scope.md](../scope.md); [CREDITS.md](../../CREDITS.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
