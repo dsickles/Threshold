@@ -311,7 +311,9 @@ func press(at: Vector2) -> void:
 func release(at: Vector2) -> void:
 	if _press_at < 0.0:
 		return
-	var was_hold := _holding
+	# Held long enough by the real clock is a hold, even if no frame has
+	# come since to say so: a slow frame must not turn a hold into a tap.
+	var was_hold: bool = _holding or real_clock.call() - _press_real >= HOLD_START
 	_press_at = -1.0
 	_holding = false
 	if was_hold:
@@ -469,7 +471,7 @@ func _update() -> void:
 		for row in _rows.keys():
 			var falls := Vector2(INF, -INF)
 			for tile: MeshInstance3D in _rows[row]:
-				if tile == null:
+				if not is_instance_valid(tile):
 					continue
 				if _t < float(tile.get_meta("fall")):
 					tile.set_meta("fall", INF)

@@ -259,6 +259,33 @@ func test_a_quick_tap_on_a_slow_frame_still_moves_the_lane() -> void:
 	check(_run.is_holding(), "really held for HOLD_START: a hold")
 	_run.release(Vector2(4, 10))
 	check_eq(_run.lane(), 1, "and the hold didn't move the lane")
+	# Lifted after HOLD_START with no frame in between: still a hold.
+	_run.press(Vector2(4, 10))
+	now[0] += 0.25
+	_run.release(Vector2(4, 10))
+	check_eq(_run.lane(), 1, "a 0.25 s hold inside one slow frame doesn't move the lane")
+
+
+func test_at_the_fade_falling_tiles_carry_on_and_no_row_is_rebuilt() -> void:
+	# At 2:45 the path is whole again, but nothing snaps back and nothing is
+	# built again all at once (Hopper, 2026-10-27).
+	_step_to(RunPlan.FADE_START - 0.05)
+	var falling: MeshInstance3D = null
+	var before := {}
+	for row: int in _run._rows:
+		before[row] = _run._rows[row].duplicate()
+		for tile: Variant in _run._rows[row]:
+			if tile != null and falling == null and _run.time() > float(tile.get_meta("fall")) + 0.1 \
+					and tile.visible:
+				falling = tile
+	if not check(falling != null, "a panic tile is falling just before 2:45"):
+		return
+	var y := falling.position.y
+	_run.advance(0.1)
+	check(is_instance_valid(falling) and falling.position.y < y, "and it is still falling after 2:45")
+	for row: int in before:
+		if _run._rows.has(row):
+			check_eq(_run._rows[row], before[row], "row %d is kept, not built again" % row)
 
 
 func test_letting_go_before_the_gap_lifts_the_hand_and_the_light_stumbles() -> void:
