@@ -33,7 +33,7 @@ About 15 minutes, rough, played in one sitting.
 - A tiny version of the finished-chapter list and core table driving the House mood.
 - Pause when the browser tab is hidden (no save).
 
-**Not in M1:** title and settings screens, quality setting, Continue, journal, chapter looks beyond one gray filter, final art. _(updated 2026-10-19: was "save/Continue". The save system itself is built in M1; see scope.md.)_
+**Not in M1:** title and settings screens, quality setting, Continue, journal, chapter looks beyond one gray filter, final art (the first art pass is M1.5). _(updated 2026-10-19: was "save/Continue". The save system itself is built in M1; see scope.md.)_
 
 **Success criteria:**
 1. Runs from a link on Dan's phone and a laptop browser, meets the iPhone headroom bar in [scope.md](scope.md), and passes one spot check on a real mid-range Android. _(updated 2026-10-17: was "smooth on one chosen mid-range phone")_
@@ -44,6 +44,22 @@ About 15 minutes, rough, played in one sitting.
 6. Dan, having played it, wants to build the rest.
 
 **If item 4 fails, fix the Loss before building anything else.** Playtest notes go in [playtests/](playtests/).
+
+## M1.5 Asset pass
+
+_Added 2026-10-26 (Dan): starts once M1 is done._
+
+Replace the gray-box art of everything M1 built with free asset packs, following [ADR-0010](adr/0010-free-asset-packs-first-ai-fills-gaps.md) (packs first, AI only to fill gaps). Sources: [design/asset-sources.md](design/asset-sources.md).
+
+**In:**
+- Decide the House's look (realistic or soft low-poly) on a one-room test played on Dan's phone first, then dress the M1 rooms in the chosen style.
+- The Loss: trees, stones, branches and path from packs; the car from a pack.
+- The Partner: better art for what it shows (to be discussed with Dan before its ticket).
+- Every asset listed in [CREDITS.md](../CREDITS.md); the web build still meets the load and memory bar in [scope.md](scope.md).
+
+**Not in M1.5:** new chapters, new mechanics, or changes to how M1 plays.
+
+**Done when:** Dan plays M1 on his phone with the new art, it still meets the iPhone headroom bar in scope.md, and he prefers it to the gray box.
 
 ## M2 The Whole Story, Rough
 
