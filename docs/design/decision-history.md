@@ -382,6 +382,17 @@ The documents were written in one day, in this order: brainstorming session → 
 | **Became** | Fireflies drift along the trail from the euphoria; when the path empties at 2:45 they go out one by one at random (a fixed order that looks random), some never, and one or two still glow as the light goes out in the hand. The panic lasts 30 s with 17 obstacles (41 in all), and everything after it moves 10 s earlier: black at 3:25. |
 | **Why** | Dan's third play, 2026-10-26: the storm felt a little long, and the light going out needed something to happen that shows the randomness more explicitly in the last 45 seconds. Fireflies show chance without giving the loss a cause the player could have stopped. Dan may still want more, possibly a last obstacle nobody can clear (open). |
 | **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 18; [continuity-ledger.md](continuity-ledger.md) (Fireflies, the small light, the couple's song); [scope.md](../scope.md) |
+
+---
+
+## 33. The Loss's gaps: press and hold, not the lane tap (2026-10-27)
+
+| | |
+|---|---|
+| **Was** | A tap on the left or right half moved the light one lane and, with a gap in reach, also laid the father's hand across it. |
+| **Became** | A tap (under 0.2 s) moves the lane, when the finger lifts. Pressing and holding anywhere lays the hand across a gap in reach for as long as the finger is down; letting go before the gap reaches the light lifts it and the light stumbles. A hold never moves the lane. Still one pointer, click is tap, nothing on hover. |
+| **Why** | Dan's third play, 2026-10-26: "closing the gap is a different action than moving lanes, and having them be exactly the same doesn't quite feel right". He picked press and hold on a decision card (2026-10-27) over tapping the light itself, a double tap, or no change. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 19 (and 13); [scope.md](../scope.md) |
 ---
 
 ## What did not change
