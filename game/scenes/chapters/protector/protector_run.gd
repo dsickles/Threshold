@@ -426,7 +426,8 @@ func release(at: Vector2) -> void:
 # browser hook ignores): use now (Hopper, 2026-10-27).
 func _up_time() -> float:
 	var up: float = up_clock.call()
-	return up if up > _press_real else real_clock.call()
+	# The same time is this press's own lift: a tap the browser sent at once.
+	return up if up >= _press_real else real_clock.call()
 
 
 func is_holding() -> bool:
