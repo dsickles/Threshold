@@ -17,7 +17,7 @@ The single answer to "is this in v1?". If a design doc describes something marke
 | The Loss with no warning, skip or retry | | 2026-09-20 |
 | Saves only between chapters | No mid-chapter checkpoints | 2026-09-22 D6 |
 | Text dialogue with subtitles | No voice acting | [ADR-0005](adr/0005-ai-assets-text-dialogue-v1.md) |
-| Free asset packs first; AI-generated art, music and sound only to fill gaps | CC0, CC-BY or royalty-free commercial licenses only; each asset listed in CREDITS.md. _(updated 2026-10-27: was AI-generated art, music and sound, ADR-0005)_ | [ADR-0010](adr/0010-free-asset-packs-first-ai-fills-gaps.md) |
+| Free asset packs first; AI-generated art, music and sound only to fill gaps | CC0, CC-BY or royalty-free commercial licenses only; each asset listed in CREDITS.md. _(updated 2026-10-26: was AI-generated art, music and sound, ADR-0005)_ | [ADR-0010](adr/0010-free-asset-packs-first-ai-fills-gaps.md) |
 | House sounds (rain, fridge hum, heartbeat) | Recorded loops, not generated sound | 2026-09-22 |
 | Maya's assist in the Anchor ("You've got this.") | Subtitle plus sound cue | GDD, ADR-0005 |
 | Settings: subtitles, reduced motion, quality | | UX spec |
@@ -44,6 +44,7 @@ The single answer to "is this in v1?". If a design doc describes something marke
 | What The Partner shows on screen, its song, and its beat chart (draft: [design/partner-song-and-beat-chart.md](design/partner-song-and-beat-chart.md)) | M1 |
 | What "Stress" is, whether it lasts beyond a chapter, and what it changes | M2 |
 | Anchor: scripted wobble or real physics | M2 (cheap test) |
+| The House's look: realistic (Poly Haven and ambientCG) or soft low-poly (Quaternius). Recommended: realistic. See [design/asset-sources.md](design/asset-sources.md) | Before the House's final art (M3+); a living-room look test can come earlier |
 
 ## Settled questions
 
