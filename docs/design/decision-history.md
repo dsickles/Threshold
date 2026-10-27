@@ -373,7 +373,18 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
-## 32. The Loss's run: the father's hand and three lanes, trees, and a storm that never stops (2026-10-25)
+## 32. M1.5, an asset pass after M1 (2026-10-26)
+
+| | |
+|---|---|
+| **Was** | Final art came later (M3+ chapter looks, then Polish & Ship); M1 lists "final art" as not in M1, and no milestone covered an art pass on what is built. |
+| **Became** | Finish M1, then M1.5 replaces the gray-box art of what M1 built (the House, the Loss and its car, the Partner) with free packs under ADR-0010, and AI-made Partner pictures where no pack fits (Dan, 2026-10-27: no art budget). |
+| **Why** | Free packs make an art pass cheap now, and the House and Loss gain the most from it. Dan's call, 2026-10-26, in the project thread. |
+| **Record** | [roadmap.md](../roadmap.md); DAS-104 |
+
+---
+
+## 33. The Loss's run: the father's hand and three lanes, trees, and a storm that never stops (2026-10-25)
 
 | | |
 |---|---|
@@ -384,7 +395,7 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
-## 33. The Loss's ending: fireflies go out at random, and a shorter storm (2026-10-26)
+## 34. The Loss's ending: fireflies go out at random, and a shorter storm (2026-10-26)
 
 | | |
 |---|---|
@@ -395,7 +406,7 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
-## 34. The Loss's gaps: press and hold, not the lane tap (2026-10-27)
+## 35. The Loss's gaps: press and hold, not the lane tap (2026-10-27)
 
 | | |
 |---|---|
@@ -404,7 +415,7 @@ The documents were written in one day, in this order: brainstorming session → 
 | **Why** | Dan's third play, 2026-10-26: "closing the gap is a different action than moving lanes, and having them be exactly the same doesn't quite feel right". He picked press and hold on a decision card (2026-10-27) over tapping the light itself, a double tap, or no change. |
 | **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 19 (and 13); [scope.md](../scope.md) |
 
-## 35. The Loss's run: about 2:45, hints, and a fallen tree at the end (2026-10-27)
+## 36. The Loss's run: about 2:45, hints, and a fallen tree at the end (2026-10-27)
 
 | | |
 |---|---|

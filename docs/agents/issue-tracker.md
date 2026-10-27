@@ -8,6 +8,7 @@ Work for this repo lives in Linear, workspace **dassoft**, team **DASSoft** (key
 - **Projects = milestones.** One Linear project per milestone in `docs/roadmap.md`, all linked to the Threshold initiative:
   - `Threshold M0 Setup`
   - `Threshold M1 Spark to Silence`
+  - `Threshold M1.5 Asset pass`
   - `Threshold M2 The Whole Story, Rough`
   - `Threshold M3+ Chapter depth` (may later split into one project per chapter)
   - `Threshold Final: Polish & Ship`
