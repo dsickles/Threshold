@@ -3,10 +3,10 @@ extends Node3D
 ## away from the camera down a trail of square tiles through tall trees, and
 ## the father's hand keeps it safe. Tap the left or right of the screen and
 ## the hand moves the light one lane that way, out of the way of the stones
-## and branches coming; with a gap in reach the tap also lays the hand
-## across it. Seen from behind, like Temple Run; the path bends on its own.
-## Built from docs/design/the-loss-run-and-car.md (Dan, 2026-10-25, revised
-## after his first and second plays: calls 13 to 17).
+## and branches coming; hold a finger down with a gap in reach and the hand
+## lays across it. Seen from behind, like Temple Run; the path bends on its
+## own. Built from docs/design/the-loss-run-and-car.md (Dan, 2026-10-25,
+## revised after each of his plays: calls 13 to 19).
 ##
 ## Everything follows one fixed timeline (run_plan.gd), the same for every
 ## player: the euphoria, the confusion, the panic, then the fade, where the
@@ -70,6 +70,10 @@ const LOOKS := [
 
 ## False in tests, which move the clock with advance().
 var auto_advance := true
+## The real clock, in seconds, that tells a tap from a hold: how long the
+## finger is really down, not how far the run moved, so one slow frame can't
+## turn a quick tap into a hold. Tests that step the run swap in its own clock.
+var real_clock: Callable = func() -> float: return Time.get_ticks_usec() / 1000000.0
 
 var _t := 0.0
 var _paused := false
@@ -85,6 +89,7 @@ var _lane_at := -INF  # When it set off.
 var _lane_time := RunPlan.LANE_MOVE
 var _push_dir := 0.0  # Which way the hand last pushed: -1 left, 1 right.
 var _press_at := -1.0  # When the finger went down; -1 when none is down.
+var _press_real := 0.0  # The same moment by real_clock.
 var _press_pos := Vector2.ZERO
 var _press_index := 0  # Which finger: only the first one down counts.
 var _holding := false  # The press has lasted HOLD_START: a hold.
@@ -115,6 +120,9 @@ var _canopy_material: StandardMaterial3D
 var _ground_material: StandardMaterial3D
 var _skin: StandardMaterial3D
 # Shared by every obstacle and hand, so none is built while the light runs.
+# Only each obstacle's outline material is its own, since each fades in at
+# its own moment; it is the same kind as the one drawn behind the black, so
+# it costs no first-time stutter.
 var _stone_mesh: SphereMesh
 var _stone_material: StandardMaterial3D
 var _branch_meshes := {}  # Lanes it spans -> CylinderMesh.
@@ -181,7 +189,7 @@ func advance(delta: float) -> void:
 	if _paused or _ended:
 		return
 	_t += delta
-	if _press_at >= 0.0 and not _holding and _t - _press_at >= HOLD_START:
+	if _press_at >= 0.0 and not _holding and real_clock.call() - _press_real >= HOLD_START:
 		_start_hold()
 	if _holding:
 		_lay_hand_across()
@@ -294,6 +302,7 @@ func press(at: Vector2) -> void:
 	if _ended or _press_at >= 0.0:
 		return
 	_press_at = _t
+	_press_real = real_clock.call()
 	_press_pos = at
 
 
@@ -452,10 +461,21 @@ func _on_visibility_change(_args: Array) -> void:
 
 func _update() -> void:
 	if not _whole and _t >= RunPlan.FADE_START:
-		# The obstacles have stopped, and the path is whole again.
+		# The obstacles have stopped, and the path is whole again: no tile
+		# still whole will fall, and every row built from now on is whole.
+		# Tiles already falling behind the light carry on, so nothing snaps
+		# back, and nothing is rebuilt all in one frame.
 		_whole = true
 		for row in _rows.keys():
-			_free_row(row)
+			var falls := Vector2(INF, -INF)
+			for tile: MeshInstance3D in _rows[row]:
+				if tile == null:
+					continue
+				if _t < float(tile.get_meta("fall")):
+					tile.set_meta("fall", INF)
+				else:
+					falls = Vector2(minf(falls.x, tile.get_meta("fall")), maxf(falls.y, tile.get_meta("fall")))
+			_row_falls[row] = falls
 	if _t >= RunPlan.SLOW_START and _lane_at < RunPlan.SLOW_START:
 		# As it slows it drifts back to the middle, into the hand.
 		_lane_from_x = _lane_x()

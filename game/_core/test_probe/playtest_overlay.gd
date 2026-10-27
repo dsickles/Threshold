@@ -21,7 +21,7 @@ func _ready() -> void:
 	if not OS.has_feature("web"):
 		return
 	var on: Variant = JavaScriptBridge.eval(
-			"window.thresholdPlaytest === true || window.location.search.includes('overlay')", true)
+			"window.thresholdPlaytest === true || new URLSearchParams(window.location.search).has('overlay')", true)
 	# The web hands a JavaScript true back as 1.
 	if not on:
 		return

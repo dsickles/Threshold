@@ -1,7 +1,7 @@
 extends TestCase
 ## The Protector's run (DAS-97), on the run's own clock instead of real time.
 ## The rules come from docs/design/the-loss-run-and-car.md, "Checks this
-## design must pass" (revised after Dan's first play, calls 13 to 16). Feel,
+## design must pass" (revised after each of Dan's plays, calls 13 to 19). Feel,
 ## sound and the fade's weight are Dan's to check on his phone.
 
 const PROTECTOR := preload("res://scenes/chapters/protector/protector.tscn")
@@ -17,6 +17,7 @@ func before_each() -> void:
 	_chapter = add_scene(PROTECTOR)
 	_run = _chapter.run()
 	_run.auto_advance = false
+	_run.real_clock = _run.time  # No real time passes here.
 
 
 func test_the_obstacle_list_matches_the_design() -> void:
@@ -89,6 +90,7 @@ func test_the_obstacle_sequence_is_fixed_not_random() -> void:
 	check_eq(RunPlan.obstacles(), RunPlan.obstacles(), "the same list every time")
 	var other: Node = add_scene(PROTECTOR).run()
 	other.auto_advance = false
+	other.real_clock = other.time  # No real time passes here.
 	for i in _run.obstacles().size():
 		check_eq(other.obstacles()[i].distance, _run.obstacles()[i].distance, "obstacle %d in the same place" % i)
 	check_eq(other._path_points, _run._path_points, "the same path")
@@ -237,6 +239,26 @@ func test_a_quick_press_moves_the_lane_when_the_finger_lifts() -> void:
 	_run.release(Vector2(4, 10))
 	check_eq(_run.lane(), 1, "held: no lane move")
 	check_eq(_run.ripple_count(), 1, "a hold with nothing to cross only ripples")
+
+
+func test_a_quick_tap_on_a_slow_frame_still_moves_the_lane() -> void:
+	# The phone can draw a frame longer than HOLD_START; how long the finger
+	# is really down decides, not how far the run moved (Hopper, 2026-10-27).
+	_step_to(8.0)
+	var now := [100.0]
+	_run.real_clock = func() -> float: return now[0]
+	var size: Vector2 = _run.get_viewport().get_visible_rect().size
+	_run.press(Vector2(size.x - 4, 10))
+	_run.advance(0.3)
+	now[0] += 0.05
+	_run.release(Vector2(size.x - 4, 10))
+	check_eq(_run.lane(), 1, "a 50 ms tap across a 0.3 s frame is still a tap")
+	_run.press(Vector2(4, 10))
+	now[0] += _run.HOLD_START
+	_run.advance(STEP)
+	check(_run.is_holding(), "really held for HOLD_START: a hold")
+	_run.release(Vector2(4, 10))
+	check_eq(_run.lane(), 1, "and the hold didn't move the lane")
 
 
 func test_letting_go_before_the_gap_lifts_the_hand_and_the_light_stumbles() -> void:
@@ -433,6 +455,7 @@ func test_leaving_mid_run_saves_nothing_and_next_time_starts_from_the_lamp() -> 
 	check(runner.enter(&"protector", house), "the run starts")
 	var run: Node = runner.get_child(0).run()
 	run.auto_advance = false
+	run.real_clock = run.time  # No real time passes here.
 	run.advance(100.0)
 	runner.get_child(0).queue_free()  # Closing the tab part-way, say.
 	await frames()
@@ -461,6 +484,7 @@ func test_the_chapter_reports_finished_once_with_no_answer_and_is_saved() -> voi
 	runner.enter(&"protector", house)
 	var run: Node = runner.get_child(0).run()
 	run.auto_advance = false
+	run.real_clock = run.time  # No real time passes here.
 	run.advance(RunPlan.BLACK - 1.0)
 	check(results.is_empty(), "not finished before the black")
 	check_eq(state.finished_chapters(), ["partner"], "nothing saved before it finishes")
@@ -488,6 +512,7 @@ func test_the_menu_opens_the_protector_and_takes_it_back() -> void:
 	check(not menu.visible, "menu hidden while it plays")
 	var run: Node = chapter.run()
 	run.auto_advance = false
+	run.real_clock = run.time  # No real time passes here.
 	run.advance(RunPlan.BLACK + 0.1)
 	await frames()
 	check(not is_instance_valid(chapter), "closed when finished")
@@ -542,6 +567,7 @@ func _play(perfect: bool) -> Dictionary:
 	var chapter: Node = add_scene(PROTECTOR)
 	var run: Node = chapter.run()
 	run.auto_advance = false
+	run.real_clock = run.time  # No real time passes here.
 	var out := {"finishes": 0, "finished_at": -1.0, "out_at": -1.0}
 	chapter.finished.connect(func() -> void:
 		out.finishes += 1
