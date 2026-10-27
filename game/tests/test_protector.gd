@@ -307,6 +307,16 @@ func test_a_quick_tap_heard_after_a_slow_frame_is_still_a_tap() -> void:
 	now[0] = 300.04
 	_run.release(Vector2(size.x - 4, 10))
 	check_eq(_run.lane(), 0, "it is a tap: one lane right")
+	# A click just after a touch: the browser keeps the touch's old lift, which
+	# is before this press. Held 0.3 s, it is still a hold (Hopper, 2026-10-27).
+	_run.up_clock = func() -> float: return 300.04
+	now[0] = 400.0
+	_run.press(Vector2(4, 10))
+	now[0] = 400.3
+	_run.advance(STEP)
+	check(_run.is_holding(), "an old lift doesn't stop a fresh press becoming a hold")
+	_run.release(Vector2(4, 10))
+	check_eq(_run.lane(), 0, "letting go of a hold doesn't move the lane")
 
 
 func test_at_the_fade_falling_tiles_carry_on_and_no_row_is_rebuilt() -> void:
@@ -943,3 +953,7 @@ func test_the_first_rain_is_faint_and_thickens() -> void:
 	check(first < 0.25, "the first drops are faint (%.2f)" % first)
 	_step_to(RunPlan.RAIN_START + 12.0)
 	check(drops.albedo_color.a > 2.0 * first, "and thicken as the rain is heard")
+	# The pre-mixed track's rain starts where the drops do (Hopper, 2026-10-27).
+	var script_path := ProjectSettings.globalize_path("res://").path_join("../tools/protector/make_audio.py")
+	var mix := FileAccess.get_file_as_string(script_path)
+	check(mix.contains("RAIN_SEEN = %.1f" % RunPlan.RAIN_START), "make_audio.py's RAIN_SEEN is RunPlan.RAIN_START")

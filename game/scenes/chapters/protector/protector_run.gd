@@ -282,7 +282,7 @@ func advance(delta: float) -> void:
 	if _paused or _ended:
 		return
 	_t += delta
-	if _press_at >= 0.0 and not _holding and up_clock.call() - _press_real >= HOLD_START:
+	if _press_at >= 0.0 and not _holding and _up_time() - _press_real >= HOLD_START:
 		_start_hold()
 	if _holding:
 		_lay_hand_across()
@@ -411,7 +411,7 @@ func release(at: Vector2) -> void:
 		return
 	# Held long enough by the real clock is a hold, even if no frame has
 	# come since to say so: a slow frame must not turn a hold into a tap.
-	_last_up = up_clock.call()
+	_last_up = _up_time()
 	var was_hold: bool = _holding or _last_up - _press_real >= HOLD_START
 	_press_at = -1.0
 	_holding = false
@@ -419,6 +419,14 @@ func release(at: Vector2) -> void:
 		_let_go()
 	else:
 		tap(at)
+
+
+# When the finger lifted, or now if it hasn't. A browser lift from before this
+# press belongs to an earlier one (a click just after a touch, which the
+# browser hook ignores): use now (Hopper, 2026-10-27).
+func _up_time() -> float:
+	var up: float = up_clock.call()
+	return up if up > _press_real else real_clock.call()
 
 
 func is_holding() -> bool:
@@ -1604,6 +1612,9 @@ func _build_tree() -> void:
 	for stub: Array in [[-1.7, 0.6, -0.5], [0.9, -0.7, 0.4], [3.4, 0.9, -0.2]]:
 		var branch := MeshInstance3D.new()
 		branch.mesh = _branch_mesh(1)
+		# The obstacle branch's shape, kept at the stubs' first length (1 m)
+		# when call 21 shortened the obstacles.
+		branch.scale = Vector3(1.0, 1.0 / _branch_mesh(1).height, 1.0)
 		branch.material_override = _branch_material
 		branch.rotation = Vector3(stub[1], 0.0, stub[2])
 		branch.position = Vector3(stub[0], TREE_RADIUS * 1.6, -0.2)
