@@ -54,7 +54,7 @@ Replace the gray-box art of everything M1 built with free asset packs, following
 **In:**
 - Decide the House's look (realistic or soft low-poly) on a one-room test played on Dan's phone first, then dress the M1 rooms in the chosen style.
 - The Loss: trees, stones, branches and path from packs; the car from a pack.
-- The Partner: better art for what it shows (to be discussed with Dan before its ticket).
+- The Partner: AI-made art for the 12 moment pictures and the couple, in one matching style (Dan, 2026-10-27: no art budget, so AI where no pack fits, per ADR-0010); pack particles for the lights and sparkles; a warmer background; a better pregnancy test.
 - Every asset listed in [CREDITS.md](../CREDITS.md); the web build still meets the load and memory bar in [scope.md](scope.md).
 
 **Not in M1.5:** new chapters, new mechanics, or changes to how M1 plays.
