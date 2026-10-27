@@ -905,3 +905,41 @@ func _slot_fireflies_visible() -> int:
 			if nodes[k].visible:
 				n += 1
 	return n
+
+
+# Call 21: the empty space of a gap reads even in the dark, the branches
+# leave their free lane plainly empty, and the first rain is faint.
+func test_a_gap_s_edges_show_through_the_dark_before_it_is_in_reach() -> void:
+	var i := -1
+	for k in _run.obstacles().size():
+		if _run.obstacles()[k].kind == RunPlan.Kind.GAP and _run.obstacles()[k].part == RunPlan.Part.PANIC:
+			i = k
+			break
+	var gap: Dictionary = _run.obstacles()[i]
+	_step_to(gap.time - _run.GAP_SEEN - 0.2)
+	var outline: Node3D = gap.node.get_node("Outline")
+	check(not outline.visible, "nothing before it comes close")
+	var line: StandardMaterial3D = outline.get_meta("material")
+	check(line.disable_fog, "the fog doesn't hide its edges")
+	_step_to(gap.time - _run.GAP_SEEN + 0.5)
+	check(outline.visible, "its edges show faintly well before it is in reach")
+	check(line.albedo_color.a > 0.2 and line.albedo_color.a < 0.5, "faint: %.2f" % line.albedo_color.a)
+	_step_to(gap.time - RunPlan.reach(gap.part) + 0.2)
+	check_eq(line.albedo_color.a, 1.0, "bright once it is in reach")
+
+
+func test_a_branch_leaves_its_free_lane_plainly_empty() -> void:
+	var mesh: CylinderMesh = _run._branch_mesh(2)
+	# From the middle of its two lanes, it reaches just past the second one's middle.
+	var reach := mesh.height / 2.0
+	check(reach >= _run.TILE / 2.0 + _run.LIGHT_RADIUS - 0.001, "it still covers the light in both its lanes")
+	check(reach < _run.TILE / 2.0 + 0.4, "and ends just past its second lane's middle")
+
+
+func test_the_first_rain_is_faint_and_thickens() -> void:
+	_step_to(RunPlan.RAIN_START + 0.5)
+	var drops: StandardMaterial3D = _run._rain.mesh.material
+	var first := drops.albedo_color.a
+	check(first < 0.25, "the first drops are faint (%.2f)" % first)
+	_step_to(RunPlan.RAIN_START + 12.0)
+	check(drops.albedo_color.a > 2.0 * first, "and thicken as the rain is heard")

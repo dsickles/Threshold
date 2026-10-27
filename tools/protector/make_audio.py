@@ -10,7 +10,8 @@ game/assets/audio/protector/:
 - run.mp3: one pre-mixed track for the run, from 0:03 (the light fades up)
   to 2:45 (black). The run starts it at 0:03 and it plays to the end.
   - 0:03-1:03 the euphoria: the Partner's song, bright.
-  - 1:03-1:43 the confusion: wind, then the first rain, rise over the song.
+  - 1:03-1:43 the confusion: wind, then the first rain, rise over the song;
+    the rain is heard only from 1:23, when it is seen, light at first.
   - 1:43-2:08 the panic: heavy rain, wind and thunder drown the song until
     only scraps of it come through, and by 2:08 it is gone under the rain.
   - 2:08-2:45 the light goes out: the storm without the song, the wind
@@ -58,6 +59,7 @@ CONFUSION = 63.0
 PANIC = 103.0
 FADE = 128.0  # The song is gone under the rain (2:08 since call 20).
 HELD = 145.0  # The hand holds the light at the fallen tree; it goes out.
+RAIN_SEEN = 83.0  # The first rain on screen: none is heard before it (call 21).
 OUT_AT = 155.0
 BLACK = 165.0
 LENGTH = BLACK - START  # 162 s.
@@ -160,7 +162,7 @@ def run_track(source):
     song_level = np.where(t >= PANIC + 12, (0.06 + scraps * 0.45) * under, song_level)
     wind_level = ramp(t, [(START, 0.0), (CONFUSION, 0.0), (CONFUSION + 16, 0.3), (PANIC, 0.55),
                           (PANIC + 8, 0.75), (FADE, 0.75), (FADE + 10, 0.45), (BLACK, 0.45)])
-    rain_level = ramp(t, [(START, 0.0), (CONFUSION + 8, 0.0), (CONFUSION + 20, 0.2),
+    rain_level = ramp(t, [(START, 0.0), (RAIN_SEEN, 0.0), (RAIN_SEEN + 3, 0.05), (RAIN_SEEN + 12, 0.2),
                           (PANIC, 0.45), (PANIC + 8, 1.0), (BLACK, 1.0)])
     rain = ffilter(loop(RAIN, RAIN_LOOP, n), "highpass=f=120")
     wind = loop(WIND, WIND_LOOP, n)

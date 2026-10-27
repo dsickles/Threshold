@@ -51,6 +51,8 @@ const DRIFT_HOME := 2.0  # Seconds the light takes back to the middle as it slow
 const TREE_RADIUS := 0.75  # The fallen tree's trunk: taller than the light (call 20).
 const TREE_LENGTH := 15.0  # Across the path and out past both edges into the trees.
 const HINT_COLOR := Color(1.0, 0.97, 0.9, 0.85)
+const GAP_SEEN := 3.0  # A gap's edges show faintly from this long before it arrives (call 21).
+const GAP_FAINT := 0.35  # How bright they are until the gap is in reach.
 const WARM_END := 3.0  # Everything is drawn once, unseen, in the dark before this.
 const HOLD_START := 0.2  # A press this long is a hold, not a tap (call 19). Choice, to tune.
 
@@ -798,6 +800,9 @@ func _update_look() -> void:
 	# The rain never stops once it starts (call 15).
 	_rain.emitting = is_raining()
 	_rain.visible = is_raining()
+	# The first drops are faint and thicken as the rain is heard (call 21).
+	(_rain.mesh.material as StandardMaterial3D).albedo_color.a = lerpf(0.15, 0.5,
+			smoothstep(RunPlan.RAIN_START, RunPlan.RAIN_START + 10.0, _t))
 	_heavy_rain.emitting = _t >= RunPlan.HEAVY_RAIN
 	_heavy_rain.visible = _t >= RunPlan.HEAVY_RAIN
 	_leaves.emitting = _t >= RunPlan.PANIC_START - 10.0
@@ -1102,13 +1107,16 @@ func _make_obstacle(obstacle: Dictionary) -> Node3D:
 	line.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	line.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	line.albedo_color = Color("#FFE2B0")
+	# A gap's edges show through the fog, so the empty space reads in the
+	# dark too (Dan, 2026-10-27, call 21).
+	line.disable_fog = obstacle.kind == RunPlan.Kind.GAP
 	var outline := Node3D.new()
 	outline.name = "Outline"
 	outline.set_meta("material", line)
 	node.add_child(outline)
 	if obstacle.kind == RunPlan.Kind.GAP:
-		# The warm outline it gets when it comes into reach, so it reads
-		# without colour alone: a bar along each of its edges.
+		# A pale rim along each of its edges, faint as it comes and bright
+		# once it is in reach, so it reads without colour alone.
 		for edge in [first * TILE, (first + 2) * TILE]:
 			var rim := MeshInstance3D.new()
 			rim.mesh = _bar_mesh
@@ -1155,9 +1163,9 @@ func _branch_mesh(lanes: int) -> CylinderMesh:
 		var mesh := CylinderMesh.new()
 		mesh.top_radius = 0.22
 		mesh.bottom_radius = 0.28
-		# Short, ending well inside its second lane, so the free lane
+		# Short, ending just past the middle of its second lane, so the free lane
 		# beside it is plainly empty (Dan, 2026-10-27, call 20).
-		mesh.height = TILE * (lanes - 1) + 1.0
+		mesh.height = TILE * (lanes - 1) + 0.6  # Shorter again (call 21).
 		_branch_meshes[lanes] = mesh
 	return _branch_meshes[lanes]
 
@@ -1181,11 +1189,17 @@ func _pose_obstacle(i: int, obstacle: Dictionary) -> void:
 	var e: float = _t - obstacle.at
 	# Lit softly as it comes close: a gap while the hand can be laid across
 	# it; a stone or branch over the same stretch, so it is easy to read.
-	var lit_from: float = obstacle.time - maxf(RunPlan.reach(obstacle.part), 0.8)
+	# A gap's edges also show faintly from GAP_SEEN before it arrives.
+	var reach_from: float = obstacle.time - maxf(RunPlan.reach(obstacle.part), 0.8)
+	var gap: bool = obstacle.kind == RunPlan.Kind.GAP
+	var lit_from: float = obstacle.time - GAP_SEEN if gap else reach_from
 	var lit: bool = obstacle.status == Status.PENDING and _t >= lit_from \
-			and not (obstacle.kind == RunPlan.Kind.GAP and obstacle.bridged)
+			and not (gap and obstacle.bridged)
 	outline.visible = lit
-	(outline.get_meta("material") as StandardMaterial3D).albedo_color.a = clampf((_t - lit_from) / 0.15, 0.0, 1.0)
+	var glow := clampf((_t - reach_from) / 0.15, 0.0, 1.0)
+	if gap:
+		glow = maxf(glow, GAP_FAINT * clampf((_t - lit_from) / 0.3, 0.0, 1.0))
+	(outline.get_meta("material") as StandardMaterial3D).albedo_color.a = glow
 	node.visible = true
 	if obstacle.kind == RunPlan.Kind.GAP:
 		node.transform = place
@@ -1271,7 +1285,7 @@ func _build_world() -> void:
 	_stone_material = _solid(Color("#7D7268"))
 	_branch_material = _solid(Color("#4E3A2C"))
 	_bar_mesh = BoxMesh.new()
-	_bar_mesh.size = Vector3(TILE * 3.0 - 0.2, 0.06, 0.12)
+	_bar_mesh.size = Vector3(TILE * 3.0 - 0.2, 0.08, 0.2)
 	_palm_mesh = BoxMesh.new()
 	_palm_mesh.size = Vector3(0.82, 0.2, 0.9)
 	_finger_mesh = CapsuleMesh.new()
@@ -1319,7 +1333,7 @@ func _build_world() -> void:
 
 	# Rain from 1:23 to the black, heavier from 1:43, and leaves blowing in
 	# the storm: simple CPU particles, cheap on a phone.
-	_rain = _make_rain(160)
+	_rain = _make_rain(160)  # Starts faint and thickens (call 21): _update_look.
 	_heavy_rain = _make_rain(520)
 	_leaves = CPUParticles3D.new()
 	_leaves.amount = 40
@@ -1376,9 +1390,15 @@ func _build_warm() -> void:
 		branch.mesh = _branch_mesh(lanes)
 		branch.material_override = _branch_material
 		_warm.add_child(branch)
+	# A gap's rim, which the fog doesn't dim.
+	var rim_line := StandardMaterial3D.new()
+	rim_line.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	rim_line.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	rim_line.disable_fog = true
+	rim_line.albedo_color = Color(1.0, 1.0, 1.0, 0.0)
 	var rim := MeshInstance3D.new()
 	rim.mesh = _bar_mesh
-	rim.material_override = line
+	rim.material_override = rim_line
 	_warm.add_child(rim)
 	_warm.add_child(_make_hand())
 	var trunk := MeshInstance3D.new()
