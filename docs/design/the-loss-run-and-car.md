@@ -116,7 +116,7 @@ All of it is made **ahead of time** by a script, the way `tools/partner/make_son
 |---|---|---|
 | Dark | The lamp click (the House's sound for the lamp), then nothing | House |
 | Euphoria | The song's bright version, as at the Partner's best | Partner's song, edited |
-| Confusion | The song, with wind and rain rising over it | Partner's song; storm recordings: free licensed sound effects (Pixabay or CC0), listed in CREDITS.md, or AI-made (ADR-0005) |
+| Confusion | The song, with wind and rain rising over it | Partner's song; storm recordings: free licensed sound effects (Pixabay or CC0), listed in CREDITS.md, or AI-made (ADR-0005) _(updated 2026-10-26: packs first, AI only if no pack fits, [ADR-0010](../adr/0010-free-asset-packs-first-ai-fills-gaps.md))_ |
 | Panic | The storm, loud: heavy rain, wind, thunder, scraps of the song under it until it is gone | The same storm recordings and song, mixed offline |
 | The hand / stumble | A soft, warm sound when the hand moves the light or covers a gap; a dull thud for a stumble | Same |
 | The light goes out | The storm without the song: rain and wind, thunder far off, none as the light goes out. Not the House hum, not a tone. | The same storm recordings |

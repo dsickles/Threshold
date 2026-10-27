@@ -362,7 +362,18 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
-## 31. The Loss's run: the father's hand and three lanes, trees, and a storm that never stops (2026-10-25)
+## 31. Free asset packs first; AI only fills gaps (2026-10-26)
+
+| | |
+|---|---|
+| **Was** | v1 art, music and sound are AI-generated (ADR-0005, §11). |
+| **Became** | Free packs with commercial licenses first (CC0, CC-BY, royalty-free such as Sonniss); AI-generated assets only where no pack fits. Every asset is listed in CREDITS.md. Text dialogue and no voice acting are unchanged. |
+| **Why** | Packs look more consistent than AI models, have clear terms for Steam, and shrink the AI disclosure. Dan's call, 2026-10-26, in the project thread. |
+| **Record** | [ADR-0010](../adr/0010-free-asset-packs-first-ai-fills-gaps.md); [scope.md](../scope.md); [CREDITS.md](../../CREDITS.md); [asset-sources.md](asset-sources.md); DAS-101 |
+
+---
+
+## 32. The Loss's run: the father's hand and three lanes, trees, and a storm that never stops (2026-10-25)
 
 | | |
 |---|---|
@@ -371,10 +382,9 @@ The documents were written in one day, in this order: brainstorming session → 
 | **Why** | Dan's first play of the rough build, 2026-10-25: tap anywhere was too easy and too like the Partner; the light should be visibly protected by an outside force, the father; the setting was too bright and ethereal; the silence after the song felt like a mistake, the storm didn't come through, and the lighter gray read as the storm ending; the light needed to read as the baby, subtly. Still one tap scheme: lanes are tapped, never swiped. |
 | **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) calls 13 to 16 (and 2, 4, 5, 11); [continuity-ledger.md](continuity-ledger.md) (Rain, the couple's song, the small light, the father's hand); [scope.md](../scope.md) |
 
-
 ---
 
-## 32. The Loss's ending: fireflies go out at random, and a shorter storm (2026-10-26)
+## 33. The Loss's ending: fireflies go out at random, and a shorter storm (2026-10-26)
 
 | | |
 |---|---|
@@ -385,7 +395,7 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
-## 33. The Loss's gaps: press and hold, not the lane tap (2026-10-27)
+## 34. The Loss's gaps: press and hold, not the lane tap (2026-10-27)
 
 | | |
 |---|---|
@@ -393,6 +403,7 @@ The documents were written in one day, in this order: brainstorming session → 
 | **Became** | A tap (under 0.2 s) moves the lane, when the finger lifts. Pressing and holding anywhere lays the hand across a gap in reach for as long as the finger is down; letting go before the gap reaches the light lifts it and the light stumbles. A hold never moves the lane. Still one pointer, click is tap, nothing on hover. |
 | **Why** | Dan's third play, 2026-10-26: "closing the gap is a different action than moving lanes, and having them be exactly the same doesn't quite feel right". He picked press and hold on a decision card (2026-10-27) over tapping the light itself, a double tap, or no change. |
 | **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 19 (and 13); [scope.md](../scope.md) |
+
 ---
 
 ## What did not change
