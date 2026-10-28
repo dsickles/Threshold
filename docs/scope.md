@@ -44,6 +44,7 @@ The single answer to "is this in v1?". If a design doc describes something marke
 | What The Partner shows on screen, its song, and its beat chart (draft: [design/partner-song-and-beat-chart.md](design/partner-song-and-beat-chart.md)) | M1 |
 | What "Stress" is, whether it lasts beyond a chapter, and what it changes | M2 |
 | Anchor: scripted wobble or real physics | M2 (cheap test) |
+| Whether the Protector's run reads clearly enough as the loss without being heavy-handed. Dan approved the rough run as it is after his fifth play (Dan, 2026-10-28) and will decide after user testing | After UA testing |
 | The House's look: realistic (Poly Haven and ambientCG) or soft low-poly (Quaternius). Recommended: realistic. See [design/asset-sources.md](design/asset-sources.md) | Before the House's final art (M3+); a living-room look test can come earlier |
 
 ## Settled questions
