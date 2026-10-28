@@ -20,6 +20,7 @@ export const VIEWPOINTS = "res://scenes/m0_checks/viewpoints_check.tscn";
 export const UI_STYLE = "res://scenes/m0_checks/ui_style_check.tscn";
 export const RHYTHM = "res://scenes/ui/m0_rhythm_check.tscn";
 export const PARTNER = "res://scenes/chapters/partner/partner.tscn";
+export const PROTECTOR = "res://scenes/chapters/protector/protector.tscn";
 export const HOUSE = "res://scenes/house/house.tscn";
 
 // Every console error or uncaught page error fails the test that caused it.
@@ -68,7 +69,7 @@ export { expect };
 export class Game {
   constructor(
     readonly page: Page,
-    private readonly hasTouch: boolean,
+    readonly hasTouch: boolean,
   ) {}
 
   /**
@@ -142,6 +143,12 @@ export class Game {
   async tapMiddle() {
     const { size } = (await this.state())!;
     await this.tapButton({ text: "", x: size.x / 2, y: size.y / 2, disabled: false });
+  }
+
+  /** Taps a point given as fractions of the screen (0 to 1 across, 0 to 1 down). */
+  async tapAt(across: number, down: number) {
+    const { size } = (await this.state())!;
+    await this.tapButton({ text: "", x: size.x * across, y: size.y * down, disabled: false });
   }
 
   async audioStates(): Promise<string[]> {

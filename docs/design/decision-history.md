@@ -384,6 +384,48 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 33. The Loss's run: the father's hand and three lanes, trees, and a storm that never stops (2026-10-25)
+
+| | |
+|---|---|
+| **Was** | The first Loss design and its rough build: tap anywhere clears the next obstacle; a pale, open path floating over a void; at 2:55 the song and storm stop dead, the world turns a lighter gray, and the light goes out in silence. |
+| **Became** | Tap the left or right of the screen and the father's hand moves the light one lane that way (changed the same day after Dan's second play, call 17: at first each third of the screen was a lane); with a gap in reach the hand also lies across it. A trail through tall trees at the end of the day, with real shadows. The song drowns under a storm that never stops, through the light going out and into the car, and nothing gets lighter. The light starts as small as the fridge note's sesame seed and goes out in the father's open hand. |
+| **Why** | Dan's first play of the rough build, 2026-10-25: tap anywhere was too easy and too like the Partner; the light should be visibly protected by an outside force, the father; the setting was too bright and ethereal; the silence after the song felt like a mistake, the storm didn't come through, and the lighter gray read as the storm ending; the light needed to read as the baby, subtly. Still one tap scheme: lanes are tapped, never swiped. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) calls 13 to 16 (and 2, 4, 5, 11); [continuity-ledger.md](continuity-ledger.md) (Rain, the couple's song, the small light, the father's hand); [scope.md](../scope.md) |
+
+---
+
+## 34. The Loss's ending: fireflies go out at random, and a shorter storm (2026-10-26)
+
+| | |
+|---|---|
+| **Was** | From 2:55 the light runs on down an empty path, slows and goes out in the father's hand with nothing else happening; the panic lasts 40 s with 25 obstacles (49 in all) and black is at 3:35. |
+| **Became** | Fireflies drift along the trail from the euphoria; when the path empties at 2:45 they go out one by one at random (a fixed order that looks random), some never, and one or two still glow as the light goes out in the hand. The panic lasts 30 s with 17 obstacles (41 in all), and everything after it moves 10 s earlier: black at 3:25. |
+| **Why** | Dan's third play, 2026-10-26: the storm felt a little long, and the light going out needed something to happen that shows the randomness more explicitly in the last 45 seconds. Fireflies show chance without giving the loss a cause the player could have stopped. Dan may still want more, possibly a last obstacle nobody can clear (open). |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 18; [continuity-ledger.md](continuity-ledger.md) (Fireflies, the small light, the couple's song); [scope.md](../scope.md) |
+
+---
+
+## 35. The Loss's gaps: press and hold, not the lane tap (2026-10-27)
+
+| | |
+|---|---|
+| **Was** | A tap on the left or right half moved the light one lane and, with a gap in reach, also laid the father's hand across it. |
+| **Became** | A tap (under 0.2 s) moves the lane, when the finger lifts. Pressing and holding anywhere lays the hand across a gap in reach for as long as the finger is down; letting go before the gap reaches the light lifts it and the light stumbles. A hold never moves the lane. Still one pointer, click is tap, nothing on hover. |
+| **Why** | Dan's third play, 2026-10-26: "closing the gap is a different action than moving lanes, and having them be exactly the same doesn't quite feel right". He picked press and hold on a decision card (2026-10-27) over tapping the light itself, a double tap, or no change. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 19 (and 13); [scope.md](../scope.md) |
+
+## 36. The Loss's run: about 2:45, hints, and a fallen tree at the end (2026-10-27)
+
+| | |
+|---|---|
+| **Was** | 5 s of black; the euphoria 0:05–1:25 (12 obstacles: 0:13 S M, 0:18 S L+R, 0:24 B LM, 0:29 S R, 0:34 G, 0:40 B MR, 0:45 S L, 0:50 G, 0:56 B LM, 1:01 S M, 1:06 G, 1:12 S L+R); the confusion 1:25–2:15 (12: 1:29 S L+M, 1:33 G, 1:39 B MR, 1:42 S L, 1:48 S R, 1:50 B LM, 1:56 G, 1:59 S M+R, 2:02 B LM, 2:06 G, 2:09 S L+R, 2:13 G); the panic 2:15–2:45 (17 in clusters 0.6 s apart, gap reach 0.8 s: 2:17 S L, S R; 2:20 B LM, S M, G; 2:25 G, S R; 2:28 S M, B MR, S M; 2:32 B LM, G; 2:36 S R, S M, G; 2:39 G, B MR); the song gone at 2:45; the light slowed to a stop on the empty path from 2:55 to 3:05, settling into the hand, out by 3:15; black at 3:25. Branches reached close to the free lane. No words on screen at all. After switching tabs the sound could stay lost. |
+| **Became** | 3 s of black; the euphoria 0:03–1:03 (9 obstacles); the confusion 1:03–1:43 (10); the panic 1:43–2:08 (12, clusters 0.8 s apart, gap reach 1.0 s, ending on a single stone); the song gone at 2:08; a fallen tree across the whole path, where the light stops at 2:22 and the hand then comes under it; out by 2:35; black at 2:45. Shorter branches. "tap here" on both halves at the start and "hold" for the first two gaps. The sound comes back with the tab. |
+| **Why** | Dan's fourth play, 2026-10-27: the start and the song felt long coming straight from the Partner's same song; he wanted about 2:45 in all; the far side of a branch didn't read as clear; both actions needed a word on screen the first time; in the dark the obstacles got too rapid and a miss could look like the reason for the loss; and he asked for "some sort of 'final unclearable obstacle' that the light runs into and can't get past, and then the hand comes in". Dan picked the fallen tree on a decision card (2026-10-27), over a gap too wide for the hand, or the path just ending. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 20 (and 3, 4); [scope.md](../scope.md); [continuity-ledger.md](continuity-ledger.md) |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

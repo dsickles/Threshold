@@ -58,6 +58,14 @@ mkdir -p "$OUT_DIR"
 [ -f "$OUT_DIR/index.html" ] && [ -f "$OUT_DIR/index.pck" ] || { echo "Export failed."; exit 1; }
 echo "Exported to build/web/."
 
+# Review builds show Dan's playtest overlay (frame rate and clock in the
+# corner, game/_core/test_probe/playtest_overlay.gd); the main page never does.
+if [ "${ITCH_TARGET:-}" = "$ITCH_REVIEW_TARGET" ]; then
+    sed -i 's|<head>|<head><script>window.thresholdPlaytest = true;</script>|' "$OUT_DIR/index.html"
+    grep -q thresholdPlaytest "$OUT_DIR/index.html" || { echo "Couldn't turn on the playtest overlay."; exit 1; }
+    echo "Playtest overlay on (review build)."
+fi
+
 if ! $upload; then
     echo "Not uploaded. Run with --upload once Dan says \"upload\", or --review for Hopper's review page."
     exit 0

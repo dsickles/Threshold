@@ -311,6 +311,19 @@ func test_stand_in_buttons_are_big_enough_on_a_phone() -> void:
 		_finished.clear()
 
 
+# --- Playtests
+
+# Every rough chapter gives the playtest overlay its clock (CLAUDE.md,
+# "Rough chapters"), so Dan can say when in it something happened.
+func test_every_chapter_has_a_playtest_clock() -> void:
+	for id: StringName in ChapterList.SCENES:
+		if not ChapterList.is_story_chapter(id):
+			continue
+		var chapter: Node = load(ChapterList.scene_path(id)).instantiate()
+		check(chapter.has_method("playtest_time"), "%s has playtest_time()" % id)
+		chapter.free()
+
+
 func _plain_chapter_script() -> GDScript:
 	var script := GDScript.new()
 	script.source_code = "extends Control\nsignal finished\n"

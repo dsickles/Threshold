@@ -13,6 +13,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 
 GameState="*res://_core/state_manager/game_state.gd"
 WebTestProbe="*res://_core/test_probe/web_test_probe.gd"
+PlaytestOverlay="*res://_core/test_probe/playtest_overlay.gd"
 
 [display]
 
