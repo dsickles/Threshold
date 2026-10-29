@@ -109,6 +109,13 @@ window.partnerConductor = window.partnerConductor || (function () {
 			hiddenPause = false;
 		},
 		// 'interrupted' is Safari's state for a phone call or another app's sound.
+		// Like a hidden tab: the song stops until the next tap (onTouch).
+		pause: function () {
+			if (active && playing) {
+				hiddenPause = true;
+				ctx.suspend();
+			}
+		},
 		ended: function () { return ended; },
 		paused: function () { return playing && (hiddenPause || ctx.state === 'interrupted'); },
 		songTime: function () { return playing ? heardAt(performance.now()) : -1; },
@@ -211,10 +218,13 @@ func set_layer_level(level: float) -> void:
 		_layer_player.volume_db = linear_to_db(maxf(level, 0.0001))
 
 
-## Native builds pause here when the window loses focus. The web pauses on
-## its own when the tab is hidden.
+## Pauses the song until the next tap. Native builds pause here when the
+## window loses focus; the web pauses on its own when the tab is hidden, and
+## here for the "Turn your phone sideways" screen.
 func pause() -> void:
-	if _playing and not uses_browser_clock:
+	if _playing and uses_browser_clock:
+		JavaScriptBridge.eval("window.partnerConductor.pause()", true)
+	elif _playing:
 		_player.stream_paused = true
 		if _layer_player:
 			_layer_player.stream_paused = true

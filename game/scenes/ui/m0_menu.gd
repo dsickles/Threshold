@@ -13,8 +13,10 @@ extends Control
 ## The two House buttons open the gray-box House (DAS-93) at a story point
 ## from the core table: moving day (the start), or after the opening beat,
 ## with the back hall open so the bedroom can be reached.
-## "The Protector (rough)" opens the Loss's run (DAS-97) until the bedside
-## lamp in the House can start it (that needs the close-ups from DAS-95).
+## "The Protector (rough)" opens the Loss's run (DAS-97) straight away, for
+## testing; in the game the bedside lamp in the House starts it (DAS-95).
+## The game itself opens on the title (title.tscn); this menu only opens with
+## "?menu" in the address.
 
 const SMOOTHNESS_SCENE := "res://scenes/m0_checks/smoothness/smoothness_check.tscn"
 const VIEWPOINTS_SCENE := "res://scenes/m0_checks/viewpoints_check.tscn"

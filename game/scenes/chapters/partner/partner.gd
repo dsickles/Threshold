@@ -213,6 +213,13 @@ func _notification(what: int) -> void:
 		_conductor.pause()
 
 
+## Pauses the song until the next tap, as a hidden tab does (the "Turn your
+## phone sideways" screen).
+func pause() -> void:
+	if _state == State.PLAYING:
+		_conductor.pause()
+
+
 func _exit_tree() -> void:
 	if _recorder:
 		_recorder.close()  # Leaving with the taps box still open.

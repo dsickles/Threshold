@@ -6,7 +6,7 @@ config_version=5
 [application]
 
 config/name="Threshold"
-run/main_scene="res://scenes/ui/m0_menu.tscn"
+run/main_scene="res://scenes/ui/title.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
@@ -14,6 +14,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 GameState="*res://_core/state_manager/game_state.gd"
 WebTestProbe="*res://_core/test_probe/web_test_probe.gd"
 PlaytestOverlay="*res://_core/test_probe/playtest_overlay.gd"
+TurnSideways="*res://scenes/ui/turn_sideways.gd"
 
 [display]
 

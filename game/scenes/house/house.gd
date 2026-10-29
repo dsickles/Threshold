@@ -11,8 +11,19 @@ extends Node3D
 ##
 ## Which doors are open, shut or boxed in, and which room the player arrives
 ## in, come from the core table (HouseTable) at the story point. The rooms,
-## doors, furniture and views are data in house_layout.gd. Close-ups, House objects, moods and the
-## opening beat come in later tickets. For now it opens from the M0 menu.
+## doors, furniture and views are data in house_layout.gd.
+##
+## The opening flow (DAS-95): the game's title opens the House at the
+## player's own story point. The opening beat plays the first time the player
+## reaches the living room's doorway view (L1) on moving day; when it ends the
+## House is at "after the opening beat" (the hall and bedroom open, the
+## bedside lamp lit). The chapter objects work by close-up (ADR-0008): tap
+## one to glide to its close-up, tap it again for its one action, tap
+## anywhere else to step back to the view it was opened from. The record
+## player's action starts the Partner and the bedside lamp's (turning it off)
+## starts the Protector, through the chapter runner; when the chapter
+## finishes the House comes back at the next story point, in the room it
+## arrives in. House objects and moods come in DAS-96.
 
 const ACCENT := Color(0.769, 0.647, 0.455)
 const INK := Color(0.957, 0.937, 0.902)
@@ -36,6 +47,12 @@ const LOOK_PITCH_MAX := deg_to_rad(10.0)
 const LOOK_PER_PIXEL := deg_to_rad(0.12)
 const DOOR_OPEN_ANGLE := deg_to_rad(80.0)
 const BOX_SIZE := 0.5
+## A press and lift closer together than this (in screen units) is a tap, not
+## a look-drag.
+const TAP_SLOP := 16.0
+## Where the opening beat plays.
+const OPENING_BEAT_VIEW := "L1"
+const OpeningBeat := preload("res://scenes/house/opening_beat.gd")
 const WALL_THICKNESS := 0.12
 
 const COLOURS := {
@@ -54,7 +71,9 @@ const COLOURS := {
 	"white": Color(0.82, 0.82, 0.8),
 	"leather": Color(0.36, 0.22, 0.14),
 	"glass": Color(0.5, 0.56, 0.62),
+	"shade": Color(0.72, 0.68, 0.6),
 }
+const LAMP_GLOW := Color(1.0, 0.86, 0.62)
 const DUSK := Color(0.2, 0.22, 0.34)
 
 ## The story point the House shows. Set before adding the House to the tree
@@ -62,6 +81,9 @@ const DUSK := Color(0.2, 0.22, 0.34)
 ## (GameState.house_point()). `door_states`, if set, wins over its doors.
 var story_point: StringName = &""
 var door_states: Dictionary = {}
+## How long a glide takes. Browser tests that aren't about the House can make
+## it quicker ("&glide=" in the address, web_test_probe.gd).
+var glide_seconds := GLIDE_SECONDS
 
 var _current := ""
 var _camera: Camera3D
@@ -79,7 +101,29 @@ var _wall_styles: Array[StyleBoxFlat] = []
 var _label_style: StyleBoxFlat
 var _materials := {}
 var _door_pivots := {}
+# Each door's built nodes (its panel and any stack of boxes), so a new story
+# point can rebuild them.
+var _door_nodes := {}
+var _props: Node3D
 var _world_env: WorldEnvironment
+var _ui_layer: CanvasLayer
+# The chapter objects: their tap areas (invisible buttons over them) and the
+# record player's arm and the bedside lamp's light and shade.
+var _object_root: Control
+var _object_buttons := {}
+var _arm: Node3D
+var _arm_rest := Transform3D.IDENTITY
+var _needle: Tween
+var _lamp_light: OmniLight3D
+var _shade: MeshInstance3D
+# The chapter object whose close-up the camera is at (or gliding to), or "".
+# `_current` stays the view it was opened from.
+var _close_up := ""
+# True from a chapter object's action until its chapter has come and gone.
+var _acting := false
+var _playing_chapter: StringName = &""
+var _beat: Control
+var _press_at := Vector2.INF
 
 
 func _ready() -> void:
@@ -91,12 +135,17 @@ func _ready() -> void:
 		story_point = HouseTable.START
 	if door_states.is_empty():
 		door_states = HouseTable.doors(story_point)
+	glide_seconds = get_tree().root.get_meta("house_glide_seconds", glide_seconds)
 	_build_world()
 	_camera = Camera3D.new()
 	_camera.fov = LENS_FOV
 	_camera.near = 0.05
 	add_child(_camera)
 	_build_ui()
+	visibility_changed.connect(_on_visibility_changed)
+	var chapters := ChapterRunner.of(get_tree())
+	chapters.chapter_finished.connect(_on_chapter_finished)
+	chapters.chapter_left.connect(_on_chapter_left)
 	# Deferred: the 3D view takes in its new size during the same frame, after
 	# the signal, so placing straight away would use the old projection.
 	get_viewport().size_changed.connect(_place_rings, CONNECT_DEFERRED)
@@ -123,14 +172,39 @@ func is_gliding() -> bool:
 
 
 ## For the browser tests (web_test_probe.gd): the view, whether a glide is
-## under way, and each ring with the view it leads to, its label and its centre.
+## under way, each ring with the view it leads to, its label and its centre,
+## the story point, the close-up (if any), each chapter object that can be
+## tapped now with its centre, and the opening beat while it plays.
 func probe_state() -> Dictionary:
 	var rings: Array[Dictionary] = []
 	for i in _ring_data.size():
 		var centre := _rings[i].get_global_transform_with_canvas() * (_rings[i].size / 2.0)
 		rings.append({"target": _ring_data[i].target, "label": ring_label(_rings[i]).text,
 				"doorway": _ring_data[i].door != "", "x": centre.x, "y": centre.y})
-	return {"view": _current, "gliding": is_gliding(), "rings": rings}
+	var objects: Array[Dictionary] = []
+	for id: String in _object_buttons:
+		var button: Button = _object_buttons[id]
+		if button.visible:
+			var centre := button.get_global_transform_with_canvas() * (button.size / 2.0)
+			objects.append({"id": id, "x": centre.x, "y": centre.y})
+	return {"view": _current, "gliding": is_gliding(), "rings": rings, "point": String(story_point),
+			"closeUp": _close_up, "objects": objects,
+			"beat": _beat.probe_state() if _beat else null}
+
+
+## The chapter object whose close-up the camera is at, or "".
+func close_up() -> String:
+	return _close_up
+
+
+## A chapter object's tap area (an invisible button over it).
+func object_button(object_id: String) -> Button:
+	return _object_buttons.get(object_id)
+
+
+## The opening beat while it plays, or null.
+func opening_beat() -> Control:
+	return _beat
 
 
 # --- Moving.
@@ -155,20 +229,31 @@ func _go_to(target: String, door_id: String) -> void:
 	if door_id == "front_door":
 		_open_door(door_id)
 	_current = target
+	_glide(to, via, across)
+
+
+# Glides the camera from where it is to `to`, through `via` if it is set.
+func _glide(to: Transform3D, via := Vector3.INF, across := Vector3.ZERO) -> void:
+	var from := _camera.global_transform
 	_yaw = 0.0
 	_pitch = 0.0
-	# Rings hide during the glide and come back on arrival, so a glide is
-	# never turned mid-way through a wall.
+	_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_tween.tween_method(_apply_glide.bind(from, to, via, across), 0.0, 1.0, glide_seconds)
+	_tween.finished.connect(_arrive)
+	# Rings (and chapter objects' tap areas) hide during the glide and come
+	# back on arrival, so a glide is never turned mid-way through a wall.
 	_ring_data = []
 	_show_rings()
-	_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_tween.tween_method(_apply_glide.bind(from, to, via, across), 0.0, 1.0, GLIDE_SECONDS)
-	_tween.finished.connect(_arrive)
 
 
+# At a view: its rings, and the opening beat on first arrival at L1. At a
+# close-up: no rings, only the object.
 func _arrive() -> void:
 	_ring_data = HouseLayout.rings_for(_current, door_states)
+	if _close_up != "":
+		_ring_data.clear()
 	_show_rings()
+	_start_opening_beat_if_due()
 
 
 func _apply_glide(t: float, from: Transform3D, to: Transform3D, via: Vector3, across: Vector3) -> void:
@@ -205,11 +290,20 @@ func _set_base(base: Transform3D) -> void:
 	_camera.global_transform = _base * Transform3D(Basis.from_euler(Vector3(_pitch, _yaw, 0.0)))
 
 
-# A short drag looks around a little, never far. Taps on rings are buttons,
-# so only drags that start off a ring arrive here.
+# A short drag looks around a little, never far. Taps on rings and chapter
+# objects are buttons, so only presses that start off them arrive here. At a
+# close-up there is no looking around: a tap off the object steps back.
 func _unhandled_input(event: InputEvent) -> void:
+	var press := event as InputEventMouseButton
+	if press and press.button_index == MOUSE_BUTTON_LEFT:
+		if press.pressed:
+			_press_at = press.position
+		elif _close_up != "" and press.position.distance_to(_press_at) < TAP_SLOP:
+			step_back()
+		return
 	var motion := event as InputEventMouseMotion
-	if motion == null or not (motion.button_mask & MOUSE_BUTTON_MASK_LEFT) or is_gliding():
+	if motion == null or not (motion.button_mask & MOUSE_BUTTON_MASK_LEFT) or is_gliding() \
+			or _close_up != "":
 		return
 	_yaw = clampf(_yaw - motion.relative.x * LOOK_PER_PIXEL, -LOOK_YAW_MAX, LOOK_YAW_MAX)
 	_pitch = clampf(_pitch - motion.relative.y * LOOK_PER_PIXEL, -LOOK_PITCH_MAX, LOOK_PITCH_MAX)
@@ -352,6 +446,7 @@ func _place_rings() -> void:
 	for side in [pinned_left, pinned_right]:
 		_spread(side, feet, bounds)
 	_push_apart(shown, feet, bounds)
+	_place_objects()
 
 
 # A label's size at a font size. Measured here rather than asked of the
@@ -470,8 +565,10 @@ func _build_world() -> void:
 	for item: Array in HouseLayout.FURNITURE:
 		var mesh := _add_box(props, item[2], item[3], item[4], "Furniture_%s" % item[0])
 		mesh.rotation.y = deg_to_rad(item[5])
+	_props = props
 	for door_id: String in HouseLayout.DOORS:
 		_add_door(props, door_id)
+	_add_chapter_objects(props, lighting)
 
 	_add_lights(lighting)
 
@@ -527,9 +624,11 @@ func _add_door(parent: Node3D, door_id: String) -> void:
 	var along_x := _door_along_x(door_id)
 	var at: Vector2 = door.at
 	var width: float = door.width
+	_door_nodes[door_id] = []
 	if door.get("panel", false):
 		var pivot := Node3D.new()
 		pivot.name = "Door_%s" % door_id
+		_door_nodes[door_id].append(pivot)
 		# Hinged at the doorway's west (or north) end, or its east (or south)
 		# end when "hinge" says "end".
 		var side := 1.0 if door.get("hinge", "") == "end" else -1.0
@@ -578,6 +677,7 @@ func _add_box_stack(parent: Node3D, door_id: String) -> void:
 	var stack := Node3D.new()
 	stack.name = "Boxes_%s" % door_id
 	parent.add_child(stack)
+	_door_nodes[door_id].append(stack)
 	var along_x := _door_along_x(door_id)
 	var centre: Vector2 = door.at
 	var side: String = door.get("boxes", "")
@@ -666,7 +766,26 @@ func _material(colour: String) -> StandardMaterial3D:
 
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
+	layer.name = "UI"
 	add_child(layer)
+	_ui_layer = layer
+	# Chapter objects' tap areas sit under the rings.
+	_object_root = Control.new()
+	_object_root.name = "Objects"
+	_object_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_object_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(_object_root)
+	for id: String in HouseLayout.CHAPTER_OBJECTS:
+		var button := Button.new()
+		button.name = "Object_%s" % id
+		# Tap only, and nothing to see: the object itself is what is tapped.
+		button.focus_mode = Control.FOCUS_NONE
+		for state in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
+			button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+		button.visible = false
+		button.pressed.connect(_on_object_pressed.bind(id))
+		_object_root.add_child(button)
+		_object_buttons[id] = button
 	_ring_root = Control.new()
 	_ring_root.name = "Rings"
 	_ring_root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -694,3 +813,241 @@ func _ring_look(fill: float, border: Color) -> StyleBoxFlat:
 	# Larger than any ring, so it is always a circle.
 	style.set_corner_radius_all(1000)
 	return style
+
+
+# --- Story points.
+
+## Shows another story point: its doors, its boxes, the bedside lamp and
+## which chapter object works. The camera stays where it is.
+func set_point(point: StringName) -> void:
+	story_point = point
+	door_states = HouseTable.doors(point)
+	for door_id: String in _door_nodes:
+		for node: Node in _door_nodes[door_id]:
+			node.free()
+		_door_pivots.erase(door_id)
+	_door_nodes.clear()
+	for door_id: String in HouseLayout.DOORS:
+		_add_door(_props, door_id)
+	_set_lamp(HouseTable.bedside_lamp_lit(point))
+	if _arm:
+		_arm.transform = _arm_rest
+	if not is_gliding():
+		_arrive()
+
+
+# The opening beat plays once, on first arrival at L1 on moving day. It is
+# not saved on its own: until the Partner is saved, leaving and coming back
+# plays it again (GameState.finish_opening_beat).
+func _start_opening_beat_if_due() -> void:
+	if _beat or _current != OPENING_BEAT_VIEW or story_point != HouseTable.START:
+		return
+	if get_node("/root/GameState").opening_beat_done():
+		return
+	_beat = OpeningBeat.new()
+	_beat.name = "OpeningBeat"
+	_beat.finished.connect(_on_opening_beat_finished)
+	_ui_layer.add_child(_beat)
+
+
+func _on_opening_beat_finished(answer: String) -> void:
+	get_node("/root/GameState").finish_opening_beat(answer)
+	_beat.queue_free()
+	_beat = null
+	# Maya's last line: the boxes go from the hall, and the lamp is on.
+	set_point(HouseTable.AFTER_OPENING)
+
+
+# --- Chapter objects and close-ups (ADR-0008).
+
+# Each chapter object as gray blocks, and the bedside lamp's light.
+func _add_chapter_objects(props: Node3D, lighting: Node3D) -> void:
+	for id: String in HouseLayout.CHAPTER_OBJECTS:
+		var data: Dictionary = HouseLayout.CHAPTER_OBJECTS[id]
+		var object := Node3D.new()
+		object.name = "ChapterObject_%s" % id
+		props.add_child(object)
+		for part: Array in data.parts:
+			var mesh := _add_box(object, part[1], part[2], part[3], "%s_%s" % [id, part[0]])
+			if part[0] == "arm":
+				_arm = mesh
+				_arm_rest = mesh.transform
+			if part[0] == "shade":
+				_shade = mesh
+		if data.has("light"):
+			_lamp_light = OmniLight3D.new()
+			_lamp_light.name = "Lamp_bedside"
+			_lamp_light.position = data.light
+			_lamp_light.light_color = LAMP_GLOW
+			_lamp_light.light_energy = 1.6
+			_lamp_light.omni_range = 4.5
+			_lamp_light.shadow_enabled = false
+			lighting.add_child(_lamp_light)
+	_set_lamp(HouseTable.bedside_lamp_lit(story_point))
+
+
+## Whether the bedside lamp is on.
+func is_lamp_lit() -> bool:
+	return _lamp_light != null and _lamp_light.visible
+
+
+func _set_lamp(lit: bool) -> void:
+	if _lamp_light == null:
+		return
+	_lamp_light.visible = lit
+	_shade.material_override = _glow_material() if lit else _material("shade")
+
+
+func _glow_material() -> StandardMaterial3D:
+	if not _materials.has("glow"):
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.albedo_color = LAMP_GLOW
+		_materials["glow"] = mat
+	return _materials["glow"]
+
+
+## Whether a chapter object works now: it is the story point's chapter object
+## and nothing else is under way.
+func object_works(object_id: String) -> bool:
+	return String(HouseTable.chapter_object(story_point)) == object_id and not _acting
+
+
+## Glides to a chapter object's close-up.
+func open_close_up(object_id: String) -> void:
+	if is_gliding() or _close_up != "" or not object_works(object_id):
+		return
+	_close_up = object_id
+	_glide(HouseLayout.close_up_transform(object_id))
+
+
+## Steps back from a close-up to the view it was opened from.
+func step_back() -> void:
+	if _close_up == "" or is_gliding() or _acting:
+		return
+	_close_up = ""
+	_glide(HouseLayout.view_transform(_current))
+
+
+func _on_object_pressed(object_id: String) -> void:
+	if is_gliding() or not object_works(object_id):
+		return
+	if _close_up != object_id:
+		open_close_up(object_id)
+		return
+	_act(object_id)
+
+
+# The object's one action. The record player lowers its needle, then the
+# Partner begins. The lamp goes off and the Protector's run begins straight
+# away: no warning, no title card, nothing to skip.
+func _act(object_id: String) -> void:
+	_acting = true
+	_place_objects()
+	var chapter := HouseTable.chapter_for_object(StringName(object_id))
+	if object_id == "record_player" and _arm:
+		_needle = create_tween().set_trans(Tween.TRANS_SINE)
+		_needle.tween_property(_arm, "rotation:y", deg_to_rad(28.0), 0.5)
+		_needle.tween_property(_arm, "position:y", _arm_rest.origin.y - 0.02, 0.3)
+		_needle.tween_callback(_enter_chapter.bind(chapter))
+		return
+	if object_id == "bedside_lamp":
+		_set_lamp(false)
+	_enter_chapter(chapter)
+
+
+func _enter_chapter(chapter: StringName) -> void:
+	_playing_chapter = chapter
+	if not ChapterRunner.of(get_tree()).enter(chapter, self):
+		_playing_chapter = &""
+		_back_to_view()
+
+
+# The chapter finished: the House comes back at the next story point, in the
+# room that point arrives in (the bedroom after the Partner, the entry after
+# the Loss). GameState has already recorded and saved the result.
+func _on_chapter_finished(result: Dictionary) -> void:
+	if _playing_chapter == &"" or StringName(result.chapter) != _playing_chapter:
+		return
+	_playing_chapter = &""
+	_acting = false
+	_close_up = ""
+	var point: StringName = get_node("/root/GameState").house_point()
+	_current = HouseLayout.ROOMS.get(String(HouseTable.arrive_in(point)), {}).get("doorway_view", _current)
+	_set_base(HouseLayout.view_transform(_current))
+	set_point(point)
+
+
+# Left without finishing: nothing changed, so back to the view the close-up
+# was opened from, as it was.
+func _on_chapter_left(chapter: StringName) -> void:
+	if chapter != _playing_chapter:
+		return
+	_playing_chapter = &""
+	_back_to_view()
+
+
+func _back_to_view() -> void:
+	_acting = false
+	_close_up = ""
+	if _arm:
+		_arm.transform = _arm_rest
+	_set_lamp(HouseTable.bedside_lamp_lit(story_point))
+	_set_base(HouseLayout.view_transform(_current))
+	_arrive()
+
+
+# Each chapter object that works has a tap area over it: from any view in its
+# room where it is in front of the camera, and at its own close-up. It is at
+# least ring-sized, so it is easy to tap however small the object looks.
+func _place_objects() -> void:
+	var screen := get_viewport().get_visible_rect()
+	var smallest := _ring_size()
+	var room: String = HouseLayout.VIEWS[_current].room if HouseLayout.VIEWS.has(_current) else ""
+	for id: String in _object_buttons:
+		var button: Button = _object_buttons[id]
+		var data: Dictionary = HouseLayout.CHAPTER_OBJECTS[id]
+		var here: bool = _close_up == id if _close_up != "" else data.room == room
+		var rect := _object_rect(id)
+		button.visible = here and object_works(id) and not is_gliding() and rect.size != Vector2.ZERO \
+				and screen.has_point(rect.get_center())
+		if not button.visible:
+			continue
+		var size := rect.size.max(Vector2.ONE * smallest)
+		button.position = rect.get_center() - size / 2.0
+		button.size = size
+
+
+# Where an object is on screen, or an empty rect if any of it is behind the
+# camera.
+func _object_rect(object_id: String) -> Rect2:
+	var bounds := HouseLayout.object_bounds(object_id)
+	var rect := Rect2()
+	for i in 8:
+		var corner := bounds.get_endpoint(i)
+		if _camera.is_position_behind(corner):
+			return Rect2()
+		var point := _camera.unproject_position(corner)
+		rect = Rect2(point, Vector2.ZERO) if i == 0 else rect.expand(point)
+	return rect
+
+
+# --- While a chapter plays.
+
+# The chapter runner hides the House while a chapter plays. Its rings and
+# words go too, and its light and fog (one WorldEnvironment at a time: the
+# chapter may have its own).
+func _on_visibility_changed() -> void:
+	_ui_layer.visible = visible
+	if visible:
+		if _world_env.get_parent() == null:
+			add_child(_world_env)
+		_camera.make_current()
+	elif _world_env.get_parent() == self:
+		remove_child(_world_env)
+
+
+func _exit_tree() -> void:
+	# The WorldEnvironment is not in the tree while a chapter plays.
+	if is_instance_valid(_world_env) and _world_env.get_parent() == null:
+		_world_env.queue_free()

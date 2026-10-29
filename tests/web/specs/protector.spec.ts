@@ -1,5 +1,5 @@
-// The Protector's run (DAS-97): it opens from the menu (until the bedside
-// lamp in the House can start it, DAS-95), plays with no console errors, a
+// The Protector's run (DAS-97): it opens from the bedside lamp in the House
+// (DAS-95: its close-up, then a tap turns it off), plays with no console errors, a
 // tap on the left or right moves the light one lane that way, a hold through
 // a gap lays the hand across it, hiding the tab pauses it until a
 // tap and the sound comes back with it, the hints show at the start, it
@@ -8,14 +8,29 @@
 // Headless Chromium has no speaker and draws phone sizes slowly, so the
 // run's feel and sound are Dan's to check on his phone; the whole run
 // (2:45) is played by the Godot tests instead (game/tests/test_protector.gd).
-import { test, expect, MENU, PROTECTOR } from "./game";
+import { test, expect, HOUSE, PROTECTOR, houseUntil, useObject } from "./game";
 
-const openRun = async (game: any, query = "") => {
-  await game.open(query);
-  await game.tap("Tap to begin");
-  await game.tap("The Protector (rough)");
-  await game.waitForScene(MENU, [PROTECTOR]);
+// After the Partner ("&finish=partner"), the game opens in the bedroom with
+// the bedside lamp lit. Its close-up, then a tap, turns it off and the run
+// begins. Only the first test is about the House, so the others glide
+// quickly ("&glide=0.2"): phone sizes draw the House slowly.
+const openRun = async (game: any, query = "", glide = "&glide=0.2") => {
+  await game.begin("&finish=partner" + glide + query);
+  await houseUntil(game, (s) => s.point === "after_partner" && s.view === "B1", "in the bedroom after the Partner");
+  await useObject(game, "bedside_lamp");
+  await game.waitForScene(HOUSE, [PROTECTOR]);
 };
+
+test("the run opens from the bedside lamp in the House", async ({ game }) => {
+  test.setTimeout(400_000);
+  await game.begin("&finish=partner");
+  await houseUntil(game, (s) => s.point === "after_partner" && s.view === "B1", "in the bedroom after the Partner");
+  await game.screenshot("house-bedroom-lamp-lit");
+  await useObject(game, "bedside_lamp");
+  await game.waitForScene(HOUSE, [PROTECTOR]);
+  expect((await game.state()).buttons, "no warning, no title card, no skip").toEqual([]);
+  await game.screenshot("protector-from-the-lamp");
+});
 
 const run = (game: any) => game.screen(PROTECTOR);
 
@@ -33,7 +48,7 @@ const hide = (page: any, hidden: boolean) =>
 test("opens with no words or buttons, and the light runs into the evening", async ({ game }) => {
   // The 3 s of dark and the fade-up draw slowly at phone sizes, more so with
   // the fireflies; the waits below are already up to 120 s on their own.
-  test.setTimeout(240_000);
+  test.setTimeout(300_000);
   await openRun(game);
   expect((await game.state()).buttons, "nothing to press: no skip, no menu").toEqual([]);
   // The 3 s of dark first. Phone sizes draw a few frames a second here, and
@@ -47,7 +62,7 @@ test("opens with no words or buttons, and the light runs into the evening", asyn
 test("a tap on the left or right moves the light one lane that way", async ({ game }) => {
   // Three taps and a screenshot at phone sizes, a few frames a second: about
   // 2 minutes in CI, over the default 120 s.
-  test.setTimeout(240_000);
+  test.setTimeout(300_000);
   await openRun(game, "&protector_from=8");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(8);
   expect((await run(game)).hints, "the hint on each half").toEqual(["tap here", "tap here"]);
@@ -96,7 +111,7 @@ test("a hold through a gap lays the hand across it and the light crosses", async
 
 test("hiding the tab pauses the run until a tap, and the sound comes back", async ({ game, page }) => {
   // About 2 minutes at phone sizes in CI, over the default 120 s (CI on 4d0dfba).
-  test.setTimeout(240_000);
+  test.setTimeout(300_000);
   await openRun(game, "&protector_from=20");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(21);
   const setHidden = (hidden: boolean) => hide(page, hidden);
@@ -116,12 +131,12 @@ test("hiding the tab pauses the run until a tap, and the sound comes back", asyn
   await expect.poll(async () => (await run(game)).time).toBeGreaterThan(frozen + 0.5);
   await expect.poll(() => game.audioStates(), "the sound comes back with the tap").not.toContain("suspended");
   expect((await run(game)).music).toBe(true);
-  expect((await game.state()).progress.finished, "hiding never saves").toEqual([]);
+  expect((await game.state()).progress.finished.map((c: any) => c.chapter), "hiding never saves").toEqual(["partner"]);
 });
 
 test("after the tab comes back, the first tap restarts the sound", async ({ game, page }) => {
   // About 2 minutes at phone sizes in CI, over the default 120 s (CI on 4d0dfba).
-  test.setTimeout(240_000);
+  test.setTimeout(300_000);
   // Safari can say the page's sound is running while it is silent after a
   // tab switch (Dan, 2026-10-27, call 20), so the first tap back restarts it.
   await openRun(game, "&protector_from=20");
@@ -143,7 +158,7 @@ test("after the tab comes back, the first tap restarts the sound", async ({ game
 const SLOW = { timeout: 150_000 };
 
 test("the panic: dark and raining", async ({ game }) => {
-  test.setTimeout(240_000);
+  test.setTimeout(300_000);
   await openRun(game, "&protector_from=115");
   await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(115.5);
   expect((await run(game)).raining).toBe(true);
@@ -151,7 +166,7 @@ test("the panic: dark and raining", async ({ game }) => {
 });
 
 test("after the song: the storm plays on and it is still raining", async ({ game }) => {
-  test.setTimeout(240_000);
+  test.setTimeout(300_000);
   await openRun(game, "&protector_from=131");
   await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(131.5);
   expect((await run(game)).part).toBe("FADE");
@@ -162,10 +177,9 @@ test("after the song: the storm plays on and it is still raining", async ({ game
 
 test("the light goes out, then black, then the chapter is finished and saved", async ({ game }) => {
   test.setTimeout(300_000);
-  // After the Partner, so the Protector is the next chapter and can be saved.
   // From 2:33, near the end of the light going out in the hand at the fallen
   // tree (2:25 to 2:35), so the slow phone sizes reach the black in time.
-  await openRun(game, "&finish=partner&protector_from=153");
+  await openRun(game, "&protector_from=153");
   await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(153.2);
   expect((await run(game)).held, "the light is in the father's hand").toBe(true);
   expect((await run(game)).hints, "no words at the end").toEqual([]);
@@ -179,7 +193,8 @@ test("the light goes out, then black, then the chapter is finished and saved", a
   await expect
     .poll(async () => (await game.state())?.overlays, { timeout: 200_000 })
     .toEqual([]);
-  await game.findButton("The Protector (rough)");
+  // Back in the House after the Loss: in the entry, coming in from the car.
+  await houseUntil(game, (s) => s.point === "after_loss" && s.view === "E1", "the House after the Loss");
   expect((await game.state()).progress.finished.map((c: any) => c.chapter)).toEqual([
     "partner",
     "protector",

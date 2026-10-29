@@ -38,6 +38,11 @@ func _on_run_ended() -> void:
 	finished.emit()
 
 
+## Pauses the run until the next tap (the "Turn your phone sideways" screen).
+func pause() -> void:
+	_run.pause()
+
+
 func probe_state() -> Dictionary:
 	return _run.probe_state()
 

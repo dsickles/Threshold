@@ -94,6 +94,14 @@ func enter_scene(id: StringName, scene: PackedScene, house: Node) -> bool:
 	return true
 
 
+## Pauses the chapter playing, if it can pause (it has a pause() method), as
+## it would for a hidden tab: it waits for a tap to carry on. For the "Turn
+## your phone sideways" screen.
+func pause_chapter() -> void:
+	if is_running() and _chapter.has_method("pause"):
+		_chapter.pause()
+
+
 # A second tap on a chapter object, say. Harmless, so only a warning.
 func _refuse_while_running(id: StringName) -> bool:
 	if is_running():
