@@ -32,8 +32,10 @@ jobs:
   browser-tests:
     runs-on: ubuntu-latest
     # The 3D House and the Protector's run (trees, sun shadow, rain) draw
-    # slowly in software WebGL at phone sizes (DAS-93, DAS-97).
-    timeout-minutes: 75
+    # slowly in software WebGL at phone sizes (DAS-93, DAS-97); the Loss's
+    # forest from the asset pack takes the whole run to about 73 minutes
+    # (DAS-106), so this leaves some room.
+    timeout-minutes: 90
     defaults:
       run:
         working-directory: tests/web
