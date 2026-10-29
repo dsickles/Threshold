@@ -47,6 +47,11 @@ var _index := -1
 var _clock := 0.0
 var _answer := ""
 var _done := false
+# Every line shown so far, as "Who: line".
+var _said: Array[String] = []
+# Browser tests can play it faster ("&beat_speed=", web_test_probe.gd):
+# phone sizes draw a few frames a second in software WebGL.
+var _speed := 1.0
 var _bar: PanelContainer
 var _who: Label
 var _line: Label
@@ -63,6 +68,7 @@ func _ready() -> void:
 		_steps.append({"who": MAYA, "text": text})
 	_steps.append({"choice": true})
 	_clock = -LEAD_IN
+	_speed = get_tree().root.get_meta("opening_beat_speed", 1.0)
 	_show_step()
 
 
@@ -71,7 +77,7 @@ func _ready() -> void:
 func step(delta: float) -> void:
 	if _done or is_choosing():
 		return
-	_clock += delta
+	_clock += delta * _speed
 	if _clock < 0.0:
 		return
 	if _index < 0:
@@ -126,7 +132,8 @@ func choice_button(answer: String) -> Button:
 
 ## For the browser tests, through the House's probe_state().
 func probe_state() -> Dictionary:
-	return {"who": current_speaker(), "line": current_line(), "choosing": is_choosing(), "done": _done}
+	return {"who": current_speaker(), "line": current_line(), "choosing": is_choosing(), "done": _done,
+			"said": _said}
 
 
 func _next() -> void:
@@ -147,6 +154,7 @@ func _show_step() -> void:
 	if line.has("text"):
 		_who.text = line.who
 		_line.text = line.text
+		_said.append("%s: %s" % [line.who, line.text])
 
 
 # The subtitle bar along the bottom (DESIGN.md subtitle-bar), and the choice

@@ -86,6 +86,8 @@ test("a tap on the left or right moves the light one lane that way", async ({ ga
 });
 
 test("a hold through a gap lays the hand across it and the light crosses", async ({ game, page }) => {
+  // The House comes first now (DAS-95), over the default 120 s at phone sizes.
+  test.setTimeout(300_000);
   // The first gap touches the light at 0:32.3 and is in reach from 0:31.
   await openRun(game, "&protector_from=30.2");
   await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(30.2);

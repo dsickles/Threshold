@@ -53,15 +53,18 @@ test("the test menu is still reachable for tests", async ({ game }) => {
 
 test("the opening beat plays in the living room and the hall opens", async ({ game }) => {
   test.setTimeout(400_000);
-  await game.begin("&glide=0.2");
+  // Phone sizes draw the House a few frames a second here, so the lines play
+  // faster ("&beat_speed=6"); how long each stays is checked headless.
+  await game.begin("&glide=0.2&beat_speed=6");
   await goTo(game, "E1");
   await goTo(game, "L1");
-  await houseUntil(game, (s) => s.beat?.line === "Did you lock the front door?", "Maya's first line");
-  await game.screenshot("opening-beat-first-line");
   await houseUntil(game, (s) => s.beat?.choosing === true, "Leo's line to choose");
+  expect((await houseState(game)).beat?.said, "Maya's first two lines").toEqual([
+    "Maya: Did you lock the front door?",
+    "Maya: Leo… are we really doing this? The house. All of it.",
+  ]);
   await game.screenshot("opening-beat-choice");
   await game.tap("Honestly? I'm a little scared. The good kind.");
-  await houseUntil(game, (s) => s.beat?.line === "Me too. The good kind.", "Maya's reply");
   await houseUntil(game, (s) => s.point === "after_opening", "the House after the opening beat");
   expect((await houseState(game)).rings.map((r) => r.target), "a ring into the hall").toContain("H1");
   expect((await game.state())?.progress.finished, "nothing saved yet").toEqual([]);

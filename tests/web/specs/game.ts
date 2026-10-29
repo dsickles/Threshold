@@ -207,7 +207,7 @@ export type HouseState = {
   point: string;
   closeUp: string;
   objects: { id: string; x: number; y: number }[];
-  beat: { who: string; line: string; choosing: boolean; done: boolean } | null;
+  beat: { who: string; line: string; choosing: boolean; done: boolean; said: string[] } | null;
 };
 
 export const houseState = async (game: Game): Promise<HouseState> => game.screen(HOUSE);

@@ -40,6 +40,9 @@ func _ready() -> void:
 		# that only pass through the House.
 		if part.begins_with("glide="):
 			get_tree().root.set_meta("house_glide_seconds", part.get_slice("=", 1).to_float())
+		# "&beat_speed=6" plays the opening beat's lines that many times faster.
+		if part.begins_with("beat_speed="):
+			get_tree().root.set_meta("opening_beat_speed", part.get_slice("=", 1).to_float())
 		# "&opening=stoic" plays the opening beat with that answer (held in
 		# memory, as the real beat is), so the House starts after it.
 		if part.begins_with("opening="):
