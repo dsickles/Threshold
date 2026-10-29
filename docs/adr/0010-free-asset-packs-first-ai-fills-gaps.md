@@ -14,7 +14,7 @@ ADR-0005 said v1 uses AI-generated art and audio because there were no existing 
 - Licenses allowed: **CC0** (best), **CC-BY** (with a credit), and royalty-free licenses that allow commercial use in a game, such as the Sonniss GDC bundles. Not allowed: non-commercial (NC), no-changes (ND), or "personal use only".
 - Every outside asset, and every AI-generated one, gets a line in the root [CREDITS.md](../../CREDITS.md) (file, source, author, license) in the same PR that adds it. A folder may also keep its own CREDITS.md with longer notes (as `game/assets/audio/partner/` does); the root file is still the full list.
 - Copy only the files used into `game/`, never a whole pack. Use glTF models and 1k or 2k textures, to keep the web build within the load and memory bar in [scope.md](../scope.md).
-- Where to look first is in [design/asset-sources.md](../design/asset-sources.md). The House's look (realistic or soft low-poly) is an open question in [scope.md](../scope.md).
+- Where to look first is in [design/asset-sources.md](../design/asset-sources.md). The House's look is realistic (Poly Haven and ambientCG; Dan, 2026-10-29, [scope.md](../scope.md)).
 
 ## Consequences
 

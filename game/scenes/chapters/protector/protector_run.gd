@@ -1,6 +1,6 @@
 extends Node3D
-## The Protector's run (DAS-97), in plain gray-box shapes: a small light runs
-## away from the camera down a trail of square tiles through tall trees, and
+## The Protector's run (DAS-97): a small light runs away from the camera
+## down a trail of square stepping stones through tall trees, and
 ## the father's hand keeps it safe. Tap the left or right of the screen and
 ## the hand moves the light one lane that way, out of the way of the stones
 ## and branches coming; hold a finger down with a gap in reach and the hand
@@ -21,6 +21,10 @@ extends Node3D
 ##
 ## The run's clock moves in advance(), from _process; tests turn
 ## auto_advance off and move it themselves.
+##
+## The forest, the stepping stones, the stones and the fallen tree are from
+## Quaternius's Stylized Nature MegaKit (CC0, DAS-106); the hand, the light,
+## the fireflies and the rain are still drawn here.
 
 ## 2:45: the screen is black and the run is over.
 signal ended
@@ -55,6 +59,20 @@ const GAP_SEEN := 3.0  # A gap's edges show faintly from this long before it arr
 const GAP_FAINT := 0.35  # How bright they are until the gap is in reach.
 const WARM_END := 3.0  # Everything is drawn once, unseen, in the dark before this.
 const HOLD_START := 0.2  # A press this long is a hold, not a tap (call 19). Choice, to tune.
+const MODELS := "res://assets/models/protector/"
+const TREES := ["Pine_1", "Pine_2", "Pine_4", "Pine_5"]
+const DEAD_TREES := ["DeadTree_1", "DeadTree_2"]
+const STEPPING_STONES := ["RockPath_Square_Small_1", "RockPath_Square_Small_2", "RockPath_Square_Small_3"]
+const STONE := "Rock_Medium_2"
+# The undergrowth on the forest floor, with how big each is drawn (from the
+# pack's own size) and how many go on each side in a patch. Only three
+# materials (leaves, grass, rock), so each patch is three draws.
+const UNDERGROWTH := [
+	["Fern_1", 0.22, 2], ["Grass_Common_Tall", 0.8, 2], ["Plant_1_Big", 0.35, 1],
+	["Clover_1", 0.7, 1], ["Rock_Medium_1", 0.35, 1],
+]
+const PATCHES := 6  # Undergrowth patches, both sides of the trail, shared by every slot.
+const UNDERGROWTH_SEEN := 50.0  # Metres; past this the fog has all but hidden it.
 
 # The look of each part: sky (and fog), tiles, sun energy, ambient energy,
 # fog density, sun colour, at run times between which it eases. Low gold sun
@@ -127,10 +145,13 @@ var _tree_distance := 0.0
 var _rain: CPUParticles3D
 var _heavy_rain: CPUParticles3D
 var _leaves: CPUParticles3D
-var _tile_mesh: BoxMesh
+var _tile_meshes: Array[Mesh] = []  # The stepping stones,
+var _tile_fits: Array[Transform3D] = []  # and how each is sized to TILE_SIZE.
 var _tile_materials: Array[StandardMaterial3D] = []
+var _tree_meshes: Array[Mesh] = []
+var _dead_tree_meshes: Array[Mesh] = []
+var _patches: Array[Mesh] = []
 var _trunk_mesh: CylinderMesh
-var _canopy_mesh: SphereMesh
 var _ground_mesh: BoxMesh
 var _trunk_material: StandardMaterial3D
 var _canopy_material: StandardMaterial3D
@@ -140,7 +161,7 @@ var _skin: StandardMaterial3D
 # Only each obstacle's outline material is its own, since each fades in at
 # its own moment; it is the same kind as the one drawn behind the black, so
 # it costs no first-time stutter.
-var _stone_mesh: SphereMesh
+var _stone_mesh: Mesh
 var _stone_material: StandardMaterial3D
 var _branch_meshes := {}  # Lanes it spans -> CylinderMesh.
 var _branch_material: StandardMaterial3D
@@ -813,6 +834,8 @@ func _update_look() -> void:
 	_env.fog_density = lerpf(a[5], b[5], f)
 	_sun.light_energy = lerpf(a[3], b[3], f)
 	_sun.light_color = Color(a[6]).lerp(Color(b[6]), f)
+	# The stones' own colours show through the light of each part.
+	tile = tile.lerp(Color.WHITE, 0.35)
 	_tile_materials[0].albedo_color = tile
 	_tile_materials[1].albedo_color = tile.darkened(0.08)
 	# The rain never stops once it starts (call 15).
@@ -933,7 +956,10 @@ func _build_row(row: int) -> void:
 	if not _gap_rows.has(row) or _whole:
 		for column: int in RunPlan.LANES:
 			var tile := MeshInstance3D.new()
-			tile.mesh = _tile_mesh
+			var kind := (row * 5 + column * 3 + 7) % _tile_meshes.size()
+			tile.mesh = _tile_meshes[kind]
+			tile.lod_bias = 0.5
+			tile.set_meta("fit", _tile_fits[kind])
 			tile.material_override = _tile_materials[(row + column) & 1]
 			tile.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			var fall := _fall_time(row, column)
@@ -971,45 +997,46 @@ func _pose_row(row: int) -> void:
 			place.origin.y -= 0.5 * GRAVITY * e * e
 			place.basis = place.basis.rotated(basis.z, column * 0.6 * e + 0.2 * e)
 			visible = e < 2.5
-		tile.transform = place
+		tile.transform = place * tile.get_meta("fit")
 		tile.visible = visible
 
 
 # --- The trees.
 
-# A slot of forest: a tall dark trunk on each side of the trail, with its
-# canopy high above, and the dark forest floor either side. Placed from the
-# slot's number alone, so it is the same for every player.
+# A slot of forest: a tall tree on each side of the trail, and the dark
+# forest floor either side with its undergrowth. Placed from the slot's number
+# alone, so it is the same for every player. Toward the panic more of the
+# trees are dead (Choice, DAS-106).
 func _build_slot(slot: int) -> void:
 	var nodes: Array[Node3D] = []
 	var s := (slot + 0.5) * SLOT
 	var basis := _path_basis(s)
 	var floor_at := _path_at(s) - basis.y * 0.9
+	var dead_share := 0.45 * smoothstep(RunPlan.distance(RunPlan.CONFUSION_START),
+			RunPlan.distance(RunPlan.PANIC_START), s)
 	for side: int in [-1, 1]:
 		var h := _hash01(slot, side)
 		var tree := Node3D.new()
 		var along := (h - 0.5) * SLOT * 0.8
-		var out: float = side * (3.3 + 3.0 * _hash01(slot, side * 7))
+		# Far enough out that the pines' lowest branches clear the trail.
+		var out: float = side * (4.8 + 3.5 * _hash01(slot, side * 7))
 		var root: Vector3 = _path_at(s + along) + basis.x * out - basis.y * 0.9
 		var base := Transform3D(basis, root)
 		tree.set_meta("base", base)
 		tree.set_meta("phase", h * TAU)
 		tree.transform = base
+		var dead := _hash01(slot, side * 5) < dead_share
+		var kinds := _dead_tree_meshes if dead else _tree_meshes
+		var model := MeshInstance3D.new()
+		model.mesh = kinds[int(_hash01(slot, side * 3) * kinds.size()) % kinds.size()]
+		# 10 to 15 m tall, like the trunks they replace, but no wider than
+		# the pack's, so their branches stay out of the way where the path
+		# bends. Turned at random.
 		var height := 10.0 + 5.0 * h
-		var radius := 0.3 + 0.18 * _hash01(slot, side * 3)
-		var trunk := MeshInstance3D.new()
-		trunk.mesh = _trunk_mesh
-		trunk.material_override = _trunk_material
-		trunk.scale = Vector3(radius / 0.4, height, radius / 0.4)
-		trunk.position = Vector3.UP * height / 2.0
-		tree.add_child(trunk)
-		var canopy := MeshInstance3D.new()
-		canopy.mesh = _canopy_mesh
-		canopy.material_override = _canopy_material
-		canopy.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		canopy.scale = Vector3.ONE * (2.4 + 1.2 * h)
-		canopy.position = Vector3(-side * 0.8, height, 0.0)
-		tree.add_child(canopy)
+		model.scale = Vector3(0.9, height / model.mesh.get_aabb().end.y, 0.9)
+		model.rotation.y = TAU * _hash01(slot, side * 9)
+		model.lod_bias = 0.25  # The pack's simpler shapes sooner: the fog hides the difference.
+		tree.add_child(model)
 		add_child(tree)
 		nodes.append(tree)
 	var ground := Node3D.new()
@@ -1021,6 +1048,12 @@ func _build_slot(slot: int) -> void:
 		slab.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		slab.position = Vector3(side * (2.6 + _ground_mesh.size.x / 2.0), 0.0, 0.0)
 		ground.add_child(slab)
+	var patch := MeshInstance3D.new()
+	patch.mesh = _patches[int(_hash01(slot, 19) * PATCHES) % PATCHES]
+	patch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	patch.visibility_range_end = UNDERGROWTH_SEEN
+	patch.position = Vector3.UP * _ground_mesh.size.y / 2.0
+	ground.add_child(patch)
 	add_child(ground)
 	nodes.append(ground)
 	# A firefly on each side, drifting between the trunks. Each has its own
@@ -1276,32 +1309,48 @@ func _build_world() -> void:
 	add_child(_camera)
 	_camera.make_current()
 
-	_tile_mesh = BoxMesh.new()
-	_tile_mesh.size = TILE_SIZE
+	# The stepping stones: each fills a tile, its top where the box's was.
+	var path_rocks: Texture2D = load(MODELS + "PathRocks_Diffuse.png")
+	# Placed by a transform, not reshaped, so they keep the pack's simpler
+	# shapes for when they are far away.
+	for stone: String in STEPPING_STONES:
+		var mesh := _pack_mesh(stone)
+		_tile_meshes.append(mesh)
+		# A little bigger than the tile, so the stones meet across the lanes
+		# and from row to row: no sky shows between them.
+		_tile_fits.append(_fit(mesh, Vector3(TILE + 0.1, TILE_SIZE.y, TILE + 0.1)))
 	for k in 2:
-		_tile_materials.append(_solid(Color.GRAY))
+		var tile := _solid(Color.GRAY)
+		tile.albedo_texture = path_rocks
+		_tile_materials.append(tile)
+	# Darker bark than the pack's, so the trunks still stand dark against the
+	# low sun (call 15). Set, not multiplied: the shapes are shared.
+	for tree: String in TREES:
+		var mesh := _pack_mesh(tree)
+		(mesh.surface_get_material(0) as StandardMaterial3D).albedo_color = Color(0.55, 0.5, 0.47)
+		_tree_meshes.append(mesh)
+	for tree: String in DEAD_TREES:
+		_dead_tree_meshes.append(_pack_mesh(tree))
+	for k in PATCHES:
+		_patches.append(_undergrowth(k))
 	_trunk_mesh = CylinderMesh.new()
 	_trunk_mesh.top_radius = 0.32
 	_trunk_mesh.bottom_radius = 0.4
 	_trunk_mesh.height = 1.0
 	_trunk_mesh.radial_segments = 10
-	_canopy_mesh = SphereMesh.new()
-	_canopy_mesh.radius = 1.0
-	_canopy_mesh.height = 1.4
-	_canopy_mesh.radial_segments = 12
-	_canopy_mesh.rings = 6
 	_ground_mesh = BoxMesh.new()
 	_ground_mesh.size = Vector3(10.0, 0.4, SLOT + 0.05)
-	_trunk_material = _solid(Color("#2A1F17"))
-	_canopy_material = _solid(Color("#2F3A22"))
+	# The dead trees' bark: on the fallen tree's own shape (_canopy_material),
+	# and wrapped round the plain trunk and branches, which are stretched.
+	_canopy_material = _dead_tree_meshes[0].surface_get_material(0)
+	_trunk_material = _bark(Vector3(3.0, 6.0, 1.0))
+	_branch_material = _bark(Vector3(2.0, 1.0, 1.0))
 	_ground_material = _solid(Color("#2E261D"))
 	_skin = _solid(SKIN)
 	_skin.roughness = 0.75
-	_stone_mesh = SphereMesh.new()
-	_stone_mesh.radius = 0.6
-	_stone_mesh.height = 1.0
-	_stone_material = _solid(Color("#7D7268"))
-	_branch_material = _solid(Color("#4E3A2C"))
+	# A stone fills the same space as the gray-box one: 1.2 m across, 1 m tall.
+	_stone_mesh = _fitted(_pack_mesh(STONE), Vector3(1.2, 1.0, 1.2))
+	_stone_material = _stone_mesh.surface_get_material(0)
 	_bar_mesh = BoxMesh.new()
 	_bar_mesh.size = Vector3(TILE * 3.0 - 0.2, 0.08, 0.2)
 	_palm_mesh = BoxMesh.new()
@@ -1423,6 +1472,18 @@ func _build_warm() -> void:
 	trunk.mesh = _trunk_mesh
 	trunk.material_override = _trunk_material
 	_warm.add_child(trunk)
+	# The pack's shapes, so the dead trees of the panic and the fallen tree's
+	# bark are ready before they first come into view.
+	for mesh: Mesh in _tree_meshes + _dead_tree_meshes + _patches + _tile_meshes:
+		var model := MeshInstance3D.new()
+		model.mesh = mesh
+		model.scale = Vector3.ONE * 0.01
+		_warm.add_child(model)
+	var fallen := MeshInstance3D.new()
+	fallen.mesh = _dead_tree_meshes[0]
+	fallen.material_override = _canopy_material
+	fallen.scale = Vector3.ONE * 0.01
+	_warm.add_child(fallen)
 	_warm.add_child(_make_firefly(unseen.call(_firefly_material), unseen.call(_firefly_halo)))
 	# The song too, silent, so starting it at 0:03 doesn't catch.
 	var song := AudioStreamPlayer.new()
@@ -1500,6 +1561,72 @@ func _solid(colour: Color) -> StandardMaterial3D:
 	mat.albedo_color = colour
 	mat.roughness = 0.9
 	return mat
+
+
+# The dead trees' bark from the pack, repeated `repeat` times over a shape.
+func _bark(repeat: Vector3) -> StandardMaterial3D:
+	var mat: StandardMaterial3D = _canopy_material.duplicate()
+	mat.uv1_scale = repeat
+	return mat
+
+
+# --- The pack's models.
+
+# The one shape in a model from the pack, with its own materials.
+func _pack_mesh(model: String) -> Mesh:
+	var scene: Node = (load(MODELS + model + ".gltf") as PackedScene).instantiate()
+	var mesh: Mesh = (scene.find_children("*", "MeshInstance3D")[0] as MeshInstance3D).mesh
+	scene.free()
+	return mesh
+
+
+# What scales and moves a shape so it fills a box of `size` centred on the origin.
+func _fit(mesh: Mesh, size: Vector3) -> Transform3D:
+	var box := mesh.get_aabb()
+	var k := size / box.size
+	return Transform3D(Basis.from_scale(k), -box.get_center() * k)
+
+
+# The shape itself, reshaped that way.
+func _fitted(mesh: Mesh, size: Vector3) -> ArrayMesh:
+	return _merged([[mesh, _fit(mesh, size)]])
+
+
+# One shape from several placed ones, one surface per material, so a patch of
+# undergrowth is drawn in a few calls, not one for each plant.
+func _merged(parts: Array) -> ArrayMesh:
+	var tools := {}  # Material -> SurfaceTool.
+	for part: Array in parts:
+		var mesh: Mesh = part[0]
+		for i in mesh.get_surface_count():
+			var material := mesh.surface_get_material(i)
+			if not tools.has(material):
+				tools[material] = SurfaceTool.new()
+			(tools[material] as SurfaceTool).append_from(mesh, i, part[1])
+	var out := ArrayMesh.new()
+	for material: Material in tools:
+		var tool: SurfaceTool = tools[material]
+		tool.set_material(material)
+		tool.commit(out)
+	return out
+
+
+# A patch of undergrowth a slot long: ferns, grass, leafy plants and a small
+# rock each side, scattered from the path's edges into the trees, on the
+# forest floor at y = 0. Patch k is the same every time.
+func _undergrowth(k: int) -> ArrayMesh:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7919 * k + 1
+	var parts := []
+	for plant: Array in UNDERGROWTH:
+		var mesh := _pack_mesh(plant[0])
+		for n: int in plant[2] * 2:
+			var side := -1 if n % 2 == 0 else 1
+			var size: float = plant[1] * rng.randf_range(0.8, 1.25)
+			var at := Vector3(side * rng.randf_range(2.8, 9.0), 0.0, rng.randf_range(-SLOT, SLOT) / 2.0)
+			var turn := Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * size)
+			parts.append([mesh, Transform3D(turn, at)])
+	return _merged(parts)
 
 
 func _build_sound() -> void:
@@ -1607,18 +1734,18 @@ func _build_tree() -> void:
 	trunk.scale = Vector3(TREE_RADIUS / 0.4, TREE_LENGTH, TREE_RADIUS / 0.4)
 	trunk.position = Vector3(0.8, TREE_RADIUS - 0.1, 0.0)
 	_tree.add_child(trunk)
-	var roots := MeshInstance3D.new()
-	roots.mesh = _canopy_mesh
-	roots.material_override = _trunk_material
-	roots.scale = Vector3(1.2, 1.6, 1.1)
-	roots.position = Vector3(0.8 - TREE_LENGTH / 2.0, 1.0, 0.0)
-	_tree.add_child(roots)
-	var crown := MeshInstance3D.new()
-	crown.mesh = _canopy_mesh
-	crown.material_override = _canopy_material
-	crown.scale = Vector3(3.2, 2.0, 2.6)
-	crown.position = Vector3(0.8 + TREE_LENGTH / 2.0 + 1.5, 1.4, -0.5)
-	_tree.add_child(crown)
+	# A dead tree from the pack lies along it, its roots at one end and its
+	# bare crown spread out past the path's right-hand edge; the plain trunk
+	# gives it its thickness where it crosses the path.
+	var dead := MeshInstance3D.new()
+	dead.name = "DeadTree"
+	dead.mesh = _dead_tree_meshes[0]
+	dead.material_override = _canopy_material
+	var lying := Basis(Vector3.BACK, -PI / 2.0).rotated(Vector3.RIGHT, 1.6)
+	var length := TREE_LENGTH + 3.0
+	dead.transform = Transform3D(lying.scaled(Vector3.ONE * length / dead.mesh.get_aabb().end.y),
+			Vector3(0.8 - TREE_LENGTH / 2.0, TREE_RADIUS - 0.1, 0.0))
+	_tree.add_child(dead)
 	for stub: Array in [[-1.7, 0.6, -0.5], [0.9, -0.7, 0.4], [3.4, 0.9, -0.2]]:
 		var branch := MeshInstance3D.new()
 		branch.mesh = _branch_mesh(1)

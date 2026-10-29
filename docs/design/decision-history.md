@@ -426,6 +426,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 37. The House's look is realistic; M1.5 starts before M1 ends (2026-10-29)
+
+| | |
+|---|---|
+| **Was** | The House's look, realistic or soft low-poly, was an open question for M3+, with realistic recommended; M1.5 started only once M1 was done. |
+| **Became** | Realistic (Poly Haven and ambientCG, CC0), tried on the living room on Dan's phone first. The Loss and House art passes start now, alongside the last M1 tickets. |
+| **Why** | Dan asked to swap the whole House and the whole Loss to asset packs now, "as nice as possible while maintaining performance targets", and picked realistic on a decision card. |
+| **Record** | [scope.md](../scope.md); [roadmap.md](../roadmap.md); [asset-sources.md](asset-sources.md); DAS-106, DAS-107 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

@@ -47,7 +47,7 @@ About 15 minutes, rough, played in one sitting.
 
 ## M1.5 Asset pass
 
-_Added 2026-10-26 (Dan): starts once M1 is done._
+_Added 2026-10-26 (Dan): starts once M1 is done._ _(updated 2026-10-29: Dan started the House and Loss art now, while DAS-95, DAS-96 and DAS-98 are still open. The Loss art (DAS-106) changes only the run's look; the House art (DAS-107) waits for the open House tickets to merge, then pulls main.)_
 
 Replace the gray-box art of everything M1 built with free asset packs, following [ADR-0010](adr/0010-free-asset-packs-first-ai-fills-gaps.md) (packs first, AI only to fill gaps). Sources: [design/asset-sources.md](design/asset-sources.md).
 
