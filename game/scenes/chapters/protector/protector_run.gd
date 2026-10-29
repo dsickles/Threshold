@@ -72,7 +72,8 @@ const UNDERGROWTH := [
 	["Clover_1", 0.7, 1], ["Rock_Medium_1", 0.35, 1],
 ]
 const PATCHES := 6  # Undergrowth patches, both sides of the trail, shared by every slot.
-const UNDERGROWTH_SEEN := 50.0  # Metres; past this the fog has all but hidden it.
+const UNDERGROWTH_SEEN := 30.0  # Metres; past this it is too small to make out.
+const TREES_SEEN := 60.0  # Metres; past this the fog has all but hidden them.
 
 # The look of each part: sky (and fog), tiles, sun energy, ambient energy,
 # fog density, sun colour, at run times between which it eases. Low gold sun
@@ -1003,10 +1004,11 @@ func _pose_row(row: int) -> void:
 
 # --- The trees.
 
-# A slot of forest: a tall tree on each side of the trail, and the dark
-# forest floor either side with its undergrowth. Placed from the slot's number
-# alone, so it is the same for every player. Toward the panic more of the
-# trees are dead (Choice, DAS-106).
+# A slot of forest: a tall tree on one side of the trail, the next slot's on
+# the other (the pack's pines are bushy, and each one costs a phone more than
+# the gray-box trunk did), and the dark forest floor either side with its
+# undergrowth. Placed from the slot's number alone, so it is the same for
+# every player. Toward the panic more of the trees are dead (Choice, DAS-106).
 func _build_slot(slot: int) -> void:
 	var nodes: Array[Node3D] = []
 	var s := (slot + 0.5) * SLOT
@@ -1025,6 +1027,10 @@ func _build_slot(slot: int) -> void:
 		tree.set_meta("base", base)
 		tree.set_meta("phase", h * TAU)
 		tree.transform = base
+		nodes.append(tree)
+		add_child(tree)
+		if (slot + (0 if side < 0 else 1)) % 2 == 0:
+			continue  # This side's tree is in the next slot.
 		var dead := _hash01(slot, side * 5) < dead_share
 		var kinds := _dead_tree_meshes if dead else _tree_meshes
 		var model := MeshInstance3D.new()
@@ -1036,9 +1042,8 @@ func _build_slot(slot: int) -> void:
 		model.scale = Vector3(0.9, height / model.mesh.get_aabb().end.y, 0.9)
 		model.rotation.y = TAU * _hash01(slot, side * 9)
 		model.lod_bias = 0.25  # The pack's simpler shapes sooner: the fog hides the difference.
+		model.visibility_range_end = TREES_SEEN
 		tree.add_child(model)
-		add_child(tree)
-		nodes.append(tree)
 	var ground := Node3D.new()
 	ground.transform = Transform3D(basis, floor_at)
 	for side: int in [-1, 1]:
