@@ -22,8 +22,9 @@ npx playwright test
 
 Screenshots of each screen land in `tests/web/test-results/<test>/`, and the
 full report (with screenshots and, on failure, a trace) in
-`tests/web/playwright-report/`. In CI both are the "browser-test-results"
-download on the run's page (`.github/workflows/browser-tests.yml`).
+`tests/web/playwright-report/`. In CI each size runs as its own job, and both
+are its "browser-test-results-<size>" download on the run's page
+(`.github/workflows/browser-tests.yml`).
 
 ## How they see inside the game
 

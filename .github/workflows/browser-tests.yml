@@ -1,7 +1,8 @@
 # Plays the exported web build in Chromium (tests/web/, Playwright) at laptop,
 # phone and sideways-phone sizes: it loads, has no console errors, sound waits
-# for the first tap, and each screen opens and goes back. Screenshots and the
-# report are saved as the run's "browser-test-results" download.
+# for the first tap, and each screen opens and goes back. Each size runs as its
+# own job, side by side; screenshots and the report are saved as the run's
+# "browser-test-results-<size>" downloads.
 # Kept apart from check.yml so the two can change without clashing.
 # These complement Dan's own phone tests; they never replace them.
 name: Browser tests
@@ -31,11 +32,16 @@ concurrency:
 jobs:
   browser-tests:
     runs-on: ubuntu-latest
+    # One job per size, at the same time: with the Loss's forest from the
+    # asset pack (DAS-106) all three in one job took 73 to over 90 minutes.
+    strategy:
+      fail-fast: false
+      matrix:
+        size: [laptop, phone, phone-sideways]
     # The 3D House and the Protector's run (trees, sun shadow, rain) draw
-    # slowly in software WebGL at phone sizes (DAS-93, DAS-97); the Loss's
-    # forest from the asset pack takes the whole run to about 73 minutes
-    # (DAS-106), so this leaves some room.
-    timeout-minutes: 90
+    # slowly in software WebGL at phone sizes (DAS-93, DAS-97): one phone
+    # size takes about 35 minutes.
+    timeout-minutes: 75
     defaults:
       run:
         working-directory: tests/web
@@ -65,13 +71,13 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Run browser tests
-        run: npx playwright test
+        run: npx playwright test --project=${{ matrix.size }}
 
       - name: Save screenshots and report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: browser-test-results
+          name: browser-test-results-${{ matrix.size }}
           path: |
             tests/web/test-results/
             tests/web/playwright-report/
