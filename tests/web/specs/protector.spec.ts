@@ -19,6 +19,10 @@ const openRun = async (game: any, query = "") => {
 
 const run = (game: any) => game.screen(PROTECTOR);
 
+// Phone sizes draw a few frames a second here, and Godot counts at most
+// 8/60 s a frame, so a few seconds of run can take a minute or more.
+const SLOW = { timeout: 150_000 };
+
 // The tab going away and coming back, as the browser says it.
 const hide = (page: any, hidden: boolean) =>
   page.evaluate((hidden: boolean) => {
@@ -71,9 +75,12 @@ test("a tap on the left or right moves the light one lane that way", async ({ ga
 });
 
 test("a hold through a gap lays the hand across it and the light crosses", async ({ game, page }) => {
+  // Over 2 minutes at the sideways phone size in CI with the asset-pack
+  // forest (DAS-106).
+  test.setTimeout(240_000);
   // The first gap touches the light at 0:32.3 and is in reach from 0:31.
   await openRun(game, "&protector_from=30.2");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(30.2);
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(30.2);
   expect((await run(game)).hints, "the hold hint, before the first gap").toEqual(["hold"]);
   // A finger goes down in the middle of the screen before the gap is in
   // reach and stays down; the hand goes across when the gap comes into reach.
@@ -98,7 +105,7 @@ test("hiding the tab pauses the run until a tap, and the sound comes back", asyn
   // About 2 minutes at phone sizes in CI, over the default 120 s (CI on 4d0dfba).
   test.setTimeout(240_000);
   await openRun(game, "&protector_from=20");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(21);
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(21);
   const setHidden = (hidden: boolean) => hide(page, hidden);
   await expect.poll(() => game.audioStates()).toContain("running");
   await setHidden(true);
@@ -125,7 +132,7 @@ test("after the tab comes back, the first tap restarts the sound", async ({ game
   // Safari can say the page's sound is running while it is silent after a
   // tab switch (Dan, 2026-10-27, call 20), so the first tap back restarts it.
   await openRun(game, "&protector_from=20");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(21);
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(21);
   await expect.poll(() => game.audioStates()).toContain("running");
   await hide(page, true);
   await expect.poll(async () => (await run(game)).paused).toBe(true);
@@ -137,10 +144,6 @@ test("after the tab comes back, the first tap restarts the sound", async ({ game
   await game.tapMiddle();
   expect(await page.evaluate(() => (window as any).thresholdSoundBack.restarts), "only the first tap back").toBe(1);
 });
-
-// Phone sizes draw a few frames a second here, and Godot counts at most
-// 8/60 s a frame, so a few seconds of run can take a minute or more.
-const SLOW = { timeout: 150_000 };
 
 test("the panic: dark and raining", async ({ game }) => {
   test.setTimeout(240_000);
