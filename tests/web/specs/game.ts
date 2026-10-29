@@ -11,9 +11,12 @@ export type ProbeState = {
   buttons: ProbeButton[];
   // probe_state() of screens that report one, by scene path.
   screens: Record<string, any>;
+  // Whether the "Turn your phone sideways" screen is showing.
+  turnSideways: boolean;
   progress: { finished: { chapter: string; answer: string }[]; saveOk: boolean };
 };
 
+export const TITLE = "res://scenes/ui/title.tscn";
 export const MENU = "res://scenes/ui/m0_menu.tscn";
 export const SMOOTHNESS = "res://scenes/m0_checks/smoothness/smoothness_check.tscn";
 export const VIEWPOINTS = "res://scenes/m0_checks/viewpoints_check.tscn";
@@ -34,10 +37,12 @@ export const test = base.extend<{ game: Game }>({
     // Headless Chromium lets sound play before any tap, even when told not
     // to. Phones don't, so this applies the phone rule: audio contexts start
     // paused and only resume once the player has tapped. It also keeps a list
-    // of them, so a test can see whether sound is on.
+    // of them, so a test can see whether sound is on, and counts any try to
+    // start sound before the first tap (a phone would refuse it too).
     await page.addInitScript(() => {
       const w = window as any;
       w.__audioContexts = [];
+      w.__resumesBeforeTap = 0;
       const Real = w.AudioContext || w.webkitAudioContext;
       if (!Real) return;
       // Tracked here because Playwright's page load already counts as a
@@ -54,7 +59,9 @@ export const test = base.extend<{ game: Game }>({
           if (!tapped()) Real.prototype.suspend.call(this);
         }
         resume() {
-          return tapped() ? super.resume() : Promise.resolve();
+          if (tapped()) return super.resume();
+          w.__resumesBeforeTap += 1;
+          return Promise.resolve();
         }
       }
       w.AudioContext = PhoneRules;
@@ -73,12 +80,42 @@ export class Game {
   ) {}
 
   /**
-   * Opens the game and waits until the engine is running its first scene.
+   * Opens the M0 test menu ("&menu") and waits until the engine is running it.
    * `extra` adds to the address, for example "&finish=partner" (see the probe).
    */
   async open(extra = "") {
-    await this.page.goto("/index.html?probe" + extra);
+    await this.page.goto("/index.html?probe&menu" + extra);
     await expect.poll(() => this.state().then((s) => s?.scene), { timeout: 90_000 }).toBe(MENU);
+  }
+
+  /** Opens the game itself, as a player does, and waits for "Tap to begin". */
+  async openGame(extra = "") {
+    await this.page.goto("/index.html?probe" + extra);
+    await expect.poll(() => this.state().then((s) => s?.scene), { timeout: 90_000 }).toBe(TITLE);
+  }
+
+  /** Whether the page is taller than it is wide (a phone held upright). */
+  upright(): boolean {
+    const { width, height } = this.page.viewportSize()!;
+    return height > width;
+  }
+
+  /** Turns an upright phone sideways (swaps the page's width and height). */
+  async turnSideways() {
+    const { width, height } = this.page.viewportSize()!;
+    if (height > width) await this.page.setViewportSize({ width: height, height: width });
+  }
+
+  /**
+   * Opens the game, turns an upright phone sideways (the game is sideways
+   * only) and taps "Tap to begin": the House at the player's story point.
+   */
+  async begin(extra = "") {
+    await this.openGame(extra);
+    await this.turnSideways();
+    await expect.poll(() => this.state().then((s) => s?.turnSideways)).toBe(false);
+    await this.tap("Tap to begin");
+    await this.waitForScene(HOUSE);
   }
 
   async state(): Promise<ProbeState | null> {
@@ -151,6 +188,17 @@ export class Game {
     await this.tapButton({ text: "", x: size.x * across, y: size.y * down, disabled: false });
   }
 
+  /** How many times the page tried to start sound before the first tap. */
+  async resumesBeforeTap(): Promise<number> {
+    return this.page.evaluate(() => (window as any).__resumesBeforeTap);
+  }
+
+  /** Holds the page upright (taller than wide), as a phone turned upright. */
+  async holdUpright() {
+    const { width, height } = this.page.viewportSize()!;
+    if (width > height) await this.page.setViewportSize({ width: height, height: width });
+  }
+
   async audioStates(): Promise<string[]> {
     return this.page.evaluate(() => (window as any).__audioContexts.map((c: AudioContext) => c.state));
   }
@@ -162,4 +210,55 @@ export class Game {
     await this.page.screenshot({ path });
     await test.info().attach(name, { path, contentType: "image/png" });
   }
+}
+
+// --- The House (game/scenes/house/house.gd, probe_state()).
+
+export type HouseRing = { target: string; x: number; y: number };
+export type HouseState = {
+  view: string;
+  gliding: boolean;
+  rings: HouseRing[];
+  point: string;
+  closeUp: string;
+  objects: { id: string; x: number; y: number }[];
+  beat: { who: string; line: string; choosing: boolean; done: boolean; said: string[] } | null;
+};
+
+export const houseState = async (game: Game): Promise<HouseState> => game.screen(HOUSE);
+
+// Software WebGL draws the 3D House slowly at phone pixel densities (a frame
+// can take seconds), so waits in the House are long.
+const HOUSE_WAIT = { timeout: 120_000 };
+
+/** Waits until the House is still (not gliding) and `ok` holds. */
+export async function houseUntil(game: Game, ok: (s: HouseState) => boolean, message: string) {
+  await expect
+    .poll(async () => {
+      const s = await houseState(game);
+      return !!s && !s.gliding && ok(s);
+    }, { message, ...HOUSE_WAIT })
+    .toBe(true);
+}
+
+/** Taps the ring that leads to `target`, then waits to arrive there. */
+export async function goTo(game: Game, target: string) {
+  let ring: HouseRing | undefined;
+  await houseUntil(game, (s) => (ring = s.rings.find((r) => r.target === target)) !== undefined, `ring to ${target}`);
+  await game.tapButton({ text: "", x: ring!.x, y: ring!.y, disabled: false });
+  await houseUntil(game, (s) => s.view === target, `arrive at ${target}`);
+}
+
+/** Taps a chapter object (the record player, the bedside lamp) where it is on screen. */
+export async function tapObject(game: Game, id: string) {
+  let object: { x: number; y: number } | undefined;
+  await houseUntil(game, (s) => (object = s.objects.find((o) => o.id === id)) !== undefined, `${id} can be tapped`);
+  await game.tapButton({ text: "", x: object!.x, y: object!.y, disabled: false });
+}
+
+/** Taps a chapter object twice: its close-up, then its one action. */
+export async function useObject(game: Game, id: string) {
+  await tapObject(game, id);
+  await houseUntil(game, (s) => s.closeUp === id, `${id}'s close-up`);
+  await tapObject(game, id);
 }

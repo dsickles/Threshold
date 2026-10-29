@@ -213,6 +213,18 @@ func _notification(what: int) -> void:
 		_conductor.pause()
 
 
+## Pauses the song, as a hidden tab does, for the "Turn your phone sideways"
+## screen. No tap starts it again until allow_resume().
+func pause() -> void:
+	if _state == State.PLAYING:
+		_conductor.pause()
+
+
+## The screen has gone: the next tap carries on with the song.
+func allow_resume() -> void:
+	_conductor.allow_resume()
+
+
 func _exit_tree() -> void:
 	if _recorder:
 		_recorder.close()  # Leaving with the taps box still open.
