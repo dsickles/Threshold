@@ -13,7 +13,8 @@ extends CanvasLayer
 const SURFACE := Color(0.11, 0.098, 0.086)
 
 ## Whether this is a phone or tablet. Left null it asks the device (a touch
-## screen); tests set it.
+## screen), unless a browser test said "&touch" (web_test_probe.gd); tests
+## set it.
 var assume_touch: Variant = null
 
 var _watching := false
@@ -77,12 +78,16 @@ func _check() -> void:
 			get_tree().paused = true
 			_paused_it = true
 		ChapterRunner.of(get_tree()).pause_chapter()
-	elif _paused_it:
-		get_tree().paused = false
-		_paused_it = false
+	else:
+		ChapterRunner.of(get_tree()).allow_chapter_resume()
+		if _paused_it:
+			get_tree().paused = false
+			_paused_it = false
 
 
 func _is_touch() -> bool:
 	if assume_touch != null:
 		return assume_touch
+	if get_tree().root.has_meta("assume_touch"):
+		return true
 	return DisplayServer.is_touchscreen_available()

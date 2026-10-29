@@ -133,8 +133,9 @@ func test_the_game_opens_on_tap_to_begin_then_the_porch() -> void:
 	check(begin.is_visible_in_tree() and begin.text == "Tap to begin", "Tap to begin shows")
 	check(begin.size.x >= 44.0 and begin.size.y >= 44.0, "Tap to begin is at least 44px")
 	# Nothing plays before the first tap (the browser wouldn't let it).
-	for player in get_tree().root.find_children("*", "AudioStreamPlayer", true, false):
-		check(not (player as AudioStreamPlayer).playing, "%s is quiet before the first tap" % player.name)
+	for type in ["AudioStreamPlayer", "AudioStreamPlayer2D", "AudioStreamPlayer3D"]:
+		for player in get_tree().root.find_children("*", type, true, false):
+			check(not player.playing, "%s is quiet before the first tap" % player.name)
 	tap(begin)
 	await frames(2)
 	var house := get_tree().current_scene
@@ -146,7 +147,7 @@ func test_the_game_opens_on_tap_to_begin_then_the_porch() -> void:
 
 
 func test_the_test_menu_opens_only_when_asked_for() -> void:
-	check(not preload("res://scenes/ui/title.gd").wants_menu(), "no ?menu: the game, not the menu")
+	check(not preload("res://scenes/ui/title.gd").wants_menu(), "no ?probe&menu: the game, not the menu")
 
 
 func test_the_house_opens_at_the_players_own_point() -> void:
@@ -236,6 +237,72 @@ func test_the_opening_beat_plays_once() -> void:
 	check(again.opening_beat() == null, "not again in the same visit")
 
 
+# Every ring the player can see, with its label, as screen rects.
+func _ring_rects(house: Node) -> Array[Rect2]:
+	var rects: Array[Rect2] = []
+	for ring: Button in house._rings:
+		if ring.is_visible_in_tree():
+			rects.append(ring.get_global_rect().merge(house.ring_label(ring).get_global_rect()))
+	return rects
+
+
+func test_rings_keep_clear_of_the_subtitles_and_the_choice() -> void:
+	for screen in SCREENS:
+		set_screen(screen)
+		_state.start_new()
+		var house := _open_house(HouseTable.START)
+		var beat := await _arrive_at_l1(house)
+		var checked := 0
+		for i in 2000:
+			if beat.is_done():
+				break
+			await frames(2)
+			var covered: Array[Control] = [beat._bar,
+					beat.choice_button("stoic"), beat.choice_button("vulnerable")]
+			var rings := _ring_rects(house)
+			check(not rings.is_empty(), "%s: the rings still show during the beat" % screen)
+			for control in covered:
+				if not control.is_visible_in_tree():
+					continue
+				checked += 1
+				for rect in rings:
+					check(not rect.intersects(control.get_global_rect()),
+							"%s: no ring over %s (%s, %s)" % [screen, control.name, rect, control.get_global_rect()])
+			if beat.is_choosing():
+				tap(beat.choice_button("stoic"))
+			beat.step(0.5)
+		check(beat.is_done(), "%s: the beat played through" % screen)
+		check(checked > 0, "%s: the subtitles and the choice were checked" % screen)
+		house.free()
+		await frames()
+
+
+func test_walking_away_mid_beat_lets_maya_finish_and_the_hall_still_opens() -> void:
+	var house := _open_house(HouseTable.START)
+	var beat := await _arrive_at_l1(house)
+	for i in 400:
+		if beat.current_line() != "":
+			break
+		beat.step(0.05)
+	check_eq(beat.current_line(), "Did you lock the front door?", "Maya has started")
+	var away: Button = house.ring_to("E1")
+	if not check(away != null and away.is_visible_in_tree(), "a ring out of the living room can be tapped"):
+		house.free()
+		return
+	tap(away)
+	await _finish_glide(house)
+	check_eq(house._current, "E1", "walked back to the entry")
+	check(house.opening_beat() == beat, "the beat carries on")
+	var said := await _play_beat(beat, "vulnerable")
+	check_eq(said.size(), 5, "all five lines, from the entry")
+	await frames()
+	check_eq(house.story_point, HouseTable.AFTER_OPENING, "the House moves on after it")
+	check_eq(_state.opening_answer(), "vulnerable", "the answer is held")
+	_stand_at(house, "L1")
+	check(house.opening_beat() == null, "and it doesn't start again back at L1")
+	check(house.ring_to("H1") != null, "the hall is open")
+
+
 func test_after_the_opening_beat_the_back_hall_and_bedroom_open_and_the_record_player_works() -> void:
 	var house := _open_house(HouseTable.START)
 	check(house.find_child("Boxes_hall_opening", true, false) != null, "boxes in the hall opening at first")
@@ -285,18 +352,28 @@ func test_the_record_player_close_up_then_a_tap_starts_the_partner() -> void:
 
 
 func test_tapping_off_a_close_up_steps_back_to_the_view_it_was_opened_from() -> void:
-	var house := _open_house(HouseTable.AFTER_OPENING)
-	_stand_at(house, "B3")
-	await _object_tap(house, "record_player")
-	await _finish_glide(house)
-	tap_at(Vector2(30.0, 30.0))
-	await _finish_glide(house)
-	check_eq(house.close_up(), "", "stepped back")
-	check_eq(house._current, "B3", "to the corner")
-	check(house._camera.global_transform.origin.distance_to(HouseLayout.view_transform("B3").origin) < 0.01,
-			"the camera is back at the corner")
-	check(house.ring_to("B1") != null, "its rings are back")
-	check(_chapter() == null, "nothing started")
+	for setup: Array in [[HouseTable.AFTER_OPENING, "B3", "record_player"],
+			[HouseTable.AFTER_PARTNER, "B2", "bedside_lamp"]]:
+		var house := _open_house(setup[0])
+		var view: String = setup[1]
+		var where: String = setup[2]
+		_stand_at(house, view)
+		await _object_tap(house, where)
+		await _finish_glide(house)
+		check_eq(house.close_up(), where, "%s: its close-up" % where)
+		tap_at(Vector2(30.0, 30.0))
+		await _finish_glide(house)
+		check_eq(house.close_up(), "", "%s: stepped back" % where)
+		check_eq(house._current, view, "%s: to the view it was opened from" % where)
+		check(house._camera.global_transform.origin.distance_to(HouseLayout.view_transform(view).origin) < 0.01,
+				"%s: the camera is back" % where)
+		check(house._rings.any(func(ring: Button) -> bool: return ring.is_visible_in_tree()),
+				"%s: the view's rings are back" % where)
+		check(_chapter() == null, "%s: nothing started" % where)
+		if where == "bedside_lamp":
+			check(house.is_lamp_lit(), "the lamp is still on")
+		house.free()
+		await frames()
 
 
 func test_chapter_objects_can_be_tapped_at_least_44px_and_hover_does_nothing() -> void:

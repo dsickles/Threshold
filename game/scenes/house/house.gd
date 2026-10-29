@@ -435,12 +435,16 @@ func _place_rings() -> void:
 		feet[ring] = Rect2(Vector2.ZERO, disc).merge(Rect2(label.position, words))
 		ring.position = point - disc / 2.0
 		shown.append(ring)
-	# Where each ring may go so that it and its label stay on screen.
+	# Where each ring may go so that it and its label stay on screen, and
+	# above the opening beat's subtitles and choice while it plays.
+	var bottom := screen.size.y - EDGE_MARGIN
+	if _beat:
+		bottom = minf(bottom, screen.size.y - _beat.reserved_height() - RING_GAP)
 	var bounds := {}
 	for ring in shown:
 		var foot: Rect2 = feet[ring]
 		var lowest := Vector2.ONE * EDGE_MARGIN - foot.position
-		var highest := screen.size - Vector2.ONE * EDGE_MARGIN - foot.end
+		var highest := Vector2(screen.size.x - EDGE_MARGIN, bottom) - foot.end
 		bounds[ring] = [lowest, highest]
 		ring.position = ring.position.clamp(lowest, highest)
 	for side in [pinned_left, pinned_right]:
@@ -824,7 +828,10 @@ func set_point(point: StringName) -> void:
 	door_states = HouseTable.doors(point)
 	for door_id: String in _door_nodes:
 		for node: Node in _door_nodes[door_id]:
-			node.free()
+			# Out of the tree now, so the new door can take its name; freed
+			# at the end of the frame, after any tween on it has let go.
+			node.get_parent().remove_child(node)
+			node.queue_free()
 		_door_pivots.erase(door_id)
 	_door_nodes.clear()
 	for door_id: String in HouseLayout.DOORS:
@@ -847,6 +854,7 @@ func _start_opening_beat_if_due() -> void:
 	_beat = OpeningBeat.new()
 	_beat.name = "OpeningBeat"
 	_beat.finished.connect(_on_opening_beat_finished)
+	_beat.reserved_changed.connect(_place_rings)
 	_ui_layer.add_child(_beat)
 
 

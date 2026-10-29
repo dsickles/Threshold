@@ -16,7 +16,7 @@ extends Control
 ## "The Protector (rough)" opens the Loss's run (DAS-97) straight away, for
 ## testing; in the game the bedside lamp in the House starts it (DAS-95).
 ## The game itself opens on the title (title.tscn); this menu only opens with
-## "?menu" in the address.
+## "?probe&menu" in the address.
 
 const SMOOTHNESS_SCENE := "res://scenes/m0_checks/smoothness/smoothness_check.tscn"
 const VIEWPOINTS_SCENE := "res://scenes/m0_checks/viewpoints_check.tscn"

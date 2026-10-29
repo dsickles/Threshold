@@ -102,6 +102,13 @@ func pause_chapter() -> void:
 		_chapter.pause()
 
 
+## After pause_chapter(): the chapter may carry on at the player's next tap
+## (allow_resume(), for a chapter that has one).
+func allow_chapter_resume() -> void:
+	if is_running() and _chapter.has_method("allow_resume"):
+		_chapter.allow_resume()
+
+
 # A second tap on a chapter object, say. Harmless, so only a warning.
 func _refuse_while_running(id: StringName) -> bool:
 	if is_running():

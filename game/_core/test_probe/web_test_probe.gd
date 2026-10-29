@@ -43,6 +43,10 @@ func _ready() -> void:
 		# "&beat_speed=6" plays the opening beat's lines that many times faster.
 		if part.begins_with("beat_speed="):
 			get_tree().root.set_meta("opening_beat_speed", part.get_slice("=", 1).to_float())
+		# "&touch" counts the browser as a touch screen, so the "Turn your
+		# phone sideways" screen shows at a laptop size too.
+		if part == "touch":
+			get_tree().root.set_meta("assume_touch", true)
 		# "&opening=stoic" plays the opening beat with that answer (held in
 		# memory, as the real beat is), so the House starts after it.
 		if part.begins_with("opening="):

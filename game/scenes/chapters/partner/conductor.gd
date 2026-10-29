@@ -17,12 +17,15 @@ window.partnerConductor = window.partnerConductor || (function () {
 	layerGain.gain.value = 0;
 	layerGain.connect(ctx.destination);
 	var active = false, playing = false, failed = false, hiddenPause = false, ended = false;
+	// Held by pause() (the "Turn your phone sideways" screen): a tap on that
+	// screen must not start the song again. Only allowResume() lets go.
+	var held = false;
 	// Browsers only start sound inside a real touch handler, and Godot sees
 	// the touch a frame later, so unlock and timestamp here.
 	function onTouch(e) {
 		if (!active) { return; }
 		if (e.type === 'pointerdown') { lastTouch = e.timeStamp; }
-		if (ctx.state !== 'running' && !document.hidden) {
+		if (ctx.state !== 'running' && !document.hidden && !held) {
 			hiddenPause = false;
 			ctx.resume();
 		}
@@ -107,16 +110,21 @@ window.partnerConductor = window.partnerConductor || (function () {
 			layerGain.gain.value = 0;
 			playing = false;
 			hiddenPause = false;
+			held = false;
 		},
-		// 'interrupted' is Safari's state for a phone call or another app's sound.
-		// Like a hidden tab: the song stops until the next tap (onTouch).
+		// Like a hidden tab, but held: no tap starts the song again until
+		// allowResume(), then the next tap does (onTouch).
 		pause: function () {
 			if (active && playing) {
 				hiddenPause = true;
+				held = true;
 				ctx.suspend();
 			}
 		},
+		allowResume: function () { held = false; },
 		ended: function () { return ended; },
+		// 'interrupted' is Safari's state for a phone call or another app's sound:
+		// like a hidden tab, the song stops until the next tap (onTouch).
 		paused: function () { return playing && (hiddenPause || ctx.state === 'interrupted'); },
 		songTime: function () { return playing ? heardAt(performance.now()) : -1; },
 		tapTime: function () {
@@ -228,6 +236,13 @@ func pause() -> void:
 		_player.stream_paused = true
 		if _layer_player:
 			_layer_player.stream_paused = true
+
+
+## After pause(): the next tap starts the song again. On the web, taps until
+## then leave it paused (the "Turn your phone sideways" screen is up).
+func allow_resume() -> void:
+	if _playing and uses_browser_clock:
+		JavaScriptBridge.eval("window.partnerConductor.allowResume()", true)
 
 
 ## Native only: the web resumes inside the touch handler itself.

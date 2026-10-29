@@ -2,7 +2,7 @@
 // before that first tap, then the porch. An upright phone gets the "Turn your
 // phone sideways" screen. The opening beat plays at the living room and opens
 // the hall; the record player's close-up, then a tap, starts the Partner.
-// The M0 test menu is still there for tests ("&menu"). Runs at laptop, phone
+// The M0 test menu is still there for tests ("?probe&menu"). Runs at laptop, phone
 // and sideways-phone sizes; every console error fails the test.
 import { test, expect, MENU, HOUSE, PARTNER, houseState, houseUntil, goTo, useObject } from "./game";
 
@@ -20,6 +20,7 @@ test("the game loads to Tap to begin, sound starts only after the first tap, the
   await game.screenshot("game-tap-to-begin");
   await expect.poll(() => game.audioStates()).not.toEqual([]);
   expect(await game.audioStates(), "no sound before the first tap").not.toContain("running");
+  expect(await game.resumesBeforeTap(), "nothing tries to start sound before the first tap").toBe(0);
   await game.tap("Tap to begin");
   await game.waitForScene(HOUSE);
   await expect.poll(() => game.audioStates()).toContain("running");
@@ -71,9 +72,13 @@ test("the opening beat plays in the living room and the hall opens", async ({ ga
   await game.screenshot("opening-beat-hall-open");
 });
 
-test("the record player's close-up, then a tap, starts the Partner", async ({ game }) => {
+// Also the Partner under the "Turn your phone sideways" screen ("&touch"
+// shows it at the laptop size too): a tap on that screen must not start the
+// song again, and once the phone is sideways a tap carries on from the same
+// place in the song. Read from the song's own clock in the page.
+test("the record player's close-up, then a tap, starts the Partner, which holds still while upright", async ({ game }) => {
   test.setTimeout(400_000);
-  await game.begin("&opening=stoic&glide=0.2");
+  await game.begin("&opening=stoic&glide=0.2&touch");
   await houseUntil(game, (s) => s.view === "L1" && s.point === "after_opening", "in the living room");
   for (const view of ["H1", "B1", "B3"]) {
     await goTo(game, view);
@@ -82,4 +87,29 @@ test("the record player's close-up, then a tap, starts the Partner", async ({ ga
   await game.waitForScene(HOUSE, [PARTNER]);
   await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("WAITING");
   await game.screenshot("partner-from-the-record-player");
+
+  const song = () => game.page.evaluate(() => (window as any).partnerConductor.songTime() as number);
+  const paused = () => game.page.evaluate(() => (window as any).partnerConductor.paused() as boolean);
+  await game.tapMiddle();
+  await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("PLAYING");
+  await expect.poll(song, { timeout: 60_000 }).toBeGreaterThan(2);
+  const { width, height } = game.page.viewportSize()!;
+  await game.holdUpright();
+  await expect.poll(async () => (await game.state())?.turnSideways).toBe(true);
+  expect(await paused(), "the song pauses under the screen").toBe(true);
+  const frozen = await song();
+  await game.tapMiddle();
+  await game.page.waitForTimeout(1500);
+  expect(await paused(), "a tap on the screen doesn't start it again").toBe(true);
+  expect(await song(), "the song's clock stays still").toBeCloseTo(frozen, 1);
+  await game.page.setViewportSize({ width: Math.max(width, height), height: Math.min(width, height) });
+  await expect.poll(async () => (await game.state())?.turnSideways).toBe(false);
+  expect(await paused(), "sideways again, it waits for a tap").toBe(true);
+  const tappedAt = Date.now();
+  await game.tapMiddle();
+  await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("PLAYING");
+  await expect.poll(song).toBeGreaterThan(frozen + 0.2);
+  // It carries on from where it paused: on only by the time since the tap.
+  const sinceTap = (Date.now() - tappedAt) / 1000;
+  expect(await song()).toBeLessThanOrEqual(frozen + sinceTap + 0.3);
 });

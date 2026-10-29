@@ -37,10 +37,12 @@ export const test = base.extend<{ game: Game }>({
     // Headless Chromium lets sound play before any tap, even when told not
     // to. Phones don't, so this applies the phone rule: audio contexts start
     // paused and only resume once the player has tapped. It also keeps a list
-    // of them, so a test can see whether sound is on.
+    // of them, so a test can see whether sound is on, and counts any try to
+    // start sound before the first tap (a phone would refuse it too).
     await page.addInitScript(() => {
       const w = window as any;
       w.__audioContexts = [];
+      w.__resumesBeforeTap = 0;
       const Real = w.AudioContext || w.webkitAudioContext;
       if (!Real) return;
       // Tracked here because Playwright's page load already counts as a
@@ -57,7 +59,9 @@ export const test = base.extend<{ game: Game }>({
           if (!tapped()) Real.prototype.suspend.call(this);
         }
         resume() {
-          return tapped() ? super.resume() : Promise.resolve();
+          if (tapped()) return super.resume();
+          w.__resumesBeforeTap += 1;
+          return Promise.resolve();
         }
       }
       w.AudioContext = PhoneRules;
@@ -182,6 +186,17 @@ export class Game {
   async tapAt(across: number, down: number) {
     const { size } = (await this.state())!;
     await this.tapButton({ text: "", x: size.x * across, y: size.y * down, disabled: false });
+  }
+
+  /** How many times the page tried to start sound before the first tap. */
+  async resumesBeforeTap(): Promise<number> {
+    return this.page.evaluate(() => (window as any).__resumesBeforeTap);
+  }
+
+  /** Holds the page upright (taller than wide), as a phone turned upright. */
+  async holdUpright() {
+    const { width, height } = this.page.viewportSize()!;
+    if (width > height) await this.page.setViewportSize({ width: height, height: width });
   }
 
   async audioStates(): Promise<string[]> {

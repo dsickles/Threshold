@@ -3,8 +3,9 @@ extends Control
 ## player's story point (the porch at dusk on a new game). Browsers play no
 ## sound until the first tap, so nothing plays before it.
 ##
-## The M0 test menu is for tests only: "?menu" in the address on the web (or
-## "-- --menu" after Godot's own arguments elsewhere) opens it instead.
+## The M0 test menu is for tests only: "?probe&menu" in the address on the web
+## (or "-- --menu" after Godot's own arguments elsewhere) opens it instead.
+## "menu" alone does nothing, so a player can't stumble on it.
 ## While the game is playing, a phone held upright gets the "Turn your phone
 ## sideways" screen (TurnSideways); the test menu doesn't.
 
@@ -27,7 +28,7 @@ func _ready() -> void:
 static func wants_menu() -> bool:
 	if OS.has_feature("web"):
 		var asked: Variant = JavaScriptBridge.eval(
-				"new URLSearchParams(window.location.search).has('menu')", true)
+				"(p => p.has('probe') && p.has('menu'))(new URLSearchParams(window.location.search))", true)
 		return bool(asked)
 	return "--menu" in OS.get_cmdline_user_args()
 

@@ -7,10 +7,15 @@ extends Control
 ## used exactly.
 ##
 ## The House shows it over the view, and the player can still tap rings while
-## it plays (EXPERIENCE.md, The Story Sequence). It emits `finished` with the
-## answer once the last line has gone; the House then opens the hall.
+## it plays, even walk away (EXPERIENCE.md, The Story Sequence: "Still tap to
+## move"); Maya keeps talking. The House keeps its rings clear of the strip
+## along the bottom that the subtitles and the choice use (reserved_height()).
+## It emits `finished` with the answer once the last line has gone; the House
+## then opens the hall.
 
 signal finished(answer: String)
+## reserved_height() has grown.
+signal reserved_changed
 
 const MAYA := "Maya"
 const LEO := "Leo"
@@ -52,6 +57,9 @@ var _said: Array[String] = []
 # Browser tests can play it faster ("&beat_speed=", web_test_probe.gd):
 # phone sizes draw a few frames a second in software WebGL.
 var _speed := 1.0
+# The tallest the subtitles or the choice have been, with the gap below them.
+var _reserved := 0.0
+var _column: VBoxContainer
 var _bar: PanelContainer
 var _who: Label
 var _line: Label
@@ -69,6 +77,7 @@ func _ready() -> void:
 	_steps.append({"choice": true})
 	_clock = -LEAD_IN
 	_speed = get_tree().root.get_meta("opening_beat_speed", 1.0)
+	resized.connect(func() -> void: _reserved = 0.0)
 	_show_step()
 
 
@@ -89,6 +98,18 @@ func step(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	step(delta)
+	# Measured once laid out; it only grows, so the rings don't hop about
+	# from line to line. A turn of the phone starts it again.
+	var used := size.y - _column.position.y
+	if used > _reserved + 0.5:
+		_reserved = used
+		reserved_changed.emit()
+
+
+## How much of the bottom of the screen the subtitles and the choice need,
+## in screen units: rings stay above it.
+func reserved_height() -> float:
+	return _reserved
 
 
 ## Seconds a line stays up.
@@ -162,6 +183,7 @@ func _show_step() -> void:
 # a choice or what it means.
 func _build() -> void:
 	var column := VBoxContainer.new()
+	_column = column
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.anchor_left = 0.1
 	column.anchor_right = 0.9
