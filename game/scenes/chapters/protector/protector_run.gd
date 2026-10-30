@@ -67,7 +67,7 @@ const STEPPING_STONES := ["RockPath_Square_Small_1", "RockPath_Square_Small_2", 
 const STONE := "Rock_Medium_2"
 # The undergrowth on the forest floor, with how big each is drawn (from the
 # pack's own size) and how many go on each side in a patch. Only three
-# materials (leaves, grass, rock), so each patch is three draws.
+# kinds of material (leaves, grass, rock), so each patch is three draws.
 const UNDERGROWTH := [
 	["Fern_1", 0.22, 2], ["Grass_Common_Tall", 0.8, 2], ["Plant_1_Big", 0.35, 1],
 	["Clover_1", 0.7, 1], ["Rock_Medium_1", 0.35, 1],
@@ -115,6 +115,7 @@ var down_clock: Callable = func() -> float: return real_clock.call()
 var up_clock: Callable = func() -> float: return real_clock.call()
 
 var _t := 0.0
+var _scale_before := 1.0  # The 3D's scale before the run, put back after.
 var _paused := false
 var _ended := false
 var _whole := false  # The fade: the path is whole and nothing falls.
@@ -206,6 +207,7 @@ func _ready() -> void:
 			var first := floori(obstacle.distance / TILE)
 			_gap_rows[first] = obstacle
 			_gap_rows[first + 1] = obstacle
+	_scale_before = get_viewport().scaling_3d_scale
 	_build_path()
 	_build_world()
 	_build_sound()
@@ -213,7 +215,7 @@ func _ready() -> void:
 	# A phone's screen has up to 3 pixels to each point. The forest is drawn
 	# at no more than 2, which looks the same at arm's length and is about
 	# half the work (Dan, 2026-10-30: it stuttered). Words stay sharp.
-	get_viewport().scaling_3d_scale = minf(1.0, MAX_DENSITY / maxf(DisplayServer.screen_get_scale(), 1.0))
+	get_viewport().scaling_3d_scale = scale_for(DisplayServer.screen_get_scale())
 	if OS.has_feature("web"):
 		_use_browser_times()
 		_bring_sound_back()
@@ -296,7 +298,7 @@ func _browser_time(which: String) -> float:
 
 
 func _exit_tree() -> void:
-	get_viewport().scaling_3d_scale = 1.0
+	get_viewport().scaling_3d_scale = _scale_before
 	if OS.has_feature("web"):
 		JavaScriptBridge.eval("if (window.thresholdSoundBack) window.thresholdSoundBack.on = false;", true)
 	if _document:
@@ -308,6 +310,12 @@ func _process(delta: float) -> void:
 	if auto_advance:
 		advance(delta)
 	_age_ripples(delta)
+
+
+## How much of the screen's own pixel density the 3D is drawn at, for a
+## screen with `screen_scale` pixels to each point: at most MAX_DENSITY.
+static func scale_for(screen_scale: float) -> float:
+	return minf(1.0, MAX_DENSITY / maxf(screen_scale, 1.0))
 
 
 ## Moves the run's clock on by `delta` seconds (nothing moves while paused).
@@ -1365,16 +1373,25 @@ func _build_world() -> void:
 	_trunk_mesh.height = 1.0
 	_trunk_mesh.radial_segments = 10
 	_ground_mesh = BoxMesh.new()
-	_ground_mesh.size = Vector3(10.0, 0.4, SLOT + 0.05)
+	# Longer than a slot, so neighbours overlap and no line shows between
+	# them where the path bends.
+	_ground_mesh.size = Vector3(10.0, 0.4, SLOT + 0.5)
 	# The dead trees' bark: on the fallen tree's own shape (_canopy_material),
 	# and wrapped round the plain trunk and branches, which are stretched.
 	_canopy_material = _dead_tree_meshes[0].surface_get_material(0)
 	_trunk_material = _bark(Vector3(3.0, 6.0, 1.0))
 	_branch_material = _bark(Vector3(2.0, 1.0, 1.0))
-	_ground_material = _solid(Color("#2E261D"))
+	# The forest floor: pine needles and leaves (Poly Haven, CC0; the pack has
+	# no ground of its own), dark under the trees. The box's faces each take
+	# a sixth of the texture, so this repeats it every 3.3 m across and once
+	# along each slab.
+	_ground_material = _solid(Color(0.42, 0.4, 0.38))
+	_ground_material.albedo_texture = load(MODELS + "ForestLeaves04_Diffuse.jpg")
+	_ground_material.uv1_scale = Vector3(9.0, 2.0, 1.0)
 	# The hand's skin and nails are in its vertex colours (hand_mesh.gd).
 	_skin = _solid(Color.WHITE)
 	_skin.vertex_color_use_as_albedo = true
+	_skin.vertex_color_is_srgb = true
 	_skin.roughness = 0.65
 	# A stone fills the same space as the gray-box one: 1.2 m across, 1 m tall.
 	_stone_mesh = _fitted(_pack_mesh(STONE), Vector3(1.2, 1.0, 1.2))
@@ -1596,11 +1613,14 @@ func _bark(repeat: Vector3) -> StandardMaterial3D:
 
 # --- The pack's models.
 
-# The one shape in a model from the pack, with its own materials.
+# The one shape in a model from the pack, with copies of its materials, so
+# what the run changes in them (darker bark, fading in) stays in the run.
 func _pack_mesh(model: String) -> Mesh:
 	var scene: Node = (load(MODELS + model + ".gltf") as PackedScene).instantiate()
-	var mesh: Mesh = (scene.find_children("*", "MeshInstance3D")[0] as MeshInstance3D).mesh
+	var mesh: ArrayMesh = (scene.find_children("*", "MeshInstance3D")[0] as MeshInstance3D).mesh.duplicate()
 	scene.free()
+	for i in mesh.get_surface_count():
+		mesh.surface_set_material(i, mesh.surface_get_material(i).duplicate())
 	return mesh
 
 
@@ -1619,18 +1639,23 @@ func _fitted(mesh: Mesh, size: Vector3) -> ArrayMesh:
 # One shape from several placed ones, one surface per material, so a patch of
 # undergrowth is drawn in a few calls, not one for each plant.
 func _merged(parts: Array) -> ArrayMesh:
-	var tools := {}  # Material -> SurfaceTool.
+	# By the material's name: each of the pack's models has its own copy of
+	# the same leaves, grass or rock, and one of each is enough.
+	var tools := {}  # Material name -> SurfaceTool.
+	var materials := {}  # Material name -> the first material of that name.
 	for part: Array in parts:
 		var mesh: Mesh = part[0]
 		for i in mesh.get_surface_count():
 			var material := mesh.surface_get_material(i)
-			if not tools.has(material):
-				tools[material] = SurfaceTool.new()
-			(tools[material] as SurfaceTool).append_from(mesh, i, part[1])
+			var key := material.resource_name
+			if not tools.has(key):
+				tools[key] = SurfaceTool.new()
+				materials[key] = material
+			(tools[key] as SurfaceTool).append_from(mesh, i, part[1])
 	var out := ArrayMesh.new()
-	for material: Material in tools:
-		var tool: SurfaceTool = tools[material]
-		tool.set_material(material)
+	for key: String in tools:
+		var tool: SurfaceTool = tools[key]
+		tool.set_material(materials[key])
 		tool.commit(out)
 	return out
 

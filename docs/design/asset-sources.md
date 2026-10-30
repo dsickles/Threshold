@@ -25,7 +25,7 @@ The shared fonts in [ux/DESIGN.md](ux/DESIGN.md) (Source Serif 4, Source Sans 3,
 ## Keeping the web build small
 
 - Copy only the files used into `game/`, never a whole pack.
-- glTF models, 1k textures (2k only where a texture fills the screen), and Godot's ETC2/ASTC texture compression for phones.
+- glTF models, 1k textures (2k only where a texture fills the screen), and Godot's ETC2/ASTC texture compression for phones. Import textures as Basis Universal with mipmaps: it ships once and becomes ETC2/ASTC on a phone and the desktop format on a laptop when it loads. Shipping both GPU formats directly (VRAM compressed) doubled the Loss's download, 26.6 MB against 15.9 MB (DAS-106, 2026-10-30).
 - Stay within the load and memory bar in [scope.md](../scope.md) (about 10 s to load, under about 500 MB).
 
 ## The House's look

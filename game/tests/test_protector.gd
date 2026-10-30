@@ -497,7 +497,7 @@ func test_the_light_stops_against_a_fallen_tree_it_cannot_get_past() -> void:
 	check(not (tree in _run.obstacles().map(func(o: Dictionary) -> Variant: return o.node)), "not one of the obstacles")
 	check_eq(RunPlan.part_at(RunPlan.STOPPED), RunPlan.Part.FADE, "it comes after the obstacles stop")
 	# 12 s after the last one since Dan cut 5 s of the straight run (2026-10-30).
-	check(RunPlan.STOPPED - RunPlan.obstacles()[-1].time >= 10.0, "well after the last one")
+	check(RunPlan.STOPPED - RunPlan.obstacles()[-1].time >= 11.9, "well after the last one")
 	check(_run.TREE_LENGTH > 3.0 * _run.TILE + 6.0, "wider than the path, out past both edges")
 	check(2.0 * _run.TREE_RADIUS - 0.1 > _run.LIGHT_HEIGHT + _run.LIGHT_RADIUS, "taller than the light")
 	_step_to(RunPlan.FADE_START + 1.0)
@@ -992,6 +992,11 @@ func test_the_first_rain_is_faint_and_thickens() -> void:
 	var script_path := ProjectSettings.globalize_path("res://").path_join("../tools/protector/make_audio.py")
 	var mix := FileAccess.get_file_as_string(script_path)
 	check(mix.contains("RAIN_SEEN = %.1f" % RunPlan.RAIN_START), "make_audio.py's RAIN_SEEN is RunPlan.RAIN_START")
+	# And its ending is the run's (Hopper, 2026-10-30): the track was rebuilt
+	# when Dan cut 5 s, so a later change can't leave it behind.
+	for pair: Array in [["FADE", RunPlan.FADE_START], ["HELD", RunPlan.HELD], ["OUT_AT", RunPlan.OUT],
+			["BLACK", RunPlan.BLACK]]:
+		check(mix.contains("\n%s = %.1f" % pair), "make_audio.py's %s is %.1f, as in run_plan.gd" % pair)
 
 
 # Dan, 2026-10-30, after playing the asset-pack forest on his phone: "lots of
@@ -1004,14 +1009,31 @@ func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
 					"%s fades in, not all at once" % mat.resource_name)
 			check(mat.distance_fade_min_distance > mat.distance_fade_max_distance,
 					"%s: from nothing far off to whole nearer" % mat.resource_name)
+	check(_run._ground_material.albedo_texture != null, "the forest floor is textured, not a flat colour")
+	for mesh: Mesh in _run._patches:
+		check_eq(mesh.get_surface_count(), 3, "a patch of undergrowth is three draws: leaves, grass, rock")
+	# The run's changes stay in the run: the pack's own pine is untouched.
+	var pine: Node = load(_run.MODELS + "Pine_1.gltf").instantiate()
+	var own: BaseMaterial3D = (pine.find_children("*", "MeshInstance3D")[0] as MeshInstance3D).mesh.surface_get_material(0)
+	check_eq(own.distance_fade_mode, BaseMaterial3D.DISTANCE_FADE_DISABLED, "the pack's pine doesn't fade")
+	check(own.albedo_color.is_equal_approx(Color.WHITE), "and keeps its own colour")
+	pine.free()
+	var bark_seen := 0
 	for mesh: Mesh in _run._tree_meshes + _run._dead_tree_meshes:
 		for i in mesh.get_surface_count():
 			var mat: BaseMaterial3D = mesh.surface_get_material(i)
 			if mat.resource_name.contains("Bark"):
+				bark_seen += 1
 				check_eq(mat.transparency, BaseMaterial3D.TRANSPARENCY_DISABLED, "%s is solid" % mat.resource_name)
+	check_eq(bark_seen, 6, "every tree's bark was checked")
+	# An iPhone has 3 pixels to each point; a laptop 1 or 2.
+	check_near(_run.scale_for(3.0), 2.0 / 3.0, 0.001, "3 pixels a point: the 3D is drawn at 2")
+	check_eq(_run.scale_for(2.0), 1.0, "2 pixels a point: drawn at all of them")
+	check_eq(_run.scale_for(1.0), 1.0, "1 pixel a point: drawn at all of them")
 	var viewport := _run.get_viewport()
-	check(viewport.scaling_3d_scale <= 1.0 and viewport.scaling_3d_scale * DisplayServer.screen_get_scale()
-			<= _run.MAX_DENSITY + 0.001, "the 3D is drawn at no more than 2 pixels a point")
+	check_near(viewport.scaling_3d_scale, _run.scale_for(DisplayServer.screen_get_scale()), 0.001, "set for this screen")
+	var before: float = _run._scale_before
+	viewport.scaling_3d_scale = 0.5  # As if this were a phone.
 	_chapter.queue_free()
 	await frames(2)
-	check_eq(viewport.scaling_3d_scale, 1.0, "and at full again once the run is left")
+	check_eq(viewport.scaling_3d_scale, before, "and put back once the run is left")
