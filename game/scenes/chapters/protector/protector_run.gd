@@ -160,6 +160,7 @@ var _tile_materials: Array[StandardMaterial3D] = []
 var _tree_meshes: Array[Mesh] = []
 var _dead_tree_meshes: Array[Mesh] = []
 var _patches: Array[Mesh] = []
+var _plants := {}  # Undergrowth model -> its shape, shared by every patch.
 var _trunk_mesh: CylinderMesh
 var _ground_mesh: BoxMesh
 var _trunk_material: StandardMaterial3D
@@ -1358,7 +1359,7 @@ func _build_world() -> void:
 		tile.albedo_texture = path_rocks
 		_tile_materials.append(tile)
 	# Darker bark than the pack's, so the trunks still stand dark against the
-	# low sun (call 15). Set, not multiplied: the shapes are shared.
+	# low sun (call 15). Set on the run's own copies of the pack's materials.
 	for tree: String in TREES:
 		var mesh := _pack_mesh(tree)
 		(mesh.surface_get_material(0) as StandardMaterial3D).albedo_color = Color(0.55, 0.5, 0.47)
@@ -1382,12 +1383,15 @@ func _build_world() -> void:
 	_trunk_material = _bark(Vector3(3.0, 6.0, 1.0))
 	_branch_material = _bark(Vector3(2.0, 1.0, 1.0))
 	# The forest floor: pine needles and leaves (Poly Haven, CC0; the pack has
-	# no ground of its own), dark under the trees. The box's faces each take
-	# a sixth of the texture, so this repeats it every 3.3 m across and once
-	# along each slab.
-	_ground_material = _solid(Color(0.42, 0.4, 0.38))
+	# no ground of its own), a little darker than the texture under the
+	# trees. The box's faces each take a sixth of the texture, so this repeats
+	# it every 1.7 m across and twice along each slab: small enough that the
+	# leaves read through the haze (Hopper, round 2).
+	_ground_material = _solid(Color(0.8, 0.76, 0.72))
 	_ground_material.albedo_texture = load(MODELS + "ForestLeaves04_Diffuse.jpg")
-	_ground_material.uv1_scale = Vector3(9.0, 2.0, 1.0)
+	_ground_material.uv1_scale = Vector3(18.0, 4.0, 1.0)
+	# Seen almost edge-on, it would blur to a flat brown without this.
+	_ground_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	# The hand's skin and nails are in its vertex colours (hand_mesh.gd).
 	_skin = _solid(Color.WHITE)
 	_skin.vertex_color_use_as_albedo = true
@@ -1668,7 +1672,9 @@ func _undergrowth(k: int) -> ArrayMesh:
 	rng.seed = 7919 * k + 1
 	var parts := []
 	for plant: Array in UNDERGROWTH:
-		var mesh := _pack_mesh(plant[0])
+		if not _plants.has(plant[0]):
+			_plants[plant[0]] = _pack_mesh(plant[0])
+		var mesh: Mesh = _plants[plant[0]]
 		for n: int in plant[2] * 2:
 			var side := -1 if n % 2 == 0 else 1
 			var size: float = plant[1] * rng.randf_range(0.8, 1.25)

@@ -156,10 +156,16 @@ export class Game {
   }
 
   /** Lets the scene draw a few frames, then saves a named screenshot (test-results/ and the report). */
-  async screenshot(name: string) {
+  // `part` keeps only that share of the screen, for a close look at
+  // something small: x, y, width and height, each from 0 to 1.
+  async screenshot(name: string, part?: { x: number; y: number; width: number; height: number }) {
     await this.page.waitForTimeout(1000);
     const path = test.info().outputPath(`${name}.png`);
-    await this.page.screenshot({ path });
+    const size = this.page.viewportSize();
+    const clip = part && size
+      ? { x: part.x * size.width, y: part.y * size.height, width: part.width * size.width, height: part.height * size.height }
+      : undefined;
+    await this.page.screenshot({ path, clip });
     await test.info().attach(name, { path, contentType: "image/png" });
   }
 }

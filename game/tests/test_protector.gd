@@ -1012,6 +1012,11 @@ func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
 	check(_run._ground_material.albedo_texture != null, "the forest floor is textured, not a flat colour")
 	for mesh: Mesh in _run._patches:
 		check_eq(mesh.get_surface_count(), 3, "a patch of undergrowth is three draws: leaves, grass, rock")
+	var patch_materials := {}
+	for mesh: Mesh in _run._patches:
+		for i in mesh.get_surface_count():
+			patch_materials[mesh.surface_get_material(i)] = true
+	check_eq(patch_materials.size(), 3, "and every patch shares the same three materials")
 	# The run's changes stay in the run: the pack's own pine is untouched.
 	var pine: Node = load(_run.MODELS + "Pine_1.gltf").instantiate()
 	var own: BaseMaterial3D = (pine.find_children("*", "MeshInstance3D")[0] as MeshInstance3D).mesh.surface_get_material(0)
@@ -1032,8 +1037,11 @@ func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
 	check_eq(_run.scale_for(1.0), 1.0, "1 pixel a point: drawn at all of them")
 	var viewport := _run.get_viewport()
 	check_near(viewport.scaling_3d_scale, _run.scale_for(DisplayServer.screen_get_scale()), 0.001, "set for this screen")
-	var before: float = _run._scale_before
-	viewport.scaling_3d_scale = 0.5  # As if this were a phone.
+	# Whatever was there before the run, not simply full: as if the game had
+	# drawn at 0.8 and the run at 0.5.
+	_run._scale_before = 0.8
+	viewport.scaling_3d_scale = 0.5
 	_chapter.queue_free()
 	await frames(2)
-	check_eq(viewport.scaling_3d_scale, before, "and put back once the run is left")
+	check_near(viewport.scaling_3d_scale, 0.8, 0.001, "and what was there is put back once the run is left")
+	viewport.scaling_3d_scale = 1.0

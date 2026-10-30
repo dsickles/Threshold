@@ -46,6 +46,9 @@ test("opens with no words or buttons, and the light runs into the evening", asyn
   await expect.poll(async () => (await run(game)).music).toBe(true);
   await expect.poll(() => game.audioStates()).toContain("running");
   await game.screenshot("protector-euphoria");
+  // The forest floor beside the path, close up: leaves and needles, not a
+  // flat brown (Hopper, DAS-106 round 2).
+  await game.screenshot("protector-forest-floor", { x: 0.7, y: 0.58, width: 0.3, height: 0.42 });
 });
 
 test("a tap on the left or right moves the light one lane that way", async ({ game }) => {
