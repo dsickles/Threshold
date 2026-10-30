@@ -874,6 +874,11 @@ func test_everything_is_drawn_once_behind_the_black_before_the_light() -> void:
 	check(_run._warm != null, "drawn at the start")
 	check(_run._sun.light_energy > 0.0 and _run._lamp.light_energy > 0.0, "lit, behind the black")
 	check_eq(_run._overlay.color.a, 1.0, "the screen is still black")
+	# The ripples and the "hold" hint's word are drawn there too, unseen, on
+	# the ripple layer under the black (Dan, 2026-10-30: "when i did the
+	# first hold it stuttered"); no hint is on screen yet.
+	check(_run._ripple_layer.get_index() < _run._overlay.get_index(), "the ripples are drawn under the black")
+	check_eq(_run.hints_shown(), [] as Array[String], "no hint on screen while it is black")
 	# The light's glow reaches everything drawn there, so nothing it lights
 	# (the hand above all) is first got ready mid-run, with a hitch.
 	_run.advance(STEP)
@@ -1015,6 +1020,7 @@ func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
 	var slots: Array = _run._slots.keys()
 	slots.sort()
 	var a: Node3D = (_run._slots[slots[0]][2] as Node3D).get_child(0)
+	check(a is MeshInstance3D and (a as MeshInstance3D).mesh is PlaneMesh, "the floor is flat sheets, with no edges to show as lines")
 	var b: Node3D = (_run._slots[slots[0] + 1][2] as Node3D).get_child(0)
 	check_near(absf(a.position.y - b.position.y), _run.FLOOR_STEP, 0.0001,
 			"neighbouring floor sections are not at the same height")
@@ -1039,6 +1045,21 @@ func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
 				bark_seen += 1
 				check_eq(mat.transparency, BaseMaterial3D.TRANSPARENCY_DISABLED, "%s is solid" % mat.resource_name)
 	check_eq(bark_seen, 6, "every tree's bark was checked")
+	# Dan, 2026-10-30: "it takes a long time to load". Every solid with a
+	# texture (stones, bark, path, floor) is drawn the same way, so the phone
+	# builds one shader for them, not one each.
+	var solids: Array[BaseMaterial3D] = [_run._stone_material, _run._trunk_material, _run._branch_material,
+			_run._ground_material, _run._tile_materials[0]]
+	for mesh: Mesh in _run._tree_meshes + _run._dead_tree_meshes + _run._patches:
+		for i in mesh.get_surface_count():
+			var mat: BaseMaterial3D = mesh.surface_get_material(i)
+			if not (mat.resource_name.begins_with("Leaves") or mat.resource_name.begins_with("Grass")):
+				solids.append(mat)
+	for mat in solids:
+		check(mat.cull_mode == BaseMaterial3D.CULL_BACK and not mat.normal_enabled
+				and mat.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED
+				and mat.texture_filter == BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC,
+				"%s is drawn as every other textured solid" % mat.resource_name)
 	# An iPhone has 3 pixels to each point; a laptop 1 or 2.
 	check_near(_run.scale_for(3.0), 2.0 / 3.0, 0.001, "3 pixels a point: the 3D is drawn at 2")
 	check_eq(_run.scale_for(2.0), 1.0, "2 pixels a point: drawn at all of them")

@@ -56,6 +56,8 @@ const TREE_RADIUS := 0.75  # The fallen tree's trunk: taller than the light (cal
 const TREE_LENGTH := 15.0  # Across the path and out past both edges into the trees.
 const TREE_GAP := 1.0  # The light stops this far short of it (Dan, 2026-10-30).
 const HINT_COLOR := Color(1.0, 0.97, 0.9, 0.85)
+const HINT_SIZE := 34  # The hints' letters, in points.
+const HINT_OUTLINE := 6  # The dark edge round them, so they read on the bright sky.
 const GAP_SEEN := 3.0  # A gap's edges show faintly from this long before it arrives (call 21).
 const GAP_FAINT := 0.35  # How bright they are until the gap is in reach.
 const WARM_END := 3.0  # Everything is drawn once, unseen, in the dark before this.
@@ -80,6 +82,7 @@ const PATCHES := 6  # Undergrowth patches, both sides of the trail, shared by ev
 const UNDERGROWTH_SEEN := 36.0  # Past this it is too small to make out.
 const TREES_SEEN := 60.0  # Past this the fog has mostly hidden them.
 const FADE_BAND := 12.0
+const FLOOR_TOP := 0.2  # The forest floor's height above the slot's floor point (m).
 const FLOOR_STEP := 0.01  # How much higher every other slot's floor is (m).
 const MAX_DENSITY := 2.0  # Pixels to each of the screen's points the 3D is drawn at, at most.
 
@@ -163,7 +166,7 @@ var _dead_tree_meshes: Array[Mesh] = []
 var _patches: Array[Mesh] = []
 var _plants := {}  # Undergrowth model -> its shape, shared by every patch.
 var _trunk_mesh: CylinderMesh
-var _ground_mesh: BoxMesh
+var _ground_mesh: PlaneMesh
 var _trunk_material: StandardMaterial3D
 var _canopy_material: StandardMaterial3D
 var _ground_material: StandardMaterial3D
@@ -895,6 +898,19 @@ func _age_ripples(delta: float) -> void:
 
 
 func _draw_ripples() -> void:
+	if _warm:
+		# Behind the black, unseen: one ripple, and the "hold" hint's word in
+		# its own font, size and outline, so neither the first real ripple (a
+		# hold with no gap in reach) nor the hint at the first gaps stops to
+		# get its drawing ready (Dan, 2026-10-30: "when i did the first hold
+		# it stuttered").
+		var middle := _ripple_layer.size / 2.0
+		_ripple_layer.draw_arc(middle, 30.0, 0.0, TAU, 40, Color(1, 1, 1, 0.01), 3.0, true)
+		var font := _ripple_layer.get_theme_font("font", "Label")
+		_ripple_layer.draw_string_outline(font, middle, RunPlan.HOLD_HINT, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				HINT_SIZE, HINT_OUTLINE, Color(0, 0, 0, 0.01))
+		_ripple_layer.draw_string(font, middle, RunPlan.HOLD_HINT, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				HINT_SIZE, Color(HINT_COLOR, 0.01))
 	for ripple in _ripples:
 		var f := ripple.z / RIPPLE_TIME
 		_ripple_layer.draw_arc(Vector2(ripple.x, ripple.y), lerpf(12.0, 56.0, f), 0.0, TAU, 40,
@@ -1084,13 +1100,14 @@ func _build_slot(slot: int) -> void:
 		slab.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		# Every other slot 1 cm higher, so where neighbours overlap one is
 		# plainly on top and their surfaces don't flicker through each other.
-		slab.position = Vector3(side * (2.6 + _ground_mesh.size.x / 2.0), FLOOR_STEP * (slot % 2), 0.0)
+		# A flat sheet, not a box, so the step has no edge to show as a line.
+		slab.position = Vector3(side * (2.6 + _ground_mesh.size.x / 2.0), FLOOR_TOP + FLOOR_STEP * (slot % 2), 0.0)
 		ground.add_child(slab)
 	var patch := MeshInstance3D.new()
 	patch.mesh = _patches[int(_hash01(slot, 19) * PATCHES) % PATCHES]
 	patch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	patch.visibility_range_end = UNDERGROWTH_SEEN
-	patch.position = Vector3.UP * _ground_mesh.size.y / 2.0
+	patch.position = Vector3.UP * FLOOR_TOP
 	ground.add_child(patch)
 	add_child(ground)
 	nodes.append(ground)
@@ -1360,6 +1377,7 @@ func _build_world() -> void:
 	for k in 2:
 		var tile := _solid(Color.GRAY)
 		tile.albedo_texture = path_rocks
+		_plain(tile)
 		_tile_materials.append(tile)
 	# Darker bark than the pack's, so the trunks still stand dark against the
 	# low sun (call 15). Set on the run's own copies of the pack's materials.
@@ -1376,10 +1394,10 @@ func _build_world() -> void:
 	_trunk_mesh.bottom_radius = 0.4
 	_trunk_mesh.height = 1.0
 	_trunk_mesh.radial_segments = 10
-	_ground_mesh = BoxMesh.new()
+	_ground_mesh = PlaneMesh.new()
 	# Longer than a slot, so neighbours overlap and no line shows between
 	# them where the path bends.
-	_ground_mesh.size = Vector3(10.0, 0.4, SLOT + 0.5)
+	_ground_mesh.size = Vector2(10.0, SLOT + 0.5)
 	# The dead trees' bark: on the fallen tree's own shape (_canopy_material),
 	# and wrapped round the plain trunk and branches, which are stretched.
 	_canopy_material = _dead_tree_meshes[0].surface_get_material(0)
@@ -1387,14 +1405,14 @@ func _build_world() -> void:
 	_branch_material = _bark(Vector3(2.0, 1.0, 1.0))
 	# The forest floor: pine needles and leaves (Poly Haven, CC0; the pack has
 	# no ground of its own), a little darker than the texture under the
-	# trees. The box's faces each take a sixth of the texture, so this repeats
-	# it every 1.7 m across and twice along each slab: small enough that the
-	# leaves read through the haze (Hopper, round 2).
+	# trees. It repeats every 1.7 m across and twice along each slab: small
+	# enough that the leaves read through the haze (Hopper, round 2).
 	_ground_material = _solid(Color(0.8, 0.76, 0.72))
 	_ground_material.albedo_texture = load(MODELS + "ForestLeaves04_Diffuse.jpg")
-	_ground_material.uv1_scale = Vector3(18.0, 4.0, 1.0)
-	# Seen almost edge-on, it would blur to a flat brown without this.
-	_ground_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	_ground_material.uv1_scale = Vector3(6.0, 2.0, 1.0)
+	# Seen almost edge-on, it would blur to a flat brown without the
+	# sharpening _plain gives it.
+	_plain(_ground_material)
 	# The hand's skin and nails are in its vertex colours (hand_mesh.gd).
 	_skin = _solid(Color.WHITE)
 	_skin.vertex_color_use_as_albedo = true
@@ -1405,11 +1423,7 @@ func _build_world() -> void:
 	_stone_material = _stone_mesh.surface_get_material(0)
 	for mesh: Mesh in _tree_meshes + _dead_tree_meshes:
 		for i in mesh.get_surface_count():
-			var mat: BaseMaterial3D = mesh.surface_get_material(i)
-			# Bark needs no see-through edges, which cost iPhones dear.
-			if not mat.resource_name.begins_with("Leaves"):
-				mat.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
-			_fade_in(mat, TREES_SEEN)
+			_fade_in(mesh.surface_get_material(i), TREES_SEEN)
 	for mesh: Mesh in _patches:
 		for i in mesh.get_surface_count():
 			_fade_in(mesh.surface_get_material(i), UNDERGROWTH_SEEN)
@@ -1627,8 +1641,25 @@ func _pack_mesh(model: String) -> Mesh:
 	var mesh: ArrayMesh = (scene.find_children("*", "MeshInstance3D")[0] as MeshInstance3D).mesh.duplicate()
 	scene.free()
 	for i in mesh.get_surface_count():
-		mesh.surface_set_material(i, mesh.surface_get_material(i).duplicate())
+		var mat: BaseMaterial3D = mesh.surface_get_material(i).duplicate()
+		# Leaves and grass are thin cards, seen from both sides, with
+		# see-through edges; everything else is a plain solid.
+		if not (mat.resource_name.begins_with("Leaves") or mat.resource_name.begins_with("Grass")):
+			_plain(mat)
+		mesh.surface_set_material(i, mat)
 	return mesh
+
+
+# A textured solid as every other one is: one side, no see-through edges, no
+# bump map, sharp when seen edge-on. Each difference is another shader the
+# phone has to build before the run can start (Dan, 2026-10-30: "it takes a
+# long time to load"), so the stones, the bark, the path and the floor
+# share one.
+func _plain(mat: BaseMaterial3D) -> void:
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+	mat.cull_mode = BaseMaterial3D.CULL_BACK
+	mat.normal_enabled = false
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 
 
 # What scales and moves a shape so it fills a box of `size` centred on the origin.
@@ -1733,10 +1764,10 @@ func _hint(node_name: String, text: String, x: float, y: float) -> Label:
 	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	hint.add_theme_font_size_override("font_size", 34)
+	hint.add_theme_font_size_override("font_size", HINT_SIZE)
 	hint.add_theme_color_override("font_color", HINT_COLOR)
 	hint.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.55))
-	hint.add_theme_constant_override("outline_size", 6)
+	hint.add_theme_constant_override("outline_size", HINT_OUTLINE)
 	hint.anchor_left = x
 	hint.anchor_right = x
 	hint.anchor_top = y
