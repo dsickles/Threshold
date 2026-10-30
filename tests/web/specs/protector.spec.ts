@@ -7,7 +7,7 @@
 // back with the chapter finished.
 // Headless Chromium has no speaker and draws phone sizes slowly, so the
 // run's feel and sound are Dan's to check on his phone; the whole run
-// (2:45) is played by the Godot tests instead (game/tests/test_protector.gd).
+// (2:40) is played by the Godot tests instead (game/tests/test_protector.gd).
 import { test, expect, MENU, PROTECTOR } from "./game";
 
 const openRun = async (game: any, query = "") => {
@@ -167,10 +167,10 @@ test("the light goes out, then black, then the chapter is finished and saved", a
   // Over 5 minutes at phone size in CI with the asset-pack forest (DAS-106).
   test.setTimeout(420_000);
   // After the Partner, so the Protector is the next chapter and can be saved.
-  // From 2:34.5, just before the light goes out in the hand at the fallen
-  // tree (2:25 to 2:35), so the slow phone sizes reach the black in time.
-  await openRun(game, "&finish=partner&protector_from=154.5");
-  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(154.6);
+  // From 2:29.5, just before the light goes out in the hand at the fallen
+  // tree (2:20 to 2:30), so the slow phone sizes reach the black in time.
+  await openRun(game, "&finish=partner&protector_from=149.5");
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(149.6);
   expect((await run(game)).held, "the light is in the father's hand").toBe(true);
   expect((await run(game)).hints, "no words at the end").toEqual([]);
   await game.screenshot("protector-going-out");

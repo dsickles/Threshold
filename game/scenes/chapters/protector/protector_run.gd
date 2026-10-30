@@ -16,7 +16,7 @@ extends Node3D
 ## hints at the start ("tap here", "hold"), no HUD, no retry, no skip, no
 ## shake, no flash.
 ##
-## The run only reports `ended` (2:45, black). The chapter (protector.gd)
+## The run only reports `ended` (2:40, black). The chapter (protector.gd)
 ## decides what follows. It never touches the House or saved state.
 ##
 ## The run's clock moves in advance(), from _process; tests turn
@@ -26,10 +26,11 @@ extends Node3D
 ## Quaternius's Stylized Nature MegaKit (CC0, DAS-106); the hand, the light,
 ## the fireflies and the rain are still drawn here.
 
-## 2:45: the screen is black and the run is over.
+## 2:40: the screen is black and the run is over.
 signal ended
 
 const RunPlan := preload("res://scenes/chapters/protector/run_plan.gd")
+const HandMesh := preload("res://scenes/chapters/protector/hand_mesh.gd")
 const MUSIC := preload("res://assets/audio/protector/run.mp3")
 const HAND_SOUND := preload("res://assets/audio/protector/placeholder_clear.wav")  # PLACEHOLDER
 const STUMBLE_SOUND := preload("res://assets/audio/protector/placeholder_stumble.wav")  # PLACEHOLDER
@@ -47,13 +48,13 @@ const CONTACT := 0.9  # An obstacle's centre is this far past the light when it 
 const LIGHT_HEIGHT := 0.55
 const LIGHT_RADIUS := 0.3
 const LIGHT_COLOR := Color("#FFB45C")  # Warm amber, like the Partner's heart.
-const SKIN := Color("#C8977A")  # The father's hand, in the gray box.
 const GRAVITY := 14.0
 const RIPPLE_TIME := 0.5
 const SLOT := TILE * 2.0  # Trees and the forest floor come in slots this long.
 const DRIFT_HOME := 2.0  # Seconds the light takes back to the middle as it slows.
 const TREE_RADIUS := 0.75  # The fallen tree's trunk: taller than the light (call 20).
 const TREE_LENGTH := 15.0  # Across the path and out past both edges into the trees.
+const TREE_GAP := 1.0  # The light stops this far short of it (Dan, 2026-10-30).
 const HINT_COLOR := Color(1.0, 0.97, 0.9, 0.85)
 const GAP_SEEN := 3.0  # A gap's edges show faintly from this long before it arrives (call 21).
 const GAP_FAINT := 0.35  # How bright they are until the gap is in reach.
@@ -72,8 +73,14 @@ const UNDERGROWTH := [
 	["Clover_1", 0.7, 1], ["Rock_Medium_1", 0.35, 1],
 ]
 const PATCHES := 6  # Undergrowth patches, both sides of the trail, shared by every slot.
-const UNDERGROWTH_SEEN := 30.0  # Metres; past this it is too small to make out.
-const TREES_SEEN := 60.0  # Metres; past this the fog has all but hidden them.
+# How far from the camera the trees and the undergrowth are drawn, in
+# metres. Each fades in over the last FADE_BAND of it, not all at once (Dan,
+# 2026-10-30: "lots of pop in"). The path and what is in the way are built
+# AHEAD, small and deep in the fog by then.
+const UNDERGROWTH_SEEN := 36.0  # Past this it is too small to make out.
+const TREES_SEEN := 60.0  # Past this the fog has mostly hidden them.
+const FADE_BAND := 12.0
+const MAX_DENSITY := 2.0  # Pixels to each of the screen's points the 3D is drawn at, at most.
 
 # The look of each part: sky (and fog), tiles, sun energy, ambient energy,
 # fog density, sun colour, at run times between which it eases. Low gold sun
@@ -167,9 +174,7 @@ var _stone_material: StandardMaterial3D
 var _branch_meshes := {}  # Lanes it spans -> CylinderMesh.
 var _branch_material: StandardMaterial3D
 var _bar_mesh: BoxMesh
-var _palm_mesh: BoxMesh
-var _finger_mesh: CapsuleMesh
-var _thumb_mesh: CapsuleMesh
+var _hand_mesh: ArrayMesh
 var _warm: Node3D  # One of each thing drawn in the dark, then freed (_build_warm).
 var _firefly_mesh: SphereMesh
 var _firefly_halo_mesh: SphereMesh
@@ -205,6 +210,10 @@ func _ready() -> void:
 	_build_world()
 	_build_sound()
 	_build_screen()
+	# A phone's screen has up to 3 pixels to each point. The forest is drawn
+	# at no more than 2, which looks the same at arm's length and is about
+	# half the work (Dan, 2026-10-30: it stuttered). Words stay sharp.
+	get_viewport().scaling_3d_scale = minf(1.0, MAX_DENSITY / maxf(DisplayServer.screen_get_scale(), 1.0))
 	if OS.has_feature("web"):
 		_use_browser_times()
 		_bring_sound_back()
@@ -287,6 +296,7 @@ func _browser_time(which: String) -> float:
 
 
 func _exit_tree() -> void:
+	get_viewport().scaling_3d_scale = 1.0
 	if OS.has_feature("web"):
 		JavaScriptBridge.eval("if (window.thresholdSoundBack) window.thresholdSoundBack.on = false;", true)
 	if _document:
@@ -378,7 +388,7 @@ func lane() -> int:
 	return _lane
 
 
-## True from 2:20: the light is slowing at the fallen tree, the hand is
+## True from 2:15: the light is slowing at the fallen tree, the hand is
 ## coming for it, and taps only ripple.
 func is_held() -> bool:
 	return _t >= RunPlan.SLOW_START
@@ -475,7 +485,7 @@ func tap(at: Vector2) -> bool:
 ## A tap that sends the light to a lane: the hand moves the light there.
 ## Returns whether it moved. A tap that changes nothing (its own lane) makes
 ## a ripple where it landed and nothing else: no penalty, no sound of
-## failure. A tap never bridges a gap; a hold does (call 19). From 2:20 the
+## failure. A tap never bridges a gap; a hold does (call 19). From 2:15 the
 ## hand is holding the light, and every tap only ripples.
 func tap_lane(lane_tapped: int, at := Vector2.ZERO) -> bool:
 	if _paused:
@@ -644,6 +654,10 @@ func _update() -> void:
 		# everything is ready to be drawn lit before the light fades up.
 		_sun.light_energy = 1.7
 		_lamp.light_energy = 2.4
+		# Far enough to reach everything drawn here: the seed-sized light's
+		# own reach falls short, and the hand's skin then got ready only
+		# when the hand first came near the light, with a hitch.
+		_lamp.omni_range = 12.0
 	if not _ended and _t >= RunPlan.BLACK:
 		_ended = true
 		# PLACEHOLDER until the car (DAS-98), where the same rain carries on.
@@ -782,7 +796,7 @@ func _hop() -> float:
 
 # The hand that moves the light: in from behind and below on the side it
 # pushes from, across with the light, then back out of sight. Once the light
-# has stopped against the fallen tree (2:22) it comes in under it, palm up,
+# has stopped at the fallen tree (2:17) it comes in under it, palm up,
 # and holds it as it goes out; then it stays, empty, to the black.
 func _update_hand() -> void:
 	var d := light_distance()
@@ -791,7 +805,8 @@ func _update_hand() -> void:
 		var come := smoothstep(RunPlan.STOPPED, RunPlan.HELD - 0.5, _t)
 		var rest := _path_at(d) + basis.x * _lane_x() * TILE + Vector3.UP * (LIGHT_HEIGHT - 0.22)
 		var place := rest - basis.y * 1.6 * (1.0 - come) + basis.z * 2.5 * (1.0 - come)
-		_hand.transform = Transform3D(basis, place)
+		# Palm up, fingers forward, cupped a little round the light.
+		_hand.transform = Transform3D(basis * Basis(Vector3.BACK, PI), place)
 		_hand.visible = true
 		return
 	var e := _t - _lane_at
@@ -800,7 +815,7 @@ func _update_hand() -> void:
 		_hand.visible = false
 		return
 	# Palm toward the light, fingers forward, on the far side from where it goes.
-	var turned := basis * Basis(Vector3.BACK, -_push_dir * PI / 2.0)
+	var turned := basis * Basis(Vector3.BACK, _push_dir * PI / 2.0)
 	var beside := _path_at(d) + basis.x * (_lane_x() * TILE - _push_dir * 0.6) + Vector3.UP * LIGHT_HEIGHT
 	var away := 0.0
 	if e < 0.12:
@@ -1351,21 +1366,26 @@ func _build_world() -> void:
 	_trunk_material = _bark(Vector3(3.0, 6.0, 1.0))
 	_branch_material = _bark(Vector3(2.0, 1.0, 1.0))
 	_ground_material = _solid(Color("#2E261D"))
-	_skin = _solid(SKIN)
-	_skin.roughness = 0.75
+	# The hand's skin and nails are in its vertex colours (hand_mesh.gd).
+	_skin = _solid(Color.WHITE)
+	_skin.vertex_color_use_as_albedo = true
+	_skin.roughness = 0.65
 	# A stone fills the same space as the gray-box one: 1.2 m across, 1 m tall.
 	_stone_mesh = _fitted(_pack_mesh(STONE), Vector3(1.2, 1.0, 1.2))
 	_stone_material = _stone_mesh.surface_get_material(0)
+	for mesh: Mesh in _tree_meshes + _dead_tree_meshes:
+		for i in mesh.get_surface_count():
+			var mat: BaseMaterial3D = mesh.surface_get_material(i)
+			# Bark needs no see-through edges, which cost iPhones dear.
+			if not mat.resource_name.begins_with("Leaves"):
+				mat.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+			_fade_in(mat, TREES_SEEN)
+	for mesh: Mesh in _patches:
+		for i in mesh.get_surface_count():
+			_fade_in(mesh.surface_get_material(i), UNDERGROWTH_SEEN)
 	_bar_mesh = BoxMesh.new()
 	_bar_mesh.size = Vector3(TILE * 3.0 - 0.2, 0.08, 0.2)
-	_palm_mesh = BoxMesh.new()
-	_palm_mesh.size = Vector3(0.82, 0.2, 0.9)
-	_finger_mesh = CapsuleMesh.new()
-	_finger_mesh.radius = 0.095
-	_finger_mesh.height = 0.78
-	_thumb_mesh = CapsuleMesh.new()
-	_thumb_mesh.radius = 0.11
-	_thumb_mesh.height = 0.6
+	_hand_mesh = HandMesh.build()
 	_firefly_mesh = SphereMesh.new()
 	_firefly_mesh.radius = 0.06
 	_firefly_mesh.height = 0.12
@@ -1534,30 +1554,15 @@ func _make_rain(amount: int) -> CPUParticles3D:
 	return rain
 
 
-# The father's hand, in plain rounded shapes: a palm, four fingers and a
-# thumb. Palm centre at the origin, fingers toward -z (forward), back of the
-# hand up.
+# The father's hand (hand_mesh.gd): palm centre at the origin, fingers
+# toward -z (forward), back of the hand up. One shape, so one draw.
 func _make_hand() -> Node3D:
 	var hand := Node3D.new()
-	var palm := MeshInstance3D.new()
-	palm.mesh = _palm_mesh
-	palm.material_override = _skin
-	hand.add_child(palm)
-	for k in 4:
-		var finger := MeshInstance3D.new()
-		finger.mesh = _finger_mesh
-		finger.material_override = _skin
-		finger.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
-		finger.position = Vector3(-0.3 + 0.2 * k, 0.0, -0.45 - 0.3 + 0.04 * absf(k - 1.5))
-		hand.add_child(finger)
-	var thumb := MeshInstance3D.new()
-	thumb.mesh = _thumb_mesh
-	thumb.material_override = _skin
-	thumb.rotation = Vector3(-PI / 2.0, -0.6, 0.0)
-	thumb.position = Vector3(0.5, -0.02, -0.15)
-	hand.add_child(thumb)
-	for part in hand.get_children():
-		(part as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var shape := MeshInstance3D.new()
+	shape.mesh = _hand_mesh
+	shape.material_override = _skin
+	shape.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	hand.add_child(shape)
 	return hand
 
 
@@ -1566,6 +1571,14 @@ func _solid(colour: Color) -> StandardMaterial3D:
 	mat.albedo_color = colour
 	mat.roughness = 0.9
 	return mat
+
+
+# Fades `material` in by its object's distance from the camera: not drawn at
+# `far`, whole FADE_BAND nearer, dithered between (works in the browser).
+func _fade_in(material: BaseMaterial3D, far: float) -> void:
+	material.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_OBJECT_DITHER
+	material.distance_fade_min_distance = far
+	material.distance_fade_max_distance = far - FADE_BAND
 
 
 # The dead trees' bark from the pack, repeated `repeat` times over a shape.
@@ -1728,7 +1741,7 @@ func hints_shown() -> Array[String]:
 # obstacle: nothing lights it up, and nothing gets past it. It shares the
 # trees' shapes, so drawing it costs no first-time stutter.
 func _build_tree() -> void:
-	_tree_distance = RunPlan.distance(RunPlan.STOPPED) + LIGHT_RADIUS + TREE_RADIUS + 0.1
+	_tree_distance = RunPlan.distance(RunPlan.STOPPED) + LIGHT_RADIUS + TREE_GAP + TREE_RADIUS
 	_tree = Node3D.new()
 	_tree.name = "FallenTree"
 	_tree.transform = Transform3D(_path_basis(_tree_distance), _path_at(_tree_distance))
