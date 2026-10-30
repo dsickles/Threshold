@@ -80,6 +80,7 @@ const PATCHES := 6  # Undergrowth patches, both sides of the trail, shared by ev
 const UNDERGROWTH_SEEN := 36.0  # Past this it is too small to make out.
 const TREES_SEEN := 60.0  # Past this the fog has mostly hidden them.
 const FADE_BAND := 12.0
+const FLOOR_STEP := 0.01  # How much higher every other slot's floor is (m).
 const MAX_DENSITY := 2.0  # Pixels to each of the screen's points the 3D is drawn at, at most.
 
 # The look of each part: sky (and fog), tiles, sun energy, ambient energy,
@@ -1081,7 +1082,9 @@ func _build_slot(slot: int) -> void:
 		slab.mesh = _ground_mesh
 		slab.material_override = _ground_material
 		slab.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		slab.position = Vector3(side * (2.6 + _ground_mesh.size.x / 2.0), 0.0, 0.0)
+		# Every other slot 1 cm higher, so where neighbours overlap one is
+		# plainly on top and their surfaces don't flicker through each other.
+		slab.position = Vector3(side * (2.6 + _ground_mesh.size.x / 2.0), FLOOR_STEP * (slot % 2), 0.0)
 		ground.add_child(slab)
 	var patch := MeshInstance3D.new()
 	patch.mesh = _patches[int(_hash01(slot, 19) * PATCHES) % PATCHES]

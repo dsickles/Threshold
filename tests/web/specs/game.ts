@@ -162,6 +162,7 @@ export class Game {
     await this.page.waitForTimeout(1000);
     const path = test.info().outputPath(`${name}.png`);
     const size = this.page.viewportSize();
+    if (part && !size) throw new Error(`${name}: no viewport size, so no close-up`);
     const clip = part && size
       ? { x: part.x * size.width, y: part.y * size.height, width: part.width * size.width, height: part.height * size.height }
       : undefined;

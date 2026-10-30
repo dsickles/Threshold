@@ -1010,6 +1010,14 @@ func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
 			check(mat.distance_fade_min_distance > mat.distance_fade_max_distance,
 					"%s: from nothing far off to whole nearer" % mat.resource_name)
 	check(_run._ground_material.albedo_texture != null, "the forest floor is textured, not a flat colour")
+	# Neighbouring floor sections overlap; one sits a little higher so they
+	# don't flicker through each other (Hopper, round 3).
+	var slots: Array = _run._slots.keys()
+	slots.sort()
+	var a: Node3D = (_run._slots[slots[0]][2] as Node3D).get_child(0)
+	var b: Node3D = (_run._slots[slots[0] + 1][2] as Node3D).get_child(0)
+	check_near(absf(a.position.y - b.position.y), _run.FLOOR_STEP, 0.0001,
+			"neighbouring floor sections are not at the same height")
 	for mesh: Mesh in _run._patches:
 		check_eq(mesh.get_surface_count(), 3, "a patch of undergrowth is three draws: leaves, grass, rock")
 	var patch_materials := {}
