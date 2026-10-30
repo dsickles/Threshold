@@ -814,8 +814,14 @@ func _update_hand() -> void:
 	if _push_dir == 0.0 or e < 0.0 or e > total:
 		_hand.visible = false
 		return
-	# Palm toward the light, fingers forward, on the far side from where it goes.
-	var turned := basis * Basis(Vector3.BACK, _push_dir * PI / 2.0)
+	# On the far side from where it goes, standing up as a hand does to push
+	# something sideways: fingers up and a little forward, palm to the light
+	# and a little ahead of it, so from behind the camera sees its back and
+	# fingers, not its edge.
+	var fingers := Vector3(0.0, 1.0, -0.35).normalized()
+	var palm := Vector3(_push_dir, 0.0, -0.6).normalized()
+	var x := (-palm).cross(-fingers)
+	var turned := basis * Basis(x * _push_dir, -palm, -fingers).orthonormalized()
 	var beside := _path_at(d) + basis.x * (_lane_x() * TILE - _push_dir * 0.6) + Vector3.UP * LIGHT_HEIGHT
 	var away := 0.0
 	if e < 0.12:
