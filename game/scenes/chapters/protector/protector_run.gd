@@ -1654,7 +1654,8 @@ func _pack_mesh(model: String) -> Mesh:
 # bump map, sharp when seen edge-on. Each difference is another shader the
 # phone has to build before the run can start (Dan, 2026-10-30: "it takes a
 # long time to load"), so the stones, the bark, the path and the floor
-# share one.
+# share one, and the ones that fade in (the trees' bark, the undergrowth's
+# rocks) share one more.
 func _plain(mat: BaseMaterial3D) -> void:
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 	mat.cull_mode = BaseMaterial3D.CULL_BACK

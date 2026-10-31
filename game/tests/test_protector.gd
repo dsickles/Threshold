@@ -1049,7 +1049,8 @@ func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
 	# texture (stones, bark, path, floor) is drawn the same way, so the phone
 	# builds one shader for them, not one each.
 	var solids: Array[BaseMaterial3D] = [_run._stone_material, _run._trunk_material, _run._branch_material,
-			_run._ground_material, _run._tile_materials[0]]
+			_run._ground_material]
+	solids.append_array(_run._tile_materials)
 	for mesh: Mesh in _run._tree_meshes + _run._dead_tree_meshes + _run._patches:
 		for i in mesh.get_surface_count():
 			var mat: BaseMaterial3D = mesh.surface_get_material(i)
@@ -1074,3 +1075,27 @@ func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
 	await frames(2)
 	check_near(viewport.scaling_3d_scale, 0.8, 0.001, "and what was there is put back once the run is left")
 	viewport.scaling_3d_scale = 1.0
+
+
+# Only the files the forest draws are in the game (DAS-106, criterion 2):
+# every texture in the models' folder is used by a material, and none of the
+# pack's bump maps is left behind now the bark is drawn without one.
+func test_every_texture_in_the_forest_s_folder_is_used() -> void:
+	var folder: String = _run.MODELS
+	var used := {"ForestLeaves04_Diffuse.jpg": true}  # The floor, loaded by the run itself.
+	for file in DirAccess.get_files_at(folder):
+		if not file.ends_with(".gltf"):
+			continue
+		var gltf: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder + file))
+		for material: Dictionary in gltf.get("materials", []):
+			check(not material.has("normalTexture"), "%s: %s has no bump map" % [file, material.name])
+			var colour: Dictionary = material.get("pbrMetallicRoughness", {}).get("baseColorTexture", {})
+			if colour.has("index"):
+				var texture: Dictionary = gltf.textures[int(colour.index)]
+				used[gltf.images[int(texture.source)].uri] = true
+	var textures := 0
+	for file in DirAccess.get_files_at(folder):
+		if file.get_extension() in ["png", "jpg"]:
+			textures += 1
+			check(used.has(file), "%s is drawn by something" % file)
+	check(textures >= 8, "the folder's textures were found (%d)" % textures)

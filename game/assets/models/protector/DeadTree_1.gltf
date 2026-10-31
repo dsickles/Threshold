@@ -22,12 +22,9 @@
 		{
 			"doubleSided":true,
 			"name":"Bark_DeadTree",
-			"normalTexture":{
-				"index":0
-			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":1
+					"index":0
 				},
 				"metallicFactor":0
 			}
@@ -54,18 +51,9 @@
 		{
 			"sampler":0,
 			"source":0
-		},
-		{
-			"sampler":0,
-			"source":1
 		}
 	],
 	"images":[
-		{
-			"mimeType":"image/png",
-			"name":"Bark_DeadTree_Normal",
-			"uri":"Bark_DeadTree_Normal.png"
-		},
 		{
 			"mimeType":"image/png",
 			"name":"Bark_DeadTree",
