@@ -1,6 +1,6 @@
 # Where assets come from
 
-Free sources to check first under [ADR-0010](../adr/0010-free-asset-packs-first-ai-fills-gaps.md) (packs first, AI only to fill gaps). Researched 2026-10-26 in the "Find free asset packs for Threshold" project thread; the longer write-up is the [Free asset packs for Threshold](https://claude.ai/artifact/PLLgB5fPmjBf8FCBhWWjFM) doc. Nothing here is in the game yet. Check each item's license on its own page before adding it, and add a line to [CREDITS.md](../../CREDITS.md).
+Free sources to check first under [ADR-0010](../adr/0010-free-asset-packs-first-ai-fills-gaps.md) (packs first, AI only to fill gaps). Researched 2026-10-26 in the "Find free asset packs for Threshold" project thread; the longer write-up is the [Free asset packs for Threshold](https://claude.ai/artifact/PLLgB5fPmjBf8FCBhWWjFM) doc. In the game so far: the Loss's forest, from the Quaternius Stylized Nature MegaKit (DAS-106). Check each item's license on its own page before adding it, and add a line to [CREDITS.md](../../CREDITS.md).
 
 ## By place in the game
 
@@ -10,7 +10,6 @@ Free sources to check first under [ADR-0010](../adr/0010-free-asset-packs-first-
 | House walls, floors, wood | [ambientCG](https://ambientcg.com) | CC0 | Realistic surfaces fill most of each view | 1k or 2k only |
 | House light and sky through windows | [Poly Haven HDRIs](https://polyhaven.com/hdris) | CC0 | Natural reflections and sky | Large files; one small HDRI |
 | House gaps (crib, fridge and so on) | [Sketchfab](https://sketchfab.com) downloadable models | Per model: use only CC0 or CC-BY | Wide range | Skip NonCommercial (NC) and NoDerivatives (ND); CC-BY needs a credit |
-| House, if the look is soft low-poly | [Quaternius](https://quaternius.com) Ultimate House Interior / Ultimate Furniture | CC0 | One complete matching set | Cozy toy-house look |
 | The Loss run (path, trees, rocks) | Quaternius Stylized Nature MegaKit | CC0 | Simple shapes read well at speed | Keep counts low for phones |
 | The car outside the House | Kenney Car Kit or Quaternius Cars | CC0 | Seen at night in rain | |
 | The Novice and other cartoon chapters | [Kenney](https://kenney.nl/assets), [KayKit](https://kaylousberg.itch.io/furniture-bits) | CC0 | Bright, bold, one style | |
@@ -26,9 +25,9 @@ The shared fonts in [ux/DESIGN.md](ux/DESIGN.md) (Source Serif 4, Source Sans 3,
 ## Keeping the web build small
 
 - Copy only the files used into `game/`, never a whole pack.
-- glTF models, 1k textures (2k only where a texture fills the screen), and Godot's ETC2/ASTC texture compression for phones.
+- glTF models, 1k textures (2k only where a texture fills the screen), and Godot's ETC2/ASTC texture compression for phones. Import textures as Basis Universal with mipmaps: it ships once and becomes ETC2/ASTC on a phone and the desktop format on a laptop when it loads. Shipping both GPU formats directly (VRAM compressed) doubled the Loss's download, 26.6 MB against 15.9 MB (DAS-106, 2026-10-30).
 - Stay within the load and memory bar in [scope.md](../scope.md) (about 10 s to load, under about 500 MB).
 
-## Open
+## The House's look
 
-The House's look, realistic or soft low-poly, is an open question in [scope.md](../scope.md). Recommended: realistic.
+Realistic: Poly Haven models and ambientCG surfaces (Dan, 2026-10-29, [scope.md](../scope.md)). Quaternius and KayKit are for the chapters, not the House.

@@ -119,7 +119,7 @@ func test_the_music_starts_at_three_seconds_and_the_storm_plays_to_the_black() -
 	_step_to(RunPlan.BLACK - 0.5)
 	check(_run._music.playing, "still playing as it goes black")
 	check(_run.MUSIC.get_length() >= RunPlan.BLACK - RunPlan.EUPHORIA_START - 0.1,
-			"the track runs from 0:03 to 2:45")
+			"the track runs from 0:03 to 2:40")
 	check(_run.MUSIC.get_length() < RunPlan.BLACK - RunPlan.EUPHORIA_START + 5.0,
 			"and not on long past it")
 
@@ -142,9 +142,9 @@ func test_a_perfect_run_and_an_empty_run_reach_the_same_ending() -> void:
 	check_eq(empty.stumbled_at_fade, empty.stumbled, "the tree is no stumble, after an empty run")
 	check_eq(perfect.stumbled_at_fade, 0, "or a perfect one")
 	check_eq(empty.lane_when_held, perfect.lane_when_held, "and in the same lane once the hand holds it")
-	check_near(perfect.out_at, RunPlan.OUT, STEP, "the perfect run's light goes out at 2:35")
+	check_near(perfect.out_at, RunPlan.OUT, STEP, "the perfect run's light goes out at 2:30")
 	check_eq(empty.out_at, perfect.out_at, "the empty run's at the same moment")
-	check_near(perfect.finished_at, RunPlan.BLACK, STEP, "the perfect run finishes at 2:45")
+	check_near(perfect.finished_at, RunPlan.BLACK, STEP, "the perfect run finishes at 2:40")
 	check_eq(empty.finished_at, perfect.finished_at, "the empty run at the same moment")
 	check_eq(perfect.finishes, 1, "the perfect run finishes once")
 	check_eq(empty.finishes, 1, "the empty run finishes once")
@@ -456,7 +456,7 @@ func test_after_the_song_taps_still_move_the_light_until_the_hand_holds_it() -> 
 	_run.tap_lane(1)
 	check_eq(_run.lane(), 1, "a tap still does what it says")
 	_step_to(RunPlan.SLOW_START + 0.1)
-	check(_run.is_held(), "from 2:20 the hand is coming for it")
+	check(_run.is_held(), "from 2:15 the hand is coming for it")
 	check_eq(_run.lane(), 0, "the light drifts back to the middle")
 	var before := _snapshot()
 	for k in 5:
@@ -470,7 +470,7 @@ func test_the_light_stops_at_the_tree_settles_into_the_hand_and_goes_out_there()
 	check_eq(_run.light_brightness(), 1.0, "fully bright as it runs on in the rain")
 	var a: float = _run.light_distance()
 	_step_to(RunPlan.SLOW_START)
-	check_near(_run.light_distance() - a, RunPlan.SPEED, 0.01, "still at full speed at 2:19")
+	check_near(_run.light_distance() - a, RunPlan.SPEED, 0.01, "still at full speed at 2:14")
 	_step_to(RunPlan.STOPPED)
 	var stopped: float = _run.light_distance()
 	check(not _run._hand.visible or _run._hand.global_position.y < _run._light.global_position.y - 0.5,
@@ -481,13 +481,13 @@ func test_the_light_stops_at_the_tree_settles_into_the_hand_and_goes_out_there()
 	check(under.length() < 0.6 and under.y > 0.0, "the light rests in the open hand, just above the palm")
 	check_eq(_run.light_brightness(), 1.0, "still fully bright as the hand takes it")
 	_step_to(RunPlan.HELD + 5.0)
-	check_eq(_run.light_distance(), stopped, "stopped by 2:22")
+	check_eq(_run.light_distance(), stopped, "stopped by 2:17")
 	check(_run.light_brightness() < 1.0 and _run.light_brightness() > 0.0, "going out")
 	_step_to(RunPlan.OUT + 0.5)
-	check_eq(_run.light_brightness(), 0.0, "out by 2:35")
+	check_eq(_run.light_brightness(), 0.0, "out by 2:30")
 	check(not _run._light.visible, "nothing left of it")
 	check(_run._hand.visible, "the empty hand stays")
-	check(not _run.has_ended(), "until 2:45")
+	check(not _run.has_ended(), "until 2:40")
 
 
 # Call 20: after the obstacles, a whole tree across the path that nothing
@@ -496,7 +496,8 @@ func test_the_light_stops_against_a_fallen_tree_it_cannot_get_past() -> void:
 	var tree: Node3D = _run._tree
 	check(not (tree in _run.obstacles().map(func(o: Dictionary) -> Variant: return o.node)), "not one of the obstacles")
 	check_eq(RunPlan.part_at(RunPlan.STOPPED), RunPlan.Part.FADE, "it comes after the obstacles stop")
-	check(RunPlan.STOPPED - RunPlan.obstacles()[-1].time >= 15.0, "well after the last one")
+	# 12 s after the last one since Dan cut 5 s of the straight run (2026-10-30).
+	check(RunPlan.STOPPED - RunPlan.obstacles()[-1].time >= 11.9, "well after the last one")
 	check(_run.TREE_LENGTH > 3.0 * _run.TILE + 6.0, "wider than the path, out past both edges")
 	check(2.0 * _run.TREE_RADIUS - 0.1 > _run.LIGHT_HEIGHT + _run.LIGHT_RADIUS, "taller than the light")
 	_step_to(RunPlan.FADE_START + 1.0)
@@ -506,7 +507,8 @@ func test_the_light_stops_against_a_fallen_tree_it_cannot_get_past() -> void:
 	_step_to(RunPlan.STOPPED)
 	var front: float = _run.tree_distance() - _run.TREE_RADIUS
 	var reach: float = _run.light_distance() + _run.LIGHT_RADIUS
-	check(reach <= front and front - reach < 0.25, "the light stops right against it")
+	# A little short of it, not right against it (Dan, 2026-10-30).
+	check(absf(front - reach - _run.TREE_GAP) < 0.25, "the light stops just short of it")
 	check_eq(_run.light_brightness(), 1.0, "no flicker: it isn't hurt")
 	check(_run._last_stumble < RunPlan.FADE_START, "no thud and no stumble since the obstacles stopped")
 	check_eq(_run.count(_run.Status.STUMBLED), stumbled, "and it isn't a stumble")
@@ -872,6 +874,19 @@ func test_everything_is_drawn_once_behind_the_black_before_the_light() -> void:
 	check(_run._warm != null, "drawn at the start")
 	check(_run._sun.light_energy > 0.0 and _run._lamp.light_energy > 0.0, "lit, behind the black")
 	check_eq(_run._overlay.color.a, 1.0, "the screen is still black")
+	# The ripples and the "hold" hint's word are drawn there too, unseen, on
+	# the ripple layer under the black (Dan, 2026-10-30: "when i did the
+	# first hold it stuttered"); no hint is on screen yet.
+	check(_run._ripple_layer.get_index() < _run._overlay.get_index(), "the ripples are drawn under the black")
+	check_eq(_run.hints_shown(), [] as Array[String], "no hint on screen while it is black")
+	# The light's glow reaches everything drawn there, so nothing it lights
+	# (the hand above all) is first got ready mid-run, with a hitch.
+	_run.advance(STEP)
+	var lamp: OmniLight3D = _run._lamp
+	for node in _all(_run._warm):
+		if node is MeshInstance3D:
+			check(lamp.global_position.distance_to((node as Node3D).global_position) < lamp.omni_range - 1.0,
+					"in the light's reach: %s" % node.name)
 	_step_to(RunPlan.EUPHORIA_START)
 	check(_run._warm == null, "gone before the light fades up")
 	var stones: Array[Mesh] = []
@@ -982,3 +997,105 @@ func test_the_first_rain_is_faint_and_thickens() -> void:
 	var script_path := ProjectSettings.globalize_path("res://").path_join("../tools/protector/make_audio.py")
 	var mix := FileAccess.get_file_as_string(script_path)
 	check(mix.contains("RAIN_SEEN = %.1f" % RunPlan.RAIN_START), "make_audio.py's RAIN_SEEN is RunPlan.RAIN_START")
+	# And its ending is the run's (Hopper, 2026-10-30): the track was rebuilt
+	# when Dan cut 5 s, so a later change can't leave it behind.
+	for pair: Array in [["FADE", RunPlan.FADE_START], ["HELD", RunPlan.HELD], ["OUT_AT", RunPlan.OUT],
+			["BLACK", RunPlan.BLACK]]:
+		check(mix.contains("\n%s = %.1f" % pair), "make_audio.py's %s is %.1f, as in run_plan.gd" % pair)
+
+
+# Dan, 2026-10-30, after playing the asset-pack forest on his phone: "lots of
+# pop in" and "it stuttered a fair amount".
+func test_the_forest_fades_in_and_is_light_on_a_phone() -> void:
+	for mesh: Mesh in _run._tree_meshes + _run._dead_tree_meshes + _run._patches:
+		for i in mesh.get_surface_count():
+			var mat: BaseMaterial3D = mesh.surface_get_material(i)
+			check_eq(mat.distance_fade_mode, BaseMaterial3D.DISTANCE_FADE_OBJECT_DITHER,
+					"%s fades in, not all at once" % mat.resource_name)
+			check(mat.distance_fade_min_distance > mat.distance_fade_max_distance,
+					"%s: from nothing far off to whole nearer" % mat.resource_name)
+	check(_run._ground_material.albedo_texture != null, "the forest floor is textured, not a flat colour")
+	# Neighbouring floor sections overlap; one sits a little higher so they
+	# don't flicker through each other (Hopper, round 3).
+	var slots: Array = _run._slots.keys()
+	slots.sort()
+	var a: Node3D = (_run._slots[slots[0]][2] as Node3D).get_child(0)
+	check(a is MeshInstance3D and (a as MeshInstance3D).mesh is PlaneMesh, "the floor is flat sheets, with no edges to show as lines")
+	var b: Node3D = (_run._slots[slots[0] + 1][2] as Node3D).get_child(0)
+	check_near(absf(a.position.y - b.position.y), _run.FLOOR_STEP, 0.0001,
+			"neighbouring floor sections are not at the same height")
+	for mesh: Mesh in _run._patches:
+		check_eq(mesh.get_surface_count(), 3, "a patch of undergrowth is three draws: leaves, grass, rock")
+	var patch_materials := {}
+	for mesh: Mesh in _run._patches:
+		for i in mesh.get_surface_count():
+			patch_materials[mesh.surface_get_material(i)] = true
+	check_eq(patch_materials.size(), 3, "and every patch shares the same three materials")
+	# The run's changes stay in the run: the pack's own pine is untouched.
+	var pine: Node = load(_run.MODELS + "Pine_1.gltf").instantiate()
+	var own: BaseMaterial3D = (pine.find_children("*", "MeshInstance3D")[0] as MeshInstance3D).mesh.surface_get_material(0)
+	check_eq(own.distance_fade_mode, BaseMaterial3D.DISTANCE_FADE_DISABLED, "the pack's pine doesn't fade")
+	check(own.albedo_color.is_equal_approx(Color.WHITE), "and keeps its own colour")
+	pine.free()
+	var bark_seen := 0
+	for mesh: Mesh in _run._tree_meshes + _run._dead_tree_meshes:
+		for i in mesh.get_surface_count():
+			var mat: BaseMaterial3D = mesh.surface_get_material(i)
+			if mat.resource_name.contains("Bark"):
+				bark_seen += 1
+				check_eq(mat.transparency, BaseMaterial3D.TRANSPARENCY_DISABLED, "%s is solid" % mat.resource_name)
+	check_eq(bark_seen, 6, "every tree's bark was checked")
+	# Dan, 2026-10-30: "it takes a long time to load". Every solid with a
+	# texture (stones, bark, path, floor) is drawn the same way, so the phone
+	# builds one shader for them, not one each.
+	var solids: Array[BaseMaterial3D] = [_run._stone_material, _run._trunk_material, _run._branch_material,
+			_run._ground_material]
+	solids.append_array(_run._tile_materials)
+	for mesh: Mesh in _run._tree_meshes + _run._dead_tree_meshes + _run._patches:
+		for i in mesh.get_surface_count():
+			var mat: BaseMaterial3D = mesh.surface_get_material(i)
+			if not (mat.resource_name.begins_with("Leaves") or mat.resource_name.begins_with("Grass")):
+				solids.append(mat)
+	for mat in solids:
+		check(mat.cull_mode == BaseMaterial3D.CULL_BACK and not mat.normal_enabled
+				and mat.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED
+				and mat.texture_filter == BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC,
+				"%s is drawn as every other textured solid" % mat.resource_name)
+	# An iPhone has 3 pixels to each point; a laptop 1 or 2.
+	check_near(_run.scale_for(3.0), 2.0 / 3.0, 0.001, "3 pixels a point: the 3D is drawn at 2")
+	check_eq(_run.scale_for(2.0), 1.0, "2 pixels a point: drawn at all of them")
+	check_eq(_run.scale_for(1.0), 1.0, "1 pixel a point: drawn at all of them")
+	var viewport := _run.get_viewport()
+	check_near(viewport.scaling_3d_scale, _run.scale_for(DisplayServer.screen_get_scale()), 0.001, "set for this screen")
+	# Whatever was there before the run, not simply full: as if the game had
+	# drawn at 0.8 and the run at 0.5.
+	_run._scale_before = 0.8
+	viewport.scaling_3d_scale = 0.5
+	_chapter.queue_free()
+	await frames(2)
+	check_near(viewport.scaling_3d_scale, 0.8, 0.001, "and what was there is put back once the run is left")
+	viewport.scaling_3d_scale = 1.0
+
+
+# Only the files the forest draws are in the game (DAS-106, criterion 2):
+# every texture in the models' folder is used by a material, and none of the
+# pack's bump maps is left behind now the bark is drawn without one.
+func test_every_texture_in_the_forest_s_folder_is_used() -> void:
+	var folder: String = _run.MODELS
+	var used := {"ForestLeaves04_Diffuse.jpg": true}  # The floor, loaded by the run itself.
+	for file in DirAccess.get_files_at(folder):
+		if not file.ends_with(".gltf"):
+			continue
+		var gltf: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder + file))
+		for material: Dictionary in gltf.get("materials", []):
+			check(not material.has("normalTexture"), "%s: %s has no bump map" % [file, material.name])
+			var colour: Dictionary = material.get("pbrMetallicRoughness", {}).get("baseColorTexture", {})
+			if colour.has("index"):
+				var texture: Dictionary = gltf.textures[int(colour.index)]
+				used[gltf.images[int(texture.source)].uri] = true
+	var textures := 0
+	for file in DirAccess.get_files_at(folder):
+		if file.get_extension() in ["png", "jpg"]:
+			textures += 1
+			check(used.has(file), "%s is drawn by something" % file)
+	check(textures >= 8, "the folder's textures were found (%d)" % textures)
