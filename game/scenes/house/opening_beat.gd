@@ -77,7 +77,9 @@ func _ready() -> void:
 	_steps.append({"choice": true})
 	_clock = -LEAD_IN
 	_speed = get_tree().root.get_meta("opening_beat_speed", 1.0)
-	resized.connect(func() -> void: _reserved = 0.0)
+	resized.connect(func() -> void:
+		_reserved = 0.0
+		reserved_changed.emit())
 	_show_step()
 
 

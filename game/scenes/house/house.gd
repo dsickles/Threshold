@@ -33,6 +33,9 @@ const GLIDE_SECONDS := 2.0
 ## width follows the screen's shape).
 const LENS_FOV := 70.0
 const RING_SIZE := 110.0
+## A chapter object's marker, and its dot, as shares of a ring.
+const MARKER_SHARE := 0.6
+const MARKER_DOT_SHARE := 0.3
 ## Rings are never smaller than this on the real screen (points on a phone),
 ## comfortably over the 44px minimum, so they grow on an upright phone.
 const RING_MIN_REAL := 64.0
@@ -782,10 +785,22 @@ func _build_ui() -> void:
 	for id: String in HouseLayout.CHAPTER_OBJECTS:
 		var button := Button.new()
 		button.name = "Object_%s" % id
-		# Tap only, and nothing to see: the object itself is what is tapped.
+		# Tap only. The tap area itself shows nothing; a small gold ring with a
+		# dot sits on the object, a third ring look, so it reads as something
+		# to tap (Dan, 2026-11-01, after playing).
 		button.focus_mode = Control.FOCUS_NONE
 		for state in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
 			button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+		var marker := Panel.new()
+		marker.name = "Marker"
+		marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		marker.add_theme_stylebox_override("panel", _ring_look(0.0, ACCENT))
+		var dot := Panel.new()
+		dot.name = "Dot"
+		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		dot.add_theme_stylebox_override("panel", _ring_look(1.0, ACCENT))
+		marker.add_child(dot)
+		button.add_child(marker)
 		button.visible = false
 		button.pressed.connect(_on_object_pressed.bind(id))
 		_object_root.add_child(button)
@@ -1024,6 +1039,19 @@ func _place_objects() -> void:
 		var size := rect.size.max(Vector2.ONE * smallest)
 		button.position = rect.get_center() - size / 2.0
 		button.size = size
+		# The marker, in the middle of the object; gone in its close-up.
+		var marker: Control = object_marker(id)
+		marker.visible = _close_up != id
+		marker.size = Vector2.ONE * smallest * MARKER_SHARE
+		marker.position = (size - marker.size) / 2.0
+		var dot: Control = marker.get_node("Dot")
+		dot.size = marker.size * MARKER_DOT_SHARE
+		dot.position = (marker.size - dot.size) / 2.0
+
+
+## The gold ring that shows a chapter object can be tapped.
+func object_marker(object_id: String) -> Control:
+	return _object_buttons[object_id].get_node("Marker") as Control
 
 
 # Where an object is on screen, or an empty rect if any of it is behind the

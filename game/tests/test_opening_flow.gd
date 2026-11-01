@@ -396,6 +396,34 @@ func test_chapter_objects_can_be_tapped_at_least_44px_and_hover_does_nothing() -
 			house.free()
 
 
+func test_a_chapter_object_that_can_be_tapped_shows_a_gold_ring_until_its_close_up() -> void:
+	for screen in SCREENS:
+		set_screen(screen)
+		for setup: Array in [[HouseTable.AFTER_OPENING, "B3", "record_player"],
+				[HouseTable.AFTER_PARTNER, "B2", "bedside_lamp"]]:
+			var house := _open_house(setup[0])
+			var id: String = setup[2]
+			var where := "%s at %s" % [id, screen]
+			_stand_at(house, setup[1])
+			await frames(2)
+			var marker: Control = house.object_marker(id)
+			if check(marker.is_visible_in_tree(), "%s: its ring shows" % where):
+				var button: Button = house.object_button(id)
+				check(marker.get_global_rect().get_center().distance_to(button.get_global_rect().get_center()) < 1.0,
+						"%s: on the object" % where)
+				check(marker.size.x > 0.0 and marker.get_node("Dot").size.x > 0.0, "%s: a ring with a dot" % where)
+				check_eq(marker.mouse_filter, Control.MOUSE_FILTER_IGNORE, "%s: taps go to the object" % where)
+			await _object_tap(house, id)
+			await _finish_glide(house)
+			check(not marker.is_visible_in_tree(), "%s: gone in its close-up" % where)
+			house.free()
+	var early := _open_house(HouseTable.START)
+	_stand_at(early, "B3")
+	await frames(2)
+	check(not early.object_marker("record_player").is_visible_in_tree(), "no ring before the record player works")
+	early.free()
+
+
 # --- Saving.
 
 func test_nothing_is_saved_before_the_partner_finishes_and_then_the_save_holds_it_and_the_answer() -> void:
