@@ -396,6 +396,18 @@ func test_chapter_objects_can_be_tapped_at_least_44px_and_hover_does_nothing() -
 			house.free()
 
 
+func _outline_width(house: Node, id: String) -> float:
+	var mesh: MeshInstance3D = house.find_child("%s_%s" % [id, HouseLayout.CHAPTER_OBJECTS[id].parts[-1][0]], true, false)
+	return (mesh.material_override as StandardMaterial3D).stencil_outline_thickness
+
+
+func test_the_record_player_stands_on_an_av_cabinet() -> void:
+	var house := _open_house(HouseTable.AFTER_OPENING)
+	check(house.find_child("record_player_cabinet", true, false) != null, "an AV cabinet under it")
+	check(house.find_child("record_player_box", true, false) == null, "not a moving box")
+	house.free()
+
+
 func test_a_chapter_object_glows_gold_only_while_it_can_be_tapped() -> void:
 	for setup: Array in [[HouseTable.AFTER_OPENING, "B3", "record_player"],
 			[HouseTable.AFTER_PARTNER, "B2", "bedside_lamp"]]:
@@ -407,15 +419,23 @@ func test_a_chapter_object_glows_gold_only_while_it_can_be_tapped() -> void:
 		_stand_at(house, setup[1])
 		await frames()
 		check(house.object_highlighted(id), "%s: gold outline in its room" % id)
-		var outline: MeshInstance3D = house.find_child("ChapterObject_%s" % id, true, false) \
-				.find_child("Outline", true, false)
-		if check(outline != null, "%s: has an outline" % id):
-			var mat := outline.material_override as StandardMaterial3D
-			check(mat.albedo_color.is_equal_approx(house.ACCENT), "%s: in the accent gold" % id)
-			check_eq(mat.cull_mode, BaseMaterial3D.CULL_FRONT, "%s: only its rim shows" % id)
+		var stand: Array = HouseLayout.CHAPTER_OBJECTS[id].get("stand", [])
+		for part: Array in HouseLayout.CHAPTER_OBJECTS[id].parts:
+			var mesh: MeshInstance3D = house.find_child("%s_%s" % [id, part[0]], true, false)
+			var mat := mesh.material_override as StandardMaterial3D
+			if part[0] in stand:
+				check_eq(mat.stencil_mode, BaseMaterial3D.STENCIL_MODE_DISABLED, "%s: not round its %s" % [id, part[0]])
+				continue
+			check_eq(mat.stencil_mode, BaseMaterial3D.STENCIL_MODE_OUTLINE, "%s: outlined, %s too" % [id, part[0]])
+			check(mat.stencil_color.is_equal_approx(house.ACCENT), "%s: in the accent gold" % id)
+			check(mat != house._material(part[3]), "%s: its own material, so nothing else glows" % id)
+			check(mat.emission_enabled, "%s: a little warmer" % id)
+		var far := _outline_width(house, id)
 		await _object_tap(house, id)
 		await _finish_glide(house)
 		check(house.object_highlighted(id), "%s: still glowing in its close-up" % id)
+		var near := _outline_width(house, id)
+		check(near < far, "%s: thinner close up, so it looks the same width on screen" % id)
 		house.free()
 	var early := _open_house(HouseTable.START)
 	_stand_at(early, "B3")

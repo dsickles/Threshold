@@ -194,15 +194,21 @@ const FURNITURE: Array[Array] = [
 
 ## The chapter objects (HouseTable.CHAPTER_OBJECTS) as gray blocks. "parts":
 ## [name, centre, size, colour name]; the "arm" part is the record player's
-## tonearm, which lowers onto the record. "close_up" is where the camera
-## stands for its close-up, looking at "look" (ADR-0008). Where they stand
-## comes from house-floor-plan.md: the record player sits on a moving box in
-## the bedroom's top-right corner (B3), the lamp on the bed's nightstand (B2).
+## tonearm, which lowers onto the record. "stand" names the parts it stands
+## on, which are furniture: they don't glow with it. "close_up" is where the
+## camera stands for its close-up, looking at "look" (ADR-0008). Where they
+## stand comes from house-floor-plan.md: the record player sits on a low AV
+## cabinet in the bedroom's top-right corner (B3; Dan, 2026-11-01), the lamp
+## on the bed's nightstand (B2).
 const CHAPTER_OBJECTS := {
 	"record_player": {
 		"room": "bedroom",
+		"stand": ["cabinet", "cabinet_top", "cabinet_shelf"],
 		"parts": [
-			["box", Vector3(5.55, 0.25, 0.4), Vector3(0.55, 0.5, 0.45), "box"],
+			["cabinet", Vector3(5.55, 0.235, 0.4), Vector3(0.55, 0.47, 0.45), "cabinet"],
+			["cabinet_top", Vector3(5.55, 0.485, 0.4), Vector3(0.6, 0.03, 0.48), "cabinet"],
+			# The open shelf on its front, facing into the room.
+			["cabinet_shelf", Vector3(5.55, 0.25, 0.618), Vector3(0.47, 0.2, 0.02), "dark"],
 			["body", Vector3(5.55, 0.56, 0.4), Vector3(0.46, 0.12, 0.36), "wood"],
 			["record", Vector3(5.5, 0.63, 0.4), Vector3(0.3, 0.012, 0.3), "dark"],
 			["arm", Vector3(5.72, 0.66, 0.4), Vector3(0.03, 0.03, 0.24), "steel"],
@@ -305,6 +311,22 @@ static func room_at(point: Vector2) -> String:
 static func close_up_transform(object_id: String) -> Transform3D:
 	var close: Dictionary = CHAPTER_OBJECTS[object_id].close_up
 	return Transform3D.IDENTITY.translated(close.stand).looking_at(close.look, Vector3.UP)
+
+
+## The box the object itself fills, without what it stands on: its gold
+## outline goes round this.
+static func object_own_bounds(object_id: String) -> AABB:
+	var data: Dictionary = CHAPTER_OBJECTS[object_id]
+	var stand: Array = data.get("stand", [])
+	var bounds := AABB()
+	var first := true
+	for part: Array in data.parts:
+		if part[0] in stand:
+			continue
+		var box := AABB(part[1] - part[2] / 2.0, part[2])
+		bounds = box if first else bounds.merge(box)
+		first = false
+	return bounds
 
 
 ## The box a chapter object fills, all its parts together.

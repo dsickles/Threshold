@@ -431,9 +431,20 @@ The documents were written in one day, in this order: brainstorming session → 
 | | |
 |---|---|
 | **Was** | The record player and the bedside lamp had an invisible tap area and nothing to see, so nothing showed they could be tapped. scope.md (2026-10-23) expected object close-ups to need "a third look" beside the solid and outline rings. |
-| **Became** | While a chapter object works and the player is in its room (or at its close-up), it has a gold outline (`accent`), as DESIGN.md's interact-highlight says. There is no ring or marker on it. |
-| **Why** | Dan's iPhone play of DAS-95, 2026-11-01: the record player "needs a circle of some kind to denote it's an item that's clickable". He was offered a third ring look or the glow DESIGN.md and EXPERIENCE.md describe, and picked the glow on a decision card. |
+| **Became** | While a chapter object works and the player is in its room (or at its close-up), one gold outline (`accent`) goes round the whole object, and it is a little warmer, as DESIGN.md's interact-highlight says ("outline or warmth"). What it stands on doesn't glow. The outline keeps about the same width on screen from the doorway and in the close-up. There is no ring or marker on it. |
+| **Why** | Dan's iPhone play of DAS-95, 2026-11-01: the record player "needs a circle of some kind to denote it's an item that's clickable". He was offered a third ring look or the glow DESIGN.md and EXPERIENCE.md describe, and picked the glow on a decision card. On the next build he found the first outline (one per block) lit only part of the record player and was hard to see, so it became one outline round the whole object, wider, with the warmth. |
 | **Record** | [DESIGN.md](ux/DESIGN.md) interact-highlight; [scope.md](../scope.md); `game/scenes/house/house.gd` `_add_outline` |
+
+---
+
+## 39. The record player stands on a low AV cabinet, not a moving box (2026-11-01)
+
+| | |
+|---|---|
+| **Was** | The record player was set up on a moving box in the bedroom's top-right corner (house-floor-plan.md, continuity-ledger.md). |
+| **Became** | It stands on a low AV cabinet of about the same size, with an open shelf on its front. It is still the first thing they unpacked. |
+| **Why** | Dan's iPhone play of DAS-95, 2026-11-01: "The record player kinda looks like it's on a box. It should be on some sort of av cabinet that's the same size rather than a box." |
+| **Record** | [house-floor-plan.md](house-floor-plan.md); [continuity-ledger.md](continuity-ledger.md); `game/scenes/house/house_layout.gd` `CHAPTER_OBJECTS` |
 
 ---
 

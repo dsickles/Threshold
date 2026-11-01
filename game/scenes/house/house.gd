@@ -33,8 +33,12 @@ const GLIDE_SECONDS := 2.0
 ## width follows the screen's shape).
 const LENS_FOV := 70.0
 const RING_SIZE := 110.0
-## How far a chapter object's gold outline stands out from it, in metres.
-const OUTLINE := 0.022
+## How far a chapter object's gold outline stands out from it, per metre
+## from the camera, so it is about the same width on screen from the doorway
+## and in the close-up (about 8 px at 720 high).
+const OUTLINE_PER_METRE := 0.016
+## How much warmer it is while it can be tapped.
+const WARMTH := 0.18
 ## Rings are never smaller than this on the real screen (points on a phone),
 ## comfortably over the 44px minimum, so they grow on an upright phone.
 const RING_MIN_REAL := 64.0
@@ -74,6 +78,7 @@ const COLOURS := {
 	"leather": Color(0.36, 0.22, 0.14),
 	"glass": Color(0.5, 0.56, 0.62),
 	"shade": Color(0.72, 0.68, 0.6),
+	"cabinet": Color(0.3, 0.23, 0.17),
 }
 const LAMP_GLOW := Color(1.0, 0.86, 0.62)
 const DUSK := Color(0.2, 0.22, 0.34)
@@ -113,8 +118,11 @@ var _ui_layer: CanvasLayer
 # record player's arm and the bedside lamp's light and shade.
 var _object_root: Control
 var _object_buttons := {}
-# Each chapter object's gold outlines, one per part, by id.
+# Each chapter object's own materials (not shared with the rest of the
+# House, so only it gets the gold outline), by id.
 var _highlights := {}
+# Whether each chapter object shows its gold outline, by id.
+var _highlighted := {}
 var _arm: Node3D
 var _arm_rest := Transform3D.IDENTITY
 var _needle: Tween
@@ -266,6 +274,9 @@ func _apply_glide(t: float, from: Transform3D, to: Transform3D, via: Vector3, ac
 		origin = _through(t, from.origin, via, across, to.origin)
 	var turn := from.basis.get_rotation_quaternion().slerp(to.basis.get_rotation_quaternion(), t)
 	_set_base(Transform3D(Basis(turn), origin))
+	for id: String in _highlighted:
+		if _highlighted[id]:
+			_size_outline(id)
 
 
 # A smooth path from `a` to `b` through the doorway at `via`, crossing it in
@@ -880,10 +891,13 @@ func _add_chapter_objects(props: Node3D, lighting: Node3D) -> void:
 		var object := Node3D.new()
 		object.name = "ChapterObject_%s" % id
 		props.add_child(object)
-		_highlights[id] = []
+		_highlights[id] = {}
+		_highlighted[id] = false
+		var stand: Array = data.get("stand", [])
 		for part: Array in data.parts:
 			var mesh := _add_box(object, part[1], part[2], part[3], "%s_%s" % [id, part[0]])
-			_highlights[id].append(_add_outline(mesh, part[2]))
+			if not part[0] in stand:
+				mesh.material_override = _object_material(id, part[3])
 			if part[0] == "arm":
 				_arm = mesh
 				_arm_rest = mesh.transform
@@ -910,30 +924,46 @@ func _set_lamp(lit: bool) -> void:
 	if _lamp_light == null:
 		return
 	_lamp_light.visible = lit
-	_shade.material_override = _glow_material() if lit else _material("shade")
+	_shade.material_override = _object_material("bedside_lamp", "glow" if lit else "shade")
 
 
-# A chapter object's gold outline (DESIGN.md interact-highlight; Dan,
-# 2026-11-01): a slightly larger box drawn inside out, so only its rim shows
-# around the part. A child of the part, so it moves with the record player's
-# arm. Hidden until the object can be tapped.
-func _add_outline(part: MeshInstance3D, size: Vector3) -> MeshInstance3D:
-	var box := BoxMesh.new()
-	box.size = size + Vector3.ONE * OUTLINE * 2.0
-	var outline := MeshInstance3D.new()
-	outline.name = "Outline"
-	outline.mesh = box
-	outline.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	if not _materials.has("outline"):
-		var mat := StandardMaterial3D.new()
-		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		mat.cull_mode = BaseMaterial3D.CULL_FRONT
-		mat.albedo_color = ACCENT
-		_materials["outline"] = mat
-	outline.material_override = _materials["outline"]
-	outline.visible = false
-	part.add_child(outline)
-	return outline
+# A chapter object's own copy of a colour's material (or the lamp's "glow"),
+# so its gold outline (DESIGN.md interact-highlight; Dan, 2026-11-01) goes
+# round the whole object and nothing else. The outline is the material's
+# stencil outline: drawn round everything with the same stencil, so round the
+# object's whole shape, not each block. Not round what it stands on.
+func _object_material(object_id: String, colour: String) -> StandardMaterial3D:
+	var own: Dictionary = _highlights[object_id]
+	if not own.has(colour):
+		var mat: StandardMaterial3D = (_glow_material() if colour == "glow" else _material(colour)).duplicate()
+		mat.stencil_color = ACCENT
+		mat.emission = ACCENT
+		own[colour] = mat
+		_show_highlight(object_id, mat)
+	return own[colour]
+
+
+func _set_highlight(object_id: String, on: bool) -> void:
+	if _highlighted[object_id] == on:
+		return
+	_highlighted[object_id] = on
+	for mat: StandardMaterial3D in _highlights[object_id].values():
+		_show_highlight(object_id, mat)
+
+
+# A gold outline and a little warmth, or neither.
+func _show_highlight(object_id: String, mat: StandardMaterial3D) -> void:
+	var on: bool = _highlighted[object_id]
+	mat.stencil_mode = BaseMaterial3D.STENCIL_MODE_OUTLINE if on else BaseMaterial3D.STENCIL_MODE_DISABLED
+	mat.emission_enabled = on
+	mat.emission_energy_multiplier = WARMTH
+
+
+# Keeps the outline about the same width on screen wherever the camera is.
+func _size_outline(object_id: String) -> void:
+	var away := _camera.global_position.distance_to(HouseLayout.object_own_bounds(object_id).get_center())
+	for mat: StandardMaterial3D in _highlights[object_id].values():
+		mat.stencil_outline_thickness = away * OUTLINE_PER_METRE
 
 
 func _glow_material() -> StandardMaterial3D:
@@ -1046,8 +1076,9 @@ func _place_objects() -> void:
 		var button: Button = _object_buttons[id]
 		var data: Dictionary = HouseLayout.CHAPTER_OBJECTS[id]
 		var here: bool = _close_up == id if _close_up != "" else data.room == room
-		for outline: Node3D in _highlights[id]:
-			outline.visible = here and object_works(id)
+		_set_highlight(id, here and object_works(id))
+		if _highlighted[id]:
+			_size_outline(id)
 		var rect := _object_rect(id)
 		button.visible = here and object_works(id) and not is_gliding() and rect.size != Vector2.ZERO \
 				and screen.has_point(rect.get_center())
@@ -1061,8 +1092,7 @@ func _place_objects() -> void:
 ## Whether a chapter object shows its gold outline: it works and the player
 ## is in its room (or at its close-up).
 func object_highlighted(object_id: String) -> bool:
-	var outlines: Array = _highlights[object_id]
-	return not outlines.is_empty() and outlines.all(func(outline: Node3D) -> bool: return outline.visible)
+	return _highlighted.get(object_id, false)
 
 
 # Where an object is on screen, or an empty rect if any of it is behind the
