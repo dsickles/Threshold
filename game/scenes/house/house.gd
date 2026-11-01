@@ -33,9 +33,8 @@ const GLIDE_SECONDS := 2.0
 ## width follows the screen's shape).
 const LENS_FOV := 70.0
 const RING_SIZE := 110.0
-## A chapter object's marker, and its dot, as shares of a ring.
-const MARKER_SHARE := 0.6
-const MARKER_DOT_SHARE := 0.3
+## How far a chapter object's gold outline stands out from it, in metres.
+const OUTLINE := 0.022
 ## Rings are never smaller than this on the real screen (points on a phone),
 ## comfortably over the 44px minimum, so they grow on an upright phone.
 const RING_MIN_REAL := 64.0
@@ -114,6 +113,8 @@ var _ui_layer: CanvasLayer
 # record player's arm and the bedside lamp's light and shade.
 var _object_root: Control
 var _object_buttons := {}
+# Each chapter object's gold outlines, one per part, by id.
+var _highlights := {}
 var _arm: Node3D
 var _arm_rest := Transform3D.IDENTITY
 var _needle: Tween
@@ -785,22 +786,11 @@ func _build_ui() -> void:
 	for id: String in HouseLayout.CHAPTER_OBJECTS:
 		var button := Button.new()
 		button.name = "Object_%s" % id
-		# Tap only. The tap area itself shows nothing; a small gold ring with a
-		# dot sits on the object, a third ring look, so it reads as something
-		# to tap (Dan, 2026-11-01, after playing).
+		# Tap only, and nothing to see: the object itself is what is tapped,
+		# and its gold outline shows it can be (object_highlighted()).
 		button.focus_mode = Control.FOCUS_NONE
 		for state in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
 			button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
-		var marker := Panel.new()
-		marker.name = "Marker"
-		marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		marker.add_theme_stylebox_override("panel", _ring_look(0.0, ACCENT))
-		var dot := Panel.new()
-		dot.name = "Dot"
-		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		dot.add_theme_stylebox_override("panel", _ring_look(1.0, ACCENT))
-		marker.add_child(dot)
-		button.add_child(marker)
 		button.visible = false
 		button.pressed.connect(_on_object_pressed.bind(id))
 		_object_root.add_child(button)
@@ -890,8 +880,10 @@ func _add_chapter_objects(props: Node3D, lighting: Node3D) -> void:
 		var object := Node3D.new()
 		object.name = "ChapterObject_%s" % id
 		props.add_child(object)
+		_highlights[id] = []
 		for part: Array in data.parts:
 			var mesh := _add_box(object, part[1], part[2], part[3], "%s_%s" % [id, part[0]])
+			_highlights[id].append(_add_outline(mesh, part[2]))
 			if part[0] == "arm":
 				_arm = mesh
 				_arm_rest = mesh.transform
@@ -919,6 +911,29 @@ func _set_lamp(lit: bool) -> void:
 		return
 	_lamp_light.visible = lit
 	_shade.material_override = _glow_material() if lit else _material("shade")
+
+
+# A chapter object's gold outline (DESIGN.md interact-highlight; Dan,
+# 2026-11-01): a slightly larger box drawn inside out, so only its rim shows
+# around the part. A child of the part, so it moves with the record player's
+# arm. Hidden until the object can be tapped.
+func _add_outline(part: MeshInstance3D, size: Vector3) -> MeshInstance3D:
+	var box := BoxMesh.new()
+	box.size = size + Vector3.ONE * OUTLINE * 2.0
+	var outline := MeshInstance3D.new()
+	outline.name = "Outline"
+	outline.mesh = box
+	outline.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if not _materials.has("outline"):
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.cull_mode = BaseMaterial3D.CULL_FRONT
+		mat.albedo_color = ACCENT
+		_materials["outline"] = mat
+	outline.material_override = _materials["outline"]
+	outline.visible = false
+	part.add_child(outline)
+	return outline
 
 
 func _glow_material() -> StandardMaterial3D:
@@ -1031,6 +1046,8 @@ func _place_objects() -> void:
 		var button: Button = _object_buttons[id]
 		var data: Dictionary = HouseLayout.CHAPTER_OBJECTS[id]
 		var here: bool = _close_up == id if _close_up != "" else data.room == room
+		for outline: Node3D in _highlights[id]:
+			outline.visible = here and object_works(id)
 		var rect := _object_rect(id)
 		button.visible = here and object_works(id) and not is_gliding() and rect.size != Vector2.ZERO \
 				and screen.has_point(rect.get_center())
@@ -1039,19 +1056,13 @@ func _place_objects() -> void:
 		var size := rect.size.max(Vector2.ONE * smallest)
 		button.position = rect.get_center() - size / 2.0
 		button.size = size
-		# The marker, in the middle of the object; gone in its close-up.
-		var marker: Control = object_marker(id)
-		marker.visible = _close_up != id
-		marker.size = Vector2.ONE * smallest * MARKER_SHARE
-		marker.position = (size - marker.size) / 2.0
-		var dot: Control = marker.get_node("Dot")
-		dot.size = marker.size * MARKER_DOT_SHARE
-		dot.position = (marker.size - dot.size) / 2.0
 
 
-## The gold ring that shows a chapter object can be tapped.
-func object_marker(object_id: String) -> Control:
-	return _object_buttons[object_id].get_node("Marker") as Control
+## Whether a chapter object shows its gold outline: it works and the player
+## is in its room (or at its close-up).
+func object_highlighted(object_id: String) -> bool:
+	var outlines: Array = _highlights[object_id]
+	return not outlines.is_empty() and outlines.all(func(outline: Node3D) -> bool: return outline.visible)
 
 
 # Where an object is on screen, or an empty rect if any of it is behind the

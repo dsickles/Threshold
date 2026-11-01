@@ -84,7 +84,7 @@ test("the record player's close-up, then a tap, starts the Partner, which holds 
     await goTo(game, view);
   }
   await houseUntil(game, (s) => s.objects.some((o) => o.id === "record_player"), "the record player can be tapped");
-  await game.screenshot("record-player-ring");
+  await game.screenshot("record-player-glow");
   await useObject(game, "record_player");
   await game.waitForScene(HOUSE, [PARTNER]);
   await expect.poll(async () => (await game.screen(PARTNER))?.state).toBe("WAITING");

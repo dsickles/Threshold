@@ -396,31 +396,32 @@ func test_chapter_objects_can_be_tapped_at_least_44px_and_hover_does_nothing() -
 			house.free()
 
 
-func test_a_chapter_object_that_can_be_tapped_shows_a_gold_ring_until_its_close_up() -> void:
-	for screen in SCREENS:
-		set_screen(screen)
-		for setup: Array in [[HouseTable.AFTER_OPENING, "B3", "record_player"],
-				[HouseTable.AFTER_PARTNER, "B2", "bedside_lamp"]]:
-			var house := _open_house(setup[0])
-			var id: String = setup[2]
-			var where := "%s at %s" % [id, screen]
-			_stand_at(house, setup[1])
-			await frames(2)
-			var marker: Control = house.object_marker(id)
-			if check(marker.is_visible_in_tree(), "%s: its ring shows" % where):
-				var button: Button = house.object_button(id)
-				check(marker.get_global_rect().get_center().distance_to(button.get_global_rect().get_center()) < 1.0,
-						"%s: on the object" % where)
-				check(marker.size.x > 0.0 and marker.get_node("Dot").size.x > 0.0, "%s: a ring with a dot" % where)
-				check_eq(marker.mouse_filter, Control.MOUSE_FILTER_IGNORE, "%s: taps go to the object" % where)
-			await _object_tap(house, id)
-			await _finish_glide(house)
-			check(not marker.is_visible_in_tree(), "%s: gone in its close-up" % where)
-			house.free()
+func test_a_chapter_object_glows_gold_only_while_it_can_be_tapped() -> void:
+	for setup: Array in [[HouseTable.AFTER_OPENING, "B3", "record_player"],
+			[HouseTable.AFTER_PARTNER, "B2", "bedside_lamp"]]:
+		var house := _open_house(setup[0])
+		var id: String = setup[2]
+		_stand_at(house, "L1")
+		await frames()
+		check(not house.object_highlighted(id), "%s: no glow from another room" % id)
+		_stand_at(house, setup[1])
+		await frames()
+		check(house.object_highlighted(id), "%s: gold outline in its room" % id)
+		var outline: MeshInstance3D = house.find_child("ChapterObject_%s" % id, true, false) \
+				.find_child("Outline", true, false)
+		if check(outline != null, "%s: has an outline" % id):
+			var mat := outline.material_override as StandardMaterial3D
+			check(mat.albedo_color.is_equal_approx(house.ACCENT), "%s: in the accent gold" % id)
+			check_eq(mat.cull_mode, BaseMaterial3D.CULL_FRONT, "%s: only its rim shows" % id)
+		await _object_tap(house, id)
+		await _finish_glide(house)
+		check(house.object_highlighted(id), "%s: still glowing in its close-up" % id)
+		house.free()
 	var early := _open_house(HouseTable.START)
 	_stand_at(early, "B3")
-	await frames(2)
-	check(not early.object_marker("record_player").is_visible_in_tree(), "no ring before the record player works")
+	await frames()
+	check(not early.object_highlighted("record_player"), "no glow before the record player works")
+	check(not early.object_highlighted("bedside_lamp"), "nor on the lamp")
 	early.free()
 
 

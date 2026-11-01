@@ -426,6 +426,17 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 38. A chapter object you can tap glows gold; it gets no ring (2026-11-01)
+
+| | |
+|---|---|
+| **Was** | The record player and the bedside lamp had an invisible tap area and nothing to see, so nothing showed they could be tapped. scope.md (2026-10-23) expected object close-ups to need "a third look" beside the solid and outline rings. |
+| **Became** | While a chapter object works and the player is in its room (or at its close-up), it has a gold outline (`accent`), as DESIGN.md's interact-highlight says. There is no ring or marker on it. |
+| **Why** | Dan's iPhone play of DAS-95, 2026-11-01: the record player "needs a circle of some kind to denote it's an item that's clickable". He was offered a third ring look or the glow DESIGN.md and EXPERIENCE.md describe, and picked the glow on a decision card. |
+| **Record** | [DESIGN.md](ux/DESIGN.md) interact-highlight; [scope.md](../scope.md); `game/scenes/house/house.gd` `_add_outline` |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.
