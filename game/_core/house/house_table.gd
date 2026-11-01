@@ -71,6 +71,12 @@ const CHAPTER_OBJECTS := {
 	BEDSIDE_LAMP: {"chapter": &"protector", "room": BEDROOM, "view": &"B2"},
 }
 
+## Where the bedside lamp is lit: from the opening beat, when it is the warm
+## light down the hall that leads the player to the bedroom, until turning it
+## off starts the Loss. It stays off afterwards (house-floor-plan.md, "How the
+## House opens up").
+const BEDSIDE_LAMP_LIT_AT: Array[StringName] = [AFTER_OPENING, AFTER_PARTNER]
+
 ## The House objects: where each one is. They reward looking; they are never
 ## required, scored or saved.
 const HOUSE_OBJECTS := {
@@ -248,6 +254,10 @@ static func door_state(point: StringName, door: StringName) -> StringName:
 ## It works the moment the player reaches it (Dan, 2026-10-19).
 static func chapter_object(point: StringName) -> StringName:
 	return _row(point).get("chapter_object", NO_CHAPTER_OBJECT)
+
+
+static func bedside_lamp_lit(point: StringName) -> bool:
+	return point in BEDSIDE_LAMP_LIT_AT
 
 
 ## The chapter a chapter object starts ("" for none).

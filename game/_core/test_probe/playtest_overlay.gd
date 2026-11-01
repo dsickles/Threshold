@@ -18,6 +18,7 @@ var _last_ticks := 0
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS  # Shows while the game is paused too.
 	if not OS.has_feature("web"):
 		return
 	var on: Variant = JavaScriptBridge.eval(

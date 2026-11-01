@@ -4,7 +4,8 @@ extends Node
 ## Each frame it writes the current scene, any screen opened on top of it,
 ## every visible button with its centre, the `probe_state()` of any screen
 ## that has one (for screens with no buttons, like the Partner), and the
-## finished-chapter list to window.thresholdProbe, where Playwright reads it.
+## finished-chapter list to window.thresholdProbe, where Playwright reads it,
+## and whether the "Turn your phone sideways" screen is showing.
 ## "&finish=<chapter>" or "&finish=<chapter>:<answer>" in the address records
 ## that chapter as finished when the game starts, so a test can make a save
 ## without playing. Positions are in the game's own screen units (1280 wide on
@@ -14,6 +15,9 @@ var _window: JavaScriptObject
 
 
 func _ready() -> void:
+	# Keeps reporting while the game is paused (the "Turn your phone
+	# sideways" screen).
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if not OS.has_feature("web"):
 		return
 	var search: Variant = JavaScriptBridge.eval("window.location.search", true)
@@ -24,6 +28,7 @@ func _ready() -> void:
 	# test can reach its ending without playing the whole song.
 	# "&partner_moments=12" starts it with that many streak moments shown.
 	# "&protector_from=200" starts the Protector's run that many seconds in.
+	# "&menu" opens the M0 test menu instead of the game (title.gd).
 	for part in String(search).trim_prefix("?").split("&"):
 		if part.begins_with("partner_from="):
 			get_tree().root.set_meta("partner_start_from", part.get_slice("=", 1).to_float())
@@ -31,6 +36,21 @@ func _ready() -> void:
 			get_tree().root.set_meta("partner_moments", part.get_slice("=", 1).to_int())
 		if part.begins_with("protector_from="):
 			get_tree().root.set_meta("protector_start_from", part.get_slice("=", 1).to_float())
+		# "&glide=0.2" makes the House's glides that many seconds, for tests
+		# that only pass through the House.
+		if part.begins_with("glide="):
+			get_tree().root.set_meta("house_glide_seconds", part.get_slice("=", 1).to_float())
+		# "&beat_speed=6" plays the opening beat's lines that many times faster.
+		if part.begins_with("beat_speed="):
+			get_tree().root.set_meta("opening_beat_speed", part.get_slice("=", 1).to_float())
+		# "&touch" counts the browser as a touch screen, so the "Turn your
+		# phone sideways" screen shows at a laptop size too.
+		if part == "touch":
+			get_tree().root.set_meta("assume_touch", true)
+		# "&opening=stoic" plays the opening beat with that answer (held in
+		# memory, as the real beat is), so the House starts after it.
+		if part.begins_with("opening="):
+			_game_state().finish_opening_beat(part.get_slice("=", 1))
 	print("Threshold test probe on")
 	_finish_chapter_from_address(String(search))
 
@@ -64,6 +84,7 @@ func _process(_delta: float) -> void:
 		"overlays": overlays,
 		"buttons": buttons,
 		"screens": screens,
+		"turnSideways": get_node("/root/TurnSideways").is_showing(),
 		"progress": {
 			"finished": _game_state().to_save_data().finished,
 			"saveOk": _game_state().last_save_ok,
