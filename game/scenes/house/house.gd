@@ -35,10 +35,20 @@ const LENS_FOV := 70.0
 const RING_SIZE := 110.0
 ## How far a chapter object's gold outline stands out from it, per metre
 ## from the camera, so it is about the same width on screen from the doorway
-## and in the close-up (about 8 px at 720 high).
-const OUTLINE_PER_METRE := 0.016
-## How much warmer it is while it can be tapped.
-const WARMTH := 0.18
+## and in the close-up (about 11 px at 720 high).
+const OUTLINE_PER_METRE := 0.022
+## While it can be tapped it glows warm, slowly brighter and back, so the eye
+## goes to it (Dan, 2026-11-04: the outline alone wasn't enough): from
+## WARMTH_LOW to WARMTH_HIGH and back every PULSE_SECONDS. The outline pulses
+## with it, from the accent gold up to OUTLINE_BRIGHT. The warmth stays low so
+## the object keeps its own colour inside the bright rim; any more and the two
+## run together into one gold shape (seen at 0.9).
+const WARMTH_LOW := 0.05
+const WARMTH_HIGH := 0.3
+const OUTLINE_BRIGHT := Color(1.0, 0.92, 0.72)
+const PULSE_SECONDS := 1.8
+## Frames the warm-up draws everything for (see _warm_up()).
+const WARM_UP_FRAMES := 2
 ## Rings are never smaller than this on the real screen (points on a phone),
 ## comfortably over the 44px minimum, so they grow on an upright phone.
 const RING_MIN_REAL := 64.0
@@ -123,6 +133,11 @@ var _object_buttons := {}
 var _highlights := {}
 # Whether each chapter object shows its gold outline, by id.
 var _highlighted := {}
+# Seconds into the glow's pulse.
+var _pulse := 0.0
+# One tiny copy of every material, drawn for a frame or two at the start.
+var _warm: Node3D
+var _warm_frames := 0
 var _arm: Node3D
 var _arm_rest := Transform3D.IDENTITY
 var _needle: Tween
@@ -169,6 +184,49 @@ func _ready() -> void:
 		_current = HouseLayout.ROOMS.living_room.doorway_view
 	_set_base(HouseLayout.view_transform(_current))
 	_arrive()
+	_warm_up()
+
+
+func _process(delta: float) -> void:
+	if _warm != null:
+		_warm_frames -= 1
+		if _warm_frames <= 0:
+			_warm.queue_free()
+			_warm = null
+	_pulse = fmod(_pulse + delta, PULSE_SECONDS)
+	var rise := 0.5 - 0.5 * cos(TAU * _pulse / PULSE_SECONDS)
+	var energy := lerpf(WARMTH_LOW, WARMTH_HIGH, rise)
+	var rim := ACCENT.lerp(OUTLINE_BRIGHT, rise)
+	for id: String in _highlighted:
+		if _highlighted[id]:
+			for mat: StandardMaterial3D in _highlights[id].values():
+				mat.emission_energy_multiplier = energy
+				mat.stencil_color = rim
+
+
+# The web build gets each kind of material ready the first time it is drawn,
+# and that is a stutter (Dan saw one walking into the bedroom, 2026-11-04).
+# So every material the House uses, the chapter objects' glowing ones too, is
+# drawn once on a speck just in front of the camera for the first frames,
+# then freed. The outlines and glows are always on in the materials, set to
+# nothing while off, so turning one on later doesn't make a new kind.
+func _warm_up() -> void:
+	_warm = Node3D.new()
+	_warm.name = "WarmUp"
+	_warm.position = Vector3(0.0, 0.0, -0.5)
+	_camera.add_child(_warm)
+	var all: Array = _materials.values()
+	for own: Dictionary in _highlights.values():
+		all.append_array(own.values())
+	var speck := BoxMesh.new()
+	speck.size = Vector3.ONE * 0.0005
+	for mat: Material in all:
+		var piece := MeshInstance3D.new()
+		piece.mesh = speck
+		piece.material_override = mat
+		piece.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_warm.add_child(piece)
+	_warm_frames = WARM_UP_FRAMES + 1
 
 
 # Keep the view about as wide on a tall phone as on a laptop. Set before
@@ -912,6 +970,8 @@ func _add_chapter_objects(props: Node3D, lighting: Node3D) -> void:
 			_lamp_light.omni_range = 4.5
 			_lamp_light.shadow_enabled = false
 			lighting.add_child(_lamp_light)
+	# Both of the shade's looks, so the warm-up draws both.
+	_object_material("bedside_lamp", "glow")
 	_set_lamp(HouseTable.bedside_lamp_lit(story_point))
 
 
@@ -937,7 +997,9 @@ func _object_material(object_id: String, colour: String) -> StandardMaterial3D:
 	if not own.has(colour):
 		var mat: StandardMaterial3D = (_glow_material() if colour == "glow" else _material(colour)).duplicate()
 		mat.stencil_color = ACCENT
+		mat.stencil_mode = BaseMaterial3D.STENCIL_MODE_OUTLINE
 		mat.emission = ACCENT
+		mat.emission_enabled = true
 		own[colour] = mat
 		_show_highlight(object_id, mat)
 	return own[colour]
@@ -951,12 +1013,15 @@ func _set_highlight(object_id: String, on: bool) -> void:
 		_show_highlight(object_id, mat)
 
 
-# A gold outline and a little warmth, or neither.
+# A gold outline and warmth, or neither: off is no width and no warmth, so
+# the material stays the same kind (see _warm_up()).
 func _show_highlight(object_id: String, mat: StandardMaterial3D) -> void:
 	var on: bool = _highlighted[object_id]
-	mat.stencil_mode = BaseMaterial3D.STENCIL_MODE_OUTLINE if on else BaseMaterial3D.STENCIL_MODE_DISABLED
-	mat.emission_enabled = on
-	mat.emission_energy_multiplier = WARMTH
+	mat.emission_energy_multiplier = WARMTH_LOW if on else 0.0
+	if not on:
+		mat.stencil_outline_thickness = 0.0
+	elif is_instance_valid(_camera):
+		_size_outline(object_id)
 
 
 # Keeps the outline about the same width on screen wherever the camera is.

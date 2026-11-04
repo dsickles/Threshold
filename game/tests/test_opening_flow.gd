@@ -401,6 +401,31 @@ func _outline_width(house: Node, id: String) -> float:
 	return (mesh.material_override as StandardMaterial3D).stencil_outline_thickness
 
 
+func _own_material(house: Node, id: String) -> StandardMaterial3D:
+	var mesh: MeshInstance3D = house.find_child("%s_%s" % [id, HouseLayout.CHAPTER_OBJECTS[id].parts[-1][0]], true, false)
+	return mesh.material_override as StandardMaterial3D
+
+
+# The web build readies each kind of material the first time it draws it, so
+# the House draws them all once when it opens (no stutter on entering a room).
+func test_the_house_draws_every_material_once_when_it_opens() -> void:
+	var house := _open_house(HouseTable.AFTER_PARTNER)
+	var warm := house.find_child("WarmUp", true, false)
+	if not check(warm != null, "a warm-up in front of the camera"):
+		house.free()
+		return
+	var drawn := {}
+	for piece: MeshInstance3D in warm.get_children():
+		drawn[piece.material_override] = true
+	for part: Array in HouseLayout.CHAPTER_OBJECTS["record_player"].parts:
+		var mesh: MeshInstance3D = house.find_child("record_player_%s" % part[0], true, false)
+		check(drawn.has(mesh.material_override), "the record player's %s is drawn in the warm-up" % part[0])
+	check(drawn.has(_own_material(house, "bedside_lamp")), "and the lamp's")
+	await frames(5)
+	check(house.find_child("WarmUp", true, false) == null, "then it is gone")
+	house.free()
+
+
 func test_the_record_player_stands_on_an_av_cabinet() -> void:
 	var house := _open_house(HouseTable.AFTER_OPENING)
 	check(house.find_child("record_player_cabinet", true, false) != null, "an AV cabinet under it")
@@ -416,6 +441,8 @@ func test_a_chapter_object_glows_gold_only_while_it_can_be_tapped() -> void:
 		_stand_at(house, "L1")
 		await frames()
 		check(not house.object_highlighted(id), "%s: no glow from another room" % id)
+		check_eq(_outline_width(house, id), 0.0, "%s: no outline from another room" % id)
+		check_eq(_own_material(house, id).emission_energy_multiplier, 0.0, "%s: no warmth from another room" % id)
 		_stand_at(house, setup[1])
 		await frames()
 		check(house.object_highlighted(id), "%s: gold outline in its room" % id)
@@ -427,10 +454,22 @@ func test_a_chapter_object_glows_gold_only_while_it_can_be_tapped() -> void:
 				check_eq(mat.stencil_mode, BaseMaterial3D.STENCIL_MODE_DISABLED, "%s: not round its %s" % [id, part[0]])
 				continue
 			check_eq(mat.stencil_mode, BaseMaterial3D.STENCIL_MODE_OUTLINE, "%s: outlined, %s too" % [id, part[0]])
-			check(mat.stencil_color.is_equal_approx(house.ACCENT), "%s: in the accent gold" % id)
+			check(mat.stencil_color.r >= house.ACCENT.r - 0.01 and mat.stencil_color.b >= house.ACCENT.b - 0.01, "%s: in the accent gold, or brighter" % id)
 			check(mat != house._material(part[3]), "%s: its own material, so nothing else glows" % id)
 			check(mat.emission_enabled, "%s: a little warmer" % id)
 		var far := _outline_width(house, id)
+		var warmth := {}
+		for i in 18:
+			house._process(0.1)
+			warmth[snappedf(_own_material(house, id).emission_energy_multiplier, 0.05)] = true
+		check(warmth.size() >= 4, "%s: the warmth rises and falls slowly, so the eye catches it" % id)
+		check(warmth.keys().max() <= 0.35, "%s: but stays dim enough to keep its own colour" % id)
+		var rims := {}
+		for i in 18:
+			house._process(0.1)
+			rims[snappedf(_own_material(house, id).stencil_color.b, 0.02)] = true
+		check(rims.size() >= 6, "%s: the outline brightens and dims with it" % id)
+		check(rims.keys().max() > 0.65, "%s: up to a bright gold" % id)
 		await _object_tap(house, id)
 		await _finish_glide(house)
 		check(house.object_highlighted(id), "%s: still glowing in its close-up" % id)
