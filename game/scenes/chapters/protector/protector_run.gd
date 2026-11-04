@@ -318,7 +318,12 @@ func pause() -> void:
 	if _paused or _ended:
 		return
 	_paused = true
-	_music.stream_paused = true
+	# Stopped, not paused: on the web, Godot's own pause for the browser's
+	# sound measures from when the song first started, so each pause after
+	# the first jumped it ahead by every earlier pause (Dan, 2026-11-04:
+	# the rain came in while it was still light). resume() plays it again
+	# from the run's clock.
+	_music.stop()
 	# The finger is gone by the time anyone comes back.
 	if _holding:
 		_let_go()
@@ -331,12 +336,20 @@ func is_paused() -> bool:
 
 
 func resume() -> void:
+	if not _paused:
+		return  # Playing on: the song mustn't restart.
 	_paused = false
-	_music.stream_paused = false
+	if _music_started and not _ended:
+		_music.play(music_position())
 
 
 func is_music_playing() -> bool:
-	return _music.playing and not _music.stream_paused
+	return _music.playing
+
+
+## Where the song should be (seconds into the track), from the run's clock.
+func music_position() -> float:
+	return _t - RunPlan.EUPHORIA_START
 
 
 ## How far the light has run (metres). From the timeline only.
@@ -543,6 +556,7 @@ func probe_state() -> Dictionary:
 		"fireflies": fireflies_glowing(),
 		"hints": hints_shown(),
 		"music": is_music_playing(),
+		"song_at": _music.get_playback_position() if is_music_playing() else -1.0,
 		"ended": _ended,
 	}
 
@@ -634,7 +648,7 @@ func _update_sound() -> void:
 	# drowns under the storm by 2:08; the rain never stops.
 	if not _music_started and _t >= RunPlan.EUPHORIA_START and _t < RunPlan.BLACK:
 		_music_started = true
-		_music.play(_t - RunPlan.EUPHORIA_START)
+		_music.play(music_position())
 
 
 func _update_obstacles() -> void:

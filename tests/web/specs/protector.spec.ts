@@ -119,6 +119,39 @@ test("hiding the tab pauses the run until a tap, and the sound comes back", asyn
   expect((await game.state()).progress.finished, "hiding never saves").toEqual([]);
 });
 
+test("leaving the tab again and again keeps the song where the run is", async ({ game, page }) => {
+  // DAS-129 (Dan, 2026-11-04): the second time away, the song jumped ahead
+  // by the time already spent away, so the rain played while it was still
+  // light. The browser's sound clock goes on while the tab is away; the
+  // run's doesn't, so the song must come back from where the run stopped.
+  // Phone sizes draw a few frames a second here, so the run's clock falls
+  // behind real time while it plays; the check allows for the real time
+  // since the tap, and no more.
+  test.setTimeout(240_000);
+  await openRun(game, "&protector_from=20");
+  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(21);
+  await expect.poll(() => game.audioStates()).toContain("running");
+  const now = () => page.evaluate(() => performance.now() / 1000);
+  for (let away = 1; away <= 3; away++) {
+    await hide(page, true);
+    await expect.poll(async () => (await run(game)).paused).toBe(true);
+    const stopped = (await run(game)).time;
+    await page.waitForTimeout(5000);
+    await hide(page, false);
+    const tapped = await now();
+    await game.tapMiddle();
+    await expect.poll(async () => {
+      const r = await run(game);
+      return !r.paused && r.music;
+    }).toBe(true);
+    const since = (await now()) - tapped;
+    const song = (await run(game)).song_at - (stopped - 3);
+    expect(song, `the song comes back where the run stopped, not ahead (time away ${away})`).toBeLessThan(since + 0.5);
+    expect(song, `and not behind (time away ${away})`).toBeGreaterThan(-0.5);
+    await page.waitForTimeout(1000);
+  }
+});
+
 test("after the tab comes back, the first tap restarts the sound", async ({ game, page }) => {
   // About 2 minutes at phone sizes in CI, over the default 120 s (CI on 4d0dfba).
   test.setTimeout(240_000);
