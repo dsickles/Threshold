@@ -617,6 +617,37 @@ func test_hiding_the_tab_pauses_the_run_and_saves_nothing() -> void:
 	check_near(_run.time(), 31.0, STEP, "picks up where it paused")
 
 
+# Dan, 2026-11-04 (DAS-129): leaving the tab a second time jumped the song
+# ahead, so the rain played while it was still light. Each time the run comes
+# back, the song comes back where the run is.
+func test_the_music_follows_the_run_after_leaving_the_tab_again_and_again() -> void:
+	_step_to(20.0)
+	for away in 3:
+		_run.pause()
+		check(not _run.is_music_playing(), "silent while away (%d)" % away)
+		_run.advance(5.0)  # The browser's clock goes on; the run's doesn't.
+		_run.press(Vector2(1200, 360))
+		_run.release(Vector2(1200, 360))
+		check(not _run.is_paused(), "back after a tap (%d)" % away)
+		check(_run.is_music_playing(), "the song is back (%d)" % away)
+		check_near(_run._music.get_playback_position(), _run.time() - RunPlan.EUPHORIA_START, 0.05,
+				"the song is where the run is, not ahead (%d)" % away)
+		_step_to(_run.time() + 10.0)
+	check(not _run.is_raining(), "still before the rain")
+
+
+func test_leaving_the_tab_in_the_dark_does_not_start_the_song_early() -> void:
+	_step_to(1.0)
+	_run.pause()
+	_run.press(Vector2(1200, 360))
+	_run.release(Vector2(1200, 360))
+	check(not _run.is_paused(), "back after a tap")
+	check(not _run.is_music_playing(), "still silent before 0:03")
+	_step_to(3.1)
+	check(_run.is_music_playing(), "the song still starts at 0:03")
+	check(_run._music.get_playback_position() < 0.15, "from its start")
+
+
 func test_leaving_mid_run_saves_nothing_and_next_time_starts_from_the_lamp() -> void:
 	_chapter.free()
 	var state := get_node("/root/GameState")
