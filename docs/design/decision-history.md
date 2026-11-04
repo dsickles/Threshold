@@ -426,6 +426,28 @@ The documents were written in one day, in this order: brainstorming session → 
 
 ---
 
+## 37. The House's look is realistic; M1.5 starts before M1 ends (2026-10-29)
+
+| | |
+|---|---|
+| **Was** | The House's look, realistic or soft low-poly, was an open question for M3+, with realistic recommended; M1.5 started only once M1 was done. |
+| **Became** | Realistic (Poly Haven and ambientCG, CC0), tried on the living room on Dan's phone first. The Loss and House art passes start now, alongside the last M1 tickets. |
+| **Why** | Dan asked to swap the whole House and the whole Loss to asset packs now, "as nice as possible while maintaining performance targets", and picked realistic on a decision card. |
+| **Record** | [scope.md](../scope.md); [roadmap.md](../roadmap.md); [asset-sources.md](asset-sources.md); DAS-106, DAS-107 |
+
+---
+
+## 38. The Loss's ending: 5 s shorter, the light short of the tree, a better hand (2026-10-30)
+
+| | |
+|---|---|
+| **Was** | After the last obstacle (2:05) the light ran straight from 2:08 to 2:20, slowed and stopped right against the fallen tree at 2:22, went out in the hand 2:25–2:35, and black came at 2:45. The hand was plain rounded shapes. |
+| **Became** | The straight run is 2:08–2:15; it stops about a metre short of the trunk at 2:17, goes out in the hand 2:20–2:30, and black comes at 2:40. The last fireflies keep their order, closer together; the music is the same until 2:08 and 5 s shorter after. The hand has jointed fingers, a thumb and nails. |
+| **Why** | Dan played the asset-pack forest on his phone and asked to cut the 5 s where the light just runs straight, to have the light not get quite as close to the tree, and for a better hand. |
+| **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 22; [scope.md](../scope.md); [continuity-ledger.md](continuity-ledger.md); DAS-106 |
+
+---
+
 ## What did not change
 
 - Godot 4.x and GDScript.

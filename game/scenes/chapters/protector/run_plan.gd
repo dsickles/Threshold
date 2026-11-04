@@ -12,16 +12,17 @@ extends RefCounted
 enum Part { DARK, EUPHORIA, CONFUSION, PANIC, FADE }
 enum Kind { STONE, BRANCH, GAP }
 
-# Shortened to about 2:45 after Dan's fourth play (call 20).
+# Shortened to about 2:45 after Dan's fourth play (call 20), and to 2:40 by
+# cutting 5 s of the straight run after the last stone (Dan, 2026-10-30).
 const EUPHORIA_START := 3.0
 const CONFUSION_START := 63.0
 const PANIC_START := 103.0
 const FADE_START := 128.0  # 2:08: the obstacles stop; the song is gone under the rain.
-const SLOW_START := 140.0  # 2:20: the light slows as it comes to the fallen tree.
-const STOPPED := 142.0  # 2:22: it has stopped against the tree; the hand comes under it.
-const HELD := 145.0  # 2:25: it is in his hand, and goes out.
-const OUT := 155.0  # 2:35: it is out; the empty hand.
-const BLACK := 165.0  # 2:45: black. The car begins (DAS-98).
+const SLOW_START := 135.0  # 2:15: the light slows as it comes to the fallen tree.
+const STOPPED := 137.0  # 2:17: it has stopped short of the tree; the hand comes under it.
+const HELD := 140.0  # 2:20: it is in his hand, and goes out.
+const OUT := 150.0  # 2:30: it is out; the empty hand.
+const BLACK := 160.0  # 2:40: black. The car begins (DAS-98).
 const RAIN_START := 83.0  # 1:23: the first rain. It never stops (call 15).
 const HEAVY_RAIN := 103.0
 
@@ -77,10 +78,10 @@ const HINT_AFTER := 0.3  # And until this long after it has passed the light.
 # is still glowing beside the hand as the light goes out. The ones beyond
 # the fallen tree are high enough to be seen over it.
 const LAST_FIREFLIES := [
-	[-95.0, -3.2, 0.9, 130.25], [-45.0, 4.0, 1.6, 133.4], [-63.0, -4.5, 2.2, 134.5],
-	[10.0, 3.0, 2.4, 138.6], [-9.0, -2.8, 1.2, 140.6], [23.0, -5.5, 2.6, 143.75],
-	[15.0, 5.0, 2.4, 144.3], [-4.0, 2.8, 0.6, 148.7], [29.0, 1.5, 3.0, 151.85],
-	[-105.0, 3.5, 1.1, -1.0], [-2.0, -2.6, 0.9, -1.0], [18.0, 3.6, 2.2, -1.0], [35.0, -3.8, 2.6, -1.0],
+	[-59.2, -3.2, 0.9, 129.31], [-30.0, 4.0, 1.6, 131.15], [-40.5, -4.5, 2.2, 131.79],
+	[10.0, 3.0, 2.4, 134.18], [-9.0, -2.8, 1.2, 135.6], [23.0, -5.5, 2.6, 138.75],
+	[15.0, 5.0, 2.4, 139.3], [-4.0, 2.8, 0.6, 143.7], [29.0, 1.5, 3.0, 146.85],
+	[-65.0, 3.5, 1.1, -1.0], [-2.0, -2.6, 0.9, -1.0], [18.0, 3.6, 2.2, -1.0], [35.0, -3.8, 2.6, -1.0],
 ]
 const FIREFLY_OUT_TIME := 0.8  # Seconds a firefly takes to go out.
 const KINDS := {"S": Kind.STONE, "B": Kind.BRANCH, "G": Kind.GAP}
@@ -153,7 +154,7 @@ static func distance(t: float) -> float:
 
 
 ## The light's brightness from the timeline alone, 0 to 1: it fades up out of
-## the black, is full all run, and goes out in the hand from 2:25 to 2:35.
+## the black, is full all run, and goes out in the hand from 2:20 to 2:30.
 static func base_brightness(t: float) -> float:
 	if t < EUPHORIA_START:
 		return 0.0

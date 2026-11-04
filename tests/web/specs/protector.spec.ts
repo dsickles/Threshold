@@ -7,7 +7,7 @@
 // back with the chapter finished.
 // Headless Chromium has no speaker and draws phone sizes slowly, so the
 // run's feel and sound are Dan's to check on his phone; the whole run
-// (2:45) is played by the Godot tests instead (game/tests/test_protector.gd).
+// (2:40) is played by the Godot tests instead (game/tests/test_protector.gd).
 import { test, expect, MENU, PROTECTOR } from "./game";
 
 const openRun = async (game: any, query = "") => {
@@ -18,6 +18,10 @@ const openRun = async (game: any, query = "") => {
 };
 
 const run = (game: any) => game.screen(PROTECTOR);
+
+// Phone sizes draw a few frames a second here, and Godot counts at most
+// 8/60 s a frame, so a few seconds of run can take a minute or more.
+const SLOW = { timeout: 150_000 };
 
 // The tab going away and coming back, as the browser says it.
 const hide = (page: any, hidden: boolean) =>
@@ -42,6 +46,9 @@ test("opens with no words or buttons, and the light runs into the evening", asyn
   await expect.poll(async () => (await run(game)).music).toBe(true);
   await expect.poll(() => game.audioStates()).toContain("running");
   await game.screenshot("protector-euphoria");
+  // The forest floor beside the path, close up: leaves and needles, not a
+  // flat brown (Hopper, DAS-106 round 2).
+  await game.screenshot("protector-forest-floor", { x: 0.7, y: 0.58, width: 0.3, height: 0.42 });
 });
 
 test("a tap on the left or right moves the light one lane that way", async ({ game }) => {
@@ -71,9 +78,12 @@ test("a tap on the left or right moves the light one lane that way", async ({ ga
 });
 
 test("a hold through a gap lays the hand across it and the light crosses", async ({ game, page }) => {
+  // Over 2 minutes at the sideways phone size in CI with the asset-pack
+  // forest (DAS-106).
+  test.setTimeout(240_000);
   // The first gap touches the light at 0:32.3 and is in reach from 0:31.
   await openRun(game, "&protector_from=30.2");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(30.2);
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(30.2);
   expect((await run(game)).hints, "the hold hint, before the first gap").toEqual(["hold"]);
   // A finger goes down in the middle of the screen before the gap is in
   // reach and stays down; the hand goes across when the gap comes into reach.
@@ -98,7 +108,7 @@ test("hiding the tab pauses the run until a tap, and the sound comes back", asyn
   // About 2 minutes at phone sizes in CI, over the default 120 s (CI on 4d0dfba).
   test.setTimeout(240_000);
   await openRun(game, "&protector_from=20");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(21);
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(21);
   const setHidden = (hidden: boolean) => hide(page, hidden);
   await expect.poll(() => game.audioStates()).toContain("running");
   await setHidden(true);
@@ -125,7 +135,7 @@ test("after the tab comes back, the first tap restarts the sound", async ({ game
   // Safari can say the page's sound is running while it is silent after a
   // tab switch (Dan, 2026-10-27, call 20), so the first tap back restarts it.
   await openRun(game, "&protector_from=20");
-  await expect.poll(async () => (await run(game))?.time ?? 0).toBeGreaterThan(21);
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(21);
   await expect.poll(() => game.audioStates()).toContain("running");
   await hide(page, true);
   await expect.poll(async () => (await run(game)).paused).toBe(true);
@@ -137,10 +147,6 @@ test("after the tab comes back, the first tap restarts the sound", async ({ game
   await game.tapMiddle();
   expect(await page.evaluate(() => (window as any).thresholdSoundBack.restarts), "only the first tap back").toBe(1);
 });
-
-// Phone sizes draw a few frames a second here, and Godot counts at most
-// 8/60 s a frame, so a few seconds of run can take a minute or more.
-const SLOW = { timeout: 150_000 };
 
 test("the panic: dark and raining", async ({ game }) => {
   test.setTimeout(240_000);
@@ -161,12 +167,13 @@ test("after the song: the storm plays on and it is still raining", async ({ game
 });
 
 test("the light goes out, then black, then the chapter is finished and saved", async ({ game }) => {
-  test.setTimeout(300_000);
+  // Over 5 minutes at phone size in CI with the asset-pack forest (DAS-106).
+  test.setTimeout(420_000);
   // After the Partner, so the Protector is the next chapter and can be saved.
-  // From 2:33, near the end of the light going out in the hand at the fallen
-  // tree (2:25 to 2:35), so the slow phone sizes reach the black in time.
-  await openRun(game, "&finish=partner&protector_from=153");
-  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(153.2);
+  // From 2:29.5, just before the light goes out in the hand at the fallen
+  // tree (2:20 to 2:30), so the slow phone sizes reach the black in time.
+  await openRun(game, "&finish=partner&protector_from=149.5");
+  await expect.poll(async () => (await run(game))?.time ?? 0, SLOW).toBeGreaterThan(149.6);
   expect((await run(game)).held, "the light is in the father's hand").toBe(true);
   expect((await run(game)).hints, "no words at the end").toEqual([]);
   await game.screenshot("protector-going-out");
