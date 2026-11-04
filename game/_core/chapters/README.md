@@ -10,6 +10,7 @@ Until the House exists, the M0 menu stands in for it.
 | `chapter_list.gd` (`ChapterList`) | The eight chapter ids in story order, and the scene each one starts from |
 | `chapter_result.gd` (`ChapterResult`) | The result shape, and the check for a real story result |
 | `chapter_runner.gd` (`ChapterRunner`) | Starts a chapter, hides and pauses the House, brings it back |
+| `chapter_pause.gd` (`ChapterPause`) | The pause button over every chapter and the Resume panel it opens (DAS-130) |
 
 ## Starting a chapter (the House side)
 
@@ -67,6 +68,9 @@ A chapter is a scene. Its root node:
 3. Never touches the House, another chapter, or saved state. The runner and
    the core table do that.
 4. Handles its own pause when the tab is hidden.
+5. Optionally, for the pause button (see "Pausing" below): `pause_chapter()`
+   and `resume_chapter()` for anything Godot can't stop on its own, and
+   `shows_pause_button()` returning false to go without the button.
 
 Then add its scene to `ChapterList.SCENES`. The Partner (DAS-73) is the first
 real chapter on the runner: the menu's "The Partner (rough)" button calls
@@ -76,6 +80,33 @@ The Protector (DAS-97) is the second: the menu's "The Protector (rough)"
 button calls `enter(&"protector", self)` until the bedside lamp in the House
 can start it.
 
+## Pausing
+
+Every chapter gets a pause button in the top-right corner (the playtest
+overlay has the top-left), 44 points on a sideways phone. The runner owns it;
+a chapter never makes its own (DAS-130).
+
+- Tapping it calls `runner.pause()`: the chapter's `pause_chapter()` runs if
+  it has one, then the chapter's `process_mode` is set to disabled, which
+  stops its `_process`, `_input` and Godot's own sound. A dim scrim and one
+  panel ("Paused", Resume) cover the chapter; taps off the panel do nothing.
+- Resume (a tap, or Enter, since it has the focus) calls `runner.resume()`:
+  the chapter's own process mode comes back, then its `resume_chapter()` runs.
+- Pausing never saves, and the panel has no way to skip, leave or retry.
+  Settings and Back to title join it in M2.
+- `pause_chapter()` is for what Godot doesn't stop: the Partner holds its
+  song, which the browser plays (`Conductor.hold()` / `release()`); the
+  Protector's run stops its clock and music. On the web, a Godot sound left
+  on the default (sample) playback type keeps playing when its node is
+  disabled, so a chapter with music stops it here.
+- The pause layer is an internal child of the runner, after the chapter, so
+  it hears the pause button's tap before the chapter's `_input` does, and
+  `runner.get_children()` still lists only the chapter.
+- `shows_pause_button()` returning false hides the button. The Loss does,
+  because its design has no pause button on screen
+  (`docs/design/the-loss-run-and-car.md`); it still pauses when the tab is
+  hidden.
+
 The stand-in chapter (`game/scenes/chapters/stand_in/`) is the smallest
-example. Tests: `game/tests/test_chapter_runner.gd` and
-`tests/web/specs/chapters.spec.ts`.
+example. Tests: `game/tests/test_chapter_runner.gd`, `game/tests/test_chapter_pause.gd`,
+`tests/web/specs/chapters.spec.ts` and `tests/web/specs/pause.spec.ts`.

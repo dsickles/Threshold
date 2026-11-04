@@ -32,6 +32,7 @@ About 15 minutes, rough, played in one sitting.
 - The House in grief (gray).
 - A tiny version of the finished-chapter list and core table driving the House mood.
 - Pause when the browser tab is hidden (no save).
+- A pause button in every chapter that opens a panel with Resume (no save). _(added 2026-11-04, Dan: "there needs to be a way to pause the chapter while playing". The rest of the pause screen, Settings and Back to title, stays in M2.)_
 
 **Not in M1:** title and settings screens, quality setting, Continue, journal, chapter looks beyond one gray filter, final art (the first art pass is M1.5). _(updated 2026-10-19: was "save/Continue". The save system itself is built in M1; see scope.md.)_
 
@@ -67,7 +68,7 @@ Every chapter as a short rough version (2–4 minutes), in story order, playable
 
 - All eight chapters, using the real approach for each mechanic, with placeholder art.
 - The House changes after each chapter; journal entries (wording follows the Stoic/Vulnerable answer).
-- Saves between chapters, Continue, a basic title and pause screen.
+- Saves between chapters, Continue, a basic title and pause screen (the pause screen adds Settings and Back to title to M1's pause panel).
 - A cheap Anchor test: decide scripted wobble vs. real physics.
 - Rough whole-game pacing check against the 2–3 hour target.
 

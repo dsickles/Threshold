@@ -424,6 +424,15 @@ The documents were written in one day, in this order: brainstorming session → 
 | **Why** | Dan's fourth play, 2026-10-27: the start and the song felt long coming straight from the Partner's same song; he wanted about 2:45 in all; the far side of a branch didn't read as clear; both actions needed a word on screen the first time; in the dark the obstacles got too rapid and a miss could look like the reason for the loss; and he asked for "some sort of 'final unclearable obstacle' that the light runs into and can't get past, and then the hand comes in". Dan picked the fallen tree on a decision card (2026-10-27), over a gap too wide for the hand, or the path just ending. |
 | **Record** | [the-loss-run-and-car.md](the-loss-run-and-car.md) call 20 (and 3, 4); [scope.md](../scope.md); [continuity-ledger.md](continuity-ledger.md) |
 
+## 37. A pause button in every chapter, from M1 (2026-11-04)
+
+| | |
+|---|---|
+| **Was** | In M1 a chapter paused only when the browser tab was hidden; the pause screen (Resume, Settings, Back to title) came with the title screen in M2. |
+| **Became** | From M1, every chapter has a pause button in the top-right corner that opens a panel with Resume (DAS-130). Settings and Back to title join that panel in M2. Pausing never saves and offers no skip, leave or retry. The Loss shows no button until Dan decides (its design says no pause button on screen). |
+| **Why** | Dan, 2026-11-04: "there needs to be a way to pause the chapter while playing". |
+| **Record** | [roadmap.md](../roadmap.md) M1; [scope.md](../scope.md); `game/_core/chapters/README.md` |
+
 ---
 
 ## What did not change

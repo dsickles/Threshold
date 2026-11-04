@@ -9,6 +9,11 @@ extends Node
 ## It is not an autoload, so it adds nothing to project.godot.
 ## While a chapter plays, the House is hidden and paused, not unloaded, so it
 ## comes back exactly as the player left it.
+##
+## Every chapter gets a pause button (ChapterPause, DAS-130). Pausing stops
+## the chapter's processing, input and Godot sound, and calls the chapter's
+## own pause_chapter() for anything else; Resume undoes both. Pausing never
+## saves.
 
 ## The chapter finished. `result` is a ChapterResult dictionary. Sent after
 ## the House is back, so this is the moment to record the result and save.
@@ -24,6 +29,9 @@ var _id: StringName
 var _house: Node
 var _house_visible := true
 var _house_process_mode := PROCESS_MODE_INHERIT
+var _pause: ChapterPause
+var _paused := false
+var _chapter_process_mode := PROCESS_MODE_INHERIT
 
 
 static var _instance: ChapterRunner
@@ -55,6 +63,42 @@ func is_running() -> bool:
 ## The id of the chapter playing now, or &"" if none.
 func current_chapter() -> StringName:
 	return _id if is_running() else &""
+
+
+## True while the player has the chapter paused (the pause panel is up).
+func is_paused() -> bool:
+	return _paused
+
+
+## The pause button and panel over the chapter playing now, or null.
+func pause_layer() -> ChapterPause:
+	return _pause if is_running() else null
+
+
+## Pauses the chapter playing now, as the pause button does: the chapter
+## stops (its _process, _input and Godot sound) and its pause_chapter(), if
+## it has one, stops anything else, such as sound the browser plays. The
+## pause panel shows until resume(). Nothing is saved.
+func pause() -> void:
+	if not is_running() or _paused:
+		return
+	_paused = true
+	if _chapter.has_method("pause_chapter"):
+		_chapter.pause_chapter()
+	_chapter_process_mode = _chapter.process_mode
+	_chapter.process_mode = PROCESS_MODE_DISABLED
+	_pause.open()
+
+
+## Carries the chapter on from where pause() stopped it.
+func resume() -> void:
+	if not is_running() or not _paused:
+		return
+	_paused = false
+	_pause.close()
+	_chapter.process_mode = _chapter_process_mode
+	if _chapter.has_method("resume_chapter"):
+		_chapter.resume_chapter()
 
 
 ## Starts chapter `id` from `house` (the node to hide and pause until the
@@ -91,6 +135,15 @@ func enter_scene(id: StringName, scene: PackedScene, house: Node) -> bool:
 	_chapter.finished.connect(_on_finished)
 	_chapter.tree_exited.connect(_on_chapter_exited)
 	add_child(_chapter)
+	# An internal child at the back: after the chapter, so _input (last
+	# first) gives it the pause button's tap before the chapter, and out of
+	# get_children(), which lists only chapters.
+	_pause = ChapterPause.new()
+	_pause.pause_tapped.connect(pause)
+	_pause.resume_tapped.connect(resume)
+	add_child(_pause, false, INTERNAL_MODE_BACK)
+	if _chapter.has_method("shows_pause_button"):
+		_pause.show_button(_chapter.shows_pause_button())
 	return true
 
 
@@ -140,6 +193,10 @@ func _close() -> void:
 	_chapter.tree_exited.disconnect(_on_chapter_exited)
 	_chapter = null
 	_id = &""
+	_paused = false
+	if is_instance_valid(_pause):
+		_pause.queue_free()
+	_pause = null
 	_show_house()
 	_house = null
 
