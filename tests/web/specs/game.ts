@@ -21,6 +21,7 @@ export const UI_STYLE = "res://scenes/m0_checks/ui_style_check.tscn";
 export const RHYTHM = "res://scenes/ui/m0_rhythm_check.tscn";
 export const PARTNER = "res://scenes/chapters/partner/partner.tscn";
 export const PROTECTOR = "res://scenes/chapters/protector/protector.tscn";
+export const NOVICE = "res://scenes/chapters/novice/novice.tscn";
 export const HOUSE = "res://scenes/house/house.tscn";
 
 // Every console error or uncaught page error fails the test that caused it.
