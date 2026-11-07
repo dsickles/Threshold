@@ -24,6 +24,7 @@ func _ready() -> void:
 	# test can reach its ending without playing the whole song.
 	# "&partner_moments=12" starts it with that many streak moments shown.
 	# "&protector_from=200" starts the Protector's run that many seconds in.
+	# "&arrival_beat=hand" (or "cry") starts the Arrival at that beat.
 	for part in String(search).trim_prefix("?").split("&"):
 		if part.begins_with("partner_from="):
 			get_tree().root.set_meta("partner_start_from", part.get_slice("=", 1).to_float())
@@ -31,6 +32,8 @@ func _ready() -> void:
 			get_tree().root.set_meta("partner_moments", part.get_slice("=", 1).to_int())
 		if part.begins_with("protector_from="):
 			get_tree().root.set_meta("protector_start_from", part.get_slice("=", 1).to_float())
+		if part.begins_with("arrival_beat="):
+			get_tree().root.set_meta("arrival_start_beat", part.get_slice("=", 1))
 	print("Threshold test probe on")
 	_finish_chapter_from_address(String(search))
 

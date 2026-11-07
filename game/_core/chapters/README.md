@@ -76,6 +76,11 @@ The Protector (DAS-97) is the second: the menu's "The Protector (rough)"
 button calls `enter(&"protector", self)` until the bedside lamp in the House
 can start it.
 
+The Arrival (DAS-137), the last chapter, is opened by the menu's "The
+Arrival (rough)" button until the hospital bag and keys in the House can
+start it. It reuses the Tuner's knobs and the Partner's rhythm as copies in
+its own folder, not by reaching into those chapters.
+
 The stand-in chapter (`game/scenes/chapters/stand_in/`) is the smallest
 example. Tests: `game/tests/test_chapter_runner.gd` and
 `tests/web/specs/chapters.spec.ts`.
