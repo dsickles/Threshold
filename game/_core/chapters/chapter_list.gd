@@ -18,6 +18,7 @@ const STAND_IN := &"stand_in"
 const SCENES := {
 	&"partner": "res://scenes/chapters/partner/partner.tscn",
 	&"protector": "res://scenes/chapters/protector/protector.tscn",
+	&"mourner": "res://scenes/chapters/mourner/mourner.tscn",
 	STAND_IN: "res://scenes/chapters/stand_in/stand_in_chapter.tscn",
 }
 
