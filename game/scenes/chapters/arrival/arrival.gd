@@ -656,23 +656,28 @@ func _draw_hand_beat() -> void:
 	# A soft light round where the hands meet, brighter on each hit.
 	for k in range(6, 0, -1):
 		draw_circle(c, u * (0.06 + k * 0.05), Color(LIGHT, 0.03 + 0.02 * grip + 0.03 * _flash))
-	# The father's hand, from the bottom right, finger pointing to the centre.
-	var palm := c + Vector2(u * 0.32, u * 0.42)
-	_capsule(palm + Vector2(u * 0.1, u * 0.3), palm, u * 0.13, SKIN.darkened(0.08))
-	_capsule(palm, c + Vector2(u * 0.02, u * 0.02), u * 0.04, SKIN)
+	# The father's hand, from the bottom right: wrist, palm, three fingers
+	# curled under, the index finger out to where the hands meet.
+	var palm := c + Vector2(u * 0.2, u * 0.2)
+	_capsule(palm + Vector2(u * 0.25, u * 0.35), palm, u * 0.09, SKIN.darkened(0.08))
+	draw_circle(palm, u * 0.11, SKIN)
 	for k in 3:
-		var knuckle := palm + Vector2(-u * 0.02 + k * u * 0.05, -u * 0.08 + k * u * 0.03)
-		_capsule(knuckle, knuckle + Vector2(-u * 0.06, -u * 0.02), u * 0.035, SKIN.darkened(0.04))
-	# The baby's hand, from the top left; its fingers curl round the finger.
-	var baby := c + Vector2(-u * 0.2, -u * 0.2)
-	_capsule(baby + Vector2(-u * 0.12, -u * 0.12), baby, u * 0.06, BABY_SKIN.darkened(0.05))
+		var knuckle := palm + Vector2(-u * 0.1 + k * u * 0.045, -u * 0.02 + k * u * 0.05)
+		_capsule(knuckle, knuckle + Vector2(-u * 0.015, u * 0.04), u * 0.028, SKIN.darkened(0.06))
+	_capsule(palm + Vector2(u * 0.05, -u * 0.09), palm + Vector2(-u * 0.02, -u * 0.13), u * 0.03, SKIN.darkened(0.03))  # thumb
+	_capsule(palm + Vector2(-u * 0.07, -u * 0.07), c + Vector2(u * 0.01, u * 0.01), u * 0.03, SKIN)
+	# The baby's hand, from the top left; its fingers curl round the
+	# father's fingertip as the beat goes on.
+	var baby := c + Vector2(-u * 0.11, -u * 0.09)
+	_capsule(baby + Vector2(-u * 0.2, -u * 0.22), baby, u * 0.045, BABY_SKIN.darkened(0.05))
+	draw_circle(baby, u * 0.055, BABY_SKIN)
 	for k in 4:
-		var spread := deg_to_rad(-30.0 + k * 20.0)
-		var reach := u * (0.13 - 0.05 * grip)
-		var base := baby + Vector2(u * 0.05, u * 0.01 * k)
-		var dir := Vector2.from_angle(deg_to_rad(25.0) + spread * (1.0 - grip))
-		var tip := base + dir * reach + Vector2(u * 0.12, u * 0.14) * grip
-		_capsule(base, tip, u * 0.018, BABY_SKIN)
+		var base := baby + Vector2.from_angle(deg_to_rad(-20.0 + k * 28.0)) * u * 0.045
+		var open_tip := base + Vector2.from_angle(deg_to_rad(-35.0 + k * 22.0)) * u * 0.06
+		var closed_tip := c + Vector2(u * (0.0 + 0.012 * k), u * (0.035 - 0.012 * k))
+		_capsule(base, open_tip.lerp(closed_tip, grip), u * 0.014, BABY_SKIN.lightened(0.04))
+	_capsule(baby + Vector2(-u * 0.01, u * 0.05), (baby + Vector2(u * 0.02, u * 0.1)).lerp(c + Vector2(-u * 0.02, u * 0.03), grip),
+			u * 0.015, BABY_SKIN)  # thumb
 	if _flash > 0.0:
 		draw_arc(c, u * (0.05 + 0.08 * (1.0 - _flash)), 0.0, TAU, 48, Color(LIGHT, _flash * 0.7), 3.0, true)
 	_draw_lights(c, u, t)
