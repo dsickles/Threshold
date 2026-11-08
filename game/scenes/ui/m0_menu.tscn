@@ -121,6 +121,13 @@ size_flags_horizontal = 3
 theme_type_variation = &"ButtonQuiet"
 text = "The Protector (rough)"
 
+[node name="ProviderButton" type="Button" parent="Menu/Chapters"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonQuiet"
+text = "The Provider (rough)"
+
 [node name="StandInButton" type="Button" parent="Menu/Chapters"]
 unique_name_in_owner = true
 layout_mode = 2

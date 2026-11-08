@@ -76,6 +76,10 @@ The Protector (DAS-97) is the second: the menu's "The Protector (rough)"
 button calls `enter(&"protector", self)` until the bedside lamp in the House
 can start it.
 
+The Provider (DAS-134) is the third: the menu's "The Provider (rough)"
+button calls `enter(&"provider", self)` until the bills on the office desk in
+the House can start it.
+
 The stand-in chapter (`game/scenes/chapters/stand_in/`) is the smallest
 example. Tests: `game/tests/test_chapter_runner.gd` and
 `tests/web/specs/chapters.spec.ts`.
