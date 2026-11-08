@@ -476,7 +476,8 @@ func _build_paper() -> void:
 
 
 # The large-type page: it replaces the paper, and leaves the Due Date, the
-# Bank Account and the stamps where they are.
+# Bank Account, the act's name and the stamps where they are. It starts
+# below the act's name, so the name never covers its first line.
 func _build_reader() -> void:
 	_reader = PanelContainer.new()
 	_reader.name = "Reader"
@@ -484,7 +485,7 @@ func _build_reader() -> void:
 	style.bg_color = PAPER
 	style.set_content_margin_all(24)
 	_reader.add_theme_stylebox_override("panel", style)
-	_place(_reader, 0.5, 0.0, -300, 16, 260, 0)
+	_place(_reader, 0.5, 0.0, -300, 80, 260, 0)
 	_reader.anchor_bottom = 1.0
 	_reader.offset_bottom = -16
 	_reader.visible = false

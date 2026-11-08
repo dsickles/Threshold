@@ -109,6 +109,22 @@ func test_a_page_that_cant_reflow_stays_on_the_desk_and_says_so() -> void:
 	check(not notice.visible, "and goes again")
 
 
+func test_nothing_covers_the_large_type_page() -> void:
+	for screen in [Vector2i(1280, 720), Vector2i(874, 402), Vector2i(390, 844)]:
+		set_screen(screen)
+		_desk.open_reader()
+		await frames(2)
+		var page: Rect2 = _desk.find_child("ReaderText", true, false).get_global_rect()
+		check(page.has_area(), "the large-type text is laid out on %s" % screen)
+		for name in ["ActTitle", "Hud", "Stamps", "CantEnlarge"]:
+			var other: Control = _desk.get_node(name)
+			if other.is_visible_in_tree():
+				check(not other.get_global_rect().intersects(page),
+						"%s doesn't cover the large-type text on %s" % [name, screen])
+		_desk.close_reader()
+	set_screen(Vector2i(1280, 720))
+
+
 func test_the_stamps_stay_on_the_desk_and_work_while_reading() -> void:
 	await frames()
 	tap(_desk.get_node("Paper"))
@@ -400,7 +416,11 @@ func test_the_look_is_black_and_white() -> void:
 	check_eq(_desk.get_node("Desk").color, Color.BLACK, "a black desk")
 	var paper: StyleBoxFlat = _desk.get_node("Paper").get_theme_stylebox("normal")
 	check_eq(paper.bg_color, Color.WHITE, "white paper")
-	check(get_viewport().world_2d != null, "plain 2D, no compositor effects")
+	# Plain 2D Controls: no 3D world, environment or compositor anywhere in it.
+	var found := _desk.find_children("*", "Node3D", true, false) \
+			+ _desk.find_children("*", "WorldEnvironment", true, false) \
+			+ _desk.find_children("*", "Camera3D", true, false)
+	check_eq(found.size(), 0, "no 3D, environment or compositor nodes")
 
 
 # --- Opening it.
