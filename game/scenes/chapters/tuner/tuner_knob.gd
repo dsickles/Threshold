@@ -23,6 +23,7 @@ var hinting := true
 
 var _dragging := false
 var _last_angle := 0.0
+var _last_point := Vector2.ZERO
 var _hint_time := 0.0
 
 
@@ -52,14 +53,20 @@ func _gui_input(event: InputEvent) -> void:
 		_dragging = event.pressed
 		if _dragging:
 			_last_angle = _angle_at(event.position)
+			_last_point = event.position
 	elif event is InputEventMouseMotion and _dragging:
 		accept_event()
-		var from_middle: Vector2 = event.position - size / 2.0
-		if from_middle.length() < radius() * DEAD_MIDDLE:
-			return
-		var angle := _angle_at(event.position)
+		var point: Vector2 = event.position
+		var crossed_middle := _passes_middle(_last_point, point)
+		var angle := _angle_at(point)
 		var moved := wrapf(angle - _last_angle, -PI, PI)
 		_last_angle = angle
+		_last_point = point
+		# Through the middle the angle flips: count only the turning done
+		# outside it, so a drag across the knob never jumps it (Hopper,
+		# DAS-135 round 1).
+		if crossed_middle:
+			return
 		if is_zero_approx(moved):
 			return
 		hinting = false
@@ -67,6 +74,13 @@ func _gui_input(event: InputEvent) -> void:
 		set_value(value + moved / SWEEP)
 		if value != before:
 			turned.emit(value)
+
+
+# True if the straight move from `a` to `b` touches the knob's middle.
+func _passes_middle(a: Vector2, b: Vector2) -> bool:
+	var middle := size / 2.0
+	var closest := Geometry2D.get_closest_point_to_segment(middle, a, b)
+	return closest.distance_to(middle) < radius() * DEAD_MIDDLE
 
 
 func _angle_at(point: Vector2) -> float:

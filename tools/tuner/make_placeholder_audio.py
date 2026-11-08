@@ -78,7 +78,9 @@ def hum():
     t = np.arange(n) / SR
     buzz = sum(np.sin(2 * np.pi * 120 * k * t + k) / k ** 1.2 for k in range(1, 7))
     buzz += 0.15 * np.sign(np.sin(2 * np.pi * 120 * t))  # the motor's rasp
-    throb = 0.62 + 0.38 * np.sin(2 * np.pi * 1.2 * t) ** 2  # 6 swells in 5 s
+    # sin² peaks twice a cycle, so 0.6 Hz gives 1.2 swells a second: 72 a
+    # minute, 6 in the 5 s loop (Hopper, DAS-135 round 1: it was 144).
+    throb = 0.62 + 0.38 * np.sin(2 * np.pi * 0.6 * t) ** 2
     out = buzz * throb
     return out / np.max(np.abs(out)) * 0.5
 

@@ -8,6 +8,7 @@ extends TestCase
 const TUNER := preload("res://scenes/chapters/tuner/tuner.tscn")
 const TunerSignal := preload("res://scenes/chapters/tuner/tuner_signal.gd")
 const MENU := preload("res://scenes/ui/m0_menu.tscn")
+const Tuner := preload("res://scenes/chapters/tuner/tuner.gd")
 const STEP := 0.1
 
 var _tuner: Node
@@ -184,6 +185,28 @@ func test_a_knob_stops_at_each_end() -> void:
 	check_near(knob.value, 0.0, 0.0001, "stops at the bottom")
 
 
+# A drag straight across the knob, through its middle, where the angle flips
+# by half a turn: it must not jump the knob (Hopper, DAS-135 round 1).
+func test_a_drag_through_the_middle_of_a_knob_doesnt_jump_it() -> void:
+	await frames()
+	var knob: Control = _tuner.knob(0)
+	knob.set_value(0.5)
+	var middle := knob.get_global_rect().get_center()
+	var r: float = knob.radius()
+	# Slowly, in small steps, left to right through the middle.
+	var through := []
+	for k in range(1, 21):
+		through.append(middle + Vector2(lerpf(-0.8, 0.8, k / 20.0) * r, 0.0))
+	_drag(middle + Vector2(-0.8 * r, 0.0), through)
+	check_near(knob.value, 0.5, 0.02, "a slow drag across the middle")
+	# In one leap from one side to the other.
+	_drag(middle + Vector2(0.0, -0.8 * r), [middle + Vector2(0.0, 0.8 * r)])
+	check_near(knob.value, 0.5, 0.02, "one leap across the middle")
+	# Round the rim still turns it.
+	_drag(_knob_start(knob), _turn_points(knob, 60.0))
+	check(knob.value > 0.6, "turning round the rim still works (%.2f)" % knob.value)
+
+
 func test_a_tap_alone_does_not_turn_a_knob() -> void:
 	await frames()
 	for k in 2:
@@ -273,6 +296,50 @@ func test_the_beats_come_in_order_fridge_hum_then_heartbeat_then_picture() -> vo
 	for entry in _search().history:
 		order.append(TunerSignal.Stage.keys()[entry[0]])
 	check_eq(order, ["SEARCH_HUM", "HUM", "HUM_LOST", "SEARCH_BABY", "THROUGH", "DONE"], "the beats in order")
+
+
+# The false signal must sound slower than the heartbeat, and the sound must
+# match the waveform's 72 a minute (Hopper, DAS-135 round 1: the hum's file
+# swelled 144 times a minute). Measured from the sound files themselves.
+func test_the_hum_swells_slower_than_the_heartbeat_beats() -> void:
+	var hum := _swells_per_minute("res://assets/audio/tuner/placeholder_hum.wav")
+	var heart := _swells_per_minute("res://assets/audio/tuner/placeholder_heartbeat.wav")
+	check_near(hum, 72.0, 8.0, "the hum swells about 72 times a minute (is %.0f)" % hum)
+	check_near(hum, 60.0 / Tuner.HUM_PERIOD, 8.0, "the hum's sound matches its waveform")
+	check_near(heart, 150.0, 12.0, "the heartbeat beats about 150 times a minute (is %.0f)" % heart)
+	check_near(heart, 60.0 / Tuner.HEARTBEAT_PERIOD, 12.0, "the heartbeat's sound matches its waveform")
+	check(heart > hum * 1.8, "the heartbeat is clearly faster than the hum (%.0f vs %.0f)" % [heart, hum])
+
+
+# Loudness in 10 ms steps, smoothed over 90 ms, then how often it rises
+# through its own middle: the swells (or beats) a minute.
+func _swells_per_minute(path: String) -> float:
+	var bytes := FileAccess.get_file_as_bytes(path)
+	var rate := bytes.decode_u32(24)
+	var samples := (bytes.size() - 44) / 2
+	var step := rate / 100
+	var loudness: Array[float] = []
+	for start in range(0, samples - step, step):
+		var total := 0.0
+		for i in range(start, start + step):
+			total += absf(bytes.decode_s16(44 + i * 2))
+		loudness.append(total / step)
+	var smooth: Array[float] = []
+	for k in loudness.size():
+		var total := 0.0
+		var n := 0
+		for j in range(maxi(k - 4, 0), mini(k + 5, loudness.size())):
+			total += loudness[j]
+			n += 1
+		smooth.append(total / n)
+	var middle: float = (smooth.min() + smooth.max()) / 2.0
+	# The files are loops, so the end runs on into the start.
+	var rises := 0
+	for k in smooth.size():
+		if smooth[k - 1] < middle and smooth[k] >= middle:
+			rises += 1
+	var seconds := float(samples) / rate
+	return rises * 60.0 / seconds
 
 
 func test_the_heartbeat_cant_be_found_before_the_hum() -> void:
@@ -485,6 +552,7 @@ func test_hiding_the_tab_pauses_everything_and_the_next_tap_resumes() -> void:
 	check_eq(_tuner.playtest_time(), time_before, "the playtest clock stopped too")
 	check(not _tuner.is_sound_playing(), "the sound stopped")
 	check(_tuner.get_node("Hum").stream_paused and _tuner.get_node("Heartbeat").stream_paused, "every loop paused")
+	check(not _tuner.knob(0).is_processing() and not _tuner.knob(1).is_processing(), "the knobs' hint stops rocking")
 	check_eq(state.to_save_data(), saved_before, "hiding never saves")
 	# A drag while paused does nothing but wake it.
 	var knob: Control = _tuner.knob(0)

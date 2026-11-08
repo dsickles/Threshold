@@ -315,6 +315,7 @@ func pause() -> void:
 	_dim.visible = true
 	for k: Control in _knobs:
 		k.let_go()
+		k.set_process(false)  # The hint's rock stops too.
 	for player in [_static, _hum, _heartbeat, _click]:
 		player.stream_paused = true
 
@@ -324,6 +325,8 @@ func resume() -> void:
 		return
 	_paused = false
 	_dim.visible = false
+	for k: Control in _knobs:
+		k.set_process(true)
 	for player in [_static, _hum, _heartbeat, _click]:
 		player.stream_paused = false
 
