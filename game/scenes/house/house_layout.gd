@@ -192,6 +192,41 @@ const FURNITURE: Array[Array] = [
 	["spare_boxes_east", "spare_room", Vector3(15.56, 0.4, 5.974), Vector3(0.5, 0.8, 1.0), "box", 0.0],
 ]
 
+## The chapter objects (HouseTable.CHAPTER_OBJECTS) as gray blocks. "parts":
+## [name, centre, size, colour name]; the "arm" part is the record player's
+## tonearm, which lowers onto the record. "stand" names the parts it stands
+## on, which are furniture: they don't glow with it. "close_up" is where the
+## camera stands for its close-up, looking at "look" (ADR-0008). Where they
+## stand comes from house-floor-plan.md: the record player sits on a low AV
+## cabinet in the bedroom's top-right corner (B3; Dan, 2026-11-01), the lamp
+## on the bed's nightstand (B2).
+const CHAPTER_OBJECTS := {
+	"record_player": {
+		"room": "bedroom",
+		"stand": ["cabinet", "cabinet_top", "cabinet_shelf"],
+		"parts": [
+			["cabinet", Vector3(5.55, 0.235, 0.4), Vector3(0.55, 0.47, 0.45), "cabinet"],
+			["cabinet_top", Vector3(5.55, 0.485, 0.4), Vector3(0.6, 0.03, 0.48), "cabinet"],
+			# The open shelf on its front, facing into the room.
+			["cabinet_shelf", Vector3(5.55, 0.25, 0.618), Vector3(0.47, 0.2, 0.02), "dark"],
+			["body", Vector3(5.55, 0.56, 0.4), Vector3(0.46, 0.12, 0.36), "wood"],
+			["record", Vector3(5.5, 0.63, 0.4), Vector3(0.3, 0.012, 0.3), "dark"],
+			["arm", Vector3(5.72, 0.66, 0.4), Vector3(0.03, 0.03, 0.24), "steel"],
+		],
+		"close_up": {"stand": Vector3(5.2, 1.2, 1.05), "look": Vector3(5.55, 0.6, 0.4)},
+	},
+	"bedside_lamp": {
+		"room": "bedroom",
+		"parts": [
+			["base", Vector3(0.259, 0.75, 2.972), Vector3(0.12, 0.3, 0.12), "wood"],
+			["shade", Vector3(0.259, 1.0, 2.972), Vector3(0.32, 0.22, 0.32), "shade"],
+		],
+		"light": Vector3(0.45, 1.0, 2.972),
+		"close_up": {"stand": Vector3(1.15, 1.3, 2.6), "look": Vector3(0.259, 0.85, 2.972)},
+	},
+}
+
+
 ## Whether you can go through a doorway, from the given room, with these door
 ## states. Only open doors into a room that has a doorway view can be gone
 ## through; a door missing from the states counts as shut.
@@ -270,3 +305,34 @@ static func room_at(point: Vector2) -> String:
 			if rect.has_point(point):
 				return room
 	return ""
+
+
+## Where the camera stands for a chapter object's close-up.
+static func close_up_transform(object_id: String) -> Transform3D:
+	var close: Dictionary = CHAPTER_OBJECTS[object_id].close_up
+	return Transform3D.IDENTITY.translated(close.stand).looking_at(close.look, Vector3.UP)
+
+
+## The box the object itself fills, without what it stands on: its gold
+## outline goes round this.
+static func object_own_bounds(object_id: String) -> AABB:
+	var data: Dictionary = CHAPTER_OBJECTS[object_id]
+	var stand: Array = data.get("stand", [])
+	var bounds := AABB()
+	var first := true
+	for part: Array in data.parts:
+		if part[0] in stand:
+			continue
+		var box := AABB(part[1] - part[2] / 2.0, part[2])
+		bounds = box if first else bounds.merge(box)
+		first = false
+	return bounds
+
+
+## The box a chapter object fills, all its parts together.
+static func object_bounds(object_id: String) -> AABB:
+	var parts: Array = CHAPTER_OBJECTS[object_id].parts
+	var bounds := AABB(parts[0][1] - parts[0][2] / 2.0, parts[0][2])
+	for part: Array in parts:
+		bounds = bounds.merge(AABB(part[1] - part[2] / 2.0, part[2]))
+	return bounds

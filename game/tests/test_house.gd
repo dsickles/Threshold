@@ -82,12 +82,17 @@ func test_furniture_stands_in_the_room_the_floor_plan_puts_it() -> void:
 		check(house.find_child("Furniture_%s" % item[0], true, false) != null, "%s is built" % item[0])
 
 
-# Furniture is gray blocks: nothing to tap (no buttons besides the rings).
-func test_only_rings_can_be_tapped() -> void:
+# Furniture is gray blocks: nothing to tap (no buttons besides the rings and
+# the chapter objects' tap areas, DAS-95). On moving day there is no chapter
+# object, so only rings show.
+func test_only_rings_and_chapter_objects_can_be_tapped() -> void:
 	var house := _open_house(ALL_OPEN)
 	await frames()
+	var objects: Array = house._object_buttons.values()
 	for button in house.find_children("*", "BaseButton", true, false):
-		check(button in house._rings, "%s is a ring" % button.name)
+		check(button in house._rings or button in objects, "%s is a ring or a chapter object" % button.name)
+	for button: Button in objects:
+		check(not button.visible, "%s can't be tapped on moving day" % button.name)
 
 
 # --- Views and rings.
