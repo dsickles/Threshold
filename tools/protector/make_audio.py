@@ -8,15 +8,16 @@ Built from docs/design/the-loss-run-and-car.md, "Music and sound" (Dan,
 game/assets/audio/protector/:
 
 - run.mp3: one pre-mixed track for the run, from 0:03 (the light fades up)
-  to 2:45 (black). The run starts it at 0:03 and it plays to the end.
+  to 2:40 (black). The run starts it at 0:03 and it plays to the end.
   - 0:03-1:03 the euphoria: the Partner's song, bright.
   - 1:03-1:43 the confusion: wind, then the first rain, rise over the song;
     the rain is heard only from 1:23, when it is seen, light at first.
   - 1:43-2:08 the panic: heavy rain, wind and thunder drown the song until
     only scraps of it come through, and by 2:08 it is gone under the rain.
-  - 2:08-2:45 the light goes out: the storm without the song, the wind
+  - 2:08-2:40 the light goes out: the storm without the song, the wind
     easing, the rain not; thunder far off, and none while the light goes out.
-  (Times revised after Dan's fourth play, call 20.)
+  (Times revised after Dan's fourth play, call 20, and 5 s cut from the
+  straight run after 2:08, Dan, 2026-10-30.)
 - placeholder_clear.wav: a soft, warm sound when the hand moves the light or
   covers a gap.
 - placeholder_stumble.wav: a dull, soft thud when something reaches the light.
@@ -58,11 +59,11 @@ START = 3.0  # The file's time 0.
 CONFUSION = 63.0
 PANIC = 103.0
 FADE = 128.0  # The song is gone under the rain (2:08 since call 20).
-HELD = 145.0  # The hand holds the light at the fallen tree; it goes out.
+HELD = 140.0  # The hand holds the light at the fallen tree; it goes out.
 RAIN_SEEN = 83.0  # RunPlan.RAIN_START, the first rain on screen: none is heard before it (call 21). Change both together; test_the_first_rain_is_faint_and_thickens checks they match.
-OUT_AT = 155.0
-BLACK = 165.0
-LENGTH = BLACK - START  # 162 s.
+OUT_AT = 150.0
+BLACK = 160.0
+LENGTH = BLACK - START  # 157 s.
 
 # Source bars (1-based) in the order they play: from the bar where the beat
 # comes in, through the fullest part, then most of the fullest part again
@@ -70,10 +71,10 @@ LENGTH = BLACK - START  # 162 s.
 BARS = list(range(9, 57)) + list(range(41, 54))
 # Thunder (run time, level, how far off: 0 near, 1 far): one far off as the
 # confusion ends, near through the panic, far off after, none while the light
-# goes out (2:25 to 2:35).
+# goes out (2:20 to 2:30).
 THUNDER = [(94.2, 0.35, 1.0), (106.75, 0.8, 0.3), (112.2, 1.0, 0.0), (116.75, 0.8, 0.4),
-           (121.3, 1.0, 0.0), (125.1, 0.9, 0.2), (131.0, 0.55, 0.7), (138.8, 0.4, 0.9),
-           (157.3, 0.3, 1.0)]
+           (121.3, 1.0, 0.0), (125.1, 0.9, 0.2), (131.0, 0.55, 0.7), (133.8, 0.4, 0.9),
+           (152.3, 0.3, 1.0)]
 # The steady parts of each recording, in seconds, that are looped.
 RAIN_LOOP = (2.0, 26.0)
 WIND_LOOP = (1.0, 12.0)
