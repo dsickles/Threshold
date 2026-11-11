@@ -38,6 +38,18 @@ func _on_run_ended() -> void:
 	finished.emit()
 
 
+## The pause button (DAS-130) shows here as in every chapter (Dan,
+## 2026-11-11). When the runner pauses it (DAS-130), the run stops its clock and its
+## music (a web sound Godot's own pause would leave playing) and lets go of
+## any hold.
+func pause_chapter() -> void:
+	_run.pause()
+
+
+func resume_chapter() -> void:
+	_run.resume()
+
+
 func probe_state() -> Dictionary:
 	return _run.probe_state()
 

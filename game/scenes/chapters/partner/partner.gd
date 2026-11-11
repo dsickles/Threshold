@@ -213,6 +213,16 @@ func _notification(what: int) -> void:
 		_conductor.pause()
 
 
+## The pause button (DAS-130): the runner stops this node's processing, and
+## the song, which the browser plays, is held here so the chart stays in step.
+func pause_chapter() -> void:
+	_conductor.hold()
+
+
+func resume_chapter() -> void:
+	_conductor.release()
+
+
 func _exit_tree() -> void:
 	if _recorder:
 		_recorder.close()  # Leaving with the taps box still open.

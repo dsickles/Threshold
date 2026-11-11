@@ -17,6 +17,10 @@ window.partnerConductor = window.partnerConductor || (function () {
 	layerGain.gain.value = 0;
 	layerGain.connect(ctx.destination);
 	var active = false, playing = false, failed = false, hiddenPause = false, ended = false;
+	// The pause button holds the song: it notes where the player is, stops the
+	// sound and starts it again from there on Resume. The context keeps
+	// running, so the sound can come back without a fresh tap handler.
+	var held = false, heldAt = 0;
 	// Browsers only start sound inside a real touch handler, and Godot sees
 	// the touch a frame later, so unlock and timestamp here.
 	function onTouch(e) {
@@ -102,18 +106,38 @@ window.partnerConductor = window.partnerConductor || (function () {
 			playing = true;
 		},
 		stop: function () {
-			if (src) { src.stop(); src.disconnect(); src = null; }
-			if (layerSrc) { layerSrc.stop(); layerSrc.disconnect(); layerSrc = null; }
+			this.silence();
 			layerGain.gain.value = 0;
 			playing = false;
 			hiddenPause = false;
+			held = false;
+		},
+		silence: function () {
+			if (src) { src.onended = null; src.stop(); src.disconnect(); src = null; }
+			if (layerSrc) { layerSrc.stop(); layerSrc.disconnect(); layerSrc = null; }
+		},
+		hold: function () {
+			if (!playing || held) { return; }
+			heldAt = heardAt(performance.now());
+			this.silence();
+			held = true;
+		},
+		release: function () {
+			if (!held) { return; }
+			var level = layerGain.gain.value;
+			this.start(Math.max(heldAt, 0));
+			layerGain.gain.value = level;
 		},
 		// 'interrupted' is Safari's state for a phone call or another app's sound.
 		ended: function () { return ended; },
-		paused: function () { return playing && (hiddenPause || ctx.state === 'interrupted'); },
-		songTime: function () { return playing ? heardAt(performance.now()) : -1; },
+		paused: function () { return playing && (held || hiddenPause || ctx.state === 'interrupted'); },
+		songTime: function () {
+			if (!playing) { return -1; }
+			return held ? heldAt : heardAt(performance.now());
+		},
 		tapTime: function () {
 			if (!playing) { return -1; }
+			if (held) { return heldAt; }
 			// A touch older than a few frames isn't this tap; use now.
 			var now = performance.now();
 			return heardAt(lastTouch >= 0 && now - lastTouch < 100 ? lastTouch : now);
@@ -226,6 +250,29 @@ func resume() -> void:
 		_player.stream_paused = false
 		if _layer_player:
 			_layer_player.stream_paused = false
+
+
+## The pause button's pause (DAS-130): the song stops where the player is
+## and song_time() stays there until release(). On the web the song is
+## stopped and started again from that point, because the browser's sound
+## can only be woken inside a tap handler, and Godot hears a tap a frame late.
+func hold() -> void:
+	if not _playing:
+		return
+	if uses_browser_clock:
+		JavaScriptBridge.eval("window.partnerConductor.hold()", true)
+	else:
+		pause()
+
+
+## Carries the song on from where hold() stopped it.
+func release() -> void:
+	if not _playing:
+		return
+	if uses_browser_clock:
+		JavaScriptBridge.eval("window.partnerConductor.release()", true)
+	else:
+		resume()
 
 
 ## True while the streak layer is playing along with the song.

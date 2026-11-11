@@ -64,6 +64,8 @@ func _process(_delta: float) -> void:
 		"overlays": overlays,
 		"buttons": buttons,
 		"screens": screens,
+		# The chapter pause panel (DAS-130) is up.
+		"paused": runner != null and runner.is_paused(),
 		"progress": {
 			"finished": _game_state().to_save_data().finished,
 			"saveOk": _game_state().last_save_ok,
@@ -87,12 +89,14 @@ func _collect_buttons(node: Node, out: Array[Dictionary]) -> void:
 	if button and button.is_visible_in_tree():
 		var centre := button.get_global_transform_with_canvas() * (button.size / 2.0)
 		out.append({
+			"name": button.name,
 			"text": button.text if button is Button else "",
 			"x": centre.x,
 			"y": centre.y,
 			"disabled": button.disabled,
 		})
-	for child in node.get_children():
+	# Internal children too: the chapter pause button is one (chapter_runner.gd).
+	for child in node.get_children(true):
 		_collect_buttons(child, out)
 
 

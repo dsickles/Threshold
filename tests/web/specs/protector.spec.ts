@@ -34,12 +34,16 @@ const hide = (page: any, hidden: boolean) =>
     document.dispatchEvent(new Event("visibilitychange"));
   }, hidden);
 
-test("opens with no words or buttons, and the light runs into the evening", async ({ game }) => {
+test("opens with no words and only the pause button, and the light runs into the evening", async ({ game }) => {
   // The 3 s of dark and the fade-up draw slowly at phone sizes, more so with
   // the fireflies; the waits below are already up to 120 s on their own.
   test.setTimeout(240_000);
   await openRun(game);
-  expect((await game.state()).buttons, "nothing to press: no skip, no menu").toEqual([]);
+  // The pause button every chapter has (DAS-130, Dan 2026-11-11), and nothing else.
+  expect(
+    (await game.state()).buttons.map((b: any) => b.name),
+    "only the pause button: no skip, no menu",
+  ).toEqual(["PauseButton"]);
   // The 3 s of dark first. Phone sizes draw a few frames a second here, and
   // Godot counts at most 8/60 s a frame, so it takes longer than 3 s.
   await expect.poll(async () => (await run(game))?.part, { timeout: 120_000 }).toBe("EUPHORIA");

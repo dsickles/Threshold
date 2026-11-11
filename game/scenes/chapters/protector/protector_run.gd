@@ -13,7 +13,7 @@ extends Node3D
 ## light runs on in the rain, stops against a fallen tree it can't get past,
 ## and the father's hand comes under it; it goes out there. A stumble dims
 ## the light for a moment and changes nothing else. No words but the two
-## hints at the start ("tap here", "hold"), no HUD, no retry, no skip, no
+## hints at the start ("tap here", "hold"), no HUD but the chapter pause button (DAS-130), no retry, no skip, no
 ## shake, no flash.
 ##
 ## The run only reports `ended` (2:40, black). The chapter (protector.gd)

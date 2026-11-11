@@ -3,7 +3,7 @@
 // (game/_core/test_probe/web_test_probe.gd), which only runs with "?probe".
 import { test as base, expect, Page } from "@playwright/test";
 
-export type ProbeButton = { text: string; x: number; y: number; disabled: boolean };
+export type ProbeButton = { name?: string; text: string; x: number; y: number; disabled: boolean };
 export type ProbeState = {
   scene: string;
   overlays: string[];
@@ -12,6 +12,8 @@ export type ProbeState = {
   // probe_state() of screens that report one, by scene path.
   screens: Record<string, any>;
   progress: { finished: { chapter: string; answer: string }[]; saveOk: boolean };
+  // The chapter pause panel is up (DAS-130).
+  paused: boolean;
 };
 
 export const MENU = "res://scenes/ui/m0_menu.tscn";
