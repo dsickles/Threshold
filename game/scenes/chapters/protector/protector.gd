@@ -38,14 +38,8 @@ func _on_run_ended() -> void:
 	finished.emit()
 
 
-## No pause button on screen in the Loss: no HUD at all, only the two hints
-## (docs/design/the-loss-run-and-car.md, call 20). Hiding the tab still
-## pauses it. PENDING Dan's call on the DAS-130 decision card.
-func shows_pause_button() -> bool:
-	return false
-
-
-## When the runner pauses it (DAS-130), the run stops its clock and its
+## The pause button (DAS-130) shows here as in every chapter (Dan,
+## 2026-11-11). When the runner pauses it (DAS-130), the run stops its clock and its
 ## music (a web sound Godot's own pause would leave playing) and lets go of
 ## any hold.
 func pause_chapter() -> void:

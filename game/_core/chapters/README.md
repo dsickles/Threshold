@@ -102,10 +102,8 @@ a chapter never makes its own (DAS-130).
 - The pause layer is an internal child of the runner, after the chapter, so
   it hears the pause button's tap before the chapter's `_input` does, and
   `runner.get_children()` still lists only the chapter.
-- `shows_pause_button()` returning false hides the button. The Loss does,
-  because its design has no pause button on screen
-  (`docs/design/the-loss-run-and-car.md`); it still pauses when the tab is
-  hidden.
+- `shows_pause_button()` returning false hides the button. No chapter does
+  today: Dan chose the button for the Loss too (2026-11-11).
 
 The stand-in chapter (`game/scenes/chapters/stand_in/`) is the smallest
 example. Tests: `game/tests/test_chapter_runner.gd`, `game/tests/test_chapter_pause.gd`,

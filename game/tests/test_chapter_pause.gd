@@ -304,21 +304,27 @@ func test_the_partner_holds_its_song_and_the_chart_stays_in_step() -> void:
 	check_eq(partner._judged[0], partner.Judged.HIT, "the first note after resuming is a hit")
 
 
-func test_the_loss_shows_no_pause_button_but_can_still_be_paused() -> void:
+func test_the_loss_has_the_pause_button_and_pausing_stops_the_run() -> void:
 	var chapter := _enter(preload("res://scenes/chapters/protector/protector.tscn"), &"protector")
 	var run: Node = chapter.run()
 	run.auto_advance = false
 	run.advance(10.0)
 	await frames()
-	check(not _pause_layer().pause_button().is_visible_in_tree(),
-			"no pause button in the Loss (docs/design/the-loss-run-and-car.md)")
+	check(_pause_layer().pause_button().is_visible_in_tree(),
+			"the pause button shows in the Loss too (Dan, 2026-11-11)")
+	var lane: int = run.lane()
+	tap(_pause_layer().pause_button())
+	await frames()
 	var runner := ChapterRunner.of(get_tree())
-	runner.pause()
+	check(runner.is_paused(), "the button paused it")
+	check_eq(run.lane(), lane, "the pause tap didn't move the light")
 	check(run.is_paused(), "the run is paused")
 	check(not run.is_music_playing(), "its music stopped")
 	run.advance(5.0)
 	check_near(run.time(), 10.0, STEP, "its clock stopped")
-	runner.resume()
+	tap(_pause_layer().resume_button())
+	await frames()
 	check(not run.is_paused(), "the run carries on")
+	check_eq(run.lane(), lane, "the Resume tap didn't move the light")
 	run.advance(1.0)
 	check_near(run.time(), 11.0, STEP, "from where it paused")

@@ -4,7 +4,7 @@
 // off. In the Partner the song (the browser's own audio clock) is held and
 // picks up from the same point. Whether the sound really stops and comes back
 // in step on an iPhone is Dan's to check on his phone.
-import { test, expect, MENU, PARTNER, ProbeButton } from "./game";
+import { test, expect, MENU, PARTNER, PROTECTOR, ProbeButton } from "./game";
 
 const STAND_IN = "res://scenes/chapters/stand_in/stand_in_chapter.tscn";
 
@@ -91,4 +91,23 @@ test("the Partner: the song holds while paused and picks up where it was", async
   expect(await songTime()).toBeLessThanOrEqual(held + sinceTap + 0.3);
   expect(await songTime()).toBeGreaterThanOrEqual(held - 0.3);
   expect((await game.screen(PARTNER)).layer, "the streak layer is back too").toBe(true);
+});
+
+test("the Loss: the pause button stops the run and Resume carries on", async ({ game }) => {
+  // Phone sizes draw the run a few frames a second (see protector.spec.ts).
+  test.setTimeout(240_000);
+  await game.tap("The Protector (rough)");
+  await game.waitForScene(MENU, [PROTECTOR]);
+  const run = () => game.screen(PROTECTOR);
+  await expect.poll(async () => (await run())?.time ?? 0, { timeout: 120_000 }).toBeGreaterThan(4);
+  await game.tapButton(await pauseButton(game));
+  await expect.poll(() => paused(game)).toBe(true);
+  const at = (await run()).time;
+  await game.page.waitForTimeout(2000);
+  expect((await run()).time, "the run's clock stops while paused").toBeCloseTo(at, 2);
+  expect((await run()).music, "its music stops").toBe(false);
+  await game.screenshot("protector-paused-panel");
+  await game.tap("Resume");
+  await expect.poll(() => paused(game)).toBe(false);
+  await expect.poll(async () => (await run()).time, { timeout: 60_000 }).toBeGreaterThan(at + 0.5);
 });

@@ -429,9 +429,9 @@ The documents were written in one day, in this order: brainstorming session → 
 | | |
 |---|---|
 | **Was** | In M1 a chapter paused only when the browser tab was hidden; the pause screen (Resume, Settings, Back to title) came with the title screen in M2. |
-| **Became** | From M1, every chapter has a pause button in the top-right corner that opens a panel with Resume (DAS-130). Settings and Back to title join that panel in M2. Pausing never saves and offers no skip, leave or retry. The Loss shows no button until Dan decides (its design says no pause button on screen). |
+| **Became** | From M1, every chapter has a pause button in the top-right corner that opens a panel with Resume (DAS-130). Settings and Back to title join that panel in M2. Pausing never saves and offers no skip, leave or retry. The Loss shows it too (Dan, 2026-11-11, on a decision card, over keeping the Loss free of any button). |
 | **Why** | Dan, 2026-11-04: "there needs to be a way to pause the chapter while playing". |
-| **Record** | [roadmap.md](../roadmap.md) M1; [scope.md](../scope.md); `game/_core/chapters/README.md` |
+| **Record** | [roadmap.md](../roadmap.md) M1; [scope.md](../scope.md); [the-loss-run-and-car.md](the-loss-run-and-car.md) "No HUD"; `game/_core/chapters/README.md` |
 
 ---
 

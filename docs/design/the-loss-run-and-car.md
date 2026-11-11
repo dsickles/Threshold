@@ -38,7 +38,7 @@ All simple shapes, no final art (M1):
 - **The sky:** plain colours (the sky, fog the same colour) that change with each part of the run (below), from low gold to storm dark.
 - **No silhouettes** (Dan, 2026-10-25: they might be too much and not sit well in the 3D run). The "planning and dreaming" of Story 2.2 is carried by the warm morning, the couple's song and the light growing, with nothing labelled.
 - **Not a car:** the runner is the light, never a vehicle, so the run can't read as a car accident (Dan's note, 2026-10-25, [story-beats.md](story-beats.md)).
-- **No HUD:** no score, no distance counter, no meter, no pause button on screen (the tab-hidden pause still works). The only words ever on screen are the two hints below (call 20).
+- **No HUD:** no score, no distance counter, no meter. The only control on screen is the small pause button every chapter has, top right, which opens a panel with Resume and nothing else (no skip, leave or retry); hiding the tab still pauses too. The only words ever on screen are the two hints below (call 20). _(updated 2026-11-11, Dan, DAS-130: was "no pause button on screen")_
 
 ### The one tap action, and the hold
 
